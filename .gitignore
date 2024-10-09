@@ -1,0 +1,8 @@
+External/
+Resources/Model/
+Resources/old/
+Nova/x64/
+.vs/
+x64/
+Nova.vcxproj.user
+Resources/Audio/

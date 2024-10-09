@@ -45,7 +45,7 @@ private:
 	enum class AUDIO_SE_BULLET	//	3Dで鳴らすSE
 	{
 		Explosion = 0,			//	爆発音
-		MAX
+		Max
 	};
 
 protected:
@@ -60,7 +60,7 @@ protected:
 	DirectX::XMFLOAT3							ownerPosition_ = {};			//	弾丸所有者の位置
 
 	std::unique_ptr<SoundEmitter> emitter_ = nullptr;							//	エミッターを自分の位置で持つ
-	std::unique_ptr<AudioSource3D> se_[static_cast<int>(AUDIO_SE_BULLET::MAX)];	//	弾丸のSE(3Dで鳴らす)
+	std::unique_ptr<AudioSource3D> se_[static_cast<int>(AUDIO_SE_BULLET::Max)];	//	弾丸のSE(3Dで鳴らす)
 
 };
 

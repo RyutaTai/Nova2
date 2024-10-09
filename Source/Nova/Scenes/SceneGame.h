@@ -122,10 +122,10 @@ private:
 	};
 	enum class AUDIO_BGM_GAME
 	{
-		NORMAL,		//	通常時BGM
-		MAX,		//	BGM最大数
+		Normal,		//	通常時BGM
+		Max,		//	BGM最大数
 	};
-	std::unique_ptr	<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_GAME::MAX)];
+	std::unique_ptr	<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_GAME::MAX)];
 
 	//	デバッグ用

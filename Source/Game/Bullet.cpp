@@ -26,7 +26,7 @@ Bullet::Bullet(const std::string& fileName)
 	emitter_->min_distance = 7.0f;
 	emitter_->max_distance = 12.0f;
 	emitter_->volume_ = 1.0f;
-	se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
+	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
 
 }
 
@@ -54,7 +54,7 @@ void Bullet::CoverModelUpdate(const float& elpasedTime)
 void Bullet::Destroy(const float& elapsedTime)
 {
 	//	爆発音再生
-	se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)]->Play(false);
+	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)]->Play(false);
 
 	//	マネージャーから自分を削除する
 	BulletManager::Instance().Remove(this);

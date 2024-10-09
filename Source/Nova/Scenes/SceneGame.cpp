@@ -17,6 +17,10 @@
 //	初期化
 void SceneGame::Initialize()
 {
+	/* ----- オーディオ初期化 ----- */
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = std::unique_ptr<AudioSource>(Audio::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav"));
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
+
 	/* ----- スプライト初期化 ----- */
 	//sprite_[static_cast<int>(SPRITE_GAME::BACK)] = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Game.png");
 
@@ -37,11 +41,6 @@ void SceneGame::Initialize()
 	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::Instructions))->GetTransform()->SetPosition(24, 250);
 	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::Instructions))->SetName("Instructions");
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする
-
-	/* ----- オーディオ初期化 ----- */
-	//audioInstance_.Initialize();
-	//bgm_[static_cast<int>(AUDIO_BGM_GAME::NORMAL)] = std::make_unique<Audio>();
-	//bgm_[static_cast<int>(AUDIO_BGM_GAME::NORMAL)]->SetVolume(0.3f);
 
 	/* ----- ステージ初期化 ----- */
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/syougiban.glb");
@@ -125,7 +124,7 @@ void SceneGame::Reset()
 void SceneGame::Update(const float& elapsedTime)
 {
 	//	BGM再生
-	//bgm_[static_cast<int>(AUDIO_BGM_GAME::NORMAL)]->Play();
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->Play(true);
 
 	GamePad& gamePad = Input::Instance().GetGamePad();
 

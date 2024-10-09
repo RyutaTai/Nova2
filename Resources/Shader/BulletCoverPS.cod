@@ -109,31 +109,10 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB0[5], immediateIndexed
 dcl_resource_structured t0, 96
 dcl_output o0.xyzw
-dcl_temps 2
-//
-// Initial variable locations:
-//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.wPosition.x; v1.y <- pin.wPosition.y; v1.z <- pin.wPosition.z; v1.w <- pin.wPosition.w; 
-//   v2.x <- pin.wNormal.x; v2.y <- pin.wNormal.y; v2.z <- pin.wNormal.z; v2.w <- pin.wNormal.w; 
-//   v3.x <- pin.wTangent.x; v3.y <- pin.wTangent.y; v3.z <- pin.wTangent.z; v3.w <- pin.wTangent.w; 
-//   v4.x <- pin.texcoord.x; v4.y <- pin.texcoord.y; 
-//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
-//
-#line 60 "E:\Program\XAudio\Nova_Fullscreen\Source\Game\Shaders\BulletCoverPS.hlsl"
-mov r0.x, cb0[4].x
-ld_structured_indexable(structured_buffer, stride=96)(mixed,mixed,mixed,mixed) r1.x, r0.x, l(24), t0.xxxx  // r1.x <- materialConstant.pbrMetallicRoughness.baseColorFactor.x
-ld_structured_indexable(structured_buffer, stride=96)(mixed,mixed,mixed,mixed) r1.y, r0.x, l(28), t0.xxxx  // r1.y <- materialConstant.pbrMetallicRoughness.baseColorFactor.y
-ld_structured_indexable(structured_buffer, stride=96)(mixed,mixed,mixed,mixed) r1.z, r0.x, l(32), t0.xxxx  // r1.z <- materialConstant.pbrMetallicRoughness.baseColorFactor.z
-ld_structured_indexable(structured_buffer, stride=96)(mixed,mixed,mixed,mixed) r1.w, r0.x, l(36), t0.xxxx  // r1.w <- materialConstant.pbrMetallicRoughness.baseColorFactor.w
-
-#line 62
-mov r1.xyzw, r1.xyzw  // r1.x <- baseColorFactor.x; r1.y <- baseColorFactor.y; r1.z <- baseColorFactor.z; r1.w <- baseColorFactor.w
-
-#line 64
-mov o0.xyzw, r1.xyzw
+ld_structured_indexable(structured_buffer, stride=96)(mixed,mixed,mixed,mixed) o0.xyzw, cb0[4].x, l(24), t0.xyzw
 ret 
-// Approximately 8 instruction slots used
+// Approximately 2 instruction slots used

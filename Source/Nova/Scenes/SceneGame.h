@@ -38,7 +38,7 @@ public:
 	void Render()							override;
 	void DrawDebug()						override;
 
-	void ChangeState(SceneGameState state) { GetStateMachine()->ChangeState(static_cast<int>(state)); }	//	ステート遷移
+	void ChangeState(SceneGameState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 
 	void LoadWaveSprite(const wchar_t* fileName);
 	StateMachine<State<SceneGame>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得

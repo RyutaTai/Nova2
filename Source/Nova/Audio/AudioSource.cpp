@@ -48,14 +48,23 @@ AudioSource::~AudioSource()
 
 }
 
-void AudioSource::Update(FLOAT32 elapsedtime)
+void AudioSource::Update(FLOAT32 elapsedTime)
 {
 	sourceVoice_->GetState(&state_);
 	
 	//if (state.BuffersQueued == 1)
+
+	if (!isPlaying_)return;
+
+	if(state_.BuffersQueued != 0)
 	{
-		DrawDebug();
-		AddPlayTimer(elapsedtime);
+		//DrawDebug();
+		AddPlayTimer(elapsedTime);
+		AddTotalPlayTimer(elapsedTime);
+	}
+	else
+	{
+		isPlaying_ = false;
 	}
 
 	//INT32 CurrentDiskReadBuffer = 0;
@@ -101,12 +110,14 @@ void AudioSource::Play(BOOL loop)
 	HRESULT hr = sourceVoice_->Start();
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	playTimer_ = 0.0f;
+	isPlaying_ = true;
 }
 
 // 再開
 void AudioSource::Restart()
 {
 	sourceVoice_->Start();
+	isPlaying_ = true;
 	//_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 	//sourceVoice->SetVolume(volume);
 }
@@ -118,6 +129,7 @@ void AudioSource::Stop()
 	sourceVoice_->FlushSourceBuffers();
 	sourceVoice_->SubmitSourceBuffer(&buffer_);
 	state_.SamplesPlayed = 0;
+	isPlaying_ = false;
 }
 
 
@@ -125,6 +137,7 @@ void AudioSource::Stop()
 void AudioSource::Pause()
 {
 	sourceVoice_->Stop(XAUDIO2_PLAY_TAILS); // 引数にXAUDIO2_PLAY_TAILSを設定することでかけた効果(リバーブの残響など)を残す
+	isPlaying_ = false;
 }
 
 //	現在の再生位置をサンプル単位で取得
@@ -137,9 +150,9 @@ size_t AudioSource::GetCurrentSample()const
 	return (size_t(vs.SamplesPlayed) * size_t(wfe_.nBlockAlign)) % buffer_.AudioBytes;	//	要調整
 }
 
-void AudioSource::SetVolume(FLOAT32 volume, BOOL use_db)
+void AudioSource::SetVolume(FLOAT32 volume, BOOL useDb)
 {
-	if (use_db)
+	if (useDb)
 	{
 		if (volume <= -40.0f)
 			volume = 0.0f;
@@ -228,8 +241,23 @@ void AudioSource::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff, FLOAT32 overq
 
 }
 
+//	再生中かどうか
+bool AudioSource::IsPlay()
+{
+	//	再生中かどうか lengthfFloat_(音源の長さ)より再生時間(playTimer_)が小さかったら再生中
+	//return lengthFloat_ > playTimer_;
+
+	sourceVoice_->GetState(&state_);
+
+	return state_.BuffersQueued;
+}
+
 void AudioSource::DrawDebug()
 {
 #ifdef USE_IMGUI
+	bool isPlay = IsPlay();
+	ImGui::Checkbox("IsPlay", &isPlay);						//	再生中かどうか
+	ImGui::DragFloat("PlayTimer", &playTimer_);				//	再生時間
+	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);	//	合計再生時間
 #endif
 }

@@ -7,14 +7,31 @@
 #include "../Resources/Sprite.h"
 #include "../../Game/UI.h"
 #include "../Audio/AudioSource.h"
+#include "../AI/StateMachine.h"
 
 class SceneTitle : public Scene
 {
-private:	//	タイトルの次の遷移先
-	enum class TITLE_SELECT
+public:	
+	//	ステート
+	enum class SceneTitleState
 	{
-		Play,
-		Tutorial,
+		Main,
+		Setting,
+		Fade,
+		Max,
+	};
+
+	//	オーディオ
+	enum class AUDIO_SE_TITLE
+	{
+		CHOICE,		//	選択音
+		DECISION,	//	決定音
+		MAX,		//	SE最大数
+	};
+	enum class AUDIO_BGM_TITLE
+	{
+		TITLE,		//	タイトルBGM
+		MAX,		//	BGM最大数
 	};
 
 public:
@@ -25,11 +42,19 @@ public:
 	void Finalize()							override;
 
 	void Update(const float& elapsedTime)	override;
+	void PlaySE(AUDIO_SE_TITLE seTitle);
+	void PlayBGM(AUDIO_BGM_TITLE bgmTitle, bool loop);
 
 	void ShadowRender() 					override;
 	void Render()							override;
 
 	void DrawDebug()						override;
+
+	void ChangeState(SceneTitleState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
+	StateMachine<State<SceneTitle>>* GetStateMachine() { return stateMachine_.get(); }					//	ステートマシン取得
+
+private:
+	std::unique_ptr<StateMachine<State<SceneTitle>>>	stateMachine_ = nullptr;		//	ステートマシン
 
 private:	//	スプライト
 	enum class SPRITE_TITLE
@@ -43,18 +68,8 @@ private:	//	スプライト
 
 	UI*	ui_;		//	UI
 
-private:	//	オーディオ
-	enum class AUDIO_SE_TITLE
-	{
-		CHOICE,		//	選択音
-		DECISION,	//	決定音
-		MAX,		//	SE最大数
-	};
-	enum class AUDIO_BGM_TITLE
-	{
-		TITLE,		//	タイトルBGM
-		MAX,		//	BGM最大数
-	};
+private:	
+	//	オーディオ
 	//std::unique_ptr	<Audio> bgm_[static_cast<int>(AUDIO_BGM_TITLE::MAX)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_TITLE::MAX)];
 

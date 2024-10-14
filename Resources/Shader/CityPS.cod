@@ -230,7 +230,7 @@ if_nz r0.y
 endif 
 
 #line 129
-add r0.y, r1.w, l(0.500000)  // r0.y <- roughnessFactor
+mul r0.y, r1.w, l(0.250000)  // r0.y <- roughnessFactor
 
 #line 130
 mov r0.w, r0.w  // r0.w <- metallicFactor

@@ -281,6 +281,7 @@
     <ClCompile Include="Source\Nova\Scenes\SceneManager.cpp" />
     <ClCompile Include="Source\Nova\Scenes\SceneTitle.cpp" />
     <ClCompile Include="Source\Game\UIManager.cpp" />
+    <ClCompile Include="Source\Game\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />
@@ -381,6 +382,7 @@
     <ClInclude Include="Source\Nova\Scenes\SceneLoading.h" />
     <ClInclude Include="Source\Nova\Scenes\SceneManager.h" />
     <ClInclude Include="Source\Nova\Scenes\SceneTitle.h" />
+    <ClInclude Include="Source\Game\TitleState.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Game\Shaders\BulletCoverPS.hlsl">

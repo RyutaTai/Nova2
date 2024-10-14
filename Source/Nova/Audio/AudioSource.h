@@ -16,7 +16,7 @@ public:
 public:
 	
 	// 更新処理
-	void Update(FLOAT32 elapsedtime);
+	void Update(FLOAT32 elapsedTime);
 
 	// 再生
 	void Play(BOOL loop);
@@ -34,8 +34,8 @@ public:
 	void Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff = 7350.0f, FLOAT32 overq = 1.0f);
 
 	// タイマー加算
-	void AddPlayTimer(FLOAT32 time) { playTimer_ += time; }
-	void AddTotalPlayTimer(const FLOAT32& time) { totalPlayTimer_ += time; }
+	void AddPlayTimer(FLOAT32 elapsedTime) { playTimer_ += elapsedTime; }
+	void AddTotalPlayTimer(const FLOAT32& elapsedTime) { totalPlayTimer_ += elapsedTime; }
 
 	virtual void DrawDebug();
 
@@ -61,6 +61,8 @@ public: // getter setter
 
 	size_t GetCurrentSample()const;		//	現在の再生位置をサンプル単位で取得
 	
+	bool IsPlay();
+
 	void SetVolume(FLOAT32 volume, BOOL useDb);
 
 	virtual void SetPitch(FLOAT32 pitch);
@@ -103,5 +105,7 @@ protected:
 	XAUDIO2_SEND_DESCRIPTOR SFXSend_;
 	XAUDIO2_VOICE_SENDS SFXSendList_ = {};
 	XAUDIO2_VOICE_STATE state_;
+
+	bool isPlaying_ = false;	//	再生中かどうかのフラグ
 
 };

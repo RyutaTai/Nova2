@@ -37,7 +37,7 @@ public:
 	void AddPlayTimer(FLOAT32 time) { play_timer += time; }
 	void AddTotalPlayTimer(const FLOAT32& time) { totalPlayTimer_ += time; }
 
-	virtual void DebugGUI();
+	virtual void DrawDebug();
 
 public: // getter setter
 

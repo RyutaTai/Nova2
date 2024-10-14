@@ -37,14 +37,18 @@ Graphics::Graphics(HWND hwnd, bool fullscreen)
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
+#ifdef ENABLE_DIRECT2D
 	createDeviceFlags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#endif
 
 	D3D_FEATURE_LEVEL featureLevels{ D3D_FEATURE_LEVEL_11_1 };
 	hr = D3D11CreateDevice(adapter_.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, createDeviceFlags, &featureLevels, 1, D3D11_SDK_VERSION, device_.GetAddressOf(), NULL, deviceContext_.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	CreateSwapChain(dxgiFactory6.Get());
+#ifdef ENABLE_DIRECT2D
 	CreateDirect2dObjects();
+#endif
 
 	//	シーン定数バッファ
 	D3D11_BUFFER_DESC bufferDesc{};
@@ -99,6 +103,7 @@ void Graphics::AcquireHighPerformanceAdapter(IDXGIFactory6* dxgiFactory6, IDXGIA
 	*dxgiAdapter3 = enumeratedAdapter.Detach();
 }
 
+#ifdef ENABLE_DIRECT2D
 void Graphics::CreateDirect2dObjects()
 {
 	HRESULT hr{ S_OK };
@@ -156,6 +161,7 @@ void Graphics::CreateDirect2dObjects()
 	hr = d2d1DeviceContext_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::CornflowerBlue), d2dSolidColorBrushes_[1].ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 }
+#endif
 
 void Graphics::CreateSwapChain(IDXGIFactory6* dxgiFactory6)
 {
@@ -264,7 +270,9 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height)
 		frameBufferDimensions_.cy = height;
 
 		// Release all objects that hold shader resource views here.
+#ifdef ENABLE_DIRECT2D
 		d2d1DeviceContext_.Reset();
+#endif
 
 		frameBuffers_[0].reset();
 		frameBuffers_[1].reset();
@@ -278,7 +286,9 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height)
 		CreateSwapChain(dxgiFactory6.Get());
 
 		// Recreate all objects that hold shader resource views here.
+#ifdef ENABLE_DIRECT2D
 		CreateDirect2dObjects();
+#endif
 
 		frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), 1280, 720);
 		frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), 1280 / 2, 720 / 2);

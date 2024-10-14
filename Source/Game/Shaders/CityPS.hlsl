@@ -97,7 +97,7 @@ StructuredBuffer<MaterialConstants> materials : register(t0);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-#if 0
+#if 1
     const float GAMMA = 2.2f;
     
     const MaterialConstants materialConstant = materials[material];
@@ -201,7 +201,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 #endif
     
-#if 1   //  Unit38ˆÈ‘O
+#if 0   //  Unit38ˆÈ‘O
     const MaterialConstants materialConstant = materials[material];
     
     float4 baseColor = materialConstant.pbrMetallicRoughness.baseColorTexture.index > -1 ?

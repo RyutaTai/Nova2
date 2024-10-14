@@ -54,7 +54,7 @@ void AudioSource::Update(FLOAT32 elapsedtime)
 	
 	//if (state.BuffersQueued == 1)
 	{
-		DebugGUI();
+		DrawDebug();
 		AddPlayTimer(elapsedtime);
 	}
 
@@ -229,7 +229,7 @@ void AudioSource::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff, FLOAT32 overq
 
 }
 
-void AudioSource::DebugGUI()
+void AudioSource::DrawDebug()
 {
 #ifdef USE_IMGUI
 #endif

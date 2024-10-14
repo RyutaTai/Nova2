@@ -60,7 +60,7 @@ void AudioSource3D::Update(FLOAT32 elapsedtime)
 	{
 		SetVolume(emitter->volume_, false);
 	}
-	DebugGUI();
+	DrawDebug();
 
 	//	ピッチ変更テスト
 #if 0	
@@ -128,7 +128,7 @@ void AudioSource3D::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 overq)
 	source_voice->SetFilterParameters(&filter_parameters);
 }
 
-void AudioSource3D::DebugGUI()
+void AudioSource3D::DrawDebug()
 {
 #ifdef _DEBUG
 	ImGui::Begin("3DEmitter");

@@ -12,7 +12,7 @@ typedef float FLOAT32;
 struct SoundListener
 {
 	DirectX::XMFLOAT3	position_;		//	位置
-	DirectX::XMFLOAT3	velocity_;		//	リスナーの移動速度
+	DirectX::XMFLOAT3	velocity_;		//	リスナーの速度
 	DirectX::XMFLOAT3	frontVec_;		//	前方向
 	DirectX::XMFLOAT3	rightVec_;		//	右方向
 	FLOAT32				innerRadius_;	//	内半径
@@ -24,9 +24,9 @@ struct SoundListener
 struct SoundEmitter
 {
 	DirectX::XMFLOAT3	position;		//	位置
-	DirectX::XMFLOAT3	velocity;		//	
-	FLOAT32				min_distance;	//	
-	FLOAT32				max_distance;	//	
+	DirectX::XMFLOAT3	velocity;		//	エミッターの速度
+	FLOAT32				min_distance;	//	距離減衰が始まる距離
+	FLOAT32				max_distance;	//	音が聞こえる最大距離
 	float				volume_ = 1.0f;	//	ボリューム
 };
 

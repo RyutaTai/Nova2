@@ -12,7 +12,7 @@ public:
 public:
 	void Update(FLOAT32 elapsedtime);
 		
-	void DebugGUI();
+	void DrawDebug();
 
 public:
 	void SetDSPSetting(SoundListener& listner)

@@ -389,11 +389,6 @@ size_t Graphics::VideoMemoryUsage()
 	return videoMemoryInfo.CurrentUsage / 1024 / 1024;
 }
 
-//	デストラクタ
-Graphics::~Graphics()
-{
-}
-
 //	デバッグ描画
 void Graphics::DrawDebug()
 {

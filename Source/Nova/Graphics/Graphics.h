@@ -34,7 +34,7 @@ public:	//	ç\ë¢ëÃ
 
 public:
 	Graphics(HWND hwnd, bool fullscreen);
-	~Graphics();
+	~Graphics() {}
 
 	static Graphics& Instance()
 	{

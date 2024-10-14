@@ -143,7 +143,7 @@ void AudioSource::Pause()
 //	現在の再生位置をサンプル単位で取得
 size_t AudioSource::GetCurrentSample()const
 {
-	//現在をサンプル単位で計算
+	//	現在をサンプル単位で計算
 	XAUDIO2_VOICE_STATE vs;
 	sourceVoice_->GetState(&vs);
 
@@ -165,13 +165,11 @@ void AudioSource::SetVolume(FLOAT32 volume, BOOL useDb)
 		lastVolume_ = volume;
 	}
 
-
 }
 
 void AudioSource::SetPitch(FLOAT32 pitch)
 {
 	sourceVoice_->SetFrequencyRatio(pitch);
-
 }
 
 void AudioSource::SetPan(FLOAT32 pan)
@@ -230,12 +228,12 @@ void AudioSource::SetPan(FLOAT32 pan)
 
 void AudioSource::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff, FLOAT32 overq)
 {
-	filterParameters_.Type = type; //使うフィルターの種類
-	filterParameters_.Frequency										//カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
-		= cutoff / wfe_.nSamplesPerSec * 6.0f; //式:カットオフ周波数 / サンプリングレート * 6.0f 例 : 7350 / 44100 * 6.0f = 1.0f(正確には1.000002fだがまあこれでおｋ)
-																	//単極フィルターを使う場合はXAudio2CutoffFrequencyToOnePoleCoefficient()というマクロを使う(XAUDIO2_HELPER_FUNCTIONSが必要)
-				 
-	filterParameters_.OneOverQ = overq; //実際にどのくらいの音量がカットされているかを指定する
+	filterParameters_.Type = type;				//	使うフィルターの種類
+	filterParameters_.Frequency					//	カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
+		= cutoff / wfe_.nSamplesPerSec * 6.0f;	//	式:カットオフ周波数 / サンプリングレート * 6.0f 例 : 7350 / 44100 * 6.0f = 1.0f(正確には1.000002fだがまあこれでおｋ)
+												//	単極フィルターを使う場合はXAudio2CutoffFrequencyToOnePoleCoefficient()というマクロを使う(XAUDIO2_HELPER_FUNCTIONSが必要)
+	
+	filterParameters_.OneOverQ = overq;			//	実際にどのくらいの音量がカットされているかを指定する
 
 	sourceVoice_->SetFilterParameters(&filterParameters_);
 

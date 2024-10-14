@@ -97,7 +97,7 @@ protected:
 	INT32 maxOutputMatrix_{ 8 };
 
 	// 前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
-	FLOAT32 lastVolume_{};
+	FLOAT32 lastVolume_ = {};
 
 	// フィルターの種類
 	XAUDIO2_FILTER_PARAMETERS filterParameters_;

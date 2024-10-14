@@ -167,7 +167,7 @@ void SceneTitle::DrawDebug()
 	{
 		if (ImGui::TreeNode("Back"))	//	ƒ^ƒCƒgƒ‹‰æ–Ê
 		{
-			//sprite_[static_cast<int>(SPRITE_TITLE::BACK)]->DrawDebug();
+			sprite_[static_cast<int>(SPRITE_TITLE::BACK)]->DrawDebug();
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("UI"))

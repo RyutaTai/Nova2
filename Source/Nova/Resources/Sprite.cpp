@@ -329,13 +329,22 @@ void Sprite::SpriteTransform::DrawDebug()
 		ImGui::Checkbox("IsDebugSize", &isDebugSize_);
 		if (isDebugSize_)
 		{
-			ImGui::DragFloat("debugSize", &debugSize_);
+			ImGui::DragFloat2("debugSize", &debugSize_.x);
 
-			size_.x += debugSize_;
-			texSize_.x += debugSize_;
+			//	x•ûŒü
+			size_.x += debugSize_.x;
+			texSize_.x += debugSize_.x;
 
-			if (fabs(debugSize_) > 0)
-				debugSize_ = 0;
+			if (fabs(debugSize_.x) > 0)
+				debugSize_.x = 0;
+
+			//	y•ûŒü
+			size_.y += debugSize_.y;
+			texSize_.y += debugSize_.y;
+
+			if (fabs(debugSize_.y) > 0)
+				debugSize_.y = 0;
+
 		}
 		//ImGui::TreePop();
 	//}

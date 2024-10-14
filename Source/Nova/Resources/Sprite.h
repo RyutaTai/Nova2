@@ -27,7 +27,7 @@ public:	// ç\ë¢ëÃ
 		void DrawDebug(); // ImGuióp
 
 		// kesu
-		float debugSize_=0;
+		DirectX::XMFLOAT2 debugSize_ = {};
 		bool isDebugSize_ = false;
 
 		void SetPosition(const DirectX::XMFLOAT2& pos) { position_ = pos; }

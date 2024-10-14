@@ -444,7 +444,7 @@ void SceneGame::DrawDebug()
 
 	ImGui::DragFloat4("LightDirection", &lightDirection_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	ƒ‰ƒCƒg‚ÌŒü‚«
 
-	if (bloomer_)bloomer_->DrawDebug();
+	if (bloomer_)bloomer_->DrawDebug();	//	Bloom
 
 	Camera::Instance().DrawDebug();		//	Camera
 	

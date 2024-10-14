@@ -16,30 +16,30 @@ struct SoundListener
 	DirectX::XMFLOAT3	frontVec_;		//	前方向
 	DirectX::XMFLOAT3	rightVec_;		//	右方向
 	FLOAT32				innerRadius_;	//	内半径
-	FLOAT32				outer_radius;	//	外半径
-	FLOAT32				filter_param;	//	ローパスに適応する値
+	FLOAT32				outerRadius_;	//	外半径
+	FLOAT32				filterParam_;	//	ローパスに適応する値
 };
 
 //	エミッター情報
 struct SoundEmitter
 {
-	DirectX::XMFLOAT3	position;		//	位置
-	DirectX::XMFLOAT3	velocity;		//	エミッターの速度
-	FLOAT32				min_distance;	//	距離減衰が始まる距離
-	FLOAT32				max_distance;	//	音が聞こえる最大距離
+	DirectX::XMFLOAT3	position_;		//	位置
+	DirectX::XMFLOAT3	velocity_;		//	エミッターの速度
+	FLOAT32				minDistance_;	//	距離減衰が始まる距離
+	FLOAT32				maxDistance_;	//	音が聞こえる最大距離
 	float				volume_ = 1.0f;	//	ボリューム
 };
 
 //	
 struct SoundDSPSetting
 {
-	UINT32   src_channel_count;				//	音源のチャンネル数
-	UINT32   dst_channel_count;				//	アウトプットチャンネル数
-	FLOAT32  distance_listner_to_emitter;	//	リスナーとエミッターの距離
-	FLOAT32  doppler_scale;					//	ドップラー効果
-	FLOAT32  radian_listener_to_emitter;	//	リスナーからエミッターまでの角度
-	FLOAT32* output_matrix;					//	SetOutputMatrix()に渡す
-	FLOAT32  filter_param;					//	ローパスに適用する値
+	UINT32   srcChannelCount_;				//	音源のチャンネル数
+	UINT32   dstChannelCount_;				//	アウトプットチャンネル数
+	FLOAT32  distanceListnerToEmitter_;	//	リスナーとエミッターの距離
+	FLOAT32  dopplerScale_;					//	ドップラー効果
+	FLOAT32  radianListenerToEmitter_;	//	リスナーからエミッターまでの角度
+	FLOAT32* outputMatrix_;					//	SetOutputMatrix()に渡す
+	FLOAT32  filterParam_;					//	ローパスに適用する値
 };
 
 

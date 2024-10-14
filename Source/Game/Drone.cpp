@@ -78,11 +78,11 @@ void Drone::Initialize()
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
 	float playerHeight = Player::Instance().GetHeight();
 	float posOffsetY = -10.0f;
-	emitter_[static_cast<int>(Audio3D::Shot)].position = GetTransform()->GetPosition();
+	emitter_[static_cast<int>(Audio3D::Shot)].position_ = GetTransform()->GetPosition();
 	//emitter_[static_cast<int>(Audio3D::Shot)].position.y = playerPos.y + playerHeight / 2.0f + posOffsetY;
-	emitter_[static_cast<int>(Audio3D::Shot)].velocity = { 1.0f, 2.0f, 1.0f };
-	emitter_[static_cast<int>(Audio3D::Shot)].min_distance = 7.0f;
-	emitter_[static_cast<int>(Audio3D::Shot)].max_distance = 12.0f;
+	emitter_[static_cast<int>(Audio3D::Shot)].velocity_ = { 1.0f, 2.0f, 1.0f };
+	emitter_[static_cast<int>(Audio3D::Shot)].minDistance_ = 7.0f;
+	emitter_[static_cast<int>(Audio3D::Shot)].maxDistance_ = 12.0f;
 	emitter_[static_cast<int>(Audio3D::Shot)].volume_ = 2.0f;
 	sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
 	//sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
@@ -142,7 +142,7 @@ void Drone::Update(const float& elapsedTime)
 //	エミッター更新
 void Drone::UpdateEmitter()
 {
-	emitter_[static_cast<int>(Audio3D::Shot)].position = GetTransform()->GetPosition();
+	emitter_[static_cast<int>(Audio3D::Shot)].position_ = GetTransform()->GetPosition();
 	//emitter_[static_cast<int>(Audio_3d::Shot)].velocity = {1,2,1};
 
 }

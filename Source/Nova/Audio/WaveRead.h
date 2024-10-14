@@ -12,34 +12,34 @@ public:
 private:
 
     HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition);
-    HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset);
+    HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD bufferSize, DWORD bufferOffset);
     HRESULT FileCreate();
 
 
 public:
 
-    DWORD GetAudioBytes() { return dwChunkSize; }
-    BYTE* GetAudioData() { return pDataBuffer; }
-    WAVEFORMATEX GetWaveForMatex() { return wfx; }
-    UINT32 GetPlayLength() const { return length; }
-    float GetPlayLengthFLOAT() const { return length_float; }
+    DWORD GetAudioBytes() { return dwChunkSize_; }
+    BYTE* GetAudioData() { return pDataBuffer_; }
+    WAVEFORMATEX GetWaveForMatex() { return wfx_; }
+    UINT32 GetPlayLength() const { return length_; }
+    float GetPlayLengthFLOAT() const { return lengthFloat_; }
 
 private:
 
 
-    WAVEFORMATEX wfx = { 0 };
-    XAUDIO2_BUFFER buffer = { 0 };
+    WAVEFORMATEX wfx_ = { 0 };
+    XAUDIO2_BUFFER buffer_ = { 0 };
 
-    const char* strFileName;
+    const char* strFilename_;
     // Open the file
-    HANDLE hFile;
+    HANDLE hFile_;
 
-    DWORD dwChunkSize; //size of the audio buffer in bytes
-    DWORD dwChunkPosition;
+    DWORD dwChunkSize_; //size of the audio buffer in bytes
+    DWORD dwChunkPosition_;
    
-    DWORD filetype;
+    DWORD filetype_;
    
-    BYTE* pDataBuffer; //buffer containing audio data
-    UINT32 length;
-    float length_float;
+    BYTE* pDataBuffer_; //buffer containing audio data
+    UINT32 length_;
+    float lengthFloat_;
 };

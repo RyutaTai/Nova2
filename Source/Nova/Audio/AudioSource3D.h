@@ -17,25 +17,25 @@ public:
 public:
 	void SetDSPSetting(SoundListener& listner)
 	{
-		DSP(dsp_setting, listner, *emitter);
+		DSP(dspSetting_, listner, *emitter_);
 	}
 
-	void SetEmitter(SoundEmitter emitter) { this->emitter = &emitter; }
+	void SetEmitter(SoundEmitter emitter) { this->emitter_ = &emitter; }
 
-	void SetPosition(DirectX::XMFLOAT3 position) { emitter->position = position; }
+	void SetPosition(DirectX::XMFLOAT3 position) { emitter_->position_ = position; }
 
-	void SetVelocity(DirectX::XMFLOAT3 velocity) { emitter->velocity = velocity; }
+	void SetVelocity(DirectX::XMFLOAT3 velocity) { emitter_->velocity_ = velocity; }
 
-	void SetCurveDistanceScaler(FLOAT32 scaler) { emitter->max_distance = scaler; }
+	void SetCurveDistanceScaler(FLOAT32 scaler) { emitter_->maxDistance_ = scaler; }
 
 	// ドップラー効果を適用
-	void SetPitch(FLOAT32 pitch) override { source_voice->SetFrequencyRatio(dsp_setting.doppler_scale * pitch); }
+	void SetPitch(FLOAT32 pitch) override { sourceVoice_->SetFrequencyRatio(dspSetting_.dopplerScale_ * pitch); }
 
 	void SetPan();
 
-	void SetReflectionRate(FLOAT32 reflection_rate) { this->reflection_rate = reflection_rate; }
+	void SetReflectionRate(FLOAT32 reflectionRate) { this->reflectionRate_ = reflectionRate; }
 
-	void SetAbsortRate(FLOAT32 absorption_rate) { this->absorption_rate = absorption_rate; }
+	void SetAbsortRate(FLOAT32 absorptionRate) { this->absorptionRate_ = absorptionRate; }
 
 	/*void SetVolumeCurve(X3DAUDIO_DISTANCE_CURVE_POINT vol_curvepoint[], UINT32 array_size)
 	{
@@ -67,25 +67,25 @@ public:
 
 	void Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 overq = 1.0f);
 
-	SoundDSPSetting GetDSPSetting() const { return dsp_setting; }
+	SoundDSPSetting GetDSPSetting() const { return dspSetting_; }
 
-	SoundEmitter* GetEmitter() { return emitter; }
+	SoundEmitter* GetEmitter() { return emitter_; }
 
 private:
 
-	SoundEmitter* emitter{};
+	SoundEmitter* emitter_{};
 
-	SoundDSPSetting dsp_setting{};
+	SoundDSPSetting dspSetting_{};
 
-	FLOAT32 absorption_rate{};		//	吸収率
+	FLOAT32 absorptionRate_{};		//	吸収率
 
-	FLOAT32 reflection_rate{};		//	反射率
+	FLOAT32 reflectionRate_{};		//	反射率
 
-	std::vector<X3DAUDIO_DISTANCE_CURVE_POINT> vol_curvepoints;
-	X3DAUDIO_DISTANCE_CURVE vol_curve = { nullptr, 0 };
+	std::vector<X3DAUDIO_DISTANCE_CURVE_POINT> volCurvepoints_;
+	X3DAUDIO_DISTANCE_CURVE volCurve_ = { nullptr, 0 };
 
-	std::vector<X3DAUDIO_DISTANCE_CURVE_POINT> lpfdirect_curvepoints;
-	X3DAUDIO_DISTANCE_CURVE lpfdirect_curve = { nullptr, 0 };
+	std::vector<X3DAUDIO_DISTANCE_CURVE_POINT> lpfdirectCurvepoints_;
+	X3DAUDIO_DISTANCE_CURVE lpfdirectCurve_ = { nullptr, 0 };
 
 	//	デバッグ用
 	float pitch_ = 1.0f;

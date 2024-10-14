@@ -16,48 +16,47 @@
 #define fourccDPDS 'sdpd'
 
 
-WaveReader::WaveReader(const char* filename) : strFileName(filename)
+WaveReader::WaveReader(const char* filename) : strFilename_(filename)
 {
     HRESULT hr = FileCreate();
-
    
     //check the file type, should be fourccWAVE or 'XWMA'
-    hr = FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
+    hr = FindChunk(hFile_, fourccRIFF, dwChunkSize_, dwChunkPosition_);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-    hr = ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
+    hr = ReadChunkData(hFile_, &filetype_, sizeof(DWORD), dwChunkPosition_);
 
-    hr = FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
+    hr = FindChunk(hFile_, fourccFMT, dwChunkSize_, dwChunkPosition_);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-    hr = ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+    hr = ReadChunkData(hFile_, &wfx_, dwChunkSize_, dwChunkPosition_);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-    hr = FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
+    hr = FindChunk(hFile_, fourccDATA, dwChunkSize_, dwChunkPosition_);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-    pDataBuffer = new BYTE[dwChunkSize];
-    hr = ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
+    pDataBuffer_ = new BYTE[dwChunkSize_];
+    hr = ReadChunkData(hFile_, pDataBuffer_, dwChunkSize_, dwChunkPosition_);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-    switch (wfx.wFormatTag)
+    switch (wfx_.wFormatTag)
     {
     case WAVE_FORMAT_PCM:
     case WAVE_FORMAT_IEEE_FLOAT:
-        wfx.cbSize = 0;
+        wfx_.cbSize = 0;
         break;
 
     case WAVE_FORMAT_EXTENSIBLE:
-        wfx.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+        wfx_.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
         break;
 
     default:
-        wfx.cbSize = sizeof(WAVEFORMATEX);
+        wfx_.cbSize = sizeof(WAVEFORMATEX);
         break;
     }
 
-    length_float = (float)dwChunkSize / (wfx.nSamplesPerSec * 4.0f);
-    length = dwChunkSize / (wfx.nSamplesPerSec * 4);
+    lengthFloat_ = (float)dwChunkSize_ / (wfx_.nSamplesPerSec * 4.0f);
+    length_ = dwChunkSize_ / (wfx_.nSamplesPerSec * 4);
 
 }
 
@@ -116,13 +115,13 @@ HRESULT WaveReader::FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DW
 
 }
 
-HRESULT WaveReader::ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset)
+HRESULT WaveReader::ReadChunkData(HANDLE hFile, void* buffer, DWORD bufferSize, DWORD bufferOffset)
 {
     HRESULT hr = S_OK;
-    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferOffset, NULL, FILE_BEGIN))
         return HRESULT_FROM_WIN32(GetLastError());
     DWORD dwRead;
-    if (0 == ReadFile(hFile, buffer, buffersize, &dwRead, NULL))
+    if (0 == ReadFile(hFile, buffer, bufferSize, &dwRead, NULL))
         hr = HRESULT_FROM_WIN32(GetLastError());
     return hr;
 }
@@ -130,8 +129,8 @@ HRESULT WaveReader::ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, 
 
 HRESULT WaveReader::FileCreate()
 {
-    hFile = CreateFileA(
-        strFileName,
+    hFile_ = CreateFileA(
+        strFilename_,
         GENERIC_READ,
         FILE_SHARE_READ,
         NULL,
@@ -139,10 +138,10 @@ HRESULT WaveReader::FileCreate()
         0,
         NULL);
 
-    if (INVALID_HANDLE_VALUE == hFile)
+    if (INVALID_HANDLE_VALUE == hFile_)
         return HRESULT_FROM_WIN32(GetLastError());
 
-    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile_, 0, NULL, FILE_BEGIN))
         return HRESULT_FROM_WIN32(GetLastError());
 
 }

@@ -1,4 +1,5 @@
 #include "Audio3DSystem.h"
+
 #include <corecrt_math_defines.h>
 
 inline FLOAT32 VECTOR3Length(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b)
@@ -12,23 +13,23 @@ inline FLOAT32 Dot(DirectX::XMFLOAT3 a)
 }
 
 #if 1
-FLOAT32 Angle(DirectX::XMFLOAT3 point_1, DirectX::XMFLOAT3 point_2, DirectX::XMFLOAT3 vector)
+FLOAT32 Angle(DirectX::XMFLOAT3 point1, DirectX::XMFLOAT3 point2, DirectX::XMFLOAT3 vector)
 {
-    DirectX::XMFLOAT3 vector_listner_to_emitter =
+    DirectX::XMFLOAT3 vectorListnerToEmitter =
     {
-        point_1.x - point_2.x,
-        point_1.y - point_2.y,
-        point_1.z - point_2.z,
+        point1.x - point2.x,
+        point1.y - point2.y,
+        point1.z - point2.z,
     };
 
 
-    FLOAT32 front_dot = Dot(vector);
-    DirectX::XMFLOAT3 front_normalize = { vector.x / front_dot, vector.y / front_dot, vector.z / front_dot };
+    FLOAT32 frontDot = Dot(vector);
+    DirectX::XMFLOAT3 frontNormalize = { vector.x / frontDot, vector.y / frontDot, vector.z / frontDot };
 
-    FLOAT32 point_dot = Dot(vector_listner_to_emitter);
-    DirectX::XMFLOAT3 point_noramlize = { vector_listner_to_emitter.x / point_dot, vector_listner_to_emitter.y / point_dot, vector_listner_to_emitter.z / point_dot };
+    FLOAT32 pointDot = Dot(vectorListnerToEmitter);
+    DirectX::XMFLOAT3 pointNoramlize = { vectorListnerToEmitter.x / pointDot, vectorListnerToEmitter.y / pointDot, vectorListnerToEmitter.z / pointDot };
 
-    return acosf(front_normalize.x * point_noramlize.x + front_normalize.y * point_noramlize.y + front_normalize.z * point_noramlize.z);
+    return acosf(frontNormalize.x * pointNoramlize.x + frontNormalize.y * pointNoramlize.y + frontNormalize.z * pointNoramlize.z);
 }
 #else
 FLOAT32 Angle(DirectX::XMFLOAT3 point_1, DirectX::XMFLOAT3 point_2, DirectX::XMFLOAT3 vector)
@@ -75,35 +76,34 @@ FLOAT32 Angle(DirectX::XMFLOAT3 point_1, DirectX::XMFLOAT3 point_2, DirectX::XMF
 void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitter)
 {
     //  距離
-    dspSetting.distance_listner_to_emitter = VECTOR3Length(emitter.position, listener.position_);
+    dspSetting.distanceListnerToEmitter_ = VECTOR3Length(emitter.position_, listener.position_);
 
     // ドップラー効果
-    dspSetting.doppler_scale = (SPEED_OF_SOUND - (listener.velocity_.x + listener.velocity_.y + listener.velocity_.z)) /
-                                    (SPEED_OF_SOUND - (emitter.velocity.x + emitter.velocity.y + emitter.velocity.z));
+    dspSetting.dopplerScale_ = (SPEED_OF_SOUND - (listener.velocity_.x + listener.velocity_.y + listener.velocity_.z)) /
+                                    (SPEED_OF_SOUND - (emitter.velocity_.x + emitter.velocity_.y + emitter.velocity_.z));
 
     //  角度
-    dspSetting.radian_listener_to_emitter = (Angle(emitter.position, listener.position_,  listener.rightVec_) < M_PI * 0.5f) ?
-                                                Angle(emitter.position, listener.position_, listener.frontVec_) : -Angle(emitter.position, listener.position_, listener.frontVec_);
+    dspSetting.radianListenerToEmitter_ = (Angle(emitter.position_, listener.position_,  listener.rightVec_) < M_PI * 0.5f) ?
+                                                Angle(emitter.position_, listener.position_, listener.frontVec_) : -Angle(emitter.position_, listener.position_, listener.frontVec_);
 
     // 音の減衰率
-    FLOAT32 scaler = max(0.0f, min(1.0f, 1.0f - dspSetting.distance_listner_to_emitter / emitter.max_distance));
+    FLOAT32 scaler = max(0.0f, min(1.0f, 1.0f - dspSetting.distanceListnerToEmitter_ / emitter.maxDistance_));
 
-    switch (dspSetting.src_channel_count * dspSetting.dst_channel_count)
+    switch (dspSetting.srcChannelCount_ * dspSetting.dstChannelCount_)
     {
     case 1:
-        dspSetting.output_matrix[0] = scaler;
+        dspSetting.outputMatrix_[0] = scaler;
         break;
 
     case 4:
-        FLOAT32 angle = (Angle(emitter.position, listener.position_, listener.rightVec_) < M_PI * 0.5f) ?
-            dspSetting.radian_listener_to_emitter : -Angle(emitter.position, listener.position_, listener.frontVec_);
+        FLOAT32 angle = (Angle(emitter.position_, listener.position_, listener.rightVec_) < M_PI * 0.5f) ?
+            dspSetting.radianListenerToEmitter_ : -Angle(emitter.position_, listener.position_, listener.frontVec_);
         //angle = (dsp_setting.radian_listener_to_emitter + 90) * 0.5f;
-        angle = (dspSetting.radian_listener_to_emitter + M_PI_2) * 0.5f;
-
+        angle = (dspSetting.radianListenerToEmitter_ + M_PI_2) * 0.5f;
 
         FLOAT32 L = cosf(angle);
         FLOAT32 R = sinf(angle);
-        if (dspSetting.distance_listner_to_emitter > emitter.min_distance)
+        if (dspSetting.distanceListnerToEmitter_ > emitter.minDistance_)
         {
             L *= scaler;
             R *= scaler;
@@ -113,8 +113,8 @@ void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitt
         //dsp_setting.output_matrix[2] = dsp_setting.output_matrix[3] = R;
 
         //  変更したら直った。
-        dspSetting.output_matrix[0] = dspSetting.output_matrix[2] = L;    //  左を0、2に変更
-        dspSetting.output_matrix[1] = dspSetting.output_matrix[3] = R;    //  右を1、3に変更
+        dspSetting.outputMatrix_[0] = dspSetting.outputMatrix_[2] = L;    //  左を0、2に変更
+        dspSetting.outputMatrix_[1] = dspSetting.outputMatrix_[3] = R;    //  右を1、3に変更
 
 #if 0   //  dsp_setting.output_matrixの値が生きているか確認
         float pan = -90.0f;	//	真左
@@ -132,7 +132,7 @@ void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitt
 
 
     // リスナーと音源の角度からローパスに適用する値を計算
-    dspSetting.filter_param = (std::abs(dspSetting.radian_listener_to_emitter) > listener.innerRadius_) ?
-        listener.filter_param * min(1.0f, (std::abs(dspSetting.radian_listener_to_emitter) - listener.innerRadius_) / (listener.outer_radius - listener.innerRadius_)) :
-        dspSetting.filter_param = 0.0f;
+    dspSetting.filterParam_ = (std::abs(dspSetting.radianListenerToEmitter_) > listener.innerRadius_) ?
+        listener.filterParam_ * min(1.0f, (std::abs(dspSetting.radianListenerToEmitter_) - listener.innerRadius_) / (listener.outerRadius_ - listener.innerRadius_)) :
+        dspSetting.filterParam_ = 0.0f;
 }

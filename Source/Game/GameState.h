@@ -85,7 +85,7 @@ namespace GameState
 	};
 }
 
-//	リザルト
+//	ゲームオーバー
 namespace GameState
 {
 	class GameOverState : public State<SceneGame>

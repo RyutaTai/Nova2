@@ -21,10 +21,10 @@ Bullet::Bullet(const std::string& fileName)
 
 	//	SEì«Ç›çûÇ›
 	emitter_ = std::make_unique<SoundEmitter>();
-	emitter_->position = GetTransform()->GetPosition();
-	emitter_->velocity = velocity_;
-	emitter_->min_distance = 7.0f;
-	emitter_->max_distance = 12.0f;
+	emitter_->position_ = GetTransform()->GetPosition();
+	emitter_->velocity_ = velocity_;
+	emitter_->minDistance_ = 7.0f;
+	emitter_->maxDistance_ = 12.0f;
 	emitter_->volume_ = 1.0f;
 	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
 

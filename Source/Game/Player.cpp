@@ -38,8 +38,8 @@ Player::Player()
 
 	//	リスナー情報セット
 	listener_.innerRadius_ = 0.7f;
-	listener_.outer_radius = 1.67f;
-	listener_.filter_param = 0.8f;
+	listener_.outerRadius_ = 1.67f;
+	listener_.filterParam_ = 0.8f;
 
 }
 
@@ -52,14 +52,6 @@ void Player::Initialize()
 	//	エフェクトスケール設定
 	effectScale_ = 5.0f;
 
-	//	スタート位置設定(ステージの描画できてない部分確認用)カメラを回す必要あり
-#if 0
-	GetTransform()->SetPosition({ -4795.0f, -7.0f, 4940.0f });
-#endif
-	//	スタート位置設定(ステージの裏が透けて描画されている場所
-#if 0
-	GetTransform()->SetPosition({ -3918.0f, -7.0f, 2975.0f });
-#endif
 	GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
 
 	//float scale = 2.0f;
@@ -744,8 +736,8 @@ void Player::DrawDebug()
 			//	リスナー情報
 			ImGui::DragFloat3("Position", &listener_.position_.x);
 			ImGui::DragFloat("InnerRadius", &listener_.innerRadius_);
-			ImGui::DragFloat("OuterRadius", &listener_.outer_radius);
-			ImGui::DragFloat("FilterParam", &listener_.filter_param);
+			ImGui::DragFloat("OuterRadius", &listener_.outerRadius_);
+			ImGui::DragFloat("FilterParam", &listener_.filterParam_);
 			ImGui::DragFloat3("FrontVec", &listener_.frontVec_.x);
 			ImGui::DragFloat3("RightVec", &listener_.rightVec_.x);
 			ImGui::DragFloat3("Velocity", &listener_.velocity_.x);

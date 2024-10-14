@@ -44,7 +44,7 @@ void PitchShifter::ApplyPitchShift(float pitchShift, const std::vector<float>& i
         // ゼロパディング
         for (int i = newSize; i < FRAME_SIZE; ++i) 
         {
-            shiftedFreqDomain.push_back(Complex(0, 0));
+            shiftedFreqDomain.emplace_back(Complex(0, 0));
         }
 
         // 逆FFTにより時間領域へ戻す

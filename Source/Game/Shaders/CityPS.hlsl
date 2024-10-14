@@ -126,7 +126,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         emissiveFactor *= sampled.rgb;
     }
     
-    float roughnessFactor = materialConstant.pbrMetallicRoughness.roughnessFactor;
+    float roughnessFactor = materialConstant.pbrMetallicRoughness.roughnessFactor * 0.25f;
     float metallicFactor = materialConstant.pbrMetallicRoughness.metallicFactor;
     const int metallicRoughnessTexture = materialConstant.pbrMetallicRoughness.metallicRoughnessTexture.index;
     if (metallicRoughnessTexture > -1)

@@ -42,7 +42,7 @@ void AudioSource3D::Update(FLOAT32 elapsedtime)
 	AddTotalPlayTimer(elapsedtime);
 
 	//	音源データの長さを超えたら再生時間リセット
-	float length = GetPlayLengthFLOAT();
+	float length = GetPlayLengthFloat();
 	if (GetPlayTimer() >= length)
 	{
 		ResetPlayTimer();	

@@ -44,14 +44,14 @@ public: // getter setter
 	IXAudio2SourceVoice* GetSourceVoice() { return sourceVoice_; }
 
 	UINT32 GetPlayLength() const { return length_; }
-	FLOAT32 GetPlayLengthFLOAT() const { return lengthFloat_; }
+	FLOAT32 GetPlayLengthFloat() const { return lengthFloat_; }
 
 	FLOAT32 GetPlayTimer() const { return playTimer_; }
 	void ResetPlayTimer() { playTimer_ = 0.0f; }
 
 	FLOAT32 GetTotalPlayTimer()const { return totalPlayTimer_; }
 
-	XAUDIO2_VOICE_SENDS* GetSfxsendlist() { return &SFXSendList_; }
+	XAUDIO2_VOICE_SENDS* GetSfxSendList() { return &SFXSendList_; }
 
 	FLOAT32 GetVolume() const { return lastVolume_; }
 

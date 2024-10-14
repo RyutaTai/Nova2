@@ -11,6 +11,7 @@
 #include "../Scenes/SceneDemo.h"
 #include "../Debug/SceneModelCheck.h"
 #include "../Resources/EffectManager.h"
+#include "../Audio/AudioManager.h"
 
 HighResolutionTimer Framework::tictoc_ = {};
 
@@ -80,6 +81,9 @@ void Framework::Update(const float& elapsedTime/*Elapsed seconds from last frame
 
 	//	Input初期化
 	input_.Update();
+
+	//	オーディオ更新処理
+	AudioManager::Instance().Update(elapsedTime);
 
 	//	シーンの更新
 	SceneManager::Instance().Update(elapsedTime);

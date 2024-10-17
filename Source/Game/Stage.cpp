@@ -4,8 +4,8 @@
 
 static Stage* instance = nullptr;
 
-Stage::Stage(const std::string& fileName)
-	: GameStaticObject(fileName)
+Stage::Stage(const std::string& filename)
+	: GameStaticObject(filename)
 {
 	//	インスタンスポイント設定
 	instance = this;

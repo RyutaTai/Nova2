@@ -4,7 +4,7 @@
 #include "../Graphics/Graphics.h"
 
 //	コンストラクタ
-Effect::Effect(const char* fileName)
+Effect::Effect(const char* filename)
 {
 	//	エフェクトを読み込みする前にロックする
 	//	※マルチスレッドでEffectを作成するとDeviceContextを同時アクセスして
@@ -13,14 +13,14 @@ Effect::Effect(const char* fileName)
 
 	//	Effekseerのリソースを読み込む
 	//	EffekseerはUTF-16のファイルパス以外は対応していないため文字コード変換が必要
-	char16_t utf16FileName[256];
-	Effekseer::ConvertUtf8ToUtf16(utf16FileName, 256, fileName);
+	char16_t utf16filename[256];
+	Effekseer::ConvertUtf8ToUtf16(utf16filename, 256, filename);
 
 	//	Effekseer::Managerを取得
 	Effekseer::ManagerRef effekseerManager_ = EffectManager::Instance().GetEffecseerManager();
 
 	//	Effekseerエフェクトを読み込み
-	effekseerEffect_ = Effekseer::Effect::Create(effekseerManager_, (EFK_CHAR*)utf16FileName);
+	effekseerEffect_ = Effekseer::Effect::Create(effekseerManager_, (EFK_CHAR*)utf16filename);
 
 	_ASSERT_EXPR(effekseerEffect_.Get(), L"Failed to load effect.");
 

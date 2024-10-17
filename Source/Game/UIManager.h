@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 
 #include "UI.h"
 
@@ -26,12 +27,13 @@ public:
 
 	void	SetDrawFlag(const bool& drawFlag);
 
-	UI*		GetUI(int num);
+	UI*		GetUIFromNum(int num);
+	UI*		GetUIFromName(const std::string& name);
 
 private:
-	std::vector<UI*> userInterfaces_ = {};
-
-	bool allDrawFlag_ = false;
+	std::vector<UI*> userInterfaces_;
+	std::set<UI*>	generates_;
+	bool allDrawFlag_ = true;
 
 };
 

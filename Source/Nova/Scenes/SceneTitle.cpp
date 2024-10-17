@@ -18,7 +18,7 @@ void SceneTitle::Initialize()
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->SetVolume(0.3f, false);
 
 	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = std::unique_ptr<AudioSource>(Audio::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav"));
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.5f, false);
+	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.2f, false);
 #endif
 
 	sprite_[static_cast<int>(SPRITE_TITLE::BACK)] = std::make_unique<Sprite>(L"./Resources/Image/Back.png");

@@ -73,12 +73,13 @@ public:
 	void SetPlayEffectFlag(bool playEffect)				{ playEffectFlag_ = playEffect; }
 	void SetEffectPos(const DirectX::XMFLOAT3& pos)		{ effectPos_ = pos; }
 
-	bool GetPose()										{ return isPose_; }
-	bool IsHItEnemy()									{ return isHitEnemy_; }
-	bool IsPlayEffect()									{ return playEffectFlag_; }
+	const int	GetMaxHp()	  const	{ return MAX_HP; }
+	bool		GetPose()	  const	{ return isPose_; }
+	bool		IsHItEnemy()  const	{ return isHitEnemy_; }
+	bool		IsPlayEffect()const	{ return playEffectFlag_; }
 	int								GetCurrentAnimNum();	//	現在再生中のアニメーション番号取得
 	AnimationType					GetCurrentAnimType();	//	現在再生中のアニメーションタイプ取得
-	DirectX::XMFLOAT3				GetMoveVec()const;		//スティック入力値から移動ベクトルを取得
+	DirectX::XMFLOAT3				GetMoveVec()const;		//	スティック入力値から移動ベクトルを取得
 	StateMachine<State<Player>>*	GetStateMachine()	{ return stateMachine_.get(); }		//	ステートマシン取得
 	SoundListener					GetListener()const	{ return listener_; }				//	リスナー取得
 
@@ -90,6 +91,8 @@ private:
 	//AnimationType					currentAnimNum_;										//	現在のアニメーション番号
 	float							turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
 	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;				//	ステートマシン
+	static constexpr int			MAX_HP = 100;
+
 	bool							isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
 	bool							isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
 

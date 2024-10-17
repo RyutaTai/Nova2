@@ -8,7 +8,7 @@
 class BulletHorming :public Bullet
 {
 public:
-	BulletHorming(const std::string& fileName);
+	BulletHorming(const std::string& filename);
 	~BulletHorming()override;
 
 	//	XVˆ—

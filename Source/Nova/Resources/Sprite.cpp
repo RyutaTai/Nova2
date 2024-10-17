@@ -4,7 +4,7 @@
 #include "../../imgui/ImGuiCtrl.h"
 
 //	コンストラクタ
-Sprite::Sprite(const wchar_t* fileName)
+Sprite::Sprite(const wchar_t* filename)
 {
 	HRESULT hr = S_OK;
 	ID3D11Device* device = Graphics::Instance().GetDevice();
@@ -48,7 +48,7 @@ Sprite::Sprite(const wchar_t* fileName)
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	
 	// テクスチャ読み込み
-	LoadTextureFromFile(device, fileName, shaderResourceView_.GetAddressOf(), &texture2dDesc_);
+	LoadTextureFromFile(device, filename, shaderResourceView_.GetAddressOf(), &texture2dDesc_);
 
 	GetTransform()->SetSize(texture2dDesc_.Width, texture2dDesc_.Height);
 	GetTransform()->SetTexSize(texture2dDesc_.Width, texture2dDesc_.Height);
@@ -309,6 +309,39 @@ void Sprite::Textout(std::string s,
 //}
 
 
+//	X方向切り取り
+void Sprite::SpriteTransform::CutOutX(const float& sizeX)
+{
+	size_.x += sizeX;
+	texSize_.x += sizeX;
+}
+
+//	Y方向切り取り
+void Sprite::SpriteTransform::CutOutY(const float& sizeY)
+{
+	size_.x += sizeY;
+	texSize_.x += sizeY;
+}
+
+//	切り取り
+void Sprite::SpriteTransform::CutOut()
+{
+	//	x方向
+	size_.x += cutSize_.x;
+	texSize_.x += cutSize_.x;
+
+	if (fabs(cutSize_.x) > 0)
+		cutSize_.x = 0;
+
+	//	y方向
+	size_.y += cutSize_.y;
+	texSize_.y += cutSize_.y;
+
+	if (fabs(cutSize_.y) > 0)
+		cutSize_.y = 0;
+
+}
+
 //	デバッグ描画
 void Sprite::DrawDebug()
 {
@@ -326,25 +359,11 @@ void Sprite::SpriteTransform::DrawDebug()
 		ImGui::DragFloat2("texPos", &texPos_.x);
 		ImGui::DragFloat2("texSize", &texSize_.x);
 		
-		ImGui::Checkbox("IsDebugSize", &isDebugSize_);
-		if (isDebugSize_)
+		ImGui::Checkbox("IsDebugSize", &isCut_);		//	画像切り抜き
+		if (isCut_)
 		{
-			ImGui::DragFloat2("debugSize", &debugSize_.x);
-
-			//	x方向
-			size_.x += debugSize_.x;
-			texSize_.x += debugSize_.x;
-
-			if (fabs(debugSize_.x) > 0)
-				debugSize_.x = 0;
-
-			//	y方向
-			size_.y += debugSize_.y;
-			texSize_.y += debugSize_.y;
-
-			if (fabs(debugSize_.y) > 0)
-				debugSize_.y = 0;
-
+			ImGui::DragFloat2("debugSize", &cutSize_.x);
+			CutOut();
 		}
 		//ImGui::TreePop();
 	//}

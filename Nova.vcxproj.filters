@@ -269,6 +269,7 @@
     <ClCompile Include="Source\Nova\Audio\PitchShifter.cpp" />
     <ClCompile Include="Source\Nova\Audio\WaveRead.cpp" />
     <ClCompile Include="Source\Game\TitleState.cpp" />
+    <ClCompile Include="Source\Game\UIHealth.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -510,6 +511,7 @@
     <ClInclude Include="Source\Nova\Audio\PitchShifter.h" />
     <ClInclude Include="Source\Nova\Audio\WaveRead.h" />
     <ClInclude Include="Source\Game\TitleState.h" />
+    <ClInclude Include="Source\Game\UIHealth.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

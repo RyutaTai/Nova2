@@ -5,7 +5,7 @@
 class Character :public GameObject
 {
 public:
-	Character(const std::string& fileName, const std::string& rootNodeName = "root");
+	Character(const std::string& filename, const std::string& rootNodeName = "root");
 	virtual ~Character() {}
 
 	virtual void Initialize() = 0;

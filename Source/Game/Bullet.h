@@ -13,7 +13,7 @@ class BulletManager;
 class Bullet :public GameStaticObject
 {
 public:
-	Bullet(const std::string& fileName);
+	Bullet(const std::string& filename);
 	virtual ~Bullet()override {}
 
 	virtual void			Initialize();

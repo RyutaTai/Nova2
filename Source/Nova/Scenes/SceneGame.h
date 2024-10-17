@@ -11,6 +11,7 @@
 #include "../../Game/Drone.h"
 #include "../PostProcess/Bloom.h"
 #include "../../Game/UI.h"
+#include "../../Game/UIHealth.h"
 
 class SceneGame : public Scene
 {
@@ -40,7 +41,7 @@ public:
 
 	void ChangeState(SceneGameState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 
-	void LoadWaveSprite(const wchar_t* fileName);
+	void LoadWaveSprite(const wchar_t* filename);
 	StateMachine<State<SceneGame>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
 	void IsPose(bool isPose);
 	void Reset();
@@ -93,17 +94,13 @@ private:
 
 	enum class UI_GAME
 	{
-		HpGaugeBack,		//	HPゲージ(HPの減少量を見せるため)
-		HpGauge,			//	メインのHPゲージ
-		HpFrame,			//	HP枠
 		Instructions,		//	操作方法
 		Max,				//	UIの上限数
 	};
 
 	std::unique_ptr <Sprite>			  sprite_[static_cast<int>(SPRITE_GAME::MAX)];
 	Microsoft::WRL::ComPtr <ID3D11Buffer> sceneConstantBuffer_;
-	UI* ui_[static_cast<int>(UI_GAME::Max)];		//	UI
-
+	UI* ui_[static_cast<int>(UI_GAME::Max)];//	UI		
 
 	/* ----- ゲーム内で使う変数 ----- */
 	float	waveStartTimer_		= 0.0f;		//	ウェーブ開始のUIが表示されている間

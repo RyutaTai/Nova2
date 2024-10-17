@@ -6,8 +6,8 @@
 #include "../Nova/Audio/Audio.h"
 
 //	コンストラクタ
-Bullet::Bullet(const std::string& fileName)
-	:GameStaticObject(fileName)
+Bullet::Bullet(const std::string& filename)
+	:GameStaticObject(filename)
 {
 	//	生成時にマネージャーに登録する
 	BulletManager::Instance().Register(this);

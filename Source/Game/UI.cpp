@@ -4,10 +4,10 @@
 #include "../Nova/Resources/ResourceManager.h"
 #include "UIManager.h"
 
-UI::UI(const std::string& fileName)
+UI::UI(const std::string& filename)
 {
 	//	スプライト読み込み
-	spriteResource_ = ResourceManager::Instance().LoadSpriteResource(fileName);
+	spriteResource_ = ResourceManager::Instance().LoadSpriteResource(filename);
 
 	//	生成時にマネージャーに登録
 	UIManager::Instance().Register(this);
@@ -42,7 +42,7 @@ void UI::DrawDebug()
 
 	if (ImGui::TreeNode(name_.c_str()))
 	{
-		spriteResource_.get()->GetTransform()->DrawDebug();
+		spriteResource_->GetTransform()->DrawDebug();
 		ImGui::TreePop();
 	}
 }

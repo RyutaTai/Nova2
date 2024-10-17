@@ -62,6 +62,8 @@ void Player::Initialize()
 	moveSpeed_ = 2.0f;
 	//moveSpeed_ = 25.0f;
 
+	hp_ = MAX_HP;
+
 }
 
 //	XVˆ—

@@ -6,8 +6,8 @@
 #include "../Nova/Collision/Collision.h"
 
 //	コンストラクタ
-BulletHorming::BulletHorming(const std::string& fileName)
-	:Bullet(fileName)
+BulletHorming::BulletHorming(const std::string& filename)
+	:Bullet(filename)
 {
 	//	エフェクト読み込み
 	effectResource_[EFFECT::EXPLOSION] = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/Blow11_2.efk");

@@ -27,20 +27,15 @@ void SceneGame::Initialize()
 	sprite_[static_cast<int>(SPRITE_GAME::Clear)]	 = std::make_unique<Sprite>(L"./Resources/Image/Clear.png");
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
 
-	/* ----- UI初期化 ----- */
-	ui_[static_cast<int>(UI_GAME::HpGaugeBack)]		= new UI("./Resources/Image/HpGaugeBack.png");	//	生成したらUIクラスでマネージャーに登録される
-	ui_[static_cast<int>(UI_GAME::HpGauge)]			= new UI("./Resources/Image/HpGauge.png");
-	ui_[static_cast<int>(UI_GAME::HpFrame)]			= new UI("./Resources/Image/HpFrame.png");
-	ui_[static_cast<int>(UI_GAME::Instructions)]	= new UI("./Resources/Image/Instructions.png");
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpGaugeBack))->GetTransform()->SetPosition(88, 41);
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpGaugeBack))->SetName("HpGaugeBack");
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpGauge))->GetTransform()->SetPosition(85, 40);
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpGauge))->SetName("HpGauge");
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpFrame))->GetTransform()->SetPosition(0, 0);
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::HpFrame))->SetName("HpFrame");
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::Instructions))->GetTransform()->SetPosition(24, 250);
-	UIManager::Instance().GetUI(static_cast<int>(UI_GAME::Instructions))->SetName("Instructions");
-	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする
+	/* ----- UI初期化(生成したらUIクラスでマネージャーに登録される) ----- */
+	UIHealth* uiHealth = new UIHealth();
+	
+	
+	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI("./Resources/Image/Instructions.png");
+	ui_[static_cast<int>(UI_GAME::Instructions)]->GetTransform()->SetPosition(24, 250);
+	ui_[static_cast<int>(UI_GAME::Instructions)]->SetName("Instructions");
+	ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(false);
+	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
 	/* ----- ステージ初期化 ----- */
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/syougiban.glb");
@@ -150,11 +145,60 @@ void SceneGame::Update(const float& elapsedTime)
 	/* ----- UI更新処理 ----- */
 	UIManager::Instance().Update(elapsedTime);
 
+	//	HP更新処理
+
+		//	HP描画
+#if 0
+	{
+		int hp = Player::Instance().GetHp();
+
+		//	TODO:後で描画処理ではなく更新処理に移す
+		//	HPが減少している間、hpDecreaseTimerを減少させる
+		static float hpDecreaseTimer = 1.0f;	//	タイマー
+		float hpDecreaseSpeed = 20.0f;			//	HP減少速度(大きくするほど速くなる)
+		float hpGaugeMaxX = 4.4f;
+
+		float targetSizeX = hpGaugeMaxX * (hp / 2.0f);
+		float currentSizeX = ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->GetSizeX();
+
+		//	hpGaugeBackのサイズがhpGaugeのサイズに近づくようにする
+		if (currentSizeX > targetSizeX)
+		{
+			//	等速でサイズを減少させる
+			currentSizeX -= hpDecreaseSpeed * elapsedTime;
+
+			//	ターゲットサイズ以下に行き過ぎないように調整
+			if (currentSizeX < targetSizeX)
+			{
+				currentSizeX = targetSizeX;
+			}
+			ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->SetSizeX(currentSizeX);
+		}
+		else
+		{
+			//	既にサイズが等しい場合、即座にターゲットサイズを設定
+			ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->SetSizeX(targetSizeX);
+			hpDecreaseTimer = 1.0f;
+		}
+		ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->Render();
+
+		ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->SetSizeX(targetSizeX);
+		ui_[static_cast<int>(UI_GAME::HpGauge)]->Render();
+
+		ui_[static_cast<int>(UI_GAME::HpFrame)]->Render();
+	}
+
+	int hp = Player::Instance().GetHp();
+	ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->SetSizeX(14.24 * hp);
+
+	//hpGauge->GetTransform()->SetSize(1280, 720);	//	画像サイズ
+#endif
+
 	//	ゲームクリアへの遷移はWeve3 State内で行っている
 		
 	//	ゲームオーバー
 	int playerHp = player_->GetHp();
-	if (playerHp <= 10)
+	if (playerHp <= 0)
 	{
 		ChangeState(SceneGameState::GameOver);
 	}
@@ -176,9 +220,9 @@ void SceneGame::IsPose(bool isPose)
 }
 
 //	ウェーブ画像読み込み
-void SceneGame::LoadWaveSprite(const wchar_t* fileName)
+void SceneGame::LoadWaveSprite(const wchar_t* filename)
 {
-	sprite_[SPRITE_GAME::WAVE] = std::make_unique<Sprite>(fileName);
+	sprite_[SPRITE_GAME::WAVE] = std::make_unique<Sprite>(filename);
 }
 
 //	Shadow描画
@@ -364,27 +408,10 @@ void SceneGame::Render()
 			sprite_[static_cast<int>(SPRITE_GAME::WAVE)]->Render();
 		}
 
-		//	HP関連描画
-		//Sprite* hpBack = sprite_[SPRITE_GAME::HpGaugeBack].get();
-		//Sprite* hpGauge = sprite_[SPRITE_GAME::HpGauge].get();
-		//Sprite* hpFrame = sprite_[SPRITE_GAME::HpFrame].get();
-
-		//hpBack->Render();
-
-		int hp = Player::Instance().GetHp();
-		
-		//hpGauge->GetTransform()->SetSizeX(14.24 * hp);
-
-		//hpGauge->GetTransform()->SetSize(1280, 720);	//	画像サイズ
-
-		//hpGauge->Render();
-
-		//hpFrame->Render();
-
 		//	操作方法描画
 		if (waveStartTimer_ <= 0.0f && isResult_ == false)
 		{
-			ui_[static_cast<int>(UI_GAME::Instructions)]->Render();
+			ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(true);
 		}
 
 		//	ゲームクリア
@@ -403,7 +430,6 @@ void SceneGame::Render()
 
 	/* ----- UI描画 ----- */
 	UIManager::Instance().Render();
-	//if (drawUI_)UIManager::Instance().Render();
 
 }
 

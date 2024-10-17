@@ -15,20 +15,12 @@ class Sprite
 public:	// 構造体
 	struct SpriteTransform
 	{
-	private:
-		DirectX::XMFLOAT2 position_ = {};	//	位置 
-		DirectX::XMFLOAT2 size_		= {};	//	画像サイズ 
-		DirectX::XMFLOAT2 texPos_	= {};	//	切り取り開始位置
-		DirectX::XMFLOAT2 texSize_  = {};	//	切り取りサイズ
-		DirectX::XMFLOAT4 color_	= {};	//	描画色 
-		float angle_ = 0;					//	回転角度
-
 	public:
-		void DrawDebug(); // ImGui用
+		void CutOut();							//	画像切り取り
+		void CutOutX(const float& cutSizeX);	//	X方向切り取り
+		void CutOutY(const float& cutSizeY);	//	Y方向切り取り
 
-		// kesu
-		DirectX::XMFLOAT2 debugSize_ = {};
-		bool isDebugSize_ = false;
+		void DrawDebug();	//	ImGui
 
 		void SetPosition(const DirectX::XMFLOAT2& pos) { position_ = pos; }
 		void SetPosition(const float& x, const float& y)   { position_ = { x, y }; }
@@ -70,6 +62,26 @@ public:	// 構造体
 
 		void SetAngle(const float& angle) { angle_ = angle; }
 		float GetAngle() { return angle_; }
+
+		void SetIsCut(bool isCut) { isCut_ = isCut; }
+		bool IsCut() { return isCut_; }
+
+		void SetCutSize(const DirectX::XMFLOAT2& cutSize) { cutSize_ = cutSize; }
+		void SetCutSizeX(const float& cutSizeX) { cutSize_.x = cutSizeX; }
+		void SetCutSizeY(const float& cutSizeY) { cutSize_.y = cutSizeY; }
+
+	private:
+		DirectX::XMFLOAT2 position_ = {};	//	位置 
+		DirectX::XMFLOAT2 size_ = {};		//	画像サイズ 
+		DirectX::XMFLOAT2 texPos_ = {};		//	切り取り開始位置
+		DirectX::XMFLOAT2 texSize_ = {};	//	切り取りサイズ
+		DirectX::XMFLOAT4 color_ = {};		//	描画色 
+		float angle_ = 0;					//	回転角度
+
+	private:
+		bool isCut_ = false;				//	切り取るフラグ
+		DirectX::XMFLOAT2 cutSize_ = {};	//	切り取りサイズ
+
 	};
 
 private:
@@ -81,7 +93,7 @@ private:
 	};
 
 public:
-	Sprite(const wchar_t* fileName);
+	Sprite(const wchar_t* filename);
 	~Sprite();
 
 	void Render();

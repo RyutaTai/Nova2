@@ -194,6 +194,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\UIHealth.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioManager.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\ImGuiCtrl.cpp" />
@@ -284,6 +285,7 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\UIHealth.h" />
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />

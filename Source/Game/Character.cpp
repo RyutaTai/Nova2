@@ -6,11 +6,11 @@
 #include "Stage.h"
 
 //	コンストラクタ
-Character::Character(const std::string& fileName, const std::string& rootNodeName)
+Character::Character(const std::string& filename, const std::string& rootNodeName)
 	:GameObject()
 {
 	//	モデル読み込み
-	gltfModelResource_ = ResourceManager::Instance().LoadGltfModelResource(fileName, rootNodeName);
+	gltfModelResource_ = ResourceManager::Instance().LoadGltfModelResource(filename, rootNodeName);
 }
 
 //	ベロシティ更新

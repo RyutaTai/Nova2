@@ -56,7 +56,7 @@ void Drone::Initialize()
 
 	//	”¼Œaİ’è
 	height_ = 4.4f;
-	radius_ = 1.6f;
+	radius_ = 2.5f;
 
 	//	õ“G”ÍˆÍİ’è
 	searchRange_ = 15.0f;

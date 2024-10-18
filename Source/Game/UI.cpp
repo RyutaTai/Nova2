@@ -8,7 +8,6 @@ UI::UI(const wchar_t* filename)
 {
 	//	スプライト読み込み
 	sprite_ = std::make_unique<Sprite>(filename);
-		//ResourceManager::Instance().LoadSpriteResource(filename);
 
 	//	生成時にマネージャーに登録
 	UIManager::Instance().Register(this);

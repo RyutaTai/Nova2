@@ -87,7 +87,7 @@ void UIManager::DrawDebug()
 	//	UImanagerデバッグ
 	if (ImGui::TreeNode("UIManager"))
 	{
-		ImGui::DragInt("size", &size);
+		ImGui::DragInt("UI Count", &size);
 		if(ImGui::Checkbox("AllDrawFlag", &allDrawFlag_))
 		{ 
 			SetDrawFlag(allDrawFlag_);

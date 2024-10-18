@@ -52,6 +52,7 @@ void UIHealth::UpdateHpGaugeBack(const float& elapsedTime)
 	if (gaugeLerpTimer_ == 1.0f)isUpdateHpGaugeBack_ = false;
 }
 
+//	ダメージを食らったか確認する
 void UIHealth::CheckDamage()
 {
 	const float oldHealth = oldHealth_;
@@ -78,5 +79,9 @@ void UIHealth::Render()
 
 void UIHealth::DrawDebug()
 {
-	ImGui::DragFloat("GaugeLerpSpeed", &gaugeLerpSpeed_);
+	if (ImGui::TreeNode("Health"))
+	{
+		ImGui::DragFloat("GaugeLerpSpeed", &gaugeLerpSpeed_);	//	補完する速さ
+		ImGui::TreePop();
+	}
 }

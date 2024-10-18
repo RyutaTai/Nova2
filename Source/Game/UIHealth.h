@@ -13,8 +13,8 @@ public:
 	void Render()override;
 	void DrawDebug()override;
 
-	void UpdateHpGauge(const float& elpasedTime);		//	Hpゲージ更新
-	void UpdateHpGaugeBack(const float& elpasedTime);	//	後ろのHpゲージ更新
+	void UpdateHpGauge(const float& elpasedTime);		//	HPゲージ更新
+	void UpdateHpGaugeBack(const float& elpasedTime);	//	後ろのHPゲージ更新
 	void CheckDamage();									//	ダメージを食らったか確認する
 
 
@@ -24,12 +24,12 @@ private:
 
 	const float GAUGE_SIZE_X = 440.0f;		//	HPゲージの画像サイズX
 
-	float oldHealth_ = 0.0f;
+	float oldHealth_ = 0.0f;				//	前回のHP
 	bool isUpdateHpGaugeBack_ = false;		//	後ろのゲージ更新フラグ
-	float startValue_ = 0.0f;
-	float endValue_ = 0.0f;
-	float gaugeLerpTimer_ = 0.0f;
-	float gaugeLerpSpeed_ = 1.0f;
+	float startValue_ = 0.0f;				//	補完開始
+	float endValue_ = 0.0f;					//	補完終了
+	float gaugeLerpTimer_ = 0.0f;			//	補完にかける時間
+	float gaugeLerpSpeed_ = 1.0f;			//	補完する速さ
 
 };
 

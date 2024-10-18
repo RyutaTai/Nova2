@@ -74,15 +74,15 @@ void Player::Update(const float& elapsedTime)
 		//	ステートごとの更新処理
 		stateMachine_->Update(elapsedTime);
 
-		//	エフェクト再生(デバッグ)
-#if 1
-		GamePad& gamePad = Input::Instance().GetGamePad();
-		if (gamePad.GetButtonDown() & GamePad::BTN_A)	//	Zキー入力(エフェクト確認用)
-		{
-			DirectX::XMFLOAT3 pos = this->GetTransform()->GetPosition();
-			pos.y += height_;
-			effectResource_->Play(pos, effectScale_);
-		}
+		//	エフェクト再生確認用
+#if _DEBUG
+		//GamePad& gamePad = Input::Instance().GetGamePad();
+		//if (gamePad.GetButtonDown() & GamePad::BTN_A)	//	Zキー入力(エフェクト確認用)
+		//{
+		//	DirectX::XMFLOAT3 pos = this->GetTransform()->GetPosition();
+		//	pos.y += height_;
+		//	effectResource_->Play(pos, effectScale_);
+		//}
 #endif
 		//	敵との当たり判定
 		PlayerVsEnemy(elapsedTime);

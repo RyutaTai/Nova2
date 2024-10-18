@@ -230,12 +230,10 @@ namespace PlayerState
 	//	Œ‚Æ“G‚Ì“–‚½‚è”»’è
 	bool AttackState::PunchVsEnemy(const float& elapsedTime, const DirectX::XMFLOAT3 leftHandPos, const float leftHandRadius)
 	{
-		EnemyManager& enemyManager = EnemyManager::Instance();
-
 		DirectX::XMFLOAT3 outPosition = {};
 		bool isPunchHitEnemy = false;
 
-		for (Enemy* enemy : enemyManager.GetEnemies())
+		for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
 		{
 			DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
 			float eRadius = enemy->GetRadius() + 0.1f;

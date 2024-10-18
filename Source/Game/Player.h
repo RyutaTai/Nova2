@@ -13,15 +13,31 @@ public:
 	//	アニメーション情報
 	enum class AnimationType
 	{
-		ANIM_T = 0,		//	Tポーズ
-		ANIM_IDLE,		//	待機
-		ANIM_WALK,		//	歩き
-		ANIM_RUN,		//	走り
-		ANIM_PUNCH,		//	パンチ
-		ANIM_PUNCH2,	//	パンチ2
-		ANIM_WINCE,		//	ひるみ	
-		ANIM_DOWN,		//	ダウン
-		ANIM_AVOID,		//	回避
+		Idle = 0,		//	待機
+		IdleCombat,		//	待機(構え状態)
+		Walk,			//	歩き
+		RunStart,		//	走り始め
+		Run,			//	走り状態
+		RunEnd,			//	走り終わり
+		JumpVertical,	//	垂直ジャンプ	
+		JumpFront,		//	前ジャンプ
+		JumpRight,		//	右ジャンプ
+		JumpBack,		//	後ろジャンプ
+		JumpLeft,		//	左ジャンプ
+		DoubleJamp,		//	2段ジャンプの２段目
+		Combo0_1,		//	コンボ1_1
+		Combo0_2,		//	コンボ1_2
+		Combo0_3,		//	コンボ1_3
+		Combo0_4,		//	コンボ1_4
+		DodgeFront,		//	前回避
+		DodgeRight,		//	右回避
+		DodgeBack,		//	後ろ回避
+		DodgeLeft,		//	左回避
+		DodgeAirFront,	//	空中前回避
+		DodgeAirRight,	//	空中右回避
+		DodgeAirBack,	//	空中後ろ回避
+		DodgeAirLeft,	//	空中左回避
+
 		Max,			//	アニメーション最大数
 	};
 

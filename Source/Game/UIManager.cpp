@@ -51,7 +51,7 @@ void UIManager::SetDrawFlag(const bool& drawFlag)
 UI* UIManager::GetUIFromNum(int num)
 {
 	//	numがuserInterfaces_より大きかったらアサートで落とす
-	_ASSERT_EXPR(num < userInterfaces_.size(), L"ui num is too large.");
+	_ASSERT_EXPR(num < userInterfaces_.size(), L"UI num is too large.");
 
 	return userInterfaces_.at(num);
 }

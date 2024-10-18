@@ -21,7 +21,8 @@ Player& Player::Instance()
 
 //	コンストラクタ
 Player::Player()
-	:Character("./Resources/Model/free-mixamo-retextured-model/source/model5.glb", "")
+	//:Character("./Resources/Model/free-mixamo-retextured-model/source/model5.glb", "")
+	:Character("./Resources/Model/Player.glb", "")
 {
 	//	インスタンス設定
 	instance = this;
@@ -34,7 +35,7 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::AvoidanceState(this));	//	回避
 
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));				//	初期ステートセット
-	PlayAnimation(Player::AnimationType::ANIM_IDLE, true, 1.0f, 0.0f);
+	PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
 
 	//	リスナー情報セット
 	listener_.innerRadius_ = 0.7f;

@@ -58,8 +58,8 @@ namespace PlayerState
 
 		void Attack();
 		void PunchAttack(const float& elapsedTime);
-		bool PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3 leftHandPos, const float leftHandRadius);
-		bool PunchVsEnemy(const float& elpasedTime, const DirectX::XMFLOAT3 leftHandPos, const float leftHandRadius);
+		bool PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
+		bool PunchVsEnemy(const float& elpasedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
 		bool PuchAttackCollision();
 		void MoveTowardsEnemy(const float& elapsedTime);	//	ターゲットの方向へに向かって移動
 

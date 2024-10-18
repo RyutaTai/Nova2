@@ -769,10 +769,10 @@ void GltfModel::AppendAnimation(ID3D11Device* device, const std::string& fileNam
 
 void GltfModel::BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes)
 {
-    _ASSERT_EXPR(fromNodes.size() == toNodes.size(), "The size of the two node arrays must be the same.");
+    _ASSERT_EXPR(fromNodes.size() == toNodes.size(), L"The size of the two node arrays must be the same.");
 
     size_t nodeCount{ fromNodes.size() };
-    _ASSERT_EXPR(nodeCount == outNodes.size(), "The size of output nodes must be input nodes.");
+    _ASSERT_EXPR(nodeCount == outNodes.size(), L"The size of output nodes must be input nodes.");
     for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         DirectX::XMVECTOR S[2]{ DirectX::XMLoadFloat3(&fromNodes.at(nodeIndex).scale_), DirectX::XMLoadFloat3(&toNodes.at(nodeIndex).scale_) };
@@ -817,7 +817,7 @@ DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& meshName, const
             return position;
         }
     }
-    
+    _ASSERT_EXPR(false, L"Joint is not found.");
     return {};
 }
 

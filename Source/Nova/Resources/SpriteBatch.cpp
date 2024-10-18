@@ -237,7 +237,7 @@ void SpriteBatch::End(ID3D11DeviceContext* deviceContext)
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	size_t vertexCount = vertices_.size();
-	_ASSERT_EXPR(maxVertices_>=vertexCount,"Buffer overflow");
+	_ASSERT_EXPR(maxVertices_ >= vertexCount, L"Buffer overflow");
 	Vertex* data{ reinterpret_cast<Vertex*>(mappedSubresource.pData) };
 
 	if (data != nullptr)

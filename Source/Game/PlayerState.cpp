@@ -33,7 +33,7 @@ namespace PlayerState
 		}
 #endif
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::ANIM_IDLE, true, 1.0f, 0.4f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.4f);
 	}
 
 	void IdleState::Update(const float& elapsedTime)
@@ -74,7 +74,7 @@ namespace PlayerState
 		owner_->SetWeight(0.5f);
 #endif
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::ANIM_WALK, true, 1.0f, 0.2f);
+		owner_->PlayAnimation(Player::AnimationType::Walk , true, 1.0f, 0.2f);
 
 		//	更新処理に使う変数初期化
 		walkTimer_ = 0.0f;
@@ -90,9 +90,9 @@ namespace PlayerState
 		//	一定以上の時間が経過したら走りモーションへ移行
 		walkTimer_ += WALK_TIMER_ADD * elapsedTime;
 		owner_->MultiplyVelocityXZ(velocityScale_, elapsedTime);
-		if (walkTimer_ > WALK_TO_RUN_INTERVAL && owner_->GetCurrentAnimType() != Player::AnimationType::ANIM_RUN)
+		if (walkTimer_ > WALK_TO_RUN_INTERVAL && owner_->GetCurrentAnimType() != Player::AnimationType::Run)
 		{
-			owner_->PlayAnimation(Player::AnimationType::ANIM_RUN, true, 1.0f, 0.5f);
+			owner_->PlayAnimation(Player::AnimationType::Run, true, 1.0f, 0.5f);
 		}
 		else velocityScale_ += 0.1f * elapsedTime;
 
@@ -134,7 +134,8 @@ namespace PlayerState
 		owner_->SetBlendRate(1.0f);	//	いる?
 #endif
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::ANIM_PUNCH, false, 2.0f, 0.0f);
+		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 2.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f);
 
 	}
 
@@ -160,11 +161,6 @@ namespace PlayerState
 
 	}
 
-	void AttackState::Finalize()
-	{
-		judgeTime_ = 0.0f;
-	}
-
 	void AttackState::Attack()
 	{
 
@@ -177,7 +173,7 @@ namespace PlayerState
 		DirectX::XMFLOAT4X4 world;
 		DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
 		//DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorldMatrix(scale));	//	プレイヤーのワールド行列
-		DirectX::XMFLOAT3 leftHandPos = owner_->GetJointPosition("Ch44", "mixamorig:RightHandMiddle1", world);
+		DirectX::XMFLOAT3 leftHandPos = owner_->GetJointPosition("SKM_Manny_LOD0", "ik_hand_gun", world);
 
 		//	当たり判定用の半径セット
 		float leftHandRadius = 3.0f;
@@ -195,7 +191,7 @@ namespace PlayerState
 	}
 
 	//	拳と弾丸の当たり判定
-	bool AttackState::PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3 leftHandPos, const float leftHandRadius)
+	bool AttackState::PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius)
 	{
 		bool isHitBullet = false;
 		BulletManager& bulletManager = BulletManager::Instance();
@@ -228,7 +224,7 @@ namespace PlayerState
 	}
 
 	//	拳と敵の当たり判定
-	bool AttackState::PunchVsEnemy(const float& elapsedTime, const DirectX::XMFLOAT3 leftHandPos, const float leftHandRadius)
+	bool AttackState::PunchVsEnemy(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius)
 	{
 		DirectX::XMFLOAT3 outPosition = {};
 		bool isPunchHitEnemy = false;
@@ -298,6 +294,11 @@ namespace PlayerState
 
 	}
 
+	void AttackState::Finalize()
+	{
+		judgeTime_ = 0.0f;
+	}
+
 }
 
 //	回避ステート
@@ -305,7 +306,7 @@ namespace PlayerState
 {
 	void AvoidanceState::Initialize()
 	{
-		owner_->PlayAnimation(Player::AnimationType::ANIM_AVOID, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::DodgeFront, false, 1.0f, 0.0f);
 	}
 
 	void AvoidanceState::Update(const float& elapsedTime)

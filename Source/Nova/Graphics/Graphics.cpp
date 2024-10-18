@@ -9,7 +9,7 @@ Graphics* Graphics::instance_ = nullptr;
 Graphics::Graphics(HWND hwnd, bool fullscreen)
 	: hwnd_(hwnd)
 {
-	_ASSERT_EXPR(instance_ == instance_, "already instance");
+	_ASSERT_EXPR(instance_ == instance_, L"already instance");
 	instance_ = this;
 
 	if (fullscreen)

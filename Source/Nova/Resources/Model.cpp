@@ -919,7 +919,7 @@ DirectX::XMFLOAT3 Model::GetJointPosition(
 			}
 		}
 	}
-	_ASSERT_EXPR(FALSE, "Joint not found.");
+	_ASSERT_EXPR(FALSE, L"Joint not found.");
 
 	return {};
 }
@@ -952,7 +952,7 @@ DirectX::XMFLOAT3 Model::GetJointPosition(
 			}
 		}
 	}
-	_ASSERT_EXPR(FALSE, "Joint not found.");
+	_ASSERT_EXPR(FALSE, L"Joint not found.");
 
 	return {};
 }

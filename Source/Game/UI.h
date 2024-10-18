@@ -5,28 +5,25 @@
 class UI
 {
 public:
-	UI(const std::string& filename);
+	UI(const wchar_t* filename);
 	~UI(){}
 
-	void Initialize();
+	virtual void Initialize();
 	virtual void Update(const float& elapsedTime);
-	void Render();
+	virtual void Render();
 
-	void DrawDebug();
+	virtual void DrawDebug();
 
 	void SetName(const std::string& name)		{ name_ = name; }
 	void SetRenderFlag(const bool& renderFlag)	{ renderFlag_ = renderFlag; }
 
 	const std::string			GetName()const	{ return name_; }
-	Sprite::SpriteTransform*	GetTransform()	{ return spriteResource_->GetTransform(); }
+	Sprite::SpriteTransform*	GetTransform()	{ return sprite_->GetTransform(); }
 	const bool					GetRenderFlag()	{ return renderFlag_; }
 
-public:
-	// TODO:å„Ç≈ïœçXÇ∑ÇÈ
-	virtual void SetOldHealth(const float& health){}
 
 protected:
-	std::shared_ptr<Sprite> spriteResource_ = nullptr;
+	std::unique_ptr<Sprite> sprite_;
 
 private:
 	std::string name_		= {};		//	UIñº

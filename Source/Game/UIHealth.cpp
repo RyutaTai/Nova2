@@ -1,132 +1,82 @@
 #include "UIHealth.h"
 
 #include "Player.h"
+#include "../Nova/Others/MathHelper.h"
 
 UIHealth::UIHealth()
-	:UI::UI("./Resources/Image/HpGauge.png")
+	:UI(L"./Resources/Image/HpGauge.png")
 {
-	hpGaugeBack_ = std::make_unique<UI>("./Resources/Image/HpGaugeBack.png");
-	hpFrame_ = std::make_unique<UI>("./Resources/Image/HpFrame.png");
+	hpGaugeBack_ = std::make_unique<Sprite>(L"./Resources/Image/HpGaugeBack.png");
+	hpFrame_ = std::make_unique<Sprite>(L"./Resources/Image/HpFrame.png");
 
 	this->GetTransform()->SetPosition(80, 40);
 	this->SetName("HpGauge");
-	hpGaugeBack_->GetTransform()->SetPosition(88, 41);
-	hpGaugeBack_->SetName("HpGaugeBack");
+	hpGaugeBack_->GetTransform()->SetPosition(80, 40);
 	hpFrame_->GetTransform()->SetPosition(0, 0);
-	hpFrame_->SetName("HpFrame");
-
-	oldHealth_ = 100.0f;
-
 }
 
 void UIHealth::Initialize()
 {
-	
+
 }
 
 void UIHealth::Update(const float& elapsedTime)
 {
-	UpdateHpGauge(elapsedTime);
-	UpdateHpGaugeBack(elapsedTime);
-
-
-	//const float hp = XMFloatLerp(maxHp_, minHp_, gaugeLerpTimer_);
-	int hp = Player::Instance().GetHp();
-	SetOldHealth(hp);
-
-	//int maxHp = Player::Instance().GetMaxHp();
-	//int hp = Player::Instance().GetHp();
-	//int sizeX = ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->GetSizeX();
-	//int amountOfDecrease = (maxHp - hp) * (sizeX / maxHp);
-	
-	//ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->SetCutSizeX(amountOfDecrease);
-	//ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->CutOut();
-	//ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->CutOutX(amountOfDecrease);
+	CheckDamage();
+	UpdateHpGauge(elapsedTime);			//	手前のHPバー更新
+	UpdateHpGaugeBack(elapsedTime);		//	後ろのHPバー更新
 
 }
 
 //	HPゲージ更新
 void UIHealth::UpdateHpGauge(const float& elapsedTime)
 {
-	if (isUpdateHealth_)
-	{
-		gaugeLerpTimer_ += elapsedTime * 4.4f;
-		gaugeLerpTimer_ = min(gaugeLerpTimer_, 1.0f);
+	const float maxHealth = Player::Instance().GetMaxHp();
+	const float currentHealth = Player::Instance().GetHp();
+	const float health = currentHealth / maxHealth;	//	0～1にする
+	GetTransform()->SetSizeX(GAUGE_SIZE_X * health);
 
-		//const float hp = XMFloatLerp(maxHp_, minHp_, gaugeLerpTimer_);
-		//SetOldHealth(hp);
-		//Player::Instance().SetHp(hp);
-
-		//this->GetTransform()->SetCutSizeX(-1.3f);
-		//this->GetTransform()->CutOut();
-		//this->GetTransform()->CutOutX(-1.3f);
-
-		const int PLAYER_MAX_HP = Player::Instance().GetMaxHp();
-		int amountOfDecrease = GAUGE_SIZE_X * (maxHp_ - minHp_) / PLAYER_MAX_HP;	//	HPゲージ減少量
-
-		hpGaugeBack_->GetTransform()->CutOutX(-amountOfDecrease);
-		isUpdateHealth_ = false;
-		if (gaugeLerpTimer_ == 1.0f) isUpdateHealth_ = false;
-
-
-	}
 }
 
 //	後ろのHPゲージ更新
 void UIHealth::UpdateHpGaugeBack(const float& elapsedTime)
 {
-	if (isUpdateHealth_)
-	{
-		backLerpTimer_ += elapsedTime * 3.0f;
-		backLerpTimer_ = min(backLerpTimer_, 1.0f);
+	if (isUpdateHpGaugeBack_ == false)return;
 
-		//const float hp = XMFloatLerp(maxHp_, minHp_, backLerpTimer_);
-		//Player::Instance().SetHp(hp);
+	gaugeLerpTimer_ += gaugeLerpSpeed_ * elapsedTime;
+	gaugeLerpTimer_ = min(gaugeLerpTimer_, 1.0f);
 
-		//hpGaugeBack_->GetTransform()->SetCutSizeX(-1.3f);
-		//hpGaugeBack_->GetTransform()->CutOut();
-		//hpGaugeBack_->GetTransform()->CutOutX(-1.3f);
-		
-		const int PLAYER_MAX_HP = Player::Instance().GetMaxHp();
-		int amountOfDecrease = GAUGE_SIZE_X * (maxHp_ - minHp_) / PLAYER_MAX_HP;	//	HPゲージ減少量
-		
-		hpGaugeBack_->GetTransform()->CutOutX(-amountOfDecrease);
-		isUpdateHealth_ = false;
-		if (backLerpTimer_ == 1.0f) isUpdateHealth_ = false;
+	const float sizeX = XMFloatLerp(startValue_, endValue_, gaugeLerpTimer_);
+	hpGaugeBack_->GetTransform()->SetSizeX(sizeX);
 
-
-	}
+	if (gaugeLerpTimer_ == 1.0f)isUpdateHpGaugeBack_ = false;
 }
 
-void UIHealth::SetOldHealth(const float& health)
+void UIHealth::CheckDamage()
 {
-	currentHealth_ = health;
-	if (currentHealth_ != oldHealth_)
-	{
-		isUpdateHealth_ = true;
+	const float oldHealth = oldHealth_;
+	const float currentHealth = Player::Instance().GetHp();
+	const float maxHealth = Player::Instance().GetMaxHp();
+	oldHealth_ = currentHealth;
 
-		minHp_ = health;
-		maxHp_ = oldHealth_;
+	if (currentHealth >= oldHealth) return;
+	
+	isUpdateHpGaugeBack_ = true;
 
-		gaugeLerpTimer_ = 0.0f;
-		backLerpTimer_ = 0.0f;
-	}
-	oldHealth_ = health;
-}
+	gaugeLerpTimer_ = 0.0f;
 
-float UIHealth::XMFloatLerp(const float& start, const float& end, const float& timer)
-{
-	return start + timer / (end - start);
+	startValue_ = oldHealth / maxHealth * GAUGE_SIZE_X;
+	endValue_ = currentHealth / maxHealth * GAUGE_SIZE_X;
 }
 
 void UIHealth::Render()
 {
-	UI::Render();
 	hpGaugeBack_->Render();
+	UI::Render();
 	hpFrame_->Render();
 }
 
 void UIHealth::DrawDebug()
 {
-
+	ImGui::DragFloat("GaugeLerpSpeed", &gaugeLerpSpeed_);
 }

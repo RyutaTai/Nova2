@@ -37,6 +37,11 @@ public:
 
 };
 
+inline const float XMFloatLerp(const float& start, const float& end, const float& timer)
+{
+	return start + timer * (end - start);	
+}
+
 inline float Length(const DirectX::XMFLOAT3& f)
 {
 	float ret = 0;

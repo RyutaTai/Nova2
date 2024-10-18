@@ -24,10 +24,10 @@ void SceneDemo::Initialize()
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
 
 	/* ----- UI初期化 ----- */
-	ui_[static_cast<int>(UI_GAME::HpGaugeBack)] = new UI("./Resources/Image/HpGaugeBack.png");	//	生成したらUIクラスでマネージャーに登録される
-	ui_[static_cast<int>(UI_GAME::HpGauge)] = new UI("./Resources/Image/HpGauge.png");
-	ui_[static_cast<int>(UI_GAME::HpFrame)] = new UI("./Resources/Image/HpFrame.png");
-	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI("./Resources/Image/Instructions.png");
+	ui_[static_cast<int>(UI_GAME::HpGaugeBack)] = new UI(L"./Resources/Image/HpGaugeBack.png");	//	生成したらUIクラスでマネージャーに登録される
+	ui_[static_cast<int>(UI_GAME::HpGauge)] = new UI(L"./Resources/Image/HpGauge.png");
+	ui_[static_cast<int>(UI_GAME::HpFrame)] = new UI(L"./Resources/Image/HpFrame.png");
+	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
 	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->GetTransform()->SetPosition(88, 41);
 	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->SetName("HpGaugeBack");
 	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGauge))->GetTransform()->SetPosition(85, 40);

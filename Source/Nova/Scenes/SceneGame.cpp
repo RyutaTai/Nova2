@@ -31,7 +31,7 @@ void SceneGame::Initialize()
 	UIHealth* uiHealth = new UIHealth();
 	
 	
-	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI("./Resources/Image/Instructions.png");
+	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
 	ui_[static_cast<int>(UI_GAME::Instructions)]->GetTransform()->SetPosition(24, 250);
 	ui_[static_cast<int>(UI_GAME::Instructions)]->SetName("Instructions");
 	ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(false);

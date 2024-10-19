@@ -1,16 +1,16 @@
 #pragma once 
 
+#define NOMINMAX
+#define TINYGLTF_NO_EXTERNAL_IMAGE
+#define TINYGLTF_NO_STB_IMAGE
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+
 #include <d3d11.h>
 #include <wrl.h>
 #include <directxmath.h>
 #include <unordered_map>
 
 #include "../../tinygltf-release/tiny_gltf.h"
-
-#define NOMINMAX
-#define TINYGLTF_NO_EXTERNAL_IMAGE
-#define TINYGLTF_NO_STB_IMAGE
-#define TINYGLTF_NO_STB_IMAGE_WRITE
 
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/memory.hpp>
@@ -86,8 +86,8 @@ public:
 	struct Node
 	{
 		std::string name_;
-		int skin_{ -1 };  // index of skin referenced by this node 
-		int mesh_{ -1 };  // index of mesh referenced by this node 
+		int skin_ = -1;  // index of skin referenced by this node 
+		int mesh_ = -1;  // index of mesh referenced by this node 
 
 		std::vector<int> children_; // An array of indices of child nodes of this node 
 
@@ -96,7 +96,13 @@ public:
 		DirectX::XMFLOAT3 scale_				{ 1, 1, 1 };
 		DirectX::XMFLOAT3 translation_			{ 0, 0, 0 };
 
-		DirectX::XMFLOAT4X4 globalTransform_	{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+		DirectX::XMFLOAT4X4 globalTransform_=
+		{ 
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		};
 
 		bool isRoot_ = false;	//	ルートノードかどうか
 
@@ -113,8 +119,8 @@ public:
 	{
 		DXGI_FORMAT format_ = DXGI_FORMAT_UNKNOWN;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_;
-		size_t strideInBytes_{ 0 };
-		size_t sizeInBytes_{ 0 };
+		size_t strideInBytes_ = 0;
+		size_t sizeInBytes_ = 0;
 		size_t count()const
 		{
 			return sizeInBytes_ / strideInBytes_;
@@ -125,7 +131,7 @@ public:
 		template<class T>
 		void serialize(T& archive)
 		{
-			archive(format_, strideInBytes_, verticesBinary_);
+			archive(format_, strideInBytes_, sizeInBytes_, verticesBinary_);
 		}
 
 	};
@@ -171,7 +177,7 @@ public:
 	{
 		int		index_		= -1;
 		int		texcoord_	=  0;
-		float	scale_		=  1;
+		float	scale_		=  1.0f;
 
 		template<class T>
 		void serialize(T& archive)
@@ -182,9 +188,9 @@ public:
 
 	struct OcclusionTextureInfo
 	{
-		int index_		= -1;
-		int texcoord_	=  0;
-		int strength_	= -1;
+		int		index_		= -1;
+		int		texcoord_	=  0;
+		float	strength_	=  1.0f;
 
 		template<class T>
 		void serialize(T& archive)
@@ -195,10 +201,10 @@ public:
 
 	struct PbrMetallicRoughness
 	{
-		float		baseColorFactor_[4] = { 1,1,1,1 };
+		float		baseColorFactor_[4] = { 1.0f, 1.0f, 1.0f,1.0f };
 		TextureInfo baseColorTexture_;
-		float		metallicFactor_		= 1;
-		float		roughnessFactor_	= -1;
+		float		metallicFactor_		=  1.0f;
+		float		roughnessFactor_	= -1.0f;
 		TextureInfo metallicRoughnessTexture_;
 
 		template<class T>
@@ -214,7 +220,7 @@ public:
 
 		struct Cbuffer
 		{
-			float	emissiveFactor_[3]	= { 0,0,0 };
+			float	emissiveFactor_[3]	= { 0.0f, 0.0f, 0.0f };
 			int		alphaMode_			= 0;	//	"OPAQUE" : 0,"MASK" : 1,"BLEND" : 2
 			float	alphaCutOff_		= 0.5f;
 			bool	doubleSided_		= false;
@@ -245,7 +251,7 @@ public:
 	struct Texture
 	{
 		std::string name_;
-		int			source_{ -1 };
+		int			source_ = -1;
 
 		template<class T>
 		void serialize(T& archive)
@@ -257,17 +263,17 @@ public:
 
 	struct Image
 	{
-		std::string name_;
-		std::wstring filename_;
-		int			width_		{ -1 };
-		int			height_		{ -1 };
-		int			component_	{ -1 };
-		int			bits_		{ -1 };
-		int			pixelType_	{ -1 };
-		int			bufferView_;
-		std::string mimeType_;
-		std::string uri_;
-		bool		asIs_		{ false };
+		std::string		name_;
+		std::wstring	filename_;
+		int				width_		= -1;
+		int				height_		= -1;
+		int				component_	= -1;
+		int				bits_		= -1;
+		int				pixelType_	= -1;
+		int				bufferView_ = 0;
+		std::string		mimeType_;
+		std::string		uri_;
+		bool			asIs_		= false;
 
 		template<class T>
 		void serialize(T& archive)
@@ -294,11 +300,11 @@ public:
 	struct Animation
 	{
 		std::string name_;
-		float		duration_{ 0.0f };
+		float		duration_ = 0.0f;
 		struct Channel
 		{
-			int			sampler_	{ -1 };
-			int			targetNode_	{ -1 };
+			int			sampler_	= -1;
+			int			targetNode_ = -1;
 			std::string targetPath_;
 
 			template<class T>
@@ -311,8 +317,8 @@ public:
 	
 		struct Sampler
 		{
-			int			input_	{ -1 };
-			int			output_	{ -1 };
+			int			input_	= -1;
+			int			output_	= -1;
 			std::string interpolation_;
 
 			template<class T>
@@ -339,9 +345,9 @@ public:
 	struct PrimitiveConstants
 	{
 		DirectX::XMFLOAT4X4 world_;
-		int					material_{ -1 };
-		int					hasTangent_{ 0 };
-		int					skin_{ -1 };
+		int					material_	= -1;
+		int					hasTangent_ = 0 ;
+		int					skin_		= -1;
 		int					pad_;
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> primitiveCbuffer_;
@@ -402,8 +408,8 @@ private:
 	std::vector<GltfModel::Node> animatedNodes_[2];
 	std::vector<GltfModel::Node> blendedAnimatedNodes_;
 	int		animationClip_ = 0;
-	float	time_ = 0;
-	float	factor_ = 0;
+	float	time_	= 0.0f;
+	float	factor_ = 0.0f;
 	int		transitionState_ = 0;
 	float	transitionTime_ = 1.0f;			//	どれくらい時間をかけてブレンドするか
 	float	cutTime_ = 0.0f;

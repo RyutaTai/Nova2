@@ -54,7 +54,8 @@ GltfModel::GltfModel(ID3D11Device* device, const std::string& filename, const st
                 bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
                 D3D11_SUBRESOURCE_DATA subresourceData = {};
                 subresourceData.pSysMem = indexBufferView.verticesBinary_.data();
-                hr = device->CreateBuffer(&bufferDesc, &subresourceData, meshes_.at(meshIndex).primitives_.at(primitiveIndex).indexBufferView_.buffer_.ReleaseAndGetAddressOf());
+                hr = device->CreateBuffer(&bufferDesc, &subresourceData,
+                    meshes_.at(meshIndex).primitives_.at(primitiveIndex).indexBufferView_.buffer_.ReleaseAndGetAddressOf());
                 _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
                 for (auto& vertexBufferView : meshes_.at(meshIndex).primitives_.at(primitiveIndex).vertexBufferViews_)
@@ -175,6 +176,10 @@ GltfModel::GltfModel(ID3D11Device* device, const std::string& filename, const st
     hr = device->CreateBuffer(&bufferDesc, NULL, primitiveJointCbuffer_.ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
     
+    animatedNodes_[0] = nodes_;
+    animatedNodes_[1] = nodes_;
+    blendedAnimatedNodes_ = nodes_;
+
 }
 
 void GltfModel::FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName)
@@ -263,6 +268,10 @@ void GltfModel::FetchMeshes(ID3D11Device* device, const tinygltf::Model& gltfMod
             bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
             D3D11_SUBRESOURCE_DATA subresourceData{};
             subresourceData.pSysMem = gltfModel.buffers.at(gltfBufferView.buffer).data.data() + gltfBufferView.byteOffset + gltfAccessor.byteOffset;
+            
+            primitive.indexBufferView_.verticesBinary_.resize(bufferDesc.ByteWidth);
+            memcpy(primitive.indexBufferView_.verticesBinary_.data(), subresourceData.pSysMem, bufferDesc.ByteWidth);
+
             hr = device->CreateBuffer(&bufferDesc, &subresourceData, primitive.indexBufferView_.buffer_.ReleaseAndGetAddressOf());
             _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
@@ -273,8 +282,8 @@ void GltfModel::FetchMeshes(ID3D11Device* device, const tinygltf::Model& gltfMod
                 const tinygltf::BufferView& gltfBufferView{gltfModel.bufferViews.at(gltfAccessor.bufferView)};
 
                 const void* buffer = gltfModel.buffers.at(gltfBufferView.buffer).data.data() + gltfBufferView.byteOffset + gltfAccessor.byteOffset;
-                std::vector<USHORT> joints_0;
-                std::vector<FLOAT>  weights_0;
+                std::vector<USHORT> joints0;
+                std::vector<FLOAT>  weights0;
                 if (gltfAttribute.first == "JOINTS_0")
                 {
                     if (gltfAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE)
@@ -282,9 +291,9 @@ void GltfModel::FetchMeshes(ID3D11Device* device, const tinygltf::Model& gltfMod
                         const BYTE* data = gltfModel.buffers.at(gltfBufferView.buffer).data.data() + gltfBufferView.byteOffset + gltfAccessor.byteOffset;
                         for (size_t accessorIndex = 0; accessorIndex < gltfAccessor.count * 4; ++accessorIndex)
                         {
-                            joints_0.emplace_back(static_cast<USHORT>(data[accessorIndex]));
+                            joints0.emplace_back(static_cast<USHORT>(data[accessorIndex]));
                         }
-                        buffer = joints_0.data();
+                        buffer = joints0.data();
                         gltfAccessor.componentType = TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT;
                     }
                 }
@@ -299,9 +308,9 @@ void GltfModel::FetchMeshes(ID3D11Device* device, const tinygltf::Model& gltfMod
                         const BYTE* data = gltfModel.buffers.at(gltfBufferView.buffer).data.data() + gltfBufferView.byteOffset + gltfAccessor.byteOffset;
                         for (size_t accessorIndex = 0; accessorIndex < gltfAccessor.count * 4; ++accessorIndex)
                         {
-                            weights_0.emplace_back(static_cast<FLOAT>(data[accessorIndex]) / 0xFF);
+                            weights0.emplace_back(static_cast<FLOAT>(data[accessorIndex]) / 0xFF);
                         }
-                        buffer = weights_0.data();
+                        buffer = weights0.data();
                         gltfAccessor.componentType = TINYGLTF_COMPONENT_TYPE_FLOAT;
                     }
                 }
@@ -318,7 +327,10 @@ void GltfModel::FetchMeshes(ID3D11Device* device, const tinygltf::Model& gltfMod
                 bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = buffer;
-                //subresourceData.pSysMem = gltfModel.buffers.at(gltfBufferView.buffer).data.data() + gltfBufferView.byteOffset + gltfAccessor.byteOffset;
+                
+                vertexBufferView.verticesBinary_.resize(bufferDesc.ByteWidth);
+                memcpy(vertexBufferView.verticesBinary_.data(), subresourceData.pSysMem, bufferDesc.ByteWidth);
+
                 hr = device->CreateBuffer(&bufferDesc, &subresourceData, vertexBufferView.buffer_.ReleaseAndGetAddressOf());
                 _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
@@ -411,10 +423,6 @@ void GltfModel::FetchMaterials(ID3D11Device* device, const tinygltf::Model& gltf
     shaderResourceViewDesc.Buffer.NumElements = static_cast<UINT>(materialData.size());
     hr = Graphics::Instance().GetDevice()->CreateShaderResourceView(materialBuffer.Get(), &shaderResourceViewDesc, materialResourceView_.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-    animatedNodes_[0] = nodes_;
-    animatedNodes_[1] = nodes_;
-    blendedAnimatedNodes_ = nodes_;
 
 }
 
@@ -764,8 +772,8 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 
 void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes)
 {
-    _ASSERT_EXPR(animations_.size() > animationIndex, L"");
-    _ASSERT_EXPR(animatedNodes.size() == nodes_.size(), L"");
+    _ASSERT_EXPR(animations_.size() > animationIndex, L"animationSize > animationIndex.");
+    _ASSERT_EXPR(animatedNodes.size() == nodes_.size(), L"animationNodeSize > nodesSize.");
 
     std::function<size_t(const std::vector<float>&, float, float&)> indexof{
         [] (const std::vector<float>& timelines, float time, float& interpolationFactor)->size_t

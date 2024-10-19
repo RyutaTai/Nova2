@@ -30,7 +30,6 @@ void SceneGame::Initialize()
 	/* ----- UI初期化(生成したらUIクラスでマネージャーに登録される) ----- */
 	UIHealth* uiHealth = new UIHealth();
 	
-	
 	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
 	ui_[static_cast<int>(UI_GAME::Instructions)]->GetTransform()->SetPosition(24, 250);
 	ui_[static_cast<int>(UI_GAME::Instructions)]->SetName("Instructions");
@@ -40,7 +39,7 @@ void SceneGame::Initialize()
 	/* ----- ステージ初期化 ----- */
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/syougiban.glb");
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city_collision_ground2_correct.glb");//	シティモデル(地面のみ)
-	stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.gltf");							//	シティモデル
+	stage_[0] = std::make_unique<Stage>();							//	シティモデル
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.fbx", true);					//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */

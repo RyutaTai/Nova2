@@ -4,8 +4,8 @@
 
 static Stage* instance = nullptr;
 
-Stage::Stage(const std::string& filename)
-	: GameStaticObject(filename)
+Stage::Stage()
+	: GameStaticObject("./Resources/Model/cybercity-2099-v2/city.gltf")
 {
 	//	インスタンスポイント設定
 	instance = this;

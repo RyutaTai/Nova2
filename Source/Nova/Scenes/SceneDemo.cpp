@@ -39,7 +39,7 @@ void SceneDemo::Initialize()
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする
 
 	/* ----- ステージ初期化 ----- */
-	stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.gltf");			//	シティモデル
+	stage_[0] = std::make_unique<Stage>();			//	シティモデル
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city_Join.glb");		//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */

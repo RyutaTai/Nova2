@@ -6,8 +6,7 @@
 class Stage : public GameStaticObject
 {
 public:
-	Stage(const std::string& fileName);
-	Stage(){}
+	Stage();
 	~Stage();
 
 	static Stage& Instance();

@@ -22,7 +22,7 @@ Player& Player::Instance()
 //	コンストラクタ
 Player::Player()
 	//:Character("./Resources/Model/free-mixamo-retextured-model/source/model5.glb", "")
-	:Character("./Resources/Model/Player.glb", "")
+	:Character("./Resources/Model/Player.gltf", "")
 {
 	//	インスタンス設定
 	instance = this;
@@ -32,7 +32,7 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::IdleState(this));			//	待機
 	stateMachine_->RegisterState(new PlayerState::MoveState(this));			//	移動
 	stateMachine_->RegisterState(new PlayerState::AttackState(this));		//	攻撃
-	stateMachine_->RegisterState(new PlayerState::AvoidanceState(this));	//	回避
+	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
 
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));				//	初期ステートセット
 	PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);

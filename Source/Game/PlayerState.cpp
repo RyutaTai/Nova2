@@ -304,17 +304,17 @@ namespace PlayerState
 //	回避ステート
 namespace PlayerState
 {
-	void AvoidanceState::Initialize()
+	void DodgeState::Initialize()
 	{
 		owner_->PlayAnimation(Player::AnimationType::DodgeFront, false, 1.0f, 0.0f);
 	}
 
-	void AvoidanceState::Update(const float& elapsedTime)
+	void DodgeState::Update(const float& elapsedTime)
 	{
 
 	}
 
-	void AvoidanceState::Finalize()
+	void DodgeState::Finalize()
 	{
 
 	}

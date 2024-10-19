@@ -174,6 +174,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	pixelShader_;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>	inputLayout_;
 
-	std::string fileName_;
+	std::string filename_;
 
 };

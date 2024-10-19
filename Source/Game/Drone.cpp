@@ -12,7 +12,7 @@
 
 //	コンストラクタ
 Drone::Drone()
-	:Enemy("./Resources/Model/Drone/Drone.glb")
+	:Enemy("./Resources/Model/Drone/Drone.gltf")
 {
 	//	ステートセット(Drone::StateTypeの順と合わせる)
 	stateMachine_.reset(new StateMachine<State<Drone>>());
@@ -184,7 +184,7 @@ void Drone::LaunchBullet()
 			pos = pos + dir * 2.0f;
 
 			//	弾丸ファイル名
-			const char* bulletName = "./Resources/Model/Bullet/Sphere.glb";
+			const char* bulletName = "./Resources/Model/Bullet/Sphere.gltf";
 #if  0	//	直進する弾丸生成
 			BulletStraight* bullet = new BulletStraight(bulletName);
 			bullet->Launch(dir, pos);

@@ -15,7 +15,7 @@ BulletHorming::BulletHorming(const std::string& filename)
 
 	//	カバーモデル
 	DirectX::XMFLOAT4 coverModelColor = { 1.0f,0.0f,0.0f,1.0f };
-	coverModel_ = std::make_unique<GameStaticObject>("./Resources/Model/Cube/source/Cube2.glb", true, coverModelColor);
+	coverModel_ = std::make_unique<GameStaticObject>("./Resources/Model/Cube/source/Cube2.gltf", true, coverModelColor);
 	
 	//	透明処理
 #if 1

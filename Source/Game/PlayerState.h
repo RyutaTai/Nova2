@@ -77,11 +77,11 @@ namespace PlayerState
 //	回避ステート
 namespace PlayerState
 {
-	class AvoidanceState :public State<Player>
+	class DodgeState :public State<Player>
 	{
 	public:
-		AvoidanceState(Player* owner) : State(owner) {}
-		~AvoidanceState() {}
+		DodgeState(Player* owner) : State(owner) {}
+		~DodgeState() {}
 
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;

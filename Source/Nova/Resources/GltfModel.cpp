@@ -1,52 +1,149 @@
 #include "GltfModel.h"
 
 #include <stack>
-#include <functional>
 #include <filesystem>
+#include <functional>
+#include <iostream>
+#include <fstream>
 
 #include "..//Others/Misc.h"
 #include "../Graphics/Graphics.h"
 #include "../Resources/Texture.h"
 
 #define TINYGLTF_IMPLEMENTATION
+#define TINYGLTF_NO_EXTERANL_IMAGE
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STBI_MSC_SECURE_CRT
 
-GltfModel::GltfModel(ID3D11Device* device, const std::string& fileName, const std::string& rootNodeName) : fileName_(fileName)
+#define USE_SERIALIZE 1
+
+GltfModel::GltfModel(ID3D11Device* device, const std::string& filename, const std::string& rootNodeName) : filename_(filename)
 {
-    tinygltf::TinyGLTF tinyGltf;
-    tinyGltf.SetImageLoader(NullLoadImageData, nullptr);
-
-    tinygltf::Model gltfModel;
-    std::string error, warning;
-    bool succeeded{ false };
-    if (fileName.find(".glb") != std::string::npos)
+#if USE_SERIALIZE
+    std::filesystem::path cerealFilename(filename);
+    cerealFilename.replace_extension("cereal");
+    if (std::filesystem::exists(cerealFilename.c_str()))
     {
-        succeeded = tinyGltf.LoadBinaryFromFile(&gltfModel, &error, &warning, fileName.c_str());
+        std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
+        cereal::BinaryInputArchive deserialization(ifs);
+        deserialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_);
+
+        HRESULT hr;
+        D3D11_TEXTURE2D_DESC texture2dDesc;
+        for (int i = 0; i < images_.size(); ++i)
+        {
+            ID3D11ShaderResourceView* shaderResourceView{};
+            std::wstring filename = images_.at(i).filename_;
+            hr = LoadTextureFromFile(device, filename.c_str(), &shaderResourceView, &texture2dDesc);
+            if (hr == S_OK)
+            {
+                textureResourceViews_.emplace_back().Attach(shaderResourceView);
+            }
+            _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+        }
+
+        for (int meshIndex = 0; meshIndex < meshes_.size(); ++meshIndex)
+        {
+            for (int primitiveIndex = 0; primitiveIndex < meshes_.at(meshIndex).primitives_.size(); ++primitiveIndex)
+            {
+                const BufferView& indexBufferView = meshes_.at(meshIndex).primitives_.at(primitiveIndex).indexBufferView_;
+                D3D11_BUFFER_DESC bufferDesc = {};
+                bufferDesc.ByteWidth = static_cast<UINT>(indexBufferView.sizeInBytes_);
+                bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+                D3D11_SUBRESOURCE_DATA subresourceData = {};
+                subresourceData.pSysMem = indexBufferView.verticesBinary_.data();
+                hr = device->CreateBuffer(&bufferDesc, &subresourceData, meshes_.at(meshIndex).primitives_.at(primitiveIndex).indexBufferView_.buffer_.ReleaseAndGetAddressOf());
+                _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+                for (auto& vertexBufferView : meshes_.at(meshIndex).primitives_.at(primitiveIndex).vertexBufferViews_)
+                {
+                    if (static_cast<UINT>(vertexBufferView.second.sizeInBytes_) == 0)
+                    {
+                        continue;
+                    }
+                    bufferDesc.ByteWidth = static_cast<UINT>(vertexBufferView.second.sizeInBytes_);
+                    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+                    subresourceData.pSysMem = vertexBufferView.second.verticesBinary_.data();
+                    hr = device->CreateBuffer(&bufferDesc, &subresourceData, vertexBufferView.second.buffer_.ReleaseAndGetAddressOf());
+                    if (FAILED(hr))
+                    {
+                        _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+                    }
+                }
+
+            }
+        }
+
+        std::vector<Material::Cbuffer> materialData;
+        for (std::vector<Material>::const_reference material : materials_)
+        {
+            materialData.emplace_back(material.data_);
+        }
+        Microsoft::WRL::ComPtr<ID3D11Buffer> materialBuffer;
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.ByteWidth = static_cast<UINT>(sizeof(Material::Cbuffer) * materialData.size());
+        bufferDesc.StructureByteStride = sizeof(Material::Cbuffer);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        D3D11_SUBRESOURCE_DATA subresourceData = {};
+        subresourceData.pSysMem = materialData.data();
+        hr = device->CreateBuffer(&bufferDesc, &subresourceData, materialBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+        D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+        shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
+        shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+        shaderResourceViewDesc.Buffer.NumElements = static_cast<UINT>(materialData.size());
+        hr = device->CreateShaderResourceView(materialBuffer.Get(), &shaderResourceViewDesc, materialResourceView_.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
     }
-    else if (fileName.find(".gltf") != std::string::npos)
+    else
     {
-        succeeded = tinyGltf.LoadASCIIFromFile(&gltfModel, &error, &warning, fileName.c_str());
+#endif
+        tinygltf::TinyGLTF tinyGltf;
+        tinyGltf.SetImageLoader(NullLoadImageData, nullptr);
+
+        tinygltf::Model gltfModel;
+        std::string error, warning;
+        bool succeeded{ false };
+        if (filename.find(".glb") != std::string::npos)
+        {
+            succeeded = tinyGltf.LoadBinaryFromFile(&gltfModel, &error, &warning, filename.c_str());
+        }
+        else if (filename.find(".gltf") != std::string::npos)
+        {
+            succeeded = tinyGltf.LoadASCIIFromFile(&gltfModel, &error, &warning, filename.c_str());
+        }
+
+        _ASSERT_EXPR_A(warning.empty(), warning.c_str());
+        _ASSERT_EXPR_A(error.empty(), error.c_str());
+        _ASSERT_EXPR_A(succeeded, L"Failed to load glTF file");
+
+        for (std::vector<tinygltf::Scene>::const_reference gltfScene : gltfModel.scenes)
+        {
+            Scene& scene{ scenes_.emplace_back() };
+            scene.name_ = gltfScene.name;
+            scene.nodes_ = gltfScene.nodes;
+        }
+
+        FetchNodes(gltfModel, rootNodeName);
+        FetchMeshes(device, gltfModel);
+        FetchMaterials(device, gltfModel);
+        FetchTextures(device, gltfModel);
+        FetchAnimations(gltfModel);
+
+#if USE_SERIALIZE
+        std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
+        cereal::BinaryOutputArchive serialization(ofs);
+        serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_);
+
     }
+#endif
 
-    _ASSERT_EXPR_A(warning.empty(), warning.c_str());
-    _ASSERT_EXPR_A(error.empty(), error.c_str());
-    _ASSERT_EXPR_A(succeeded, L"Failed to load glTF file");
-
-    for (std::vector<tinygltf::Scene>::const_reference gltfScene : gltfModel.scenes)
-    {
-        Scene& scene{ scenes_.emplace_back() };
-        scene.name_ = gltfScene.name;
-        scene.nodes_ = gltfScene.nodes;
-    }
-
-    FetchNodes(gltfModel, rootNodeName);
-    FetchMeshes(device, gltfModel);
-    FetchMaterials(device, gltfModel);
-    FetchTextures(device, gltfModel);
-    FetchAnimations(gltfModel);
-
-    // TODO: This is a force-brute programming, may cause bugs. 
-    //  これは強引なプログラミングであり、バグを引き起こす可能性がある。
-    const std::map<std::string, BufferView>& vertexBufferViews{meshes_.at(0).primitives_.at(0).vertexBufferViews_};
+    const std::map<std::string, BufferView>& vertexBufferViews{ meshes_.at(0).primitives_.at(0).vertexBufferViews_ };
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
     {
         {"POSITION",0,vertexBufferViews.at("POSITION").format_,     0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -77,7 +174,7 @@ GltfModel::GltfModel(ID3D11Device* device, const std::string& fileName, const st
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&bufferDesc, NULL, primitiveJointCbuffer_.ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
+    
 }
 
 void GltfModel::FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName)
@@ -359,11 +456,15 @@ void GltfModel::FetchTextures(ID3D11Device* device, const tinygltf::Model& gltfM
         }
         else
         {
-            const std::filesystem::path path(fileName_);
+            const std::filesystem::path path(filename_);
             ID3D11ShaderResourceView* shaderResourceView{};
             D3D11_TEXTURE2D_DESC texture2dDesc;
-            std::wstring fileName{ path.parent_path().concat(L"/").wstring() + std::wstring(gltfImage.uri.begin(), gltfImage.uri.end()) };
-            hr = LoadTextureFromFile(device, fileName.c_str(), &shaderResourceView, &texture2dDesc);
+            std::wstring filename
+            { 
+                path.parent_path().concat(L"/").wstring() + std::wstring(gltfImage.uri.begin(), gltfImage.uri.end())
+            };
+            image.filename_ = filename;
+            hr = LoadTextureFromFile(device, filename.c_str(), &shaderResourceView, &texture2dDesc);
             if (hr == S_OK)
             {
                 textureResourceViews_.emplace_back().Attach(shaderResourceView);

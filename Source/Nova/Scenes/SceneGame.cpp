@@ -40,7 +40,7 @@ void SceneGame::Initialize()
 	/* ----- ステージ初期化 ----- */
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/syougiban.glb");
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city_collision_ground2_correct.glb");//	シティモデル(地面のみ)
-	stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.glb");							//	シティモデル
+	stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.gltf");							//	シティモデル
 	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.fbx", true);					//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */

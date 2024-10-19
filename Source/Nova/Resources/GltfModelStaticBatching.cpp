@@ -8,7 +8,7 @@
 #include "../Graphics/Graphics.h"
 #include "../Resources/Texture.h"
 
-GltfModelStaticBatching::GltfModelStaticBatching(ID3D11Device* device, const std::string& fileName, const bool setColor, const DirectX::XMFLOAT4 color) : fileName_(fileName)
+GltfModelStaticBatching::GltfModelStaticBatching(ID3D11Device* device, const std::string& fileName, const bool setColor, const DirectX::XMFLOAT4 color) : filename_(fileName)
 {
 	tinygltf::TinyGLTF tinyGltf;
 	tinyGltf.SetImageLoader(NullLoadImageData, nullptr);
@@ -575,7 +575,7 @@ void GltfModelStaticBatching::FetchTextures(ID3D11Device* device, const tinygltf
 		}
 		else
 		{
-			const std::filesystem::path path(fileName_);
+			const std::filesystem::path path(filename_);
 			ID3D11ShaderResourceView* shaderResourceView{};
 			D3D11_TEXTURE2D_DESC texture2d_desc;
 			std::wstring fileName{ path.parent_path().concat(L"/").wstring() + std::wstring(gltfImage.uri.begin(), gltfImage.uri.end()) };

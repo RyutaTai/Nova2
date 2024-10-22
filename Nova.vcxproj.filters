@@ -242,9 +242,6 @@
     <ClCompile Include="Source\Game\Stage.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Nova\Object\GameObject.cpp">
-      <Filter>Nova\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game\PlayerState.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -255,7 +252,6 @@
     <ClCompile Include="Source\Nova\Collision\CollisionMesh.cpp" />
     <ClCompile Include="Source\Nova\PostProcess\Bloom.cpp" />
     <ClCompile Include="Source\Nova\Resources\GltfModelStaticBatching.cpp" />
-    <ClCompile Include="Source\Nova\Object\GameStaticObject.cpp" />
     <ClCompile Include="Source\Game\BulletCover.cpp" />
     <ClCompile Include="Source\Game\GameState.cpp" />
     <ClCompile Include="Source\Game\UI.cpp" />
@@ -270,6 +266,7 @@
     <ClCompile Include="Source\Nova\Audio\WaveRead.cpp" />
     <ClCompile Include="Source\Game\TitleState.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
+    <ClCompile Include="Source\Game\JudgeTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -483,9 +480,6 @@
     <ClInclude Include="Source\Game\Stage.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Nova\Object\GameObject.h">
-      <Filter>Nova\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\PlayerState.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -496,7 +490,6 @@
     <ClInclude Include="Source\Nova\Collision\CollisionMesh.h" />
     <ClInclude Include="Source\Nova\PostProcess\Bloom.h" />
     <ClInclude Include="Source\Nova\Resources\GltfModelStaticBatching.h" />
-    <ClInclude Include="Source\Nova\Object\GameStaticObject.h" />
     <ClInclude Include="Source\Game\BulletCover.h" />
     <ClInclude Include="Source\Game\GameState.h" />
     <ClInclude Include="Source\Game\UI.h" />
@@ -512,6 +505,7 @@
     <ClInclude Include="Source\Nova\Audio\WaveRead.h" />
     <ClInclude Include="Source\Game\TitleState.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
+    <ClInclude Include="Source\Game\JudgeTime.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

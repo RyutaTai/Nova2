@@ -73,14 +73,14 @@ void SceneModelCheck::Update(const float& elapsedTime)
 void SceneModelCheck::ShadowRender()
 {
 	//object_[(int)MODEL_ModelCheck::CITY]->ShadowRender(1.0f);
-	if (object_[(int)MODEL_CHECK::PLANTUNE])
+	/*if (object_[(int)MODEL_CHECK::PLANTUNE])
 	{
 		object_[(int)MODEL_CHECK::PLANTUNE]->ShadowRender(1.0f);
 	}
 	if (object_[(int)MODEL_CHECK::SHOGI_BOARD])
 	{
 		object_[(int)MODEL_CHECK::SHOGI_BOARD]->ShadowRender(1.0f);
-	}
+	}*/
 	
 	//object_[(int)MODEL_ModelCheck::DRONE]->ShadowRender(1.0f);
 

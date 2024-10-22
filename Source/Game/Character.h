@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../Nova/Object/GameObject.h"
+#include "DirectXMath.h"
+#include "../Nova/Resources/GltfModel.h"
 
-class Character :public GameObject
+class Character
 {
 public:
 	Character(const std::string& filename, const std::string& rootNodeName = "root");
@@ -12,7 +13,7 @@ public:
 	virtual void Update(const float& elapsedTime) = 0;
 	virtual bool RayVsVertical(const float& elapsedTime) = 0;		//	ステージとの当たり判定
 	virtual bool RayVsHorizontal(const float& elapsedTime) = 0;
-	void Render()override;
+	virtual void Render();
 	//virtual void Render(const float& scale = 1.0f, const float& animationSpeed = 1.0f);
 
 	virtual void DrawDebug();
@@ -29,7 +30,7 @@ public:
 	virtual void Move(const float& elpasedTime);
 	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
 
-	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float blendTime = 1.0f, const float cutTime = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	void UpdateAnimation(const float& elapsedTime);
 	bool IsPlayAnimation()const;
 
@@ -42,6 +43,8 @@ public:
 	void SetIsInvincible(const bool& isInvincible) { isInvincible_ = isInvincible; }
 	void SetInvincibleTimer(const float& invincibleTimer) { invincibleTimer_ = invincibleTimer; }
 
+	Transform* GetTransform() { return gltfModelResource_->GetTransform(); }
+
 	const int				GetHp()				const	{ return hp_; }
 	const float				GetRadius()			const	{ return radius_; }
 	const float				GetHeight()			const	{ return height_; }
@@ -51,9 +54,19 @@ public:
 	const bool				IsInvincible()		const	{ return isInvincible_; }
 	const float				GetInvincibleTimer()const	{ return invincibleTimer_; }
 
-	int GetCurrentAnimNum();
+	int						GetCurrentAnimNum()			{ return gltfModelResource_->GetCurrentAnimNum(); }								//	現在再生中のアニメーション番号取得
+	float const				GetCurrentAnimationSeconds(){ return gltfModelResource_->GetCurrentAnimationSeconds(); }	//	現在再生中ののアニメーション再生時間取得
+
 	DirectX::XMFLOAT3 GetJointPosition(const std::string& meshName, const std::string& boneName, const DirectX::XMFLOAT4X4& transform);											//	ジョイントポジション取得
 	DirectX::XMFLOAT3 GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
+
+	//	ルートモーション
+	const int GetNodeIndex(const std::string& nodeName) { return gltfModelResource_->GetNodeIndex(nodeName); }
+	void RootMotion() { gltfModelResource_->RootMotion(GetTransform()->GetScaleFactor()); }
+
+	void SetRootJointIndex(const int& index) { gltfModelResource_->SetRootJointIndex(index); }
+	void SetUseRootMotion(bool useRootMotion) { gltfModelResource_->SetUseRootMotion(useRootMotion); }
+
 
 protected:
 	DirectX::XMFLOAT3	velocity_ = {};		//	移動速度
@@ -71,7 +84,7 @@ protected:
 	float				invincibleTimer_ = 0.0f;							//	無敵時間
 
 private:
-	const float MOVE_SPEED = 5.5f;		//	最大の速さ
+	const float MOVE_SPEED = 10.0f;		//	最大の速さ
 
 private:
 	std::shared_ptr <GltfModel>					gltfModelResource_;		//	Gltfモデル

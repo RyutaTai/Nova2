@@ -52,11 +52,11 @@ Framework::Framework(HWND hwnd)
 //	デストラクタ
 Framework::~Framework()
 {
-	//	シーン終了化
-	SceneManager::Instance().Clear();
+	////	シーン終了化
+	//SceneManager::Instance().Clear();
 
-	//	エフェクトマネージャー終了化
-	EffectManager::Instance().Finalize();
+	////	エフェクトマネージャー終了化
+	//EffectManager::Instance().Finalize();
 }
 
 //	初期化
@@ -246,6 +246,13 @@ void Framework::Render()
 //	終了化
 bool Framework::Uninitialize()
 {
+	//	シーン終了化
+	SceneManager::Instance().Clear();
+
+	//	エフェクトマネージャー終了化
+	EffectManager::Instance().Finalize();
+
+
 	return true;
 }
 

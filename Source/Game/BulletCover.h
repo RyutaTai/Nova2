@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Nova/Object/GameStaticObject.h"
+#include <string>
 
-class BulletCover :public GameStaticObject
+class BulletCover
 {
 public:
 	BulletCover(const std::string& fileName);

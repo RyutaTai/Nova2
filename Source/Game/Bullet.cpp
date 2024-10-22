@@ -7,8 +7,10 @@
 
 //	コンストラクタ
 Bullet::Bullet(const std::string& filename)
-	:GameStaticObject(filename)
 {
+	//	モデル生成
+	gltfStaticModelResource_= ResourceManager::Instance().LoadGltfModelStaticResource(filename);
+
 	//	生成時にマネージャーに登録する
 	BulletManager::Instance().Register(this);
 

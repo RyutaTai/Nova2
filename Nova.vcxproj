@@ -194,6 +194,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioManager.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
@@ -260,8 +261,6 @@
     <ClCompile Include="Source\Nova\Input\Input.cpp" />
     <ClCompile Include="Source\Nova\Input\Microphone.cpp" />
     <ClCompile Include="Source\Nova\Input\Mouse.cpp" />
-    <ClCompile Include="Source\Nova\Object\GameObject.cpp" />
-    <ClCompile Include="Source\Nova\Object\GameStaticObject.cpp" />
     <ClCompile Include="Source\Nova\Others\Transform.cpp" />
     <ClCompile Include="Source\Nova\PostProcess\Bloom.cpp" />
     <ClCompile Include="Source\Nova\Resources\Effect.cpp" />
@@ -285,6 +284,7 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\JudgeTime.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
@@ -358,8 +358,6 @@
     <ClInclude Include="Source\Nova\Input\Input.h" />
     <ClInclude Include="Source\Nova\Input\Microphone.h" />
     <ClInclude Include="Source\Nova\Input\Mouse.h" />
-    <ClInclude Include="Source\Nova\Object\GameObject.h" />
-    <ClInclude Include="Source\Nova\Object\GameStaticObject.h" />
     <ClInclude Include="Source\Nova\Others\Converter.h" />
     <ClInclude Include="Source\Nova\Others\Easing.h" />
     <ClInclude Include="Source\Nova\Others\MathHelper.h" />

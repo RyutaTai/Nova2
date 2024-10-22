@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 #include "../../tinygltf-release/tiny_gltf.h"
+#include "../Others/Transform.h"
 
 class GltfModelStaticBatching
 {
@@ -234,14 +235,17 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> primitiveCbuffer_;
 
 public:
-	GltfModelStaticBatching(ID3D11Device* device, const std::string& filename, const bool setColor = false, const DirectX::XMFLOAT4 color = { 0,0,0,1 });
+	GltfModelStaticBatching(const std::string& filename, const bool setColor = false, const DirectX::XMFLOAT4 color = { 0,0,0,1 });
 	virtual ~GltfModelStaticBatching() = default;
 
-	void Render(const DirectX::XMMATRIX& world);
+	void Render();
 
 	void DrawDebug();
 
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShaderê›íË
+	void SetPixelShaderFromName(const char* csoName);
+
+	Transform* GetTransform() { return &transform_; }
 
 private:
 	void FetchNodes(const tinygltf::Model& gltfModel);
@@ -257,5 +261,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>	inputLayout_;
 
 	std::string filename_;
+	Transform transform_ = {};
 
 };

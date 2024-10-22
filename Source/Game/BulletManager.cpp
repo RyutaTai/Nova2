@@ -1,5 +1,7 @@
 #include "BulletManager.h"
 
+#include "../../External/imgui/imgui.h"
+
 //	コンストラクタ
 BulletManager::BulletManager()
 {

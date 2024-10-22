@@ -1,8 +1,6 @@
 #include "Player.h"
 
 #include "../Nova/Graphics/Graphics.h"
-#include "../Nova/Input/GamePad.h"
-#include "../Nova/Input/Input.h"
 #include "../Nova/Graphics/Camera.h"
 #include "../Nova/Core/Framework.h"
 #include "../Nova/Others/MathHelper.h"
@@ -10,6 +8,7 @@
 #include "PlayerState.h"
 #include "Stage.h"
 #include "EnemyManager.h"
+#include "BulletManager.h"
 
 static Player* instance = nullptr;
 
@@ -29,9 +28,13 @@ Player::Player()
 
 	//	ステートセット(Player::StateTypeの順と合わせる)
 	stateMachine_.reset(new StateMachine<State<Player>>());
-	stateMachine_->RegisterState(new PlayerState::IdleState(this));			//	待機
-	stateMachine_->RegisterState(new PlayerState::MoveState(this));			//	移動
-	stateMachine_->RegisterState(new PlayerState::AttackState(this));		//	攻撃
+	stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機
+	stateMachine_->RegisterState(new PlayerState::MoveState(this));		//	移動
+	stateMachine_->RegisterState(new PlayerState::AttackState(this));	//	攻撃
+	stateMachine_->RegisterState(new PlayerState::ComboOne1(this));		//	コンボ0_1
+	stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
+	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
+	stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
 	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
 
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));				//	初期ステートセット
@@ -41,6 +44,10 @@ Player::Player()
 	listener_.innerRadius_ = 0.7f;
 	listener_.outerRadius_ = 1.67f;
 	listener_.filterParam_ = 0.8f;
+
+	//	モデルのルート設定
+	int rootNodeIndex = GetNodeIndex("root");
+	SetRootJointIndex(rootNodeIndex);
 
 }
 
@@ -70,12 +77,12 @@ void Player::Initialize()
 //	更新処理
 void Player::Update(const float& elapsedTime)
 {
-	if (!isPose_)	//	ポーズ中じゃないなら
-	{
-		//	ステートごとの更新処理
-		stateMachine_->Update(elapsedTime);
+	if (isPose_)return;	//	ポーズ中ならreturn
 
-		//	エフェクト再生確認用
+	//	ステートごとの更新処理
+	stateMachine_->Update(elapsedTime);
+
+	//	エフェクト再生確認用
 #if _DEBUG
 		//GamePad& gamePad = Input::Instance().GetGamePad();
 		//if (gamePad.GetButtonDown() & GamePad::BTN_A)	//	Zキー入力(エフェクト確認用)
@@ -85,31 +92,31 @@ void Player::Update(const float& elapsedTime)
 		//	effectResource_->Play(pos, effectScale_);
 		//}
 #endif
-		//	敵との当たり判定
-		PlayerVsEnemy(elapsedTime);
+	//	敵との当たり判定
+	PlayerVsEnemies(elapsedTime);
 
 	
-		if (!isHitStage_ && isAddGravity_)
-		{
-			//	適当に重力処理
-			AddVelocityY(gravity_, elapsedTime);
-			//GetTransform()->SetPositionY(GetTransform()->GetPositionY() - gravity_ * elapsedTime);
-			//Move(elapsedTime);	//	inputMoveにもある
-		}
-		//	ステージとの当たり判定
-		if (isCollisionStage_)
-		{
-			//isHitStage_ = RayVsVertical(elapsedTime);	//	垂直方向(地面)
-			if (!RayVsVertical(elapsedTime))
-			{
-				GetTransform()->AddPositionY(velocity_.y * elapsedTime);
-			}
-			RayVsHorizontal(elapsedTime);	//	水平方向(壁)
-		}
-
+	if (!isHitStage_ && isAddGravity_)
+	{
+		//	適当に重力処理
+		AddVelocityY(gravity_, elapsedTime);
+		//GetTransform()->SetPositionY(GetTransform()->GetPositionY() - gravity_ * elapsedTime);
 		//Move(elapsedTime);	//	inputMoveにもある
-
 	}
+	//	ステージとの当たり判定
+	if (isCollisionStage_)
+	{
+		//isHitStage_ = RayVsVertical(elapsedTime);	//	垂直方向(地面)
+		if (!RayVsVertical(elapsedTime))
+		{
+			GetTransform()->AddPositionY(velocity_.y * elapsedTime);
+		}
+		RayVsHorizontal(elapsedTime);	//	水平方向(壁)
+	}
+
+	//Move(elapsedTime);	//	inputMoveにもある
+
+	
 
 	//	アニメーション更新処理
 	UpdateAnimation(elapsedTime);
@@ -137,7 +144,7 @@ void Player::UpdateListener()
 }
 
 //	プレイヤーと敵の当たり判定（押し合い処理）
-bool Player::PlayerVsEnemy(const float& elapsedTime)
+bool Player::PlayerVsEnemies(const float& elapsedTime)
 {
 	DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 	pos.y += height_ / 2.0f;
@@ -165,6 +172,80 @@ bool Player::PlayerVsEnemy(const float& elapsedTime)
 	return isHitEnemy_;
 }
 
+//	ジョイントに敵または弾丸が当たっているか判定(どちらも当たっていてもtrue)
+bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& meshName, const std::string& boneName, const float& jointRadius)
+{
+	bool isHit = false;
+
+	//	ジョイントのワールド座標取得
+	DirectX::XMFLOAT4X4 world;
+	DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
+	DirectX::XMFLOAT3 jointPos = GetJointPosition(meshName, boneName, world);
+	
+	//	衝突判定用のデバッグ球を描画
+	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+	//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
+
+	if (JointVsEnemies(elapsedTime, jointPos, jointRadius) == true)isHit = true;
+	if (JointVsBullet(elapsedTime, jointPos, jointRadius) == true)isHit = true;
+
+	return isHit;
+}
+
+//	ジョイントと敵の当たり判定
+bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius)
+{
+	DirectX::XMFLOAT3 outPosition = {};
+	bool isHitEnemy = false;
+
+	for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
+	{
+		DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
+		float eRadius = enemy->GetRadius() + 0.1f;
+		float eHeight = enemy->GetHeight() * 2;
+		DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
+
+		//	球と円柱で当たり判定
+		if (Collision::IntersectSphereVsCylinder(jointPos, jointRadius, ePos + ePosOffset, eRadius, eHeight, outPosition))
+		{
+			enemy->SubtractHp(1);
+			float effectScale = 50.0f;
+			isHitEnemy = true;
+		}
+		else isHitEnemy = false;
+
+		//	エフェクト再生設定(PlayerのRender()で描画される)
+		if (isHitEnemy)
+		{
+			isHitEnemy = true;
+			SetPlayEffectFlag(true);
+			SetEffectPos(jointPos);
+		}
+	}
+	return isHitEnemy;
+}
+
+//	ジョイントと弾丸の当たり判定
+bool Player::JointVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius)
+{
+	bool isHitBullet = false;
+	BulletManager& bulletManager = BulletManager::Instance();
+	for (int bulletNum = 0; bulletNum < bulletManager.GetBulletCount(); ++bulletNum)
+	{
+		//	弾丸と右手との当たり判定
+		Bullet* bullet = bulletManager.GetBullet(bulletNum);
+		DirectX::XMFLOAT3	bulletPos = bullet->GetTransform()->GetPosition();	//	弾丸の位置
+		float				bulletRadius = bullet->GetRadius();					//	弾丸の半径
+		DirectX::XMFLOAT3	outPos = {};
+		if (Collision::IntersectSphereVsSphere(jointPos, jointRadius, bulletPos, bulletRadius, outPos))
+		{
+			isHitBullet = true;
+		}
+
+	}
+	return isHitBullet;
+}
+
 //	移動入力処理
 bool Player::InputMove(const float& elapsedTime)
 {
@@ -182,18 +263,6 @@ bool Player::InputMove(const float& elapsedTime)
 	//	(ゼロより大きければ入力された)
 	float moveVecLength = sqrtf(moveVec_.x * moveVec_.x + moveVec_.z * moveVec_.z);
 	return (moveVecLength > 0);
-
-}
-
-//	攻撃ステートへ遷移
-void Player::TransitionAttack()
-{
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	//	Xキーを押したら攻撃ステートへ遷移
-	if (gamePad.GetButtonDown() & GamePad::BTN_B)
-	{
-		stateMachine_->ChangeState(static_cast<int>(StateType::Attack));
-	}
 
 }
 
@@ -602,9 +671,9 @@ bool Player::DummyRay(const float& elapsedTime)
 }
 
 //	アニメーション
-void Player::PlayAnimation(AnimationType index, const bool& loop, const float& speed, const float blendTime, const float cutTime)
+void Player::PlayAnimation(AnimationType index, const bool& loop, const float& speed, const float& blendTime, const float& startFrame)
 {
-	Character::PlayAnimation(static_cast<int>(index), loop, speed, blendTime, cutTime);
+	Character::PlayAnimation(static_cast<int>(index), loop, speed, blendTime, startFrame);
 }
 
 //	スティック入力値から移動ベクトルを取得
@@ -688,14 +757,18 @@ Player::AnimationType Player::GetCurrentAnimType()
 	return static_cast<Player::AnimationType>(currentAnimNum);
 }
 
+//	現在再生中のアニメーションの再生時間取得
+float const Player::GetCurrentAnimationSeconds()
+{
+	return Character::GetCurrentAnimationSeconds();
+}
+
 //	デバッグ描画
 void Player::DrawDebug()
 {
-	//	ステート文字列
-	std::string stateStr[static_cast<int>(StateType::Max)] =
-	{
-		"Idle","Move","Attack","Avoidance"
-	};
+	//	ステート表示
+	DrawStateStr();
+	//stateMachine_->DrawDebug();
 
 	//	ステージヒット文字列
 	std::string hitStage = "";
@@ -703,7 +776,7 @@ void Player::DrawDebug()
 	else hitStage = "false";
 
 	//	アニメーション関連
-	//int currentAnimationIndex = GetCurrentBlendAnimationIndex();	//	現在のアニメーション番号取得
+	//int currentAnimationIndex = GetCurrentBlendAnimationIndex();		//	現在のアニメーション番号取得
 	//float weight = GetWeight();										//	weight値取得		
 	//float blendRate = GetBlendRate();
 
@@ -722,7 +795,6 @@ void Player::DrawDebug()
 		//ImGui::DragFloat("AnimationWeight", &weight, 0.005f, 0.0f, 1.0f);								//	アニメーションweight値
 		//ImGui::DragFloat("BlendRate", &blendRate, 0.005f, 0.0f, 1.0f);								//	アニメーションブレンド率
 		//ImGui::InputInt("CurrentBlendAnimationIndex", &currentAnimationIndex);						//	現在のアニメーション番号
-		ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
 		ImGui::Checkbox(u8"StageCollision", &isCollisionStage_);										//	ステージとの当たり判定オン/オフ
 		ImGui::Text(u8"HitStage %s", hitStage.c_str());													//	ステージと当たっているか
 		ImGui::DragFloat("Gravity", &gravity_, 0.01f, -FLT_MAX, FLT_MAX);								//	重力
@@ -754,6 +826,20 @@ void Player::DrawDebug()
 	//	ImGuiでの変化を反映させる
 	//SetWeight(weight);
 	//SetBlendRate(blendRate);
+
+}
+
+//	現在のステート表示
+void Player::DrawStateStr()
+{
+	//	ステート文字列
+	std::string stateStr[static_cast<int>(StateType::Max)] =
+	{
+		"Idle","Move","Attack","ComboOne1",
+		"ComboOne2","ComboOne3","ComboOne4","Doege"
+	};
+
+	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
 
 }
 

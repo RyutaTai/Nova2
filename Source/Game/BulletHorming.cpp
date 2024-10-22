@@ -15,7 +15,7 @@ BulletHorming::BulletHorming(const std::string& filename)
 
 	//	カバーモデル
 	DirectX::XMFLOAT4 coverModelColor = { 1.0f,0.0f,0.0f,1.0f };
-	coverModel_ = std::make_unique<GameStaticObject>("./Resources/Model/Cube/source/Cube2.gltf", true, coverModelColor);
+	coverModel_ = std::make_unique<GltfModelStaticBatching>("./Resources/Model/Cube/source/Cube2.gltf", true, coverModelColor);
 	
 	//	透明処理
 #if 1
@@ -123,7 +123,7 @@ void BulletHorming::Move(const float& elapsedTime)
 void BulletHorming::Render()
 {
 	//	弾丸モデル描画
-	GameStaticObject::Render();
+	gltfStaticModelResource_->Render();
 
 }
 
@@ -137,7 +137,7 @@ void BulletHorming::RnederCoverModel()
 	
 	//coverModel_->SetPixelShader("./Resources/Shader/GltfModelPS.cso");
 	
-	coverModel_->SetPixelShader("./Resources/Shader/BulletCoverPS.cso");
+	coverModel_->SetPixelShaderFromName("./Resources/Shader/BulletCoverPS.cso");
 	coverModel_->GetTransform()->SetScaleFactor(coverScale);
 	coverModel_->Render();
 }

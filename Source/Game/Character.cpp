@@ -7,7 +7,6 @@
 
 //	コンストラクタ
 Character::Character(const std::string& filename, const std::string& rootNodeName)
-	:GameObject()
 {
 	//	モデル読み込み
 	gltfModelResource_ = ResourceManager::Instance().LoadGltfModelResource(filename, rootNodeName);
@@ -155,9 +154,9 @@ void Character::Turn(const float& elapsedTime, float vx, float vz, float speed)
 }
 
 //	アニメーション再生
-void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float blendTime,const float cutTime)
+void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendTime,const float& startFrame)
 {
-	gltfModelResource_->PlayAnimation(index, loop, speed, blendTime, cutTime);
+	gltfModelResource_->PlayAnimation(index, loop, speed, blendTime, startFrame);
 }
 
 //	アニメーション更新処理
@@ -178,12 +177,6 @@ void Character::SetPixelShader(const char* csoName)
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	Graphics::Instance().GetShader()->CreatePsFromCso(device, csoName, pixelShader_.ReleaseAndGetAddressOf());
 	gltfModelResource_->SetPixelShader(pixelShader_.Get());
-}
-
-//	現在再生中のアニメーション番号取得
-int Character::GetCurrentAnimNum()
-{
-	return gltfModelResource_->GetCurrentAnimNum();
 }
 
 //	ジョイントポジション取得

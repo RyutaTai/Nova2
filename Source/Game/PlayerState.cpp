@@ -1,37 +1,21 @@
 #include "PlayerState.h"
 
+#include <algorithm>
+
 #include "../Nova/Debug/DebugRenderer.h"
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Collision/Collision.h"
 #include "../Nova/Others/MathHelper.h"
 #include "BulletManager.h"
 #include "EnemyManager.h"
-
-#include <algorithm>
+#include "../Nova/Input/GamePad.h"
+#include "../Nova/Input/Input.h"
 
 //	待機ステート
 namespace PlayerState
 {
 	void IdleState::Initialize()
 	{
-#if 0
-		//	アニメーションセット
-		owner_->SetWeight(0.0f);
-		if (owner_->GetCurrentBlendAnimationIndex() == -1)
-		{
-			owner_->PlayBlendAnimation(Player::AnimationType::ANIM_T, Player::AnimationType::ANIM_IDLE, true);
-			owner_->SetWeight(1.0f);
-		}
-		else if (owner_->GetCurrentBlendAnimationIndex() == static_cast<int>(Player::AnimationType::ANIM_WALK))
-		{
-			owner_->PlayBlendAnimation(Player::AnimationType::ANIM_IDLE, true);
-			owner_->SetWeight(0.7f);
-		}
-		else
-		{
-			owner_->PlayBlendAnimation(Player::AnimationType::ANIM_IDLE, true);
-		}
-#endif
 		//	アニメーションセット
 		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.4f);
 	}
@@ -43,16 +27,15 @@ namespace PlayerState
 		{
 			owner_->ChangeState(Player::StateType::Move);
 			//owner_->PlayAnimation(Player::AnimationType::ANIM_WALK);
+		 return;
 		}
-		////	アニメーション更新処理
-		//owner_->UpdateBlendAnimation(elapsedTime);
-
-#if 0
-		owner_->AddWeight(elapsedTime);
-		owner_->SetWeight(std::clamp(owner_->GetWeight(), 0.0f, 1.0f));
-#endif
+		
 		//	攻撃ステートへ遷移
-		owner_->TransitionAttack();
+		if (owner_->GetCombo0ButtonDown())
+		{
+			owner_->ChangeState(Player::StateType::ComboOne1);
+			return;
+		}
 
 	}
 
@@ -88,23 +71,23 @@ namespace PlayerState
 		owner_->AddWeight(elapsedTime);
 #endif
 		//	一定以上の時間が経過したら走りモーションへ移行
-		walkTimer_ += WALK_TIMER_ADD * elapsedTime;
+		walkTimer_ += walkTimerAdd_ * elapsedTime;
 		owner_->MultiplyVelocityXZ(velocityScale_, elapsedTime);
-		if (walkTimer_ > WALK_TO_RUN_INTERVAL && owner_->GetCurrentAnimType() != Player::AnimationType::Run)
+		if (walkTimer_ > walkoToRunInterval_ && owner_->GetCurrentAnimType() != Player::AnimationType::Run)
 		{
-			owner_->PlayAnimation(Player::AnimationType::Run, true, 1.0f, 0.5f);
+			owner_->PlayAnimation(Player::AnimationType::Run, true, 1.0f, 0.2f);
 		}
-		else velocityScale_ += 0.1f * elapsedTime;
+		else velocityScale_ += velocityAdd_ * elapsedTime;
 
 		//	移動入力がなくなったら待機ステートへ遷移
 		if (!owner_->InputMove(elapsedTime))
 		{
 			//	待機ステートへ遷移
 			owner_->GetStateMachine()->ChangeState(static_cast<int>(Player::StateType::Idle));
-
+			return;
 		}
 		//	攻撃ステートへ遷移
-		owner_->TransitionAttack();
+		//owner_->TransitionAttack();
 
 		//	移動スピード加算
 		owner_->AddMoveSpeed(velocityScale_, elapsedTime);
@@ -137,6 +120,8 @@ namespace PlayerState
 		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 2.0f, 0.0f);
 		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f);
 
+		//	当たり判定タイマー初期化
+		judgeTimer_ = 0.0f;
 	}
 
 	void AttackState::Update(const float& elapsedTime)
@@ -149,46 +134,47 @@ namespace PlayerState
 
 #if 1
 		//	アニメーション再生が終わったら待機ステートへ遷移
-		if (!owner_->IsPlayAnimation()/* && isMove_ == false*/)
+		if (owner_->IsPlayAnimation() == false /* && isMove_ == false*/)
 		{
 			owner_->GetStateMachine()->ChangeState(static_cast<int> (Player::StateType::Idle));
+			return;
 		}
 #endif
 		//	攻撃処理
-		PunchAttack(elapsedTime);
+		//PunchAttack(elapsedTime, "SKM_Manny_LOD0", "ik_hand_gun");
 
-
-
-	}
-
-	void AttackState::Attack()
-	{
+		//	判定用タイマー更新
+		UpdateJudgeTimer(elapsedTime);
 
 	}
 
 	//	殴打攻撃（普通の攻撃）
-	void AttackState::PunchAttack(const float& elapsedTime)
-	{
-		//	右手のワールド座標取得
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-		//DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorldMatrix(scale));	//	プレイヤーのワールド行列
-		DirectX::XMFLOAT3 leftHandPos = owner_->GetJointPosition("SKM_Manny_LOD0", "ik_hand_gun", world);
-
-		//	当たり判定用の半径セット
-		float leftHandRadius = 3.0f;
-
-		//	衝突判定用のデバッグ球を描画
-		DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-		//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
-
-		//	弾丸への攻撃判定
-		PuchVsBullet(elapsedTime, leftHandPos, leftHandRadius);
-
-		//	敵への当たり判定
-		PunchVsEnemy(elapsedTime, leftHandPos, leftHandRadius);
-
-	}
+	
+	//bool AttackState::PunchAttack(const float& elapsedTime, const std::string& meshName, const std::string& boneName)
+	//{
+	//	bool isHIt = false;
+	//
+	//	//	右手のワールド座標取得
+	//	DirectX::XMFLOAT4X4 world;
+	//	DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
+	//	//DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorldMatrix(scale));	//	プレイヤーのワールド行列
+	//	DirectX::XMFLOAT3 leftHandPos = owner_->GetJointPosition(meshName, boneName, world);
+	//
+	//	//	当たり判定用の半径セット
+	//	float leftHandRadius = 3.0f;
+	//
+	//	//	衝突判定用のデバッグ球を描画
+	//	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+	//	//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
+	//
+	//	//	弾丸への攻撃判定
+	//	if (PuchVsBullet(elapsedTime, leftHandPos, leftHandRadius) == true)isHIt = true;
+	//
+	//	//	敵への当たり判定
+	//	if (PunchVsEnemy(elapsedTime, leftHandPos, leftHandRadius) == true)isHIt = true;
+	//
+	//	return isHIt;
+	//}
 
 	//	拳と弾丸の当たり判定
 	bool AttackState::PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius)
@@ -237,7 +223,6 @@ namespace PlayerState
 			DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
 
 			//	球と円柱で当たり判定
-			judgeTime_ += elapsedTime;
 			//if (1.1f/2.0f < judgeTime_ && judgeTime_ < 1.2f/2.0f)
 			//{
 			if (Collision::IntersectSphereVsCylinder(leftHandPos, leftHandRadius, ePos + ePosOffset, eRadius, eHeight, outPosition))
@@ -296,7 +281,139 @@ namespace PlayerState
 
 	void AttackState::Finalize()
 	{
-		judgeTime_ = 0.0f;
+		judgeTimer_ = 0.0f;
+	}
+
+}
+
+//	コンボ01_1
+namespace PlayerState
+{
+	void ComboOne1::Initialize()
+	{
+		//	アニメーションセット
+		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f, 0.9f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f, 0.0f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.55f);
+		judgeTime_.SetMaxJudgeTime(0.735f);
+
+	}
+
+	void ComboOne1::Update(const float& elpasedTime)
+	{
+		// TODO:アニメーションの長さ調整
+		if (owner_->IsPlayAnimation() == false)
+		//if (owner_->GetCurrentAnimationSeconds() >= 1.0f)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			//owner_->ChangeState(Player::StateType::ComboOne2);
+			return;
+		}
+	}
+
+	void ComboOne1::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+
+}
+
+//	コンボ01_2
+namespace PlayerState
+{
+	void ComboOne2::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_2, false, 1.0f, 0.0f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	判定時間セット
+
+
+	}
+
+	void ComboOne2::Update(const float& elpasedTime)
+	{
+		if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::ComboOne3);
+			return;
+		}
+	}
+
+	void ComboOne2::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+
+}
+
+//	コンボ01_3
+namespace PlayerState
+{
+	void ComboOne3::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	
+
+	}
+
+	void ComboOne3::Update(const float& elpasedTime)
+	{
+		if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::ComboOne4);
+			return;
+		}
+	}
+
+	void ComboOne3::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+
+}
+
+//	コンボ01_4
+namespace PlayerState
+{
+	void ComboOne4::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	
+
+	}
+
+	void ComboOne4::Update(const float& elpasedTime)
+	{
+		if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+
+	}
+
+	void ComboOne4::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
 	}
 
 }

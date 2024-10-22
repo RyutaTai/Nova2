@@ -17,6 +17,7 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/set.hpp>
 #include <cereal/types/unordered_map.hpp>
+#include "../Others/Transform.h"
 
 namespace DirectX
 {
@@ -360,28 +361,35 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> primitiveJointCbuffer_;
 
 public:
-	GltfModel(ID3D11Device* device, const std::string& filename, const std::string& rootNodename = "root");
+	GltfModel(const std::string& filename, const std::string& rootNodename = "root");
 	virtual ~GltfModel() = default;
 
 	void Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>& animatedNodes*/);
 	void DrawDebug();
 
-	void PlayAnimation(const int index, const bool loop = false, const float speed = 1.0f, const float blendTime = 1.0f, const float cutTime = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	void UpdateAnimation(const float& elapsedTime);
-
-	//void PlayBlendAnimation(const int index, const bool loop = false, const float speed = 1.0f);
-	//void UpdateBlendAnimation(const float elapsedTime);
 
 	void Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes);
 	void AppendAnimation(ID3D11Device* device, const std::string& filename);
 	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes);
 	bool IsPlayAnimation()const;
 
+	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShader設定
+	
+	Transform* GetTransform() { return &transform_; }
 	int	GetCurrentAnimNum();	//	現在再生中のアニメーション番号
+	float const GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
 	DirectX::XMFLOAT3 GetJointPosition(const std::string& meshName, const std::string& boneName, const DirectX::XMFLOAT4X4& transform);		//	ジョイントポジション取得
 	DirectX::XMFLOAT3 GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
+	const int GetNodeIndex(const std::string& nodeName);
+	std::vector<Node>* GetNodes() { return &nodes_; }
 
-	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShader設定
+	//	ルートモーション
+	void RootMotion(const float& scaleFactor);
+
+	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
+	void SetUseRootMotion(bool useRootMotion);
 
 private:
 	void FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName);
@@ -399,24 +407,29 @@ private:
 
 	std::string filename_;
 
+	Transform				transform_ = {};
+
 	// --- GLTF_ANIMATION ---
 	bool	isAnimationLoop_			= false;	//	アニメーションループフラグ
 	int		currentAnimationIndex_		= -1;		//	アニメーション番号
 	float	animationSpeed_				= 0.0f;		//	再生速度
-	float   currentAnimationSeconds_	= 0.0f;		//	アニメーション再生用タイマー
-
+	float   currentAnimationSeconds_	= 0.0f;		//	現在のアニメーション再生時間
+	bool	useRootMotionMovement_		= false;	//	ルートモーションの移動値を使うか
 	std::vector<GltfModel::Node> animatedNodes_[2];
 	std::vector<GltfModel::Node> blendedAnimatedNodes_;
 	int		animationClip_ = 0;
-	float	time_	= 0.0f;
 	float	factor_ = 0.0f;
 	int		transitionState_ = 0;
 	float	transitionTime_ = 1.0f;			//	どれくらい時間をかけてブレンドするか
-	float	cutTime_ = 0.0f;
-
 	bool	isTransition_ = false;			//	アニメーション遷移中かどうか
 	bool	animationEndFlag_ = false;		//	アニメーション再生が終わっているかどうか
 
+	//	ルートモーション
+	std::vector<GltfModel::Node> initAnimatedNode_;
+	DirectX::XMFLOAT3	lastPosition_			= {};
+	int					rootJointIndex_			= 1;
+	float				rootMotionSpeed_		= 1.0f;
+	bool				isFirstTimeRootMotion_	= false;	//	ルートモーション初回かどうか
 
 };
 

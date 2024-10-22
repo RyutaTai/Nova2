@@ -10,7 +10,6 @@
 #include "../Graphics/FullScreenQuad.h"
 #include "../Graphics/FrameBuffer.h"
 #include "../Resources/Model.h"
-#include "../Object/GameObject.h"
 
 class ShadowMap
 {

@@ -6,9 +6,10 @@
 #include <iostream>
 #include <fstream>
 
-#include "..//Others/Misc.h"
+#include "../Others/Misc.h"
 #include "../Graphics/Graphics.h"
 #include "../Resources/Texture.h"
+#include "../Others/MathHelper.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_EXTERANL_IMAGE
@@ -18,8 +19,10 @@
 
 #define USE_SERIALIZE 1
 
-GltfModel::GltfModel(ID3D11Device* device, const std::string& filename, const std::string& rootNodeName) : filename_(filename)
+GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeName) : filename_(filename)
 {
+    ID3D11Device* device = Graphics::Instance().GetDevice();
+
 #if USE_SERIALIZE
     std::filesystem::path cerealFilename(filename);
     cerealFilename.replace_extension("cereal");
@@ -180,6 +183,7 @@ GltfModel::GltfModel(ID3D11Device* device, const std::string& filename, const st
     animatedNodes_[1] = nodes_;
     blendedAnimatedNodes_ = nodes_;
 
+    initAnimatedNode_ = nodes_;
 }
 
 void GltfModel::FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName)
@@ -192,10 +196,11 @@ void GltfModel::FetchNodes(const tinygltf::Model& gltfModel, const std::string& 
         node.mesh_ = gltfNode.mesh;
         node.children_ = gltfNode.children;
         
-        node.isRoot_ = gltfNode.name == rootNodeName ? true : false;
-        if (node.isRoot_)
+        //  rootを見つけたらフラグを立てる
+        node.isRoot_ = false;
+        if (gltfNode.name == "root")
         {
-            int a = 0;
+            node.isRoot_ = true;
         }
 
         if (!gltfNode.matrix.empty())
@@ -709,12 +714,13 @@ void GltfModel::UpdateAnimation(const float elapsedTime)
 
 #else
 
-void GltfModel::PlayAnimation(const int index, const bool loop, const float speed, const float blendTime,const float cutTime)
+void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendTime,const float& startFrame)
 {
-    Animate(animationClip_, time_, animatedNodes_[0]);
+    Animate(animationClip_, currentAnimationSeconds_, animatedNodes_[0]);
     animationClip_ = index;
-    Animate(index, 0.0f, animatedNodes_[1]);
-    time_ = 0.0f;
+    //currentAnimationSeconds_ = startFrame;
+    Animate(index, startFrame, animatedNodes_[1]);
+    currentAnimationSeconds_ = 0.0f;
     factor_ = 0.0f;
 
     isAnimationLoop_ = loop;
@@ -723,62 +729,71 @@ void GltfModel::PlayAnimation(const int index, const bool loop, const float spee
     animationEndFlag_ = false;
 
     transitionTime_ = blendTime;
-    cutTime_ = cutTime;
+    factor_ = 0;
 }
 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
 {
+    if (IsPlayAnimation() == false)return;
+
     if (transitionState_ > 0 && transitionTime_ > 0.0f)
     {
-		factor_ = time_ / transitionTime_;
+		factor_ = currentAnimationSeconds_ / transitionTime_;
 		BlendAnimations(animatedNodes_[0], animatedNodes_[1], factor_, blendedAnimatedNodes_);
-		time_ += elapsedTime;
+        currentAnimationSeconds_ += elapsedTime;
 		if (factor_ > 1.0f)
 		{
 			// End of transition
 			transitionState_ = 0;
-			time_ = 0;
-            time_ += cutTime_;
+            currentAnimationSeconds_ = 0;
 		}
         //Render(immediate_context.Get(), world, blended_animated_nodes);
         nodes_ = blendedAnimatedNodes_;
     }
     else    //  アニメーションの遷移が終わったら
     {
-        time_ += elapsedTime * animationSpeed_;
-        //float sikii = animations_.at(animationClip_).duration_;
-        if (time_ > animations_.at(animationClip_).duration_)
+        currentAnimationSeconds_ += elapsedTime * animationSpeed_;
+
+        //  アニメーションの長さ
+		float animationDuration = animations_.at(animationClip_).duration_;
+        
+        if (currentAnimationSeconds_ > animationDuration)
         {
             if (isAnimationLoop_)   //  ループフラグがtrueなら巻き戻す
             {
-                time_ = 0;
+                currentAnimationSeconds_ = 0;
             }
             else
             {
                 animationEndFlag_ = true;
-                time_ = animations_.at(animationClip_).duration_;
+                currentAnimationSeconds_ = 0;
             }
         }
         static std::vector<GltfModel::Node> animatedNode = nodes_;
-        Animate(animationClip_, time_, animatedNode);
+        Animate(animationClip_, currentAnimationSeconds_, animatedNode);
         nodes_ = animatedNode;
 
         //Animate(animationClip_, time_, animatedNodes_[1]);
         //Render(immediate_context.Get(), world, animated_nodes[animation_clip]);
         //nodes_ = animatedNodes_[animationClip_];
     }
+
+    //  ルートモーション
+    RootMotion(transform_.GetScaleFactor());
+
 }
 #endif
 
 void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes)
 {
-    _ASSERT_EXPR(animations_.size() > animationIndex, L"animationSize > animationIndex.");
-    _ASSERT_EXPR(animatedNodes.size() == nodes_.size(), L"animationNodeSize > nodesSize.");
-
-    std::function<size_t(const std::vector<float>&, float, float&)> indexof{
-        [] (const std::vector<float>& timelines, float time, float& interpolationFactor)->size_t
+    _ASSERT_EXPR(animations_.size() > animationIndex, L"animationSize <= animationIndex.");
+    _ASSERT_EXPR(animatedNodes.size() == nodes_.size(), L"animationNodeSize != nodesSize.");
+    std::function<size_t(const std::vector<float>&, float, float&)> indexof
+    {
+        [](const std::vector<float>& timelines, float time, float& interpolationFactor)->size_t
         {
-            const size_t keyframeCount{ timelines.size() };
+            const size_t keyframeCount{timelines.size()};
+
             if (time > timelines.at(keyframeCount - 1))
             {
                 interpolationFactor = 1.0f;
@@ -786,7 +801,8 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
             }
             else if (time < timelines.at(0))
             {
-                interpolationFactor = 0.0f;
+                //interpolationFactor = 0.0f;
+                interpolationFactor = timelines.at(0);
                 return 0;
             }
             size_t keyframeIndex{ 0 };
@@ -798,10 +814,11 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
                     break;
                 }
             }
-            interpolationFactor = (time - timelines.at(keyframeIndex + 0)) / (timelines.at(keyframeIndex + 1) - timelines.at(keyframeIndex + 0));
-
+            interpolationFactor = (time - timelines.at(keyframeIndex + 0)) /
+                (timelines.at(keyframeIndex + 1) - timelines.at(keyframeIndex + 0));
             return keyframeIndex;
-        }};
+        }
+    };
 
     if (animations_.size() > 0)
     {
@@ -809,30 +826,32 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
         for (std::vector<Animation::Channel>::const_reference channel : animation.channels_)
         {
             const Animation::Sampler& sampler{ animation.samplers_.at(channel.sampler_) };
-            const std::vector<float>& timeline{animation.timelines_.at(sampler.input_)};
+            const std::vector<float>& timeline{ animation.timelines_.at(sampler.input_) };
             if (timeline.size() == 0)
             {
                 continue;
             }
             float interpolationFactor{};
-            size_t keyframeIndex{ indexof(timeline,time,interpolationFactor) };
+
+            size_t keyframeIndex{ indexof(timeline, time, interpolationFactor) };
+
             if (channel.targetPath_ == "scale")
             {
-                const std::vector<DirectX::XMFLOAT3>& scales{animation.scales_.at(sampler.output_)};
+                const std::vector<DirectX::XMFLOAT3>& scales{ animation.scales_.at(sampler.output_) };
                 DirectX::XMStoreFloat3(&animatedNodes.at(channel.targetNode_).scale_,
                     DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&scales.at(keyframeIndex + 0)),
                         DirectX::XMLoadFloat3(&scales.at(keyframeIndex + 1)), interpolationFactor));
             }
             else if (channel.targetPath_ == "rotation")
             {
-                const std::vector<DirectX::XMFLOAT4>& rotations{animation.rotations_.at(sampler.output_)};
+                const std::vector<DirectX::XMFLOAT4>& rotations{ animation.rotations_.at(sampler.output_) };
                 DirectX::XMStoreFloat4(&animatedNodes.at(channel.targetNode_).rotation_,
                     DirectX::XMQuaternionNormalize(DirectX::XMQuaternionSlerp(DirectX::XMLoadFloat4(&rotations.at(keyframeIndex + 0)),
                         DirectX::XMLoadFloat4(&rotations.at(keyframeIndex + 1)), interpolationFactor)));
             }
             else if (channel.targetPath_ == "translation")
             {
-                const std::vector<DirectX::XMFLOAT3>& translations{animation.translations_.at(sampler.output_)};
+                const std::vector<DirectX::XMFLOAT3>& translations{ animation.translations_.at(sampler.output_) };
                 DirectX::XMStoreFloat3(&animatedNodes.at(channel.targetNode_).translation_,
                     DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&translations.at(keyframeIndex + 0)),
                         DirectX::XMLoadFloat3(&translations.at(keyframeIndex + 1)), interpolationFactor));
@@ -845,6 +864,7 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
         animatedNodes = nodes_;
     }
 }
+
 
 void GltfModel::AppendAnimation(ID3D11Device* device, const std::string& fileName)
 {
@@ -882,6 +902,8 @@ void GltfModel::BlendAnimations(const std::vector<Node>& fromNodes, const std::v
 
     size_t nodeCount{ fromNodes.size() };
     _ASSERT_EXPR(nodeCount == outNodes.size(), L"The size of output nodes must be input nodes.");
+    outNodes.resize(nodeCount);
+    
     for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         DirectX::XMVECTOR S[2]{ DirectX::XMLoadFloat3(&fromNodes.at(nodeIndex).scale_), DirectX::XMLoadFloat3(&toNodes.at(nodeIndex).scale_) };
@@ -939,6 +961,83 @@ DirectX::XMFLOAT3 GltfModel::GetJointPosition(size_t nodeIndex, const DirectX::X
     DirectX::XMMATRIX M = XMLoadFloat4x4(&node.globalTransform_) * DirectX::XMLoadFloat4x4(&transform);
     DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
     return position;
+}
+
+//  ノードインデックス取得
+const int GltfModel::GetNodeIndex(const std::string& nodeName)
+{
+    for (int nodeIndex = 0; nodeIndex < nodes_.size(); ++nodeIndex)
+    {
+        if (nodes_.at(nodeIndex).name_ == nodeName)
+        {
+            return nodeIndex;
+        }
+    }
+
+    return -1;
+}
+
+//  ルートモーション
+void GltfModel::RootMotion(const float& scaleFactor)
+{
+    if (animationEndFlag_)return;                   //  アニメーションが再生されていないため処理しない
+
+    if (useRootMotionMovement_ == false)return;     //  
+
+    //  ルートモーション初回なら計算しなおす
+    if (isFirstTimeRootMotion_)
+    {
+        Animate(animationClip_, currentAnimationSeconds_, nodes_);
+    }
+
+    Node& node = nodes_.at(rootJointIndex_);
+
+    if (isFirstTimeRootMotion_)
+    {
+        lastPosition_ = { node.globalTransform_._41,node.globalTransform_._42,node.globalTransform_._43 };
+        isFirstTimeRootMotion_ = false;
+    }
+
+    DirectX::XMFLOAT3 position = { node.globalTransform_._41,node.globalTransform_._42,node.globalTransform_._43 };
+    DirectX::XMFLOAT3 displacement = { position.x - lastPosition_.x,position.y - lastPosition_.y,position.z - lastPosition_.z };
+
+    DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&GetTransform()->GetCoordinateSystemTransform(Transform::CoordinateSystem::cRightYup)) * DirectX::XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor);
+    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(GetTransform()->GetScale().x, GetTransform()->GetScale().y, GetTransform()->GetScale().z);
+    DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(GetTransform()->GetRotationX(), GetTransform()->GetRotationY(), GetTransform()->GetRotationZ());
+    DirectX::XMStoreFloat3(&displacement, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&displacement), C * S * R));
+
+    DirectX::XMFLOAT3 translation = GetTransform()->GetPosition();
+    translation = translation + displacement * rootMotionSpeed_;
+    GetTransform()->SetPosition(translation);
+
+    node.globalTransform_._41 = initAnimatedNode_.at(rootJointIndex_).globalTransform_._41;
+    node.globalTransform_._42 = initAnimatedNode_.at(rootJointIndex_).globalTransform_._42;
+    node.globalTransform_._43 = initAnimatedNode_.at(rootJointIndex_).globalTransform_._43;
+
+    std::function<void(int, int)>traverse = [&](int parentIndex, int nodeIndex)
+    {
+        GltfModel::Node& node = GetNodes()->at(nodeIndex);
+        if (parentIndex > -1)
+        {
+            DirectX::XMMATRIX S = DirectX::XMMatrixScaling(node.scale_.x, node.scale_.y, node.scale_.z);
+            DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(node.rotation_.x, node.rotation_.y, node.rotation_.z, node.rotation_.w));
+            DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(node.translation_.x, node.translation_.y, node.translation_.z);
+            DirectX::XMStoreFloat4x4(&node.globalTransform_, S * R * T * DirectX::XMLoadFloat4x4(&GetNodes()->at(parentIndex).globalTransform_));
+        }
+        for (int childIndex : node.children_)
+        {
+            traverse(nodeIndex, childIndex);
+        }
+    };
+    traverse(-1, rootJointIndex_);
+
+    lastPosition_ = position;
+}
+
+void GltfModel::SetUseRootMotion(bool useRootMotion)
+{
+    useRootMotionMovement_ = useRootMotion;
+    isFirstTimeRootMotion_ = true;
 }
 
 void GltfModel::Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>& animatedNodes*/)
@@ -1055,7 +1154,7 @@ void GltfModel::DrawDebug()
         ImGui::DragInt("AnimationClip", &animationClip_, 0.0f, 5.0f);
         ImGui::DragInt("TransitionState", &transitionState_, 0.0f, 5.0f);
         ImGui::DragFloat("Factor", &factor_, 0.0f, 5.0f);
-        ImGui::DragFloat("Time", &time_, 0.0f, 5.0f);
+        ImGui::DragFloat("Time", &currentAnimationSeconds_, 0.0f, 5.0f);
         ImGui::TreePop();
     }
 }

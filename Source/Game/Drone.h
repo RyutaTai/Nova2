@@ -76,7 +76,8 @@ private:
 
 private:	//	デバッグ用の変数
 	bool	bulletLaunch_	= true;		//	弾を発射するかどうか()
-	static const int MAX_HP = 3;		//	最大HP
+	static const int MAX_HP = 50;		//	最大HP
+	//static const int MAX_HP = 3;		//	最大HP
 
 };
 

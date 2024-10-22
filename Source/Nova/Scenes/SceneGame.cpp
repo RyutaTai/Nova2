@@ -146,7 +146,7 @@ void SceneGame::Update(const float& elapsedTime)
 
 	//	HP更新処理
 
-		//	HP描画
+	//	HP描画
 #if 0
 	{
 		int hp = Player::Instance().GetHp();
@@ -435,25 +435,8 @@ void SceneGame::Render()
 //	終了化
 void SceneGame::Finalize()
 {
-	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_GAME::MAX); i++)
-	{
-		if (sprite_[i] != nullptr)
-		{
-			sprite_[i] = nullptr;
-		}
-	}
-	//	ステージ終了化
-	for (int i = 0; i < 2; i++)
-	{
-		if (stage_[i] != nullptr)
-		{
-			stage_[i] = nullptr;
-		}
-	}
-
 	//	UI終了化
-	UIManager::Instance().Finalize();
+	//UIManager::Instance().Finalize();
 
 }
 

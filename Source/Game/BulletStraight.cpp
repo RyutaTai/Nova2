@@ -38,7 +38,7 @@ void BulletStraight::Update(const float& elapsedTime)
 //	•`‰æˆ—
 void BulletStraight::Render()
 {
-	GameStaticObject::Render();
+	gltfStaticModelResource_->Render();
 }
 
 //	”­ŽË

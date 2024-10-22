@@ -12,8 +12,9 @@
 
 #define USE_SERIALIZE 1
 
-GltfModelStaticBatching::GltfModelStaticBatching(ID3D11Device* device, const std::string& filename, const bool setColor, const DirectX::XMFLOAT4 color) : filename_(filename)
+GltfModelStaticBatching::GltfModelStaticBatching(const std::string& filename, const bool setColor, const DirectX::XMFLOAT4 color) : filename_(filename)
 {
+	ID3D11Device* device = Graphics::Instance().GetDevice();
 #if USE_SERIALIZE
 	std::filesystem::path cerealFilename(filename);
 	cerealFilename.replace_extension("cereal");
@@ -68,7 +69,6 @@ GltfModelStaticBatching::GltfModelStaticBatching(ID3D11Device* device, const std
 			}
 
 		}
-		
 
 		std::vector<Material::Cbuffer> materialData;
 		for (std::vector<Material>::const_reference material : materials_)
@@ -705,7 +705,14 @@ void GltfModelStaticBatching::FetchTextures(ID3D11Device* device, const tinygltf
 	}
 }
 
-void GltfModelStaticBatching::Render(const DirectX::XMMATRIX& world)
+void GltfModelStaticBatching::SetPixelShaderFromName(const char* csoName)
+{
+	ID3D11Device* device = Graphics::Instance().GetDevice();
+	Graphics::Instance().GetShader()->CreatePsFromCso(device, csoName, pixelShader_.ReleaseAndGetAddressOf());
+	SetPixelShader(pixelShader_.Get());
+}
+
+void GltfModelStaticBatching::Render()
 {
 	ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
 	deviceContext->PSSetShaderResources(0, 1, materialResourceView_.GetAddressOf());
@@ -736,7 +743,7 @@ void GltfModelStaticBatching::Render(const DirectX::XMMATRIX& world)
 		PrimitiveConstants primitiveData = {};
 		primitiveData.material_ = primitive.material_;
 		primitiveData.hasTangent_ = primitive.vertexBufferViews_.at("TANGENT").buffer_ != NULL;
-		XMStoreFloat4x4(&primitiveData.world_, world);
+		XMStoreFloat4x4(&primitiveData.world_, GetTransform()->CalcWorld());
 		deviceContext->UpdateSubresource(primitiveCbuffer_.Get(), 0, 0, &primitiveData, 0, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, primitiveCbuffer_.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(0, 1, primitiveCbuffer_.GetAddressOf());

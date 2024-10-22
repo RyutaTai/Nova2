@@ -2,6 +2,7 @@
 
 #include "../Nova/AI/State.h"
 #include "Player.h"
+#include "JudgeTime.h"
 
 //	待機ステート
 namespace PlayerState
@@ -33,12 +34,12 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		static constexpr float VELOCITY_SCALE_MAX = 30.0f;	//	
-		static constexpr float WALK_TIMER_ADD = 3.0f;		//	walkTimer加算量
-		static constexpr float WALK_TO_RUN_INTERVAL = 1.0f;	//	歩きから走りに切り替えるまでの時間
-
+		static constexpr float velocityScaleMax_ = 30.0f;	//	
+		static constexpr float walkTimerAdd_ = 10.0f;		//	walkTimer加算量
+		static constexpr float walkoToRunInterval_ = 0.5f;	//	歩きから走りに切り替えるまでの時間
+		static constexpr float velocityAdd_ = 0.1f;			//	velocityScale加算量		
 		float walkTimer_		= 0.0f;						//	歩き状態に入ってどのくらい経過したか
-		float velocityScale_	= 1.0f;						//	Velocityに掛ける数
+		float velocityScale_	= 3.0f;						//	Velocityに掛ける係数
 
 	};
 }
@@ -56,8 +57,8 @@ namespace PlayerState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 
-		void Attack();
-		void PunchAttack(const float& elapsedTime);
+		void UpdateJudgeTimer(const float& elapsedTime) { judgeTimer_ += elapsedTime; }
+		//bool PunchAttack(const float& elapsedTime, const std::string& meshName, const std::string& boneName);
 		bool PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
 		bool PunchVsEnemy(const float& elpasedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
 		bool PuchAttackCollision();
@@ -65,11 +66,81 @@ namespace PlayerState
 
 		void SetTargetPosition(const DirectX::XMFLOAT3& pos) { targetPos_ = pos; }	//	ターゲット位置設定
 
+
 	private:
 		DirectX::XMFLOAT3 targetPos_ = {};	//	ターゲット
 		float moveTime_ = 1.0f;				//	ターゲットへ向かってどのくらいの時間動くか
 		bool isMove_ = false;				//	ターゲットへ移動中
-		float judgeTime_ = 0.0f;
+		float judgeTimer_ = 0.0f;			//	判定する時間を制限するときに使用
+
+	};
+}
+
+//	コンボ01_1
+namespace PlayerState
+{
+	class ComboOne1 :public State<Player>
+	{
+	public:
+		ComboOne1(Player* owner) :State(owner) {}
+		~ComboOne1(){}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	private:
+		JudgeTime judgeTime_ = {};
+
+	};
+}
+
+//	コンボ01_2
+namespace PlayerState
+{
+	class ComboOne2 :public State<Player>
+	{
+	public:
+		ComboOne2(Player* owner) :State(owner) {}
+		~ComboOne2() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	};
+}
+
+//	コンボ01_3
+namespace PlayerState
+{
+	class ComboOne3 :public State<Player>
+	{
+	public:
+		ComboOne3(Player* owner) :State(owner) {}
+		~ComboOne3() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	private:
+
+	};
+}
+
+//	コンボ01_4
+namespace PlayerState
+{
+	class ComboOne4 :public State<Player>
+	{
+	public:
+		ComboOne4(Player* owner) :State(owner) {}
+		~ComboOne4() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
 
 	};
 }

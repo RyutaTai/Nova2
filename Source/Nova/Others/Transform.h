@@ -101,6 +101,12 @@ public:// Setter,Getter, etc...
 	[[nodiscard]] const float GetColorB() const { return color_.z; }
 	[[nodiscard]] const float GetColorA() const { return color_.w; }
 
+	//---------- CoordinateSystem ----------
+	[[nodiscard]] const DirectX::XMFLOAT4X4 GetCoordinateSystemTransform(CoordinateSystem coordinateSystem)const
+	{
+		return CoordinateSystemTransforms_[static_cast<int>(coordinateSystem)];
+	}
+
 private:
 	DirectX::XMFLOAT3 position_ = { 0,0,0 };
 	DirectX::XMFLOAT3 scale_	= { 1,1,1 };

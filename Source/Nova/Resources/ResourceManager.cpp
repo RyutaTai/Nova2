@@ -42,7 +42,7 @@ std::shared_ptr<GltfModel> ResourceManager::LoadGltfModelResource(const std::str
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>(Graphics::Instance().GetDevice(), fileName, rootNodeName);
+	std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>(fileName, rootNodeName);
 	gltfModels_[fileName] = gltfModel;
 
 	//	見つからなかった
@@ -65,7 +65,7 @@ std::shared_ptr<GltfModelStaticBatching> ResourceManager::LoadGltfModelStaticRes
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<GltfModelStaticBatching> gltfStaticModel = std::make_shared<GltfModelStaticBatching>(Graphics::Instance().GetDevice(), fileName, setColor, color);
+	std::shared_ptr<GltfModelStaticBatching> gltfStaticModel = std::make_shared<GltfModelStaticBatching>(fileName, setColor, color);
 	gltfStaticModels_[fileName] = gltfStaticModel;
 
 	//	見つからなかった

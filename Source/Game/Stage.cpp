@@ -5,7 +5,6 @@
 static Stage* instance = nullptr;
 
 Stage::Stage()
-	: GameStaticObject("./Resources/Model/cybercity-2099-v2/city.gltf")
 {
 	//	インスタンスポイント設定
 	instance = this;
@@ -16,6 +15,8 @@ Stage::Stage()
 	collisionMesh_ = std::make_unique<decltype(collisionMesh_)::element_type>(Graphics::Instance().GetDevice(), "./Resources/Model/cybercity-2099-v2/city_collision_ground2_correct.glb");
 #else
 	
+	gltfStaticModelResource_ = ResourceManager::Instance().LoadGltfModelStaticResource("./Resources/Model/cybercity-2099-v2/city.gltf");
+
 	GetTransform()->SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 	GetTransform()->SetScaleFactor(0.0025f);	//	シティモデル
 
@@ -103,8 +104,8 @@ void Stage::ShadowRender(const float& scale)
 void Stage::Render()
 {
 	//	ピクセルシェーダーセット
-	SetPixelShader("./Resources/Shader/CityPS.cso");
-	GameStaticObject::Render();
+	gltfStaticModelResource_->SetPixelShaderFromName("./Resources/Shader/CityPS.cso");
+	gltfStaticModelResource_->Render();
 
 }
 

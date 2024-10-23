@@ -100,6 +100,15 @@ void BulletManager::CoverModelUpdate(const float& elapsedTime)
 
 }
 
+//	無敵状態セット
+void BulletManager::SetInvincible(bool isInvincible)
+{
+	for (Bullet* bullet : bullets_)
+	{
+		bullet->SetInvincible(isInvincible);
+	}
+}
+
 //	描画処理
 void BulletManager::Render()
 {
@@ -121,6 +130,7 @@ void BulletManager::Render()
 //	弾丸登録
 void BulletManager::Register(Bullet* bullet)
 {
+	bullet->SetInvincible(isInvincible_);
 	bullets_.emplace_back(bullet);
 }
 
@@ -156,6 +166,14 @@ void BulletManager::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"BulletManager"))
 	{
+		bool previousInvincible = isInvincible_;
+		if(ImGui::Checkbox("Invincible", &isInvincible_))	//	無敵状態
+		{
+			if (previousInvincible != isInvincible_)
+			{
+				SetInvincible(isInvincible_);
+			}
+		}
 		ImGui::Checkbox("Bullet Destroy ", &isBulletDestroy_);						//	弾丸破棄
 		ImGui::Checkbox("CoverDraw ", &coverModelDraw_);							//	カバーモデル描画
 		ImGui::Checkbox("IsCoverModelUpdate", &isCoverModelUpdate_);				//	カバーモデル更新処理(デフォルトはtrue)

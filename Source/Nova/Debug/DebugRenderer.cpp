@@ -33,7 +33,7 @@ DebugRenderer::DebugRenderer(ID3D11Device* device)
 		//	入力レイアウト
 		D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 		hr = device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), csoData.get(), csoSize, inputLayout_.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
@@ -141,6 +141,9 @@ DebugRenderer::DebugRenderer(ID3D11Device* device)
 //	描画
 void DebugRenderer::Render()
 {
+	//	デバッグ描画がオフなら処理しない
+	if (drawDebug_ == false)return;
+
 	Graphics& graphics = Graphics::Instance();
 
 	// シェーダー設定
@@ -559,3 +562,13 @@ void DebugRenderer::CreateConeMesh(ID3D11Device* device, float radius, float hei
 
 
 #endif
+
+//	ImGui描画
+void DebugRenderer::DrawDebugGUI()
+{
+	if (ImGui::TreeNode("DebugRenderer"))
+	{
+		ImGui::Checkbox("DrawDebugFlag", &drawDebug_);	//	デバッグ描画フラグ
+		ImGui::TreePop();
+	}
+}

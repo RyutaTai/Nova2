@@ -634,7 +634,6 @@ GltfModel::BufferView GltfModel::MakeBufferView(const tinygltf::Accessor& access
         switch (accessor.componentType)
         {
         case TINYGLTF_COMPONENT_TYPE_FLOAT:
-
             bufferView.format_ = DXGI_FORMAT_R32G32_FLOAT;
             bufferView.strideInBytes_ = sizeof(FLOAT) * 2;
             break;
@@ -658,6 +657,10 @@ GltfModel::BufferView GltfModel::MakeBufferView(const tinygltf::Accessor& access
     case TINYGLTF_TYPE_VEC4:
         switch (accessor.componentType)
         {
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+            bufferView.format_ = DXGI_FORMAT_R8G8B8A8_UINT;
+            bufferView.strideInBytes_ = sizeof(BYTE) * 4;
+            break;
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
             bufferView.format_ = DXGI_FORMAT_R16G16B16A16_UINT;
             bufferView.strideInBytes_ = sizeof(USHORT) * 4;
@@ -743,11 +746,9 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
         currentAnimationSeconds_ += elapsedTime;
 		if (factor_ > 1.0f)
 		{
-			// End of transition
 			transitionState_ = 0;
             currentAnimationSeconds_ = 0;
 		}
-        //Render(immediate_context.Get(), world, blended_animated_nodes);
         nodes_ = blendedAnimatedNodes_;
     }
     else    //  アニメーションの遷移が終わったら
@@ -865,8 +866,7 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
     }
 }
 
-
-void GltfModel::AppendAnimation(ID3D11Device* device, const std::string& fileName)
+void GltfModel::AppendAnimation(const std::string& filename)
 {
     tinygltf::TinyGLTF tinyGltf;
     tinyGltf.SetImageLoader(NullLoadImageData, nullptr);
@@ -874,13 +874,13 @@ void GltfModel::AppendAnimation(ID3D11Device* device, const std::string& fileNam
     tinygltf::Model gltfModel;
     std::string error, warning;
     bool succeeded{ false };
-    if (fileName.find(".glb") != std::string::npos)
+    if (filename.find(".glb") != std::string::npos)
     {
-        succeeded = tinyGltf.LoadBinaryFromFile(&gltfModel, &error, &warning, fileName.c_str());
+        succeeded = tinyGltf.LoadBinaryFromFile(&gltfModel, &error, &warning, filename.c_str());
     }
-    else if (fileName.find(".gltf") != std::string::npos)
+    else if (filename.find(".gltf") != std::string::npos)
     {
-        succeeded = tinyGltf.LoadASCIIFromFile(&gltfModel, &error, &warning, fileName.c_str());
+        succeeded = tinyGltf.LoadASCIIFromFile(&gltfModel, &error, &warning, filename.c_str());
     }
 
     _ASSERT_EXPR_A(warning.empty(), warning.c_str());

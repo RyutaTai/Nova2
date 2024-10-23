@@ -97,7 +97,7 @@ private:
 
 	//	ConstantBuffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	constantBuffer_;
-	std::unique_ptr<FrameBuffer>			frameBuffers_[8];
+	std::unique_ptr<FrameBuffer>			frameBuffers_[8];	//	g‚í‚ê‚Ä‚¢‚È‚¢
 	std::unique_ptr<FullScreenQuad>			bitBlockTransfer_;
 
 	//	‚’¼“¯Šú

@@ -371,7 +371,7 @@ public:
 	void UpdateAnimation(const float& elapsedTime);
 
 	void Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes);
-	void AppendAnimation(ID3D11Device* device, const std::string& filename);
+	void AppendAnimation(const std::string& filename);
 	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes);
 	bool IsPlayAnimation()const;
 

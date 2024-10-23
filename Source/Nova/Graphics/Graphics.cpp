@@ -274,6 +274,7 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height)
 		d2d1DeviceContext_.Reset();
 #endif
 
+		//	FrameBufferリセット(3番目はリセットしない)
 		frameBuffers_[0].reset();
 		frameBuffers_[1].reset();
 
@@ -289,7 +290,7 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height)
 #ifdef ENABLE_DIRECT2D
 		CreateDirect2dObjects();
 #endif
-
+		//	サイズ再設定
 		frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), 1280, 720);
 		frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), 1280 / 2, 720 / 2);
 	}

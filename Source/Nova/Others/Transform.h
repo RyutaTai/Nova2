@@ -102,6 +102,8 @@ public:// Setter,Getter, etc...
 	[[nodiscard]] const float GetColorA() const { return color_.w; }
 
 	//---------- CoordinateSystem ----------
+	void SetCoordinateSystem(const CoordinateSystem& coordinateSystem) { coordinateSystem_ = static_cast<int>(coordinateSystem); }
+
 	[[nodiscard]] const DirectX::XMFLOAT4X4 GetCoordinateSystemTransform(CoordinateSystem coordinateSystem)const
 	{
 		return CoordinateSystemTransforms_[static_cast<int>(coordinateSystem)];

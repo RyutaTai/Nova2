@@ -38,16 +38,19 @@ public:
 	void Clear();
 
 	//	カバーモデルスケールセット
-	void SetCoverScale(float& coverScale) { coverScale_ = coverScale; }
+	void SetCoverScale(const float& coverScale) { coverScale_ = coverScale; }
 
 	//	カバーモデルスケール取得
 	const float& GetCoverScale() const { return coverScale_; }
+
+	//	無敵状態セット
+	void SetInvincible(bool isInvincible);
 
 	//	弾丸数取得
 	int GetBulletCount()const { return static_cast<int>(bullets_.size()); }
 
 	//	弾丸取得
-	Bullet* GetBullet(int index) { return bullets_.at(index); }
+	Bullet* GetBullet(const int& index) { return bullets_.at(index); }
 
 	//	弾丸削除
 	void Remove(Bullet* projectile);
@@ -82,6 +85,7 @@ private:
 #endif
 
 private:	//	デバッグ用の変数
+	bool isInvincible_ = false;			//	無敵状態
 	bool isBulletDestroy_ = false;		//	弾丸破棄
 	bool coverModelDraw_ = true;		//	カバーモデル描画フラグ
 	bool isCoverModelUpdate_ = true;	//	カバーモデル更新処理

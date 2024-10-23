@@ -108,6 +108,19 @@ namespace PlayerState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 
+	private:
+		bool IsHitRightHand(const float& elapsedTime);
+		bool IsHitLeftHand(const float& elapsedTime);
+
+	private:
+		enum class JudgePart	//	当たり判定部分
+		{
+			LeftHand = 0,		//	左ジャブ
+			RightHand,			//	右アッパー
+		};
+
+		JudgeTime judgeTimes_[2] = {};
+
 	};
 }
 

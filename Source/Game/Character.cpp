@@ -203,6 +203,12 @@ void Character::SubtractHp(int hp)
 	}
 }
 
+//	アニメーション追加
+void Character::AppendAnimation(const std::string& filename)
+{
+	gltfModelResource_->AppendAnimation(filename);
+}
+
 //	描画処理
 void Character::Render()
 {

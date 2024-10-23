@@ -450,14 +450,18 @@ void SceneGame::DrawDebug()
 	auto srv = ShadowMap::Instance().GetShaderResourceView();
 	ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
 
+	Graphics::Instance().GetDebugRenderer()->DrawDebugGUI();	//	DebugRenderer
+
 	ImGui::DragFloat4("LightDirection", &lightDirection_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	ƒ‰ƒCƒg‚ÌŒü‚«
 
 	if (bloomer_)bloomer_->DrawDebug();	//	Bloom
+	ShadowMap::Instance().DrawDebug();	//	Shadow
 
 	Camera::Instance().DrawDebug();		//	Camera
 	
-	ShadowMap::Instance().DrawDebug();	//	Shadow
 	player_->DrawDebug();				//	Player
+
+	stage_[0]->DrawDebug();				//	Stage
 
 	EnemyManager::Instance().DrawDebug();
 	//enemy_->DrawDebug();				//	Enemy
@@ -466,6 +470,6 @@ void SceneGame::DrawDebug()
 	
 	UIManager::Instance().DrawDebug();	//	UIManager‚ÆUI
 
-	ImGui::Checkbox("DrawUI", &drawUI_);				//	UI•`‰æØ‚è‘Ö‚¦
+	//ImGui::Checkbox("DrawUI", &drawUI_);				//	UI•`‰æØ‚è‘Ö‚¦
 
 }

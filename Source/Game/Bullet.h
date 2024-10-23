@@ -24,6 +24,7 @@ public:
 	virtual void			CoverModelUpdate(const float& elapsedTime);									//	カバーモデル更新処理
 	virtual void			Destroy(const float& elapsedTime);											//	破棄処理
 	
+	void					SetInvincible(const bool& isInvincible)			{ isInvincible_ = isInvincible; }
 	void					SetDamaged(bool damaged)						{ damaged_ = damaged; }		//	ダメージフラグ設定
 	void					SetOwnerPosition(const DirectX::XMFLOAT3& pos)	{ ownerPosition_ = pos; }	//	弾丸所有者の位置設定
 	
@@ -63,6 +64,8 @@ protected:
 
 	std::unique_ptr<SoundEmitter> emitter_ = nullptr;							//	エミッターを自分の位置で持つ
 	std::unique_ptr<AudioSource3D> se_[static_cast<int>(AUDIO_SE_BULLET::Max)];	//	弾丸のSE(3Dで鳴らす)
+
+	bool isInvincible_ = false;	//	無敵
 
 };
 

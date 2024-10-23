@@ -14,10 +14,6 @@ Bullet::Bullet(const std::string& filename)
 	//	¶¬‚Éƒ}ƒl[ƒWƒƒ[‚É“o˜^‚·‚é
 	BulletManager::Instance().Register(this);
 
-	//	’eŠÛƒXƒP[ƒ‹İ’è(•`‰æ—p)
-	float scale = 60.0f;
-	GetTransform()->SetScaleFactor(scale);
-
 	//	’eŠÛ”¼Œa(“–‚½‚è”»’è—p)
 	radius_ = 1.0f;
 
@@ -55,6 +51,9 @@ void Bullet::CoverModelUpdate(const float& elpasedTime)
 //	”jŠü
 void Bullet::Destroy(const float& elapsedTime)
 {
+	//	–³“Gó‘Ô‚È‚ç”jŠü‚µ‚È‚¢
+	if (isInvincible_)return;
+
 	//	”š”­‰¹Ä¶
 	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)]->Play(false);
 

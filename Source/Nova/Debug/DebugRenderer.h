@@ -24,6 +24,9 @@ public:
 	// 円錐描画
 	void DrawCone(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& axis, float radius, float height, const DirectX::XMFLOAT4& color);
 
+	//	ImGui描画
+	void DrawDebugGUI();
+
 private:
 	// 球メッシュ作成
 	void CreateSphereMesh(ID3D11Device* device, float radius, int slices, int stacks);
@@ -86,5 +89,7 @@ private:
 	UINT	sphereVertexCount_ = 0;
 	UINT	cylinderVertexCount_ = 0;
 	UINT	coneVertexCount_ = 0;
+
+	bool drawDebug_ = true;	//	デバッグ描画フラグ
 
 };

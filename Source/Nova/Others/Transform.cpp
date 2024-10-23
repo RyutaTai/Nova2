@@ -41,7 +41,14 @@ DirectX::XMMATRIX Transform::CalcWorld()
     const DirectX::XMMATRIX R{ DirectX::XMMatrixRotationRollPitchYaw(rotation_.x,rotation_.y,rotation_.z) };
     const DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(position_.x,position_.y,position_.z) };
 
+#if 0
     return S * R * T;
+#else
+
+    const DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&CoordinateSystemTransforms_[coordinateSystem_]) };
+
+    return C * S * R * T;
+#endif
 }
 
 //  座標系をかけたワールド行列

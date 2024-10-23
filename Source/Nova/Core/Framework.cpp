@@ -17,7 +17,7 @@ HighResolutionTimer Framework::tictoc_ = {};
 
 //	コンストラクタ
 Framework::Framework(HWND hwnd)
-	: graphics_(hwnd, false/*fullscreen*/),
+	: graphics_(hwnd, true/*fullscreen*/),
 	input_(hwnd)
 {
 	//	XAUDIO2デバッグ用

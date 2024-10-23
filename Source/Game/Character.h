@@ -34,6 +34,7 @@ public:
 	void UpdateAnimation(const float& elapsedTime);
 	bool IsPlayAnimation()const;
 
+	void AppendAnimation(const std::string& filename);
 	void SetVelocity(const DirectX::XMFLOAT3& velocity)			{ velocity_ = velocity; }
 	void SetAcceleration(const DirectX::XMFLOAT3& acceleration) { acceleration_ = acceleration; }
 	void SetMoveSpeed(const float& moveSpeed)					{ moveSpeed_ = moveSpeed; }

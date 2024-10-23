@@ -20,11 +20,39 @@ Player& Player::Instance()
 
 //	コンストラクタ
 Player::Player()
-	//:Character("./Resources/Model/free-mixamo-retextured-model/source/model5.glb", "")
-	:Character("./Resources/Model/Player.gltf", "")
+	:Character("./Resources/Model/Player/SKM_Manny_Anim.gltf", "")
+	//:Character("./Resources/Model/Player.gltf", "")
 {
 	//	インスタンス設定
 	instance = this;
+
+	//	アニメーション追加
+	{
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Idle_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Idle_Combat_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Walk_F_0_Loop_IP_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_Start_IP_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_Loop_IP_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_End_IP_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_F_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_R_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_B_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_L_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Double_Jump_0_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-1_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-2_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-3_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-4_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Front_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Right_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Back_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Left_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Front_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Right_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Back_Seq.FBX");
+		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Left_Seq.FBX");
+	}
 
 	//	ステートセット(Player::StateTypeの順と合わせる)
 	stateMachine_.reset(new StateMachine<State<Player>>());
@@ -60,10 +88,17 @@ void Player::Initialize()
 	//	エフェクトスケール設定
 	effectScale_ = 5.0f;
 
+	//	位置設定
 	GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
 
+	//	スケール設定
 	//float scale = 2.0f;
-	GetTransform()->SetScaleFactor(0.0225f);
+	//GetTransform()->SetScaleFactor(-3.0f);
+	GetTransform()->SetScaleFactor(3.0f);
+
+	//	座標系変換
+	GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
+
 	radius_ = 0.7f;
 	height_ = 4.4f;
 
@@ -71,6 +106,8 @@ void Player::Initialize()
 	//moveSpeed_ = 25.0f;
 
 	hp_ = MAX_HP;
+
+	SetPixelShader("./Resources/Shader/PlayerPS.cso");
 
 }
 
@@ -115,8 +152,6 @@ void Player::Update(const float& elapsedTime)
 	}
 
 	//Move(elapsedTime);	//	inputMoveにもある
-
-	
 
 	//	アニメーション更新処理
 	UpdateAnimation(elapsedTime);

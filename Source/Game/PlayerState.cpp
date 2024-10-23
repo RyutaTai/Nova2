@@ -17,7 +17,7 @@ namespace PlayerState
 	void IdleState::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.4f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.2f);
 	}
 
 	void IdleState::Update(const float& elapsedTime)
@@ -72,12 +72,13 @@ namespace PlayerState
 #endif
 		//	一定以上の時間が経過したら走りモーションへ移行
 		walkTimer_ += walkTimerAdd_ * elapsedTime;
-		owner_->MultiplyVelocityXZ(velocityScale_, elapsedTime);
+		//owner_->MultiplyVelocityXZ(velocityScale_, elapsedTime);
 		if (walkTimer_ > walkoToRunInterval_ && owner_->GetCurrentAnimType() != Player::AnimationType::Run)
 		{
 			owner_->PlayAnimation(Player::AnimationType::Run, true, 1.0f, 0.2f);
+			owner_->SetMoveSpeed(4.5f);	//	移動スピード切り替え
 		}
-		else velocityScale_ += velocityAdd_ * elapsedTime;
+		//else velocityScale_ += velocityAdd_ * elapsedTime;
 
 		//	移動入力がなくなったら待機ステートへ遷移
 		if (!owner_->InputMove(elapsedTime))
@@ -86,12 +87,7 @@ namespace PlayerState
 			owner_->GetStateMachine()->ChangeState(static_cast<int>(Player::StateType::Idle));
 			return;
 		}
-		//	攻撃ステートへ遷移
-		//owner_->TransitionAttack();
-
-		//	移動スピード加算
-		owner_->AddMoveSpeed(velocityScale_, elapsedTime);
-
+		
 	}
 
 	void MoveState::Finalize()
@@ -307,11 +303,21 @@ namespace PlayerState
 	void ComboOne1::Update(const float& elpasedTime)
 	{
 		// TODO:アニメーションの長さ調整
-		if (owner_->IsPlayAnimation() == false)
-		//if (owner_->GetCurrentAnimationSeconds() >= 1.0f)
+		
+		//
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		bool isCorrectTime = judgeTime_.IsJudgeFlag(currentAnimationSeconds);
+		bool isHit = owner_->JointVsEnemiesAndBullet(elpasedTime, "SKM_Manny_LOD0", "ik_hand_r", 5.0f);	//	敵と弾丸との当たり判定
+
+		if ( isHit && isCorrectTime)
+		{
+			//owner_->ChangeState(Player::StateType::Idle);
+			owner_->ChangeState(Player::StateType::ComboOne2);
+			return;
+		}
+		else if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
-			//owner_->ChangeState(Player::StateType::ComboOne2);
 			return;
 		}
 	}
@@ -335,17 +341,61 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-
+		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMinJudgeTime(0.230f);		//	左ジャブ
+		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMaxJudgeTime(0.250f);
+		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMinJudgeTime(0.3f);		//	右アッパー
+		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMaxJudgeTime(0.65f);
 
 	}
 
-	void ComboOne2::Update(const float& elpasedTime)
+	void ComboOne2::Update(const float& elapsedTime)
 	{
-		if (owner_->IsPlayAnimation() == false)
+
+		if (IsHitRightHand(elapsedTime))
 		{
+			//owner_->ChangeState(Player::StateType::Idle);
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			return;
 		}
+		else if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+	}
+
+	bool ComboOne2::IsHitLeftHand(const float& elapsedTime)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTimes_[static_cast<int>(JudgePart::LeftHand)].IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードとの当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, "SKM_Manny_LOD0", "ik_hand_l", 5.0f) == false)	//	敵と弾丸との当たり判定
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool ComboOne2::IsHitRightHand(const float& elapsedTime)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTimes_[static_cast<int>(JudgePart::RightHand)].IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードとの当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, "SKM_Manny_LOD0", "ik_hand_r", 5.0f) == false)	//	敵と弾丸との当たり判定
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
 	}
 
 	void ComboOne2::Finalize()

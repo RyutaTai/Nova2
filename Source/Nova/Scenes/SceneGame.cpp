@@ -88,10 +88,11 @@ void SceneGame::Initialize()
 	//	shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
 
 	//	ブルーム
-	framebuffers_[0] = std::make_unique<FrameBuffer>(device, 1280, 720);
+	framebuffers_[0] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
+	framebuffers_[1] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);	//	sprite
 	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(device);
 	//	BLOOM
-	bloomer_ = std::make_unique<Bloom>(device, 1280, 720);
+	bloomer_ = std::make_unique<Bloom>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(device, "./Resources/Shader/FinalPassPs.cso", pixelShaders_[0].ReleaseAndGetAddressOf());
 
 	//	ステート登録
@@ -234,6 +235,7 @@ void SceneGame::ShadowRender()
 void SceneGame::Render()
 {
 	ID3D11ShaderResourceView* nullSrv[15] = { NULL };
+	ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(0, 15, nullSrv);
 
 	Camera::Instance().SetPerspectiveFov();
@@ -243,9 +245,9 @@ void SceneGame::Render()
 	Graphics::Instance().SetCameraPosition({ 0,0,1,0 });
 
 	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
-	Graphics::Instance().GetDeviceContext()->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
-	Graphics::Instance().GetDeviceContext()->VSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
-	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
+	deviceContext->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
+	deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
+	deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
 
 	/* ----- モデル描画 ----- */
 	{
@@ -284,19 +286,17 @@ void SceneGame::Render()
 
 			ID3D11Buffer* shadowConstantBuffer = ShadowMap::Instance().GetConstantBuffer();
 			Graphics::SceneConstants sceneConstant = Graphics::Instance().GetSceneConstant();
-			Graphics::Instance().GetDeviceContext()->UpdateSubresource(shadowConstantBuffer, 0, 0, &sceneConstant, 0, 0);
-			Graphics::Instance().GetDeviceContext()->VSSetConstantBuffers(1, 1, &shadowConstantBuffer);
-			Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(1, 1, &shadowConstantBuffer);
+			deviceContext->UpdateSubresource(shadowConstantBuffer, 0, 0, &sceneConstant, 0, 0);
+			deviceContext->VSSetConstantBuffers(1, 1, &shadowConstantBuffer);
+			deviceContext->PSSetConstantBuffers(1, 1, &shadowConstantBuffer);
 
 			// SHADOW : bind shadow map at slot 8
 			ID3D11ShaderResourceView* srv = ShadowMap::Instance().GetShaderResourceView();
-			Graphics::Instance().GetDeviceContext()->PSSetShaderResources(8, 1, &srv);
+			deviceContext->PSSetShaderResources(8, 1, &srv);
 		}
 #endif
 
 		/* ----- モデル描画 ----- */
-
-		ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
 		if (bloomer_)
 		{
 			framebuffers_[0]->Clear(deviceContext);
@@ -392,6 +392,9 @@ void SceneGame::Render()
 
 	/* ----- スプライト描画 ----- */
 	{
+		framebuffers_[1]->Clear(deviceContext);
+		framebuffers_[1]->Activate(deviceContext);
+
 		//	手前にスプライト出すならZON_ON、奥に描画ならOFF_OFF
 		Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);//	各ステート毎のスプライト描画
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
@@ -424,7 +427,7 @@ void SceneGame::Render()
 		{
 			sprite_[static_cast<int>(SPRITE_GAME::GameOver)]->Render();
 		}
-
+		framebuffers_[1]->Deactivate(deviceContext);
 	}
 
 	/* ----- UI描画 ----- */

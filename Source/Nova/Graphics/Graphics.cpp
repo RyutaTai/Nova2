@@ -62,8 +62,8 @@ Graphics::Graphics(HWND hwnd, bool fullscreen)
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	
 	//	FrameBuffer
-	frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), 1280, 720);
-	frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), 1280 / 2, 720 / 2);
+	frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
+	frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(device_.Get());
 
 	shader_ = std::make_unique<Shader>();
@@ -291,8 +291,8 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height)
 		CreateDirect2dObjects();
 #endif
 		//	ÉTÉCÉYçƒê›íË
-		frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), 1280, 720);
-		frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), 1280 / 2, 720 / 2);
+		frameBuffers_[0] = std::make_unique<FrameBuffer>(device_.Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
+		frameBuffers_[1] = std::make_unique<FrameBuffer>(device_.Get(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	}
 }
 

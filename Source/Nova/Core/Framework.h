@@ -15,9 +15,6 @@
 #include "../Input/Input.h"
 #include "../Audio/Audio.h"
 
-CONST LONG SCREEN_WIDTH{ 1280 };
-CONST LONG SCREEN_HEIGHT{ 720 };
-CONST BOOL FULLSCREEN{ FALSE };
 CONST LPCWSTR APPLICATION_NAME{ L"Groove" };
 
 class Framework

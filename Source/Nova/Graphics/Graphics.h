@@ -20,6 +20,10 @@
 #include "../Debug/DebugRenderer.h"
 #include "ShadowMap.h"
 
+CONST LONG SCREEN_WIDTH{ 1980 };
+CONST LONG SCREEN_HEIGHT{ 1080 };
+CONST BOOL FULLSCREEN{ TRUE };
+
 class Graphics
 {
 public:	//	ç\ë¢ëÃ

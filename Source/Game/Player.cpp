@@ -10,12 +10,12 @@
 #include "EnemyManager.h"
 #include "BulletManager.h"
 
-static Player* instance = nullptr;
+Player* Player::instance_ = nullptr;
 
 // インスタンス取得
 Player& Player::Instance()
 {
-	return *instance;
+	return *instance_;
 }
 
 //	コンストラクタ
@@ -24,7 +24,8 @@ Player::Player()
 	//:Character("./Resources/Model/Player.gltf", "")
 {
 	//	インスタンス設定
-	instance = this;
+	_ASSERT_EXPR(instance_ == instance_, L"already instance");
+	instance_ = this;
 
 	//	アニメーション追加
 	{
@@ -86,7 +87,7 @@ void Player::Initialize()
 	effectResource_ = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/HitEff.efk");
 
 	//	エフェクトスケール設定
-	effectScale_ = 5.0f;
+	effectScale_ = 1.0f;
 
 	//	位置設定
 	GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });

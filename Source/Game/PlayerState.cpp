@@ -343,14 +343,13 @@ namespace PlayerState
 		//	判定時間セット
 		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMinJudgeTime(0.230f);		//	左ジャブ
 		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMaxJudgeTime(0.250f);
-		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMinJudgeTime(0.3f);		//	右アッパー
-		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMaxJudgeTime(0.65f);
+		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMinJudgeTime(0.285f);		//	右アッパー
+		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMaxJudgeTime(0.60f);
 
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-
 		if (IsHitRightHand(elapsedTime))
 		{
 			//owner_->ChangeState(Player::StateType::Idle);

@@ -747,7 +747,7 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 		if (factor_ > 1.0f)
 		{
 			transitionState_ = 0;
-            currentAnimationSeconds_ = 0;
+            currentAnimationSeconds_ = 0.0f;
 		}
         nodes_ = blendedAnimatedNodes_;
     }
@@ -762,12 +762,12 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
         {
             if (isAnimationLoop_)   //  ループフラグがtrueなら巻き戻す
             {
-                currentAnimationSeconds_ = 0;
+                currentAnimationSeconds_ = 0.0f;
             }
             else
             {
                 animationEndFlag_ = true;
-                currentAnimationSeconds_ = 0;
+                //currentAnimationSeconds_ = 0.0f;
             }
         }
         static std::vector<GltfModel::Node> animatedNode = nodes_;

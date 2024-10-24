@@ -392,9 +392,6 @@ void SceneGame::Render()
 
 	/* ----- スプライト描画 ----- */
 	{
-		framebuffers_[1]->Clear(deviceContext);
-		framebuffers_[1]->Activate(deviceContext);
-
 		//	手前にスプライト出すならZON_ON、奥に描画ならOFF_OFF
 		Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);//	各ステート毎のスプライト描画
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
@@ -427,7 +424,6 @@ void SceneGame::Render()
 		{
 			sprite_[static_cast<int>(SPRITE_GAME::GameOver)]->Render();
 		}
-		framebuffers_[1]->Deactivate(deviceContext);
 	}
 
 	/* ----- UI描画 ----- */

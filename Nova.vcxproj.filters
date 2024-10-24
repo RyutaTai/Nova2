@@ -267,6 +267,7 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
     <ClCompile Include="Source\Game\JudgeTime.cpp" />
+    <ClCompile Include="Source\Game\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -506,6 +507,7 @@
     <ClInclude Include="Source\Game\TitleState.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
     <ClInclude Include="Source\Game\JudgeTime.h" />
+    <ClInclude Include="Source\Game\Target.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

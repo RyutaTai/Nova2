@@ -111,6 +111,8 @@ public:
 	SoundListener						GetListener()const	{ return listener_; }				//	リスナー取得
 
 private:
+	static Player* instance_;
+
 	std::shared_ptr <Effect>		effectResource_;										//	エフェクト
 	float							effectScale_ = 5.0f;									//	エフェクトスケール
 	DirectX::XMFLOAT3				effectPos_ = {};										//	エフェクト再生位置
@@ -122,6 +124,11 @@ private:
 
 	bool							isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
 	bool							isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
+
+	//	ターゲット
+	bool				isTraget_	= false;	//	ターゲットがいるか
+	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
+	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
 
 	//	オーディオ
 	SoundListener listener_ = {};	//	リスナー
@@ -135,7 +142,7 @@ private:
 	bool				isAddGravity_		= false;		//	重力加算フラグ
 
 	//	DummyRay
-	float debugOffset_ = height_ / 2;
+	float				debugOffset_		= height_ / 2;
 	bool				isDummyReset_		= false;
 	bool				isDummyHit_			= false;		//	当てっているかどうか
 	float				dummyRayLimit_		= 100.0f;		//	レイの長さ

@@ -14,7 +14,7 @@ int WINAPI WinMain(_In_ HINSTANCE instance, _In_opt_  HINSTANCE prevInstance, _I
 
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(818);
+	//_CrtSetBreakAlloc(887396);
 #endif
 	WNDCLASSEXW wcex{};
 	wcex.cbSize = sizeof(WNDCLASSEX);

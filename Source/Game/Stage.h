@@ -31,6 +31,8 @@ private:
 	};
 
 private:
+	static Stage* instance_;
+
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfƒ‚ƒfƒ‹
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 

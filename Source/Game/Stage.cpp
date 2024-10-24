@@ -2,12 +2,13 @@
 
 #include "../Nova/Graphics/Graphics.h"
 
-static Stage* instance = nullptr;
+Stage* Stage::instance_ = nullptr;
 
 Stage::Stage()
 {
 	//	インスタンスポイント設定
-	instance = this;
+	_ASSERT_EXPR(instance_ == instance_, L"already instance");
+	instance_ = this;
 
 	//	コリジョンメッシュ生成
 #if 0
@@ -34,7 +35,7 @@ Stage::Stage()
 //	インスタンス取得
 Stage& Stage::Instance()
 {
-	return *instance;
+	return *instance_;
 }
 
 

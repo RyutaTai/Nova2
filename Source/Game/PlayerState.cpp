@@ -441,7 +441,7 @@ namespace PlayerState
 	void ComboOne4::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f,0.29f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);

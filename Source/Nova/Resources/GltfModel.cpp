@@ -721,9 +721,9 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& s
 {
     Animate(animationClip_, currentAnimationSeconds_, animatedNodes_[0]);
     animationClip_ = index;
-    //currentAnimationSeconds_ = startFrame;
+   
     Animate(index, startFrame, animatedNodes_[1]);
-    currentAnimationSeconds_ = 0.0f;
+    currentAnimationSeconds_ = startFrame;
     factor_ = 0.0f;
 
     isAnimationLoop_ = loop;

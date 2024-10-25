@@ -238,7 +238,6 @@
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
     <ClCompile Include="Source\Nova\AI\State.cpp" />
     <ClCompile Include="Source\Nova\AI\StateDerived.cpp" />
-    <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio3DSystem.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioSource.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioSource3D.cpp" />
@@ -335,7 +334,6 @@
     <ClInclude Include="Source\Nova\AI\StateDerived.h" />
     <ClInclude Include="Source\Nova\AI\StateMachine.h" />
     <ClInclude Include="Source\Nova\AI\Telegram.h" />
-    <ClInclude Include="Source\Nova\Audio\Audio.h" />
     <ClInclude Include="Source\Nova\Audio\Audio3DSystem.h" />
     <ClInclude Include="Source\Nova\Audio\AudioSource.h" />
     <ClInclude Include="Source\Nova\Audio\AudioSource3D.h" />

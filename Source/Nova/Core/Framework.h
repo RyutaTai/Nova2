@@ -13,7 +13,7 @@
 #include "../Graphics/Graphics.h"
 #include "../../Imgui/ImGuiCtrl.h"
 #include "../Input/Input.h"
-#include "../Audio/Audio.h"
+#include "../Audio/AudioManager.h"
 
 CONST LPCWSTR APPLICATION_NAME{ L"Groove" };
 

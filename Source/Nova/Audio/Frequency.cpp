@@ -1,4 +1,45 @@
 #include "Frequency.h"
+#include "../../../External/imgui/imgui.h"
+
+void Frequency::Initialize()
+{
+    // Hamming窓の生成
+    hamming_ = HammingWindow(blockCount_);
+
+}
+
+void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSource>& audioSource)
+{
+    UINT32  SPsize = audioSource->GetAudioBytes();      //  オーディオのバッファサイズ取得
+    auto    SPdata = audioSource->GetAudioData();
+    int     SPNowData = audioSource->GetCurrentSample(); //  現在のサンプル
+    int     SPNowBlock = SPNowData / blockCount_;       //  現在のブロック計算
+
+    //  FFT変換
+    std::vector<Complex> windowedData;
+    for (int i = 0; i < blockCount_; ++i)
+    {
+        windowedData.emplace_back(hamming_[i] * SPdata[i + blockCount_ * SPNowBlock]);
+    }
+
+    FFT(windowedData);
+
+    //  振幅スペクトル
+    amplitudeSpectrum_.clear();
+    for (auto& w : windowedData)
+    {
+        amplitudeSpectrum_.emplace_back(sqrtf(w.real() * w.real() + w.imag() * w.imag()));
+    }
+
+    //  平滑化
+    float blendRate = 0.9f;
+    for (size_t i = 0; i < amplitudeSpectrum_.size(); ++i)
+    {
+        amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
+        oldAmplitudeSpectrum[i] = amplitudeSpectrum_[i];
+    }
+
+}
 
 //  ハミング窓
 //  http://www.densikairo.com/Development/Public/study_dsp/C1EBB4D8BFF4.html
@@ -21,7 +62,7 @@ void Frequency::FFT(std::vector<Complex>& x)
     unsigned int N = x.size(), k = N, n;
     double thetaT = AUDIO_PI_LONG / N;
 
-    // DFT
+    //  DFT
     Complex phiT = Complex(cos(thetaT), -sin(thetaT)), T;
     while (k > 1)
     {
@@ -41,7 +82,7 @@ void Frequency::FFT(std::vector<Complex>& x)
             T *= phiT;
         }
     }
-    // Decimate
+    //  Decimate
     unsigned int m = (unsigned int)log2(N);
     for (unsigned int a = 0; a < N; a++)
     {
@@ -58,5 +99,17 @@ void Frequency::FFT(std::vector<Complex>& x)
             x[a] = x[b];
             x[b] = t;
         }
+    }
+}
+
+//  デバッグ描画
+void Frequency::DrawDebug()
+{
+    if (ImGui::TreeNode("Frequency Data"))
+    {
+        // Plot imageData using ImGui
+        ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+
+        ImGui::TreePop();
     }
 }

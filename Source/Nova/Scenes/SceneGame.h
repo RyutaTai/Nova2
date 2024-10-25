@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include "../Resources/Sprite.h"
 #include "../Input/Input.h"
-#include "../Audio/Audio.h"
+#include "../Audio/AudioManager.h"
 #include "../Graphics/ShadowMap.h"
 #include "../../Game/Stage.h"
 #include "../../Game/Player.h"

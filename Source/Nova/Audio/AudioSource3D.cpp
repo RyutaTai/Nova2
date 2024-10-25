@@ -9,11 +9,11 @@
 #include "../../imgui/imgui_impl_win32.h"
 #endif
 
-#include "../Others/Misc.h"
 #include "Audio.h"
-#include "../Graphics/Graphics.h"
-
+#include "AudioManager.h"
 #include "PitchShifter.h"
+#include "../Graphics/Graphics.h"
+#include "../Others/Misc.h"
 #include "../../Game/Player.h"
 
 AudioSource3D::AudioSource3D(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource, SoundEmitter* emitter) : AudioSource(xaudio, resource)
@@ -36,6 +36,9 @@ AudioSource3D::~AudioSource3D()
 void AudioSource3D::Update(FLOAT32 elapsedtime)
 {
 	sourceVoice_->GetState(&state_, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+
+	//	再生中でないなら処理しない
+	if (isPlaying_ == false)return;
 
 	//	再生時間更新
 	AddPlayTimer(elapsedtime);
@@ -72,7 +75,7 @@ void AudioSource3D::Update(FLOAT32 elapsedtime)
 	std::vector<float> output = {};
 	//pitchShifter->ApplyPitchShift(pitch_, input, output);
 
-	BYTE* data = Audio::Instance().GetResource()->GetAudioData();
+	BYTE* data = AudioManager::Instance().GetResource()->GetAudioData();
 #endif
 }
 
@@ -84,7 +87,7 @@ void AudioSource3D::SetPan()
 	sourceVoice_->GetVoiceDetails(&voiceDetails);
 
 	XAUDIO2_VOICE_DETAILS masterDetails;
-	Audio::Instance().GetMasteringVoice()->GetVoiceDetails(&masterDetails);
+	AudioManager::Instance().GetMasteringVoice()->GetVoiceDetails(&masterDetails);
 
 	//	マスタリングボイス情報(デバッグ用)
 	int masterInputChannel = masterDetails.InputChannels;
@@ -109,7 +112,7 @@ void AudioSource3D::SetPan()
 	{
 		volumes[i] = dspSetting_.outputMatrix_[i];
 	}
-	sourceVoice_->SetOutputMatrix(Audio::Instance().GetMasteringVoice(), voiceDetails.InputChannels, masterDetails.InputChannels, dspSetting_.outputMatrix_);
+	sourceVoice_->SetOutputMatrix(AudioManager::Instance().GetMasteringVoice(), voiceDetails.InputChannels, masterDetails.InputChannels, dspSetting_.outputMatrix_);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 #endif

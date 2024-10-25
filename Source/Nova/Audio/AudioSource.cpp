@@ -1,16 +1,18 @@
 #include "AudioSource.h"
-#include "../Others/Misc.h"
+
 #include "Audio.h"
+#include "AudioManager.h"
+#include "../Others/Misc.h"
 #include "../Graphics/Graphics.h"
 
-// コンストラクタ
+//	コンストラクタ
 AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource)
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 
 	wfe_ = resource->GetWaveForMatex();
 
-	// ソースボイスを生成
+	//	ソースボイスを生成
 	hr = xaudio->CreateSourceVoice(
 		&sourceVoice_,							//	ソースボイスのインスタンスを返す(必須)
 		&wfe_,									//	ソースボイスへ渡すWAVEFORMATRIXの構造体を返す(必須)
@@ -19,23 +21,26 @@ AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource
 	);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-	// サンプリングレートに合わせてピッチを変更(誤差が出た時に使える、マジでいらない)
+	//	サンプリングレートに合わせてピッチを変更(誤差が出た時に使える、マジでいらない)
 	// sourceVoice->SetFrequencyRatio(DEFAULT_SAMPLERATE / static_cast<FLOAT32>(resource->GetWaveFormat().nSamplesPerSec));
 	length_ = resource->GetPlayLength();
 	lengthFloat_ = resource->GetPlayLengthFLOAT();
-	// ソースボイスにデータを送信
+	//	ソースボイスにデータを送信
 	buffer_.pAudioData = resource->GetAudioData();
 	buffer_.AudioBytes = resource->GetAudioBytes();
 	buffer_.Flags = XAUDIO2_END_OF_STREAM;
 	//buffer.PlayLength = resource->GetWaveFormat().nSamplesPerSec * resource->GetPlayLength();
 	//buffer.PlayBegin = resource->GetWaveFormat().nSamplesPerSec * 30; // 再生開始位置の指定 サンプル単位(サンプリングレート * 秒数)で指定
 
-	SFXSend_  = { 0, sourceVoice_ };
-	SFXSendList_  = { 1, &SFXSend_ };
+	SFXSend_		= { 0, sourceVoice_ };
+	SFXSendList_	= { 1, &SFXSend_ };
 
+	name_ = resource->GetName();
+
+	AudioManager::Instance().Register(this);
 }
 
-// デストラクタ
+//	デストラクタ
 AudioSource::~AudioSource()
 {
 	if (sourceVoice_ != nullptr)
@@ -54,6 +59,7 @@ void AudioSource::Update(FLOAT32 elapsedTime)
 	
 	//if (state.BuffersQueued == 1)
 
+	//	再生中でないなら処理しない
 	if (!isPlaying_)return;
 
 	if(state_.BuffersQueued != 0)
@@ -102,7 +108,7 @@ void AudioSource::Update(FLOAT32 elapsedTime)
 
 }
 
-// 再生
+//	再生
 void AudioSource::Play(BOOL loop)
 {
 	buffer_.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
@@ -113,7 +119,7 @@ void AudioSource::Play(BOOL loop)
 	isPlaying_ = true;
 }
 
-// 再開
+//	再開
 void AudioSource::Restart()
 {
 	sourceVoice_->Start();
@@ -122,7 +128,7 @@ void AudioSource::Restart()
 	//sourceVoice->SetVolume(volume);
 }
 
-// 停止
+//	停止
 void AudioSource::Stop()
 {
 	sourceVoice_->Stop();
@@ -132,8 +138,7 @@ void AudioSource::Stop()
 	isPlaying_ = false;
 }
 
-
-// 一時停止
+//	一時停止
 void AudioSource::Pause()
 {
 	sourceVoice_->Stop(XAUDIO2_PLAY_TAILS); // 引数にXAUDIO2_PLAY_TAILSを設定することでかけた効果(リバーブの残響など)を残す
@@ -147,7 +152,7 @@ size_t AudioSource::GetCurrentSample()const
 	XAUDIO2_VOICE_STATE vs;
 	sourceVoice_->GetState(&vs);
 
-	return (size_t(vs.SamplesPlayed) * size_t(wfe_.nBlockAlign)) % buffer_.AudioBytes;	//	要調整
+	return (size_t(vs.SamplesPlayed) * size_t(wfe_.nBlockAlign)) % buffer_.AudioBytes;
 }
 
 void AudioSource::SetVolume(FLOAT32 volume, BOOL useDb)
@@ -175,18 +180,18 @@ void AudioSource::SetPitch(FLOAT32 pitch)
 void AudioSource::SetPan(FLOAT32 pan)
 {
 	FLOAT32 outputPan[8];
-	for (int i = 0; i < maxOutputMatrix_; i++) outputPan[i] = 0;
+	for (int i = 0; i < OutputMatrixMax_; i++) outputPan[i] = 0;
 
 	XAUDIO2_VOICE_DETAILS voiceDetails;
 	sourceVoice_->GetVoiceDetails(&voiceDetails);
 
 	XAUDIO2_VOICE_DETAILS masterDetails;
-	Audio::Instance().GetMasteringVoice()->GetVoiceDetails(&masterDetails);
+	AudioManager::Instance().GetMasteringVoice()->GetVoiceDetails(&masterDetails);
 
 	FLOAT32 left{ 0.5f - pan * 0.5f };
 	FLOAT32 right{ 0.5f + pan * 0.5f };
 
-	switch (Audio::Instance().GetCannelmask())
+	switch (AudioManager::Instance().GetCannelmask())
 	{
 	case SPEAKER_MONO:
 		outputPan[0] = 1.0;
@@ -222,7 +227,7 @@ void AudioSource::SetPan(FLOAT32 pan)
 		break;
 	}
 
-	sourceVoice_->SetOutputMatrix(Audio::Instance().GetMasteringVoice(), voiceDetails.InputChannels, masterDetails.InputChannels, outputPan);
+	sourceVoice_->SetOutputMatrix(AudioManager::Instance().GetMasteringVoice(), voiceDetails.InputChannels, masterDetails.InputChannels, outputPan);
 
 }
 

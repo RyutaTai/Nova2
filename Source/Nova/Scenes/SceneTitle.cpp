@@ -6,7 +6,7 @@
 #include "../Scenes/SceneLoading.h"
 #include "../Scenes/SceneGame.h"
 #include "../../Game/UIManager.h"
-#include "../Audio/Audio.h"
+#include "../Audio/AudioManager.h"
 #include "../../Game/TitleState.h"
 
 //	èâä˙âª
@@ -14,10 +14,10 @@ void SceneTitle::Initialize()
 {
 	//	AudioÇÊÇËå„Ç…SpriteÇåƒÇ‘
 #if 1
-	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)] = std::unique_ptr<AudioSource>(Audio::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav"));
+	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav"));
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->SetVolume(0.3f, false);
 
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = std::unique_ptr<AudioSource>(Audio::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav"));
+	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav"));
 	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.2f, false);
 #endif
 

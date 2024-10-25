@@ -775,7 +775,6 @@ void GltfModelStaticBatching::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"GltfStaticModel"))
 	{
-		
 		ImGui::TreePop();
 	}
 }

@@ -1,9 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <string>
+
 #define XAUDIO2_HELPER_FUNCTIONS
 #include <xaudio2.h>
 #include <x3daudio.h>
+
 #include "WaveRead.h"
 
 // オーディオソース
@@ -57,10 +60,14 @@ public: // getter setter
 
 	XAUDIO2_VOICE_STATE GetState() const { return state_; }
 
+	const BYTE* GetAudioData() const{ return buffer_.pAudioData; }
+
 	float GetAudioBytes() const { return buffer_.AudioBytes; }	//	バッファーのサイズ取得
 
 	size_t GetCurrentSample()const;		//	現在の再生位置をサンプル単位で取得
 	
+	std::string	GetName()const { return name_; }
+
 	bool IsPlay();
 
 	void SetVolume(FLOAT32 volume, BOOL useDb);
@@ -93,8 +100,10 @@ protected:
 	// バッファー
 	XAUDIO2_BUFFER buffer_ = { 0 };
 
-	// 
-	INT32 maxOutputMatrix_{ 8 };
+	//	音源の名前
+	std::string name_ = "";
+
+	static constexpr int OutputMatrixMax_ = 8;	//	出力マトリックス最大数
 
 	// 前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
 	FLOAT32 lastVolume_ = {};

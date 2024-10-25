@@ -3,7 +3,7 @@
 #include "../Nova/Debug/DebugRenderer.h"
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Collision/Collision.h"
-#include "../Nova/Audio/Audio.h"
+#include "../Nova/Audio/AudioManager.h"
 
 //	コンストラクタ
 Bullet::Bullet(const std::string& filename)

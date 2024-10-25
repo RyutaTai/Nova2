@@ -1,6 +1,7 @@
 #include "Stage.h"
 
 #include "../Nova/Graphics/Graphics.h"
+#include "../Nova/Audio/AudioManager.h"
 
 Stage* Stage::instance_ = nullptr;
 
@@ -30,6 +31,22 @@ Stage::Stage()
 
 	//GetTransform()->SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
+	//	エミッシブ定数バッファ生成
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.ByteWidth = sizeof(EmissiveConstants);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	HRESULT hr;
+	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, emissiveConstantBuffer_.ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	//	midi生成
+	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor.mid", 8.0f);
+
+	//	音の周波数データ生成、初期化
+	frequency_ = std::make_unique<Frequency>();
+	frequency_->Initialize();
+
 }
 
 //	インスタンス取得
@@ -38,9 +55,24 @@ Stage& Stage::Instance()
 	return *instance_;
 }
 
-
-Stage::~Stage()
+//	更新処理
+void Stage::Update(const float& elapsedTime)
 {
+	//	midi更新処理
+	midi_->Update(elapsedTime);
+
+	//	周波数データ更新
+	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Title.wav"));
+
+	//	emissiveIntensity_更新
+	if (midi_->IsCurrentTimeNoteOn())
+	{
+		emissiveConstant_.emissiveIntensity_ = maxEmissiveIntencity_;
+	}
+	else
+	{
+		emissiveConstant_.emissiveIntensity_ = 0.0f;
+	}
 
 }
 
@@ -104,9 +136,14 @@ void Stage::ShadowRender(const float& scale)
 //	描画処理
 void Stage::Render()
 {
+	//	エミッシブ定数バッファをGPUに送る
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
+	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(3, 1, emissiveConstantBuffer_.GetAddressOf());
+
 	//	ピクセルシェーダーセット
 	gltfStaticModelResource_->SetPixelShaderFromName("./Resources/Shader/CityPS.cso");
-	gltfStaticModelResource_->Render();
+
+	gltfStaticModelResource_->Render();		//	描画
 
 }
 
@@ -115,6 +152,10 @@ void Stage::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
+		//	周波数データのデバッグ描画
+		frequency_->DrawDebug();
+
+		ImGui::DragFloat("EmissiveFactor", &emissiveConstant_.emissiveIntensity_);
 		gltfStaticModelResource_->DrawDebug();
 		GetTransform()->DrawDebug();
 		ImGui::TreePop();

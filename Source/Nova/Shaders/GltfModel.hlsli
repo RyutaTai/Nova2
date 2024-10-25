@@ -39,3 +39,8 @@ cbuffer PRIMITIVE_JOINT_CONSTANTS : register(b2)
 {
     row_major float4x4 jointMatrices[PRIMITIVE_MAX_JOINTS];
 };
+
+cbuffer EMISSIVE_CONSTANTS : register(b3)
+{
+    float emissiveIntensity;
+}

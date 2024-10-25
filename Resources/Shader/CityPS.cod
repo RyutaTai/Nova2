@@ -24,6 +24,13 @@
 //
 // }
 //
+// cbuffer EMISSIVE_CONSTANTS
+// {
+//
+//   float emissiveIntensity;           // Offset:    0 Size:     4
+//
+// }
+//
 // Resource bind info for materials
 // {
 //
@@ -108,6 +115,7 @@
 // lutGgx                            texture  float4          2d            t35      1 
 // PRIMITIVE_CONSTANT_BUFFER         cbuffer      NA          NA            cb0      1 
 // SCENE_CONSTANT_BUFFER             cbuffer      NA          NA            cb1      1 
+// EMISSIVE_CONSTANTS                cbuffer      NA          NA            cb3      1 
 //
 //
 //
@@ -132,6 +140,7 @@ ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB0[5], immediateIndexed
 dcl_constantbuffer CB1[6], immediateIndexed
+dcl_constantbuffer CB3[1], immediateIndexed
 dcl_sampler s1, mode_default
 dcl_sampler s2, mode_default
 dcl_resource_structured t0, 96
@@ -744,7 +753,7 @@ mul r0.xyw, r0.xyxw, r6.xyxz  // r0.x <- <IblRadianceGgx return value>.x; r0.y <
 add r0.xyw, r0.xyxw, r4.xyxz  // r0.x <- specular.x; r0.y <- specular.y; r0.w <- specular.z
 
 #line 195
-mov r1.xyz, r1.xyzx  // r1.x <- emissive.x; r1.y <- emissive.y; r1.z <- emissive.z
+mul r1.xyz, r1.xyzx, cb3[0].xxxx  // r1.x <- emissive.x; r1.y <- emissive.y; r1.z <- emissive.z
 
 #line 196
 mul r3.xyz, r0.zzzz, r2.xyzx

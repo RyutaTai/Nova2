@@ -1,4 +1,7 @@
 #include "WaveRead.h"
+
+#include <filesystem>
+
 #include "../Others/Misc.h"
 
 #define fourccRIFF 'RIFF'
@@ -14,7 +17,6 @@
 #define fourccWAVE 'EVAW'
 #define fourccXWMA 'AMWX'
 #define fourccDPDS 'sdpd'
-
 
 WaveReader::WaveReader(const char* filename) : strFilename_(filename)
 {
@@ -144,4 +146,11 @@ HRESULT WaveReader::FileCreate()
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile_, 0, NULL, FILE_BEGIN))
         return HRESULT_FROM_WIN32(GetLastError());
 
+}
+
+//	âπåπñºê›íË
+void WaveReader::SetName(const char* filename)
+{
+    std::filesystem::path filepath = filename;
+    name_ = filepath.filename().string();
 }

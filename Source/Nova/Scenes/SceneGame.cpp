@@ -18,7 +18,7 @@
 void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = std::unique_ptr<AudioSource>(Audio::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav"));
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav"));
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
 
 	/* ----- スプライト初期化 ----- */
@@ -131,6 +131,9 @@ void SceneGame::Update(const float& elapsedTime)
 
 	/* ----- ステートマシン更新処理 ----- */
 	stateMachine_->Update(elapsedTime);
+
+	/* ----- ステージ更新処理 ----- */
+	stage_[0]->Update(elapsedTime);
 
 	/* ----- プレイヤー更新処理 ----- */
 	player_->Update(elapsedTime);

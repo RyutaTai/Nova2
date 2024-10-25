@@ -192,7 +192,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     diffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0);
     specular += IblRadianceGgx(N, V, roughnessFactor, f0);
     
-    float3 emissive = emissiveFactor;
+    float3 emissive = emissiveFactor * emissiveIntensity;
     diffuse = lerp(diffuse, diffuse * occlusionFactor, occlusionStrength);
     specular = lerp(specular, specular * occlusionFactor, occlusionStrength);
  

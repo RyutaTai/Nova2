@@ -6,7 +6,7 @@
 #include "../Nova/Resources/Effect.h"
 #include "BulletManager.h"
 #include "../Nova/AI/StateMachine.h"
-#include "../Nova/Audio/Audio.h"
+#include "../Nova/Audio/AudioManager.h"
 
 class Drone :public Enemy
 {

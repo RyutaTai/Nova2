@@ -84,7 +84,7 @@ void Drone::Initialize()
 	emitter_[static_cast<int>(Audio3D::Shot)].minDistance_ = 7.0f;
 	emitter_[static_cast<int>(Audio3D::Shot)].maxDistance_ = 12.0f;
 	emitter_[static_cast<int>(Audio3D::Shot)].volume_ = 2.0f;
-	sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
+	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
 	//sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
 #endif
 

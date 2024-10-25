@@ -1,7 +1,7 @@
 #pragma once
+
 #include "AudioSource.h"
 #include "Audio3DSystem.h"
-
 
 class AudioSource3D : public AudioSource
 {
@@ -73,13 +73,13 @@ public:
 
 private:
 
-	SoundEmitter* emitter_{};
+	SoundEmitter* emitter_ = {};
 
-	SoundDSPSetting dspSetting_{};
+	SoundDSPSetting dspSetting_ = {};
 
-	FLOAT32 absorptionRate_{};		//	‹zŽû—¦
+	FLOAT32 absorptionRate_ = {};		//	‹zŽû—¦
 
-	FLOAT32 reflectionRate_{};		//	”½ŽË—¦
+	FLOAT32 reflectionRate_ = {};		//	”½ŽË—¦
 
 	std::vector<X3DAUDIO_DISTANCE_CURVE_POINT> volCurvepoints_;
 	X3DAUDIO_DISTANCE_CURVE volCurve_ = { nullptr, 0 };

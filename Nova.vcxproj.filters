@@ -257,7 +257,6 @@
     <ClCompile Include="Source\Game\UI.cpp" />
     <ClCompile Include="Source\Game\UIManager.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioManager.cpp" />
-    <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio3DSystem.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioSource.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioSource3D.cpp" />
@@ -496,7 +495,6 @@
     <ClInclude Include="Source\Game\UI.h" />
     <ClInclude Include="Source\Game\UIManager.h" />
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />
-    <ClInclude Include="Source\Nova\Audio\Audio.h" />
     <ClInclude Include="Source\Nova\Audio\Audio3DSystem.h" />
     <ClInclude Include="Source\Nova\Audio\AudioSource.h" />
     <ClInclude Include="Source\Nova\Audio\AudioSource3D.h" />

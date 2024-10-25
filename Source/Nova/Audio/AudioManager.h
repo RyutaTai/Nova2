@@ -21,7 +21,7 @@ public:
 	AudioSource* LoadAudioSource(const char* filename);
 	AudioSource3D* LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
 
-	void Register(AudioSource* audio);		//	オーディオ登録
+	void Register(std::shared_ptr<AudioSource> audio);		//	オーディオ登録
 	void Clear();							//	オーディオ全削除
 	void Remove(AudioSource* audio);		//	オーディオ削除
 
@@ -41,7 +41,7 @@ private:
 	IXAudio2*				xaudio_ = nullptr;
 	IXAudio2MasteringVoice* masteringVoice_ = nullptr;
 
-	std::vector<std::shared_ptr<AudioSource>> audioResources_ = { nullptr };
+	std::vector<std::shared_ptr<AudioSource>> audioResources_ = {};
 
 };
 

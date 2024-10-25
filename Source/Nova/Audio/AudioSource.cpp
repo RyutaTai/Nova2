@@ -37,7 +37,6 @@ AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource
 
 	name_ = resource->GetName();
 
-	AudioManager::Instance().Register(this);
 }
 
 //	デストラクタ

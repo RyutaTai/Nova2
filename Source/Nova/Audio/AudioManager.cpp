@@ -89,7 +89,7 @@ void AudioManager::Update(const float& elapsedTime)
 }
 
 //	オーディオ登録
-void AudioManager::Register(AudioSource* audio)
+void AudioManager::Register(std::shared_ptr<AudioSource> audio)
 {
 	audioResources_.emplace_back(audio);
 }

@@ -1,5 +1,7 @@
 #include "Stage.h"
 
+#include <algorithm>
+
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Audio/AudioManager.h"
 
@@ -62,17 +64,20 @@ void Stage::Update(const float& elapsedTime)
 	midi_->Update(elapsedTime);
 
 	//	周波数データ更新
-	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Title.wav"));
+	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
 
 	//	emissiveIntensity_更新
-	if (midi_->IsCurrentTimeNoteOn())
+	float frequencity = frequency_->GetAmplitudeSpectrum(frequencyIndex_) / frequencyMax_;
+	frequencity *= emissiveIntencityMax_;
+	emissiveConstant_.emissiveIntensity_ = std::clamp(frequencity,emissiveIntencityMin_, emissiveIntencityMax_);
+	/*if (midi_->IsCurrentTimeNoteOn())
 	{
 		emissiveConstant_.emissiveIntensity_ = maxEmissiveIntencity_;
 	}
 	else
 	{
 		emissiveConstant_.emissiveIntensity_ = 0.0f;
-	}
+	}*/
 
 }
 
@@ -153,9 +158,16 @@ void Stage::DrawDebug()
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
 		//	周波数データのデバッグ描画
-		frequency_->DrawDebug();
+		if (ImGui::TreeNode("Frequency Data"))
+		{
+			frequency_->DrawDebug();
+			ImGui::DragInt("FrequencyIndex", &frequencyIndex_, 1.0f, 0);
+			ImGui::DragFloat("FrequencyMax", &frequencyMax_, 1.0f, 0.0f);
+			ImGui::DragFloat("EmissiveFactor", &emissiveConstant_.emissiveIntensity_, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("EmissiveIntencityMin", &emissiveIntencityMin_, 1.0f, 0.0f);
+			ImGui::DragFloat("EmissiveIntencityMax", &emissiveIntencityMax_, 1.0f, 0.0f);
+		}
 
-		ImGui::DragFloat("EmissiveFactor", &emissiveConstant_.emissiveIntensity_);
 		gltfStaticModelResource_->DrawDebug();
 		GetTransform()->DrawDebug();
 		ImGui::TreePop();

@@ -6,7 +6,7 @@
 #include "../Graphics/Graphics.h"
 
 //	コンストラクタ
-AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource)
+AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource)
 {
 	HRESULT hr = S_OK;
 

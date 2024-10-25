@@ -18,7 +18,8 @@
 void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav"));
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav");
+	AudioManager::Instance().Register(bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]);
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
 
 	/* ----- スプライト初期化 ----- */

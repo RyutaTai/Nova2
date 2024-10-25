@@ -71,6 +71,9 @@ bool Framework::Initialize()
 	//	エフェクトマネージャー初期化
 	EffectManager::Instance().Initialize();
 
+	//	オーディオマネージャー初期化
+	AudioManager::Instance().Initialize();
+
 	return true;
 }
 

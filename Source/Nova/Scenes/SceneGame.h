@@ -46,7 +46,7 @@ public:
 	void IsPose(bool isPose);
 	void Reset();
 
-	void SetChangeTitleTimer(int changeTitleTimer) { changeTitleTimer_ = changeTitleTimer; }
+	void SetChangeTitleTimer(const float& changeTitleTimer) { changeTitleTimer_ = changeTitleTimer; }
 	void ChangeToTitle(bool changeTitle) { changeTitle_ = changeTitle; }
 	void SetWaveStartTimer(float timer) { waveStartTimer_ = timer; }
 	void SetGameOver(bool gameOver) { isGameOver_ = gameOver; }
@@ -122,7 +122,7 @@ private:
 		Normal,		//	通常時BGM
 		Max,		//	BGM最大数
 	};
-	std::unique_ptr	<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
+	std::shared_ptr<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_GAME::MAX)];
 
 	//	デバッグ用

@@ -25,6 +25,9 @@ public:
 
 	std::vector<float> HammingWindow(int count);	//	ƒnƒ~ƒ“ƒO‘‹
 
+	std::vector<float> GetAmplitudeSpectrum() { return amplitudeSpectrum_; }
+	float GetAmplitudeSpectrum(const int& index) { return amplitudeSpectrum_.at(index); }
+
 private:
 	static constexpr float AUDIO_PI			= 3.14159265358979323846f;
 	static constexpr float AUDIO_PI_LONG	= 3.14159265358979323846264338328L;

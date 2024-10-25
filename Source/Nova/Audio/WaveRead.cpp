@@ -60,6 +60,8 @@ WaveReader::WaveReader(const char* filename) : strFilename_(filename)
     lengthFloat_ = (float)dwChunkSize_ / (wfx_.nSamplesPerSec * 4.0f);
     length_ = dwChunkSize_ / (wfx_.nSamplesPerSec * 4);
 
+    SetName(filename);
+
 }
 
 HRESULT WaveReader::FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition)

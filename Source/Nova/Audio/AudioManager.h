@@ -9,23 +9,28 @@
 class AudioManager
 {
 private:
-	AudioManager();
+	AudioManager() {}
 	~AudioManager();
 
 public:
-	static AudioManager& Instance();
+	static AudioManager& Instance()
+	{
+		static AudioManager instance;
+		return instance;
+	}
 
+	void Initialize();						//	初期化処理
 	void Update(const float& elapsedTime);	//	更新処理
 
 	//	オーディオソース読み込み
-	AudioSource* LoadAudioSource(const char* filename);
-	AudioSource3D* LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
+	std::shared_ptr<AudioSource> LoadAudioSource(const char* filename);
+	std::shared_ptr<AudioSource3D> LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
 
 	void Register(std::shared_ptr<AudioSource> audio);		//	オーディオ登録
-	void Clear();							//	オーディオ全削除
-	void Remove(AudioSource* audio);		//	オーディオ削除
+	void Clear();											//	オーディオ全削除
+	void Remove(AudioSource* audio);						//	オーディオ削除
 
-	void DrawDebug();						//	デバッグ描画
+	void DrawDebug();										//	デバッグ描画
 
 	IXAudio2*									GetXAudio()					{ return xaudio_; }
 	IXAudio2MasteringVoice*						GetMasteringVoice()			{ return masteringVoice_; }
@@ -35,8 +40,6 @@ public:
 	std::vector<std::shared_ptr<AudioSource>>	GetAudioResources()			{ return audioResources_; }
 
 private:
-	static AudioManager* instance_;
-
 	DWORD					channelMask_ = {};
 	IXAudio2*				xaudio_ = nullptr;
 	IXAudio2MasteringVoice* masteringVoice_ = nullptr;

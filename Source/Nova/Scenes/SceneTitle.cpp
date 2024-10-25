@@ -14,10 +14,10 @@ void SceneTitle::Initialize()
 {
 	//	Audio‚æ‚èŒã‚ÉSprite‚ðŒÄ‚Ô
 #if 1
-	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav"));
+	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->SetVolume(0.3f, false);
 
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = std::unique_ptr<AudioSource>(AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav"));
+	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav");
 	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.2f, false);
 #endif
 

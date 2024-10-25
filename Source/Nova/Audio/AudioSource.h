@@ -13,7 +13,7 @@
 class AudioSource
 {
 public:
-	AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource);
+	AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource);
 	~AudioSource();
 
 public:

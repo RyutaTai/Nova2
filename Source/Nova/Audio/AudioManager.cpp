@@ -2,14 +2,8 @@
 
 #include "../Others/Misc.h"
 
-AudioManager* AudioManager::instance_ = nullptr;
-
-AudioManager::AudioManager()
+void AudioManager::Initialize()
 {
-	//	インスタンス設定
-	_ASSERT_EXPR(instance_ == instance_, L"already instance");
-	instance_ = this;
-
 	HRESULT hr = S_OK;
 
 	//	COMの初期化
@@ -58,25 +52,17 @@ AudioManager::~AudioManager()
 	CoUninitialize();
 }
 
-//	インスタンス取得
-AudioManager& AudioManager::Instance()
-{
-	return *instance_;
-}
-
 //	オーディオソース読み込み
-AudioSource* AudioManager::LoadAudioSource(const char* filename)
+std::shared_ptr<AudioSource> AudioManager::LoadAudioSource(const char* filename)
 {
-	std::shared_ptr<WaveReader> resource = nullptr;
-	resource = std::make_shared<WaveReader>(filename);
-	return new AudioSource(xaudio_, resource);
+	std::shared_ptr<WaveReader> resource = std::make_shared<WaveReader>(filename);
+	return std::make_shared<AudioSource>(xaudio_, resource);
 }
 
-AudioSource3D* AudioManager::LoadAudioSource3D(const char* filename, SoundEmitter* emitter)
+std::shared_ptr<AudioSource3D> AudioManager::LoadAudioSource3D(const char* filename, SoundEmitter* emitter)
 {
-	std::shared_ptr<WaveReader> resource = nullptr;
-	resource = std::make_shared<WaveReader>(filename);
-	return new AudioSource3D(xaudio_, resource, emitter);
+	auto resource = std::make_shared<WaveReader>(filename);
+	return std::make_shared<AudioSource3D>(xaudio_, resource, emitter);
 }
 
 //	更新処理
@@ -106,6 +92,11 @@ std::shared_ptr<AudioSource> AudioManager::GetAudioResource(const std::string& n
 	}
 	_ASSERT_EXPR(false, L"Audio is not found.");
 	return nullptr;
+}
+
+void AudioManager::Remove(AudioSource* audio)
+{
+
 }
 
 //	オーディオ

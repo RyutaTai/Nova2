@@ -73,8 +73,8 @@ private:
 	//std::unique_ptr	<Audio> bgm_[static_cast<int>(AUDIO_BGM_TITLE::MAX)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_TITLE::MAX)];
 
-	std::unique_ptr<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_TITLE::MAX)];
-	std::unique_ptr	<AudioSource> se_[static_cast<int>(AUDIO_SE_TITLE::MAX)];
+	std::shared_ptr<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_TITLE::MAX)];
+	std::shared_ptr	<AudioSource> se_[static_cast<int>(AUDIO_SE_TITLE::MAX)];
 
 
 };

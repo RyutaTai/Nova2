@@ -29,10 +29,7 @@ Drone::Drone()
 
 Drone::~Drone()
 {
-	if (sources_[static_cast<int>(Audio3D::Shot)])
-	{
-		delete sources_[static_cast<int>(Audio3D::Shot)];
-	}
+	
 }
 
 //	‰Šú‰»

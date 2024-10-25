@@ -6,6 +6,8 @@ void Frequency::Initialize()
     // Hamming窓の生成
     hamming_ = HammingWindow(blockCount_);
 
+    oldAmplitudeSpectrum.resize(blockCount_, 0.0f);
+
 }
 
 void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSource>& audioSource)
@@ -17,9 +19,15 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
 
     //  FFT変換
     std::vector<Complex> windowedData;
+    int spNowBlock = blockCount_ * SPNowBlock;
+
     for (int i = 0; i < blockCount_; ++i)
     {
-        windowedData.emplace_back(hamming_[i] * SPdata[i + blockCount_ * SPNowBlock]);
+        //if (i + spNowBlock <)
+        {
+
+        }
+        windowedData.emplace_back(hamming_[i] * SPdata[i + spNowBlock]);
     }
 
     FFT(windowedData);
@@ -33,7 +41,7 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
 
     //  平滑化
     float blendRate = 0.9f;
-    for (size_t i = 0; i < amplitudeSpectrum_.size(); ++i)
+    for (size_t i = 0; i < amplitudeSpectrum_.size() - 1; ++i)
     {
         amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
         oldAmplitudeSpectrum[i] = amplitudeSpectrum_[i];
@@ -104,12 +112,10 @@ void Frequency::FFT(std::vector<Complex>& x)
 
 //  デバッグ描画
 void Frequency::DrawDebug()
-{
-    if (ImGui::TreeNode("Frequency Data"))
-    {
-        // Plot imageData using ImGui
-        ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+{  
+    // Plot imageData using ImGui
+    ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
 
-        ImGui::TreePop();
-    }
+    ImGui::TreePop();
+   
 }

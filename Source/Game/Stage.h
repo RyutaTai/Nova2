@@ -48,7 +48,10 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
-	float maxEmissiveIntencity_ = 4.0f;
+	float frequencyMax_ = 15000.0f;
+	int frequencyIndex_ = 509;
+	float emissiveIntencityMin_ = 0.1f;
+	float emissiveIntencityMax_ = 15.0f;
 	std::unique_ptr<Midi> midi_ = nullptr;				//	emissiveタイミング判定用midi
 
 	std::unique_ptr<Frequency> frequency_ = nullptr;	//	音の周波数データ(emissiveIntencityの計算に使う)

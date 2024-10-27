@@ -194,7 +194,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Game\JudgeTime.cpp" />
+    <ClCompile Include="Source\Nova\Others\ComboSystem.cpp" />
+    <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioManager.cpp" />
@@ -284,7 +285,8 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Game\JudgeTime.h" />
+    <ClInclude Include="Source\Nova\Others\ComboSystem.h" />
+    <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />

@@ -46,12 +46,14 @@ public:
 	//	–³“Gó‘ÔƒZƒbƒg
 	void SetInvincible(bool isInvincible);
 
-	//	’eŠÛ”æ“¾
-	int GetBulletCount()const { return static_cast<int>(bullets_.size()); }
+	//	’eŠÛæ“¾
+	std::vector<Bullet*> GetBullets() { return bullets_; }
 
 	//	’eŠÛæ“¾
 	Bullet* GetBullet(const int& index) { return bullets_.at(index); }
 
+	//	’eŠÛ”æ“¾
+	int GetBulletCount()const { return static_cast<int>(bullets_.size()); }
 	//	’eŠÛíœ
 	void Remove(Bullet* projectile);
 

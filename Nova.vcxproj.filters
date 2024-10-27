@@ -265,8 +265,9 @@
     <ClCompile Include="Source\Nova\Audio\WaveRead.cpp" />
     <ClCompile Include="Source\Game\TitleState.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
-    <ClCompile Include="Source\Game\JudgeTime.cpp" />
+    <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
+    <ClCompile Include="Source\Nova\Others\ComboSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -504,8 +505,9 @@
     <ClInclude Include="Source\Nova\Audio\WaveRead.h" />
     <ClInclude Include="Source\Game\TitleState.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
-    <ClInclude Include="Source\Game\JudgeTime.h" />
+    <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />
+    <ClInclude Include="Source\Nova\Others\ComboSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

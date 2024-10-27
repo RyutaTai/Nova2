@@ -13,13 +13,15 @@ void Frequency::Initialize()
 void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSource>& audioSource)
 {
     UINT32  SPsize = audioSource->GetAudioBytes();      //  オーディオのバッファサイズ取得
-    auto    SPdata = audioSource->GetAudioData();
+    BYTE    SPdata = audioSource->GetAudioData();
     int     SPNowData = audioSource->GetCurrentSample(); //  現在のサンプル
     int     SPNowBlock = SPNowData / blockCount_;       //  現在のブロック計算
 
     //  FFT変換
     std::vector<Complex> windowedData;
     int spNowBlock = blockCount_ * SPNowBlock;
+
+    int spDataSize = sizeof(SPdata);
 
     for (int i = 0; i < blockCount_; ++i)
     {

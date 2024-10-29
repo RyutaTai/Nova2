@@ -58,7 +58,7 @@ public:
 	int						GetCurrentAnimNum()			{ return gltfModelResource_->GetCurrentAnimNum(); }								//	現在再生中のアニメーション番号取得
 	float const				GetCurrentAnimationSeconds(){ return gltfModelResource_->GetCurrentAnimationSeconds(); }	//	現在再生中ののアニメーション再生時間取得
 
-	DirectX::XMFLOAT3 GetJointPosition(const std::string& meshName, const std::string& boneName, const DirectX::XMFLOAT4X4& transform);											//	ジョイントポジション取得
+	DirectX::XMFLOAT3 GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform);											//	ジョイントポジション取得
 	DirectX::XMFLOAT3 GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
 
 	//	ルートモーション

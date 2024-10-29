@@ -62,7 +62,7 @@ public: // getter setter
 
 	const BYTE* GetAudioData() const{ return buffer_.pAudioData; }
 
-	float GetAudioBytes() const { return buffer_.AudioBytes; }	//	バッファーのサイズ取得
+	size_t GetAudioBytes() const { return buffer_.AudioBytes; }	//	バッファーのサイズ取得
 
 	size_t GetCurrentSample()const;		//	現在の再生位置をサンプル単位で取得
 	

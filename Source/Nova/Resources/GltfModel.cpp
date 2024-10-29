@@ -933,7 +933,7 @@ int GltfModel::GetCurrentAnimNum()
 }
 
 //  ジョイントポジション取得
-DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& meshName, const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
+DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
 {
     DirectX::XMFLOAT3 position = {};/*world space*/
   

@@ -64,9 +64,12 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
 	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
 	stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
+	stateMachine_->RegisterState(new PlayerState::ComboOne5(this));		//	コンボ0_5
+	stateMachine_->RegisterState(new PlayerState::ComboOne6(this));		//	コンボ0_6
+	stateMachine_->RegisterState(new PlayerState::ComboOne7(this));		//	コンボ0_7
 	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
 
-	stateMachine_->SetState(static_cast<int>(StateType::Idle));				//	初期ステートセット
+	stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
 	PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
 
 	//	リスナー情報セット
@@ -209,14 +212,14 @@ bool Player::PlayerVsEnemies(const float& elapsedTime)
 }
 
 //	ジョイントに敵または弾丸が当たっているか判定(どちらも当たっていてもtrue)
-bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& meshName, const std::string& boneName, const float& jointRadius)
+bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& boneName, const float& jointRadius)
 {
 	bool isHit = false;
 
 	//	ジョイントのワールド座標取得
 	DirectX::XMFLOAT4X4 world;
 	DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-	DirectX::XMFLOAT3 jointPos = GetJointPosition(meshName, boneName, world);
+	DirectX::XMFLOAT3 jointPos = GetJointPosition(boneName, world);
 	
 	//	衝突判定用のデバッグ球を描画
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
@@ -242,6 +245,7 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 		DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
 
 		//	球と円柱で当たり判定
+		//if (enemy->IsInvincible() == true)continue;	//	敵の無敵フラグがtrueなら処理しない(当たり判定もなくなる)
 		if (Collision::IntersectSphereVsCylinder(jointPos, jointRadius, ePos + ePosOffset, eRadius, eHeight, outPosition))
 		{
 			enemy->SubtractHp(1);
@@ -673,7 +677,7 @@ bool Player::DummyRay(const float& elapsedTime)
 	//	右手のワールド座標取得
 	DirectX::XMFLOAT4X4 world;
 	DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-	DirectX::XMFLOAT3 leftHandPos = GetJointPosition("Ch44", "mixamorig:RightHandMiddle1", world);
+	DirectX::XMFLOAT3 leftHandPos = GetJointPosition("mixamorig:RightHandMiddle1", world);
 
 	//	当たり判定用の半径セット
 	constexpr float leftHandRadius = 50.0f;
@@ -871,8 +875,9 @@ void Player::DrawStateStr()
 	//	ステート文字列
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
-		"Idle","Move","Attack","ComboOne1",
-		"ComboOne2","ComboOne3","ComboOne4","Doege"
+		"Idle","Move","Attack",
+		"ComboOne1","ComboOne2","ComboOne3","ComboOne4","ComboOne5","ComboOne6","ComboOne7",
+		"Doege"
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示

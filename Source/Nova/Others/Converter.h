@@ -8,7 +8,6 @@
 #include <locale>
 #include <codecvt>
 
-
 inline DirectX::XMFLOAT4X4 ToXMFLOAT4X4(const FbxAMatrix& fbxAMatrix)
 {
 	DirectX::XMFLOAT4X4 xmfloat4x4;
@@ -103,4 +102,10 @@ inline bool BOOLTobool(BOOL value)
 inline BOOL boolToBOOL(bool value)
 {
     return value ? TRUE : FALSE;
+}
+
+//	const BYTE*‚ðstd::vector<uint8_t>‚É•ÏŠ·‚·‚é
+inline std::vector<uint8_t> ConvertToVector(const BYTE* data, const size_t& size) 
+{
+	return std::vector<uint8_t>(data, data + size);
 }

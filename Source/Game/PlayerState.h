@@ -76,7 +76,7 @@ namespace PlayerState
 	};
 }
 
-//	コンボ01_1
+//	コンボ01_1(右パンチ)
 namespace PlayerState
 {
 	class ComboOne1 :public State<Player>
@@ -109,22 +109,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHitRightHand(const float& elapsedTime);
-		bool IsHitLeftHand(const float& elapsedTime);
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
 
 	private:
-		enum class JudgePart	//	当たり判定部分
-		{
-			LeftHand = 0,		//	左ジャブ
-			RightHand,			//	右アッパー
-		};
-
-		JudgeTime judgeTimes_[2] = {};
+		JudgeTime judgeTime_ = {};
 
 	};
 }
 
-//	コンボ01_3
+//	コンボ01_3(右アッパー)
 namespace PlayerState
 {
 	class ComboOne3 :public State<Player>
@@ -138,6 +131,10 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
+		JudgeTime judgeTime_ = {};
 
 	};
 }
@@ -154,6 +151,78 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+
+	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
+		JudgeTime judgeTime_ = {};
+
+	};
+}
+
+//	コンボ01_5
+namespace PlayerState
+{
+	class ComboOne5 :public State<Player>
+	{
+	public:
+		ComboOne5(Player* owner) :State(owner) {}
+		~ComboOne5() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
+		JudgeTime judgeTime_ = {};
+
+	};
+}
+
+//	コンボ01_6
+namespace PlayerState
+{
+	class ComboOne6 :public State<Player>
+	{
+	public:
+		ComboOne6(Player* owner) :State(owner) {}
+		~ComboOne6() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
+		JudgeTime judgeTime_ = {};
+
+	};
+}
+
+//	コンボ01_7
+namespace PlayerState
+{
+	class ComboOne7 :public State<Player>
+	{
+	public:
+		ComboOne7(Player* owner) :State(owner) {}
+		~ComboOne7() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+
+	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
+		JudgeTime judgeTime_ = {};
 
 	};
 }

@@ -23,7 +23,7 @@ public:
 
 	void FFT(std::vector<Complex>& x);				//	フーリエ変換
 
-	std::vector<float> HammingWindow(int count);	//	ハミング窓
+	std::vector<float> HammingWindow(const int& count);	//	ハミング窓
 
 	std::vector<float> GetAmplitudeSpectrum() { return amplitudeSpectrum_; }
 	float GetAmplitudeSpectrum(const int& index) { return amplitudeSpectrum_.at(index); }
@@ -35,7 +35,7 @@ private:
 	static constexpr int blockCount_ = 1024;		//	ハミング窓サンプル数(何分割するか)
 
 	std::vector<float> amplitudeSpectrum_;			//	振幅スぺクトラム(周波数帯ごとのデシベル値)
-	std::vector<float> oldAmplitudeSpectrum;		//	前回の振幅スペクトラム
+	std::vector<float> oldAmplitudeSpectrum_;		//	前回の振幅スペクトラム
 	std::vector<float> hamming_;
 
 };

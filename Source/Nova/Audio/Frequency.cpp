@@ -1,37 +1,42 @@
 #include "Frequency.h"
+
 #include "../../../External/imgui/imgui.h"
+#include "../../Nova/Others/Converter.h"
 
 void Frequency::Initialize()
 {
     // Hamming窓の生成
     hamming_ = HammingWindow(blockCount_);
 
-    oldAmplitudeSpectrum.resize(blockCount_, 0.0f);
+    oldAmplitudeSpectrum_.resize(blockCount_, 0.0f);
 
 }
 
 void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSource>& audioSource)
 {
-    UINT32  SPsize = audioSource->GetAudioBytes();      //  オーディオのバッファサイズ取得
-    BYTE    SPdata = audioSource->GetAudioData();
-    int     SPNowData = audioSource->GetCurrentSample(); //  現在のサンプル
-    int     SPNowBlock = SPNowData / blockCount_;       //  現在のブロック計算
+#if 0   //自分で変えた
+    size_t          SPsize      = audioSource->GetAudioBytes();     //  オーディオのバッファサイズ取得
+    const BYTE*     SPdata      = audioSource->GetAudioData();
+    std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);
+    int             SPNowData   = audioSource->GetCurrentSample();  //  現在のサンプル
+    int             SPNowBlock  = SPNowData / blockCount_;          //  現在のブロック計算
 
     //  FFT変換
     std::vector<Complex> windowedData;
     int spNowBlock = blockCount_ * SPNowBlock;
 
-    int spDataSize = sizeof(SPdata);
-
     for (int i = 0; i < blockCount_; ++i)
     {
-        //if (i + spNowBlock <)
+        int index = i + spNowBlock;
+        if (index < SPsize)  // 範囲内かチェック
         {
-
+            windowedData.emplace_back(hamming_[i] * audioVector[index]);
         }
-        windowedData.emplace_back(hamming_[i] * SPdata[i + spNowBlock]);
+        else
+        {
+            windowedData.emplace_back(0.0f);    //  範囲外なら0を追加        }
+        }
     }
-
     FFT(windowedData);
 
     //  振幅スペクトル
@@ -45,16 +50,72 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
     float blendRate = 0.9f;
     for (size_t i = 0; i < amplitudeSpectrum_.size() - 1; ++i)
     {
-        amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
-        oldAmplitudeSpectrum[i] = amplitudeSpectrum_[i];
+        amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum_[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
+        oldAmplitudeSpectrum_[i] = amplitudeSpectrum_[i];
+    }
+#else
+    UINT32 SPsize = audioSource->GetAudioBytes();
+    //auto& SPdata = audioSource->GetAudioData();
+    const BYTE* SPdata = audioSource->GetAudioData();
+    int SPNowData = audioSource->GetCurrentSample();    // 現在のサンプル
+    int SPNowBlock = SPNowData / blockCount_;    // 現在のブロック計算
+
+    // SPNowBlock が SPdata の範囲を超えないようにする
+    if (SPNowBlock * blockCount_ + blockCount_ > SPsize)
+    {
+        SPNowBlock = (SPsize - blockCount_) / blockCount_;
     }
 
+    // windowedDataのサイズをdataBlockSizeに設定する
+    std::vector<Complex> windowedData(blockCount_);
+
+    for (int i = 0; i < blockCount_; ++i)
+    {
+        // 範囲チェックを追加する
+        if ((i + blockCount_ * SPNowBlock) < SPsize)
+        {
+            windowedData[i] = hamming_[i] * SPdata[i + blockCount_ * SPNowBlock];
+        }
+        else
+        {
+            windowedData[i] = 0; // 範囲外の場合は0を代入する
+        }
+    }
+
+    FFT(windowedData);
+
+    // 振幅スペクトル
+    amplitudeSpectrum_.clear();
+    for (auto& w : windowedData)
+    {
+        amplitudeSpectrum_.emplace_back(sqrtf(w.real() * w.real() + w.imag() * w.imag()));
+    }
+
+    // 平滑化
+    for (size_t i = 0; i < amplitudeSpectrum_.size(); ++i)
+    {
+        if (i < oldAmplitudeSpectrum_.size())
+        {
+            amplitudeSpectrum_[i] = 0.97f * oldAmplitudeSpectrum_[i] + (0.03f * amplitudeSpectrum_[i]);
+        }
+        else
+        {
+            amplitudeSpectrum_[i] = amplitudeSpectrum_[i]; // もし oldAmplitudeSpectrum に対応するインデックスがない場合はそのまま
+        }
+    }
+
+    // oldAmplitudeSpectrumのサイズを更新する
+    oldAmplitudeSpectrum_ = amplitudeSpectrum_;
+
+    //sec = bgm->GetCurrent_Time();
+
+#endif
 }
 
 //  ハミング窓
 //  http://www.densikairo.com/Development/Public/study_dsp/C1EBB4D8BFF4.html
 //  https://cognicull.com/ja/qc1y1tr9
-std::vector<float> Frequency::HammingWindow(int count)
+std::vector<float> Frequency::HammingWindow(const int& count)
 {
     std::vector<float> hm;
     for (int i = 0; i < count; ++i)
@@ -117,6 +178,8 @@ void Frequency::DrawDebug()
 {  
     // Plot imageData using ImGui
     ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+    ImGui::PlotLines("Old Amplitude Spectrum", oldAmplitudeSpectrum_.data(), static_cast<int>(oldAmplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+    ImGui::PlotLines("Hamming", hamming_.data(), static_cast<int>(hamming_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
 
     ImGui::TreePop();
    

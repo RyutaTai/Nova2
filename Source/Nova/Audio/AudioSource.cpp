@@ -45,7 +45,6 @@ AudioSource::~AudioSource()
 	if (sourceVoice_ != nullptr)
 	{
 		sourceVoice_->DestroyVoice();
-		sourceVoice_ = nullptr;
 	}
 
 	delete buffer_.pAudioData;

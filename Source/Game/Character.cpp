@@ -180,9 +180,9 @@ void Character::SetPixelShader(const char* csoName)
 }
 
 //	ジョイントポジション取得
-DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& meshName, const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
+DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
 {
-	return gltfModelResource_->GetJointPosition(meshName, boneName, transform);
+	return gltfModelResource_->GetJointPosition(boneName, transform);
 }
 
 DirectX::XMFLOAT3 Character::GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform)

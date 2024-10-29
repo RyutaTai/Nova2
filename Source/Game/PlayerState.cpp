@@ -31,7 +31,7 @@ namespace PlayerState
 		}
 		
 		//	攻撃ステートへ遷移
-		if (owner_->GetCombo0ButtonDown())
+		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
 			return;
@@ -205,42 +205,6 @@ namespace PlayerState
 
 	}
 
-	//	拳と敵の当たり判定
-	bool AttackState::PunchVsEnemy(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius)
-	{
-		DirectX::XMFLOAT3 outPosition = {};
-		bool isPunchHitEnemy = false;
-
-		for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
-		{
-			DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
-			float eRadius = enemy->GetRadius() + 0.1f;
-			float eHeight = enemy->GetHeight() * 2;
-			DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
-
-			//	球と円柱で当たり判定
-			//if (1.1f/2.0f < judgeTime_ && judgeTime_ < 1.2f/2.0f)
-			//{
-			if (Collision::IntersectSphereVsCylinder(leftHandPos, leftHandRadius, ePos + ePosOffset, eRadius, eHeight, outPosition))
-			{
-				enemy->SubtractHp(1);
-				float effectScale = 50.0f;
-				isPunchHitEnemy = true;
-			}
-			else isPunchHitEnemy = false;
-
-			//	エフェクト再生設定(PlayerのRender()で描画される)
-			if (isPunchHitEnemy)
-			{
-				isPunchHitEnemy = true;
-				owner_->SetPlayEffectFlag(true);
-				owner_->SetEffectPos(leftHandPos);
-			}
-			//}
-		}
-		return isPunchHitEnemy;
-	}
-
 	//	敵の方向へに向かって移動
 	void AttackState::MoveTowardsEnemy(const float& elapsedTime)
 	{
@@ -282,7 +246,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_1
+//	コンボ01_1(右パンチ)
 namespace PlayerState
 {
 	void ComboOne1::Initialize()
@@ -307,7 +271,7 @@ namespace PlayerState
 		//
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 		bool isCorrectTime = judgeTime_.IsJudgeFlag(currentAnimationSeconds);
-		bool isHit = owner_->JointVsEnemiesAndBullet(elpasedTime, "SKM_Manny_LOD0", "ik_hand_r", 5.0f);	//	敵と弾丸との当たり判定
+		bool isHit = owner_->JointVsEnemiesAndBullet(elpasedTime, "ik_hand_r", 5.0f);	//	敵と弾丸との当たり判定
 
 		if ( isHit && isCorrectTime)
 		{
@@ -329,7 +293,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_2
+//	コンボ01_2(左パンチ)
 namespace PlayerState
 {
 	void ComboOne2::Initialize()
@@ -341,18 +305,15 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMinJudgeTime(0.230f);		//	左ジャブ
-		judgeTimes_[static_cast<int>(JudgePart::LeftHand)].SetMaxJudgeTime(0.250f);
-		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMinJudgeTime(0.285f);		//	右アッパー
-		judgeTimes_[static_cast<int>(JudgePart::RightHand)].SetMaxJudgeTime(0.60f);
+		judgeTime_.SetMinJudgeTime(0.230f);
+		judgeTime_.SetMaxJudgeTime(0.250f);
 
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-		if (IsHitRightHand(elapsedTime))
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true)
 		{
-			//owner_->ChangeState(Player::StateType::Idle);
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			return;
 		}
@@ -363,32 +324,15 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne2::IsHitLeftHand(const float& elapsedTime)
+	bool ComboOne2::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTimes_[static_cast<int>(JudgePart::LeftHand)].IsJudgeFlag(currentAnimationSeconds) == false)
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
-		//	ノードとの当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, "SKM_Manny_LOD0", "ik_hand_l", 5.0f) == false)	//	敵と弾丸との当たり判定
-		{
-			owner_->ChangeState(Player::StateType::Idle);
-			return false;
-		}
-
-		return true;
-	}
-
-	bool ComboOne2::IsHitRightHand(const float& elapsedTime)
-	{
-		//	時間での判定
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTimes_[static_cast<int>(JudgePart::RightHand)].IsJudgeFlag(currentAnimationSeconds) == false)
-			return false;
-
-		//	ノードとの当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, "SKM_Manny_LOD0", "ik_hand_r", 5.0f) == false)	//	敵と弾丸との当たり判定
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return false;
@@ -404,28 +348,52 @@ namespace PlayerState
 
 }
 
-//	コンボ01_3
+//	コンボ01_3(右アッパー)
 namespace PlayerState
 {
 	void ComboOne3::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_2, false, 1.0f, 0.0f, 0.3f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
 
-		//	
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.285f);
+		judgeTime_.SetMaxJudgeTime(0.60f);
 
 	}
 
-	void ComboOne3::Update(const float& elpasedTime)
+	void ComboOne3::Update(const float& elapsedTime)
 	{
-		if (owner_->IsPlayAnimation() == false)
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			return;
 		}
+		else if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+	}
+
+	bool ComboOne3::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
 	}
 
 	void ComboOne3::Finalize()
@@ -441,18 +409,25 @@ namespace PlayerState
 	void ComboOne4::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f,0.29f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f,0.085f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
 
-		//	
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.07f);
+		judgeTime_.SetMaxJudgeTime(0.11f);
 
 	}
 
-	void ComboOne4::Update(const float& elpasedTime)
+	void ComboOne4::Update(const float& elapsedTime)
 	{
-		if (owner_->IsPlayAnimation() == false)
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true)
+		{
+			owner_->ChangeState(Player::StateType::ComboOne5);
+			return;
+		}
+		else if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
@@ -460,7 +435,190 @@ namespace PlayerState
 
 	}
 
+	bool ComboOne4::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
+	}
+
 	void ComboOne4::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+}
+
+//	コンボ01_5
+namespace PlayerState
+{
+	void ComboOne5::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f, 0.257f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.262f);
+		judgeTime_.SetMaxJudgeTime(0.326f);
+
+	}
+
+	void ComboOne5::Update(const float& elapsedTime)
+	{
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
+		{
+			owner_->ChangeState(Player::StateType::ComboOne6);
+			return;
+		}
+		else if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+
+	}
+
+	bool ComboOne5::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
+	}
+
+	void ComboOne5::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+
+}
+
+//	コンボ01_6
+namespace PlayerState
+{
+	void ComboOne6::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f, 0.424f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.519f);
+		judgeTime_.SetMaxJudgeTime(0.931f);
+
+	}
+
+	void ComboOne6::Update(const float& elapsedTime)
+	{
+		if (IsHit(elapsedTime, judgeTime_, "ik_foot_l") == true)
+		{
+			owner_->ChangeState(Player::StateType::ComboOne7);
+			return;
+		}
+		else if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+
+	}
+
+	bool ComboOne6::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
+	}
+	
+	void ComboOne6::Finalize()
+	{
+		owner_->SetUseRootMotion(false);
+	}
+
+}
+
+//	コンボ01_7
+namespace PlayerState
+{
+	void ComboOne7::Initialize()
+	{
+		//	アニメーションセット
+		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f, 0.14f);
+
+		//	ルートモーション
+		owner_->SetUseRootMotion(true);
+
+		//	判定時間セット
+		judgeTime_.SetMinJudgeTime(0.703f);
+		judgeTime_.SetMaxJudgeTime(1.09f);
+
+	}
+
+	void ComboOne7::Update(const float& elapsedTime)
+	{
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
+		{
+			
+		}
+		else if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+
+	}
+
+	bool ComboOne7::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
+	}
+
+	void ComboOne7::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
 	}

@@ -25,7 +25,7 @@ public:
 		JumpRight,		//	右ジャンプ
 		JumpBack,		//	後ろジャンプ
 		JumpLeft,		//	左ジャンプ
-		DoubleJamp,		//	2段ジャンプの２段目
+		DoubleJamp,		//	2段ジャンプの2段目
 		Combo0_1,		//	コンボ1_1
 		Combo0_2,		//	コンボ1_2
 		Combo0_3,		//	コンボ1_3
@@ -52,6 +52,9 @@ public:
 		ComboOne2,		//	コンボ0_2
 		ComboOne3,		//	コンボ0_3
 		ComboOne4,		//	コンボ0_4
+		ComboOne5,		//	コンボ0_5
+		ComboOne6,		//	コンボ0_6
+		ComboOne7,		//	コンボ0_7
 		Dodge,		//	回避
 		Max,			//	ステート最大数
 	};
@@ -76,13 +79,15 @@ public:
 	void ChangeState(StateType state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	void PlayEffect();
 
-	const bool GetCombo0ButtonDown() { return Input::Instance().GetGamePad().GetButtonDown()& GamePad::BTN_B; }
+	//	指定したキーが押されているか
+	const bool GetButtonDown(const GamePadButton& gamePad) { return Input::Instance().GetGamePad().GetButtonDown()& gamePad; }
 
 	//	判定
 	bool RayVsVertical(const float& elapsedTime)override;		//	ステージとの当たり判定(垂直方向)
 	bool RayVsHorizontal(const float& elapsedTime)override;		//	ステージとの当たり判定(水平方向)	
 	bool PlayerVsEnemies(const float& elapsedTime);				//	押し合い処理
-	bool JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& meshName, const std::string& boneName, const float& jointRadius);
+
+	bool JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& boneName, const float& jointRadius);
 	bool JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと敵の当たり判定
 	bool JointVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか

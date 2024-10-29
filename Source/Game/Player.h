@@ -121,7 +121,8 @@ private:
 	std::shared_ptr <Effect>		effectResource_;										//	エフェクト
 	float							effectScale_ = 5.0f;									//	エフェクトスケール
 	DirectX::XMFLOAT3				effectPos_ = {};										//	エフェクト再生位置
-	bool							playEffectFlag_ = false;								//	エフェクト描画フラグ
+	bool							playEffectFlag_ = false;								//	エフェクト再生フラグ
+	bool							drawEffectFlag_ = true;									//	エフェクト描画フラグ(falseなら描画しない)
 	//AnimationType					currentAnimNum_;										//	現在のアニメーション番号
 	float							turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
 	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;				//	ステートマシン

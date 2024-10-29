@@ -403,7 +403,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_4
+//	コンボ01_4(左パンチ)
 namespace PlayerState
 {
 	void ComboOne4::Initialize()
@@ -458,7 +458,7 @@ namespace PlayerState
 	}
 }
 
-//	コンボ01_5
+//	コンボ01_5(右パンチ)
 namespace PlayerState
 {
 	void ComboOne5::Initialize()
@@ -514,7 +514,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_6
+//	コンボ01_6(左回し蹴り)
 namespace PlayerState
 {
 	void ComboOne6::Initialize()
@@ -570,7 +570,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_7
+//	コンボ01_7(右打ち下ろし)
 namespace PlayerState
 {
 	void ComboOne7::Initialize()

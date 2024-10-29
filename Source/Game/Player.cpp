@@ -665,6 +665,9 @@ bool Player::RayVsHorizontal(const float& elapsedTime)
 //	エフェクト再生
 void Player::PlayEffect()
 {
+	//	エフェクト描画フラグがfalseなら描画しない
+	if (drawEffectFlag_ == false)return;
+
 	//	エフェクト描画
 	effectResource_->Play(effectPos_, effectScale_);
 
@@ -823,7 +826,8 @@ void Player::DrawDebug()
 	if (ImGui::TreeNode(u8"Playerプレイヤー"))
 	{
 		ImGui::Checkbox("IsPose", &isPose_);
-		ImGui::Checkbox("PlayEffect", &playEffectFlag_);
+		ImGui::Checkbox("PlayEffect", &playEffectFlag_);	//	エフェクト再生フラグ
+		ImGui::Checkbox("DrawEffect", &drawEffectFlag_);	//	エフェクト描画フラグ
 		ImGui::Checkbox("Invincible", &isInvincible_);
 		ImGui::Checkbox("AddGravity", &isAddGravity_);
 

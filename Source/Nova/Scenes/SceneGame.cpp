@@ -13,6 +13,9 @@
 #include "../../Game/EnemyManager.h"
 #include "../../Game/GameState.h"
 #include "../../Game/UIManager.h"
+#include "../../Game/UIHealth.h"
+#include "../../Game/UIInstructions.h"
+#include "../../Game/UITempo.h"
 
 //	初期化
 void SceneGame::Initialize()
@@ -29,12 +32,9 @@ void SceneGame::Initialize()
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
 
 	/* ----- UI初期化(生成したらUIクラスでマネージャーに登録される) ----- */
-	UIHealth* uiHealth = new UIHealth();
-	
-	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
-	ui_[static_cast<int>(UI_GAME::Instructions)]->GetTransform()->SetPosition(24, 250);
-	ui_[static_cast<int>(UI_GAME::Instructions)]->SetName("Instructions");
-	ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(false);
+	UIHealth*		uiHealth		= new UIHealth();
+	UIInstructions* uiInstructions	= new UIInstructions();
+	UITempo*		uiTempo			= new UITempo();
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
 	/* ----- ステージ初期化 ----- */
@@ -414,7 +414,7 @@ void SceneGame::Render()
 		//	操作方法描画
 		if (waveStartTimer_ <= 0.0f && isResult_ == false)
 		{
-			ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(true);
+			//ui_[static_cast<int>(UI_GAME::Instructions)]->SetRenderFlag(true);
 		}
 
 		//	ゲームクリア

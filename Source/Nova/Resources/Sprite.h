@@ -97,22 +97,19 @@ public:
 	~Sprite();
 
 	void Render();
-
-	// 描画実行
-	void Render(ID3D11DeviceContext* deviceContext,
-		float dx, float dy,
-		float dw, float dh,
-		float sx, float sy,
-		float sw, float sh,
-		float angle,
-		float r, float g, float b, float a) const;
-
 	void DrawDebug();
 
 	void Textout(std::string s,
 		float x, float y, float w, float h, float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f);
 	
-	SpriteTransform* GetTransform() { return &transform_; }
+
+	void SetName(const std::string& name)		{ name_ = name; }
+	void SetRenderFlag(const bool& renderFlag)	{ renderFlag_ = renderFlag; }
+
+	const std::string	GetName()const	{ return name_; }
+	const bool			GetRenderFlag() { return renderFlag_; }
+
+	SpriteTransform*	GetTransform()	{ return &transform_; }
 
 private:
 	Microsoft::WRL::ComPtr <ID3D11Buffer>				vertexBuffer_;
@@ -123,5 +120,7 @@ private:
 	D3D11_TEXTURE2D_DESC								texture2dDesc_;
 
 	SpriteTransform										transform_ = {};
+	std::string name_ = "";		//	スプライト名
+	bool renderFlag_ = true;	//	描画フラグ
 
 };

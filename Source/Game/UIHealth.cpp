@@ -4,13 +4,13 @@
 #include "../Nova/Others/MathHelper.h"
 
 UIHealth::UIHealth()
-	:UI(L"./Resources/Image/HpGauge.png")
+	:UI()
 {
+	hpGauge_ = std::make_unique<Sprite>(L"./Resources/Image/HpGauge.png");
 	hpGaugeBack_ = std::make_unique<Sprite>(L"./Resources/Image/HpGaugeBack.png");
 	hpFrame_ = std::make_unique<Sprite>(L"./Resources/Image/HpFrame.png");
 
-	this->GetTransform()->SetPosition(80, 40);
-	this->SetName("HpGauge");
+	hpGauge_->GetTransform()->SetPosition(80, 40);
 	hpGaugeBack_->GetTransform()->SetPosition(80, 40);
 	hpFrame_->GetTransform()->SetPosition(0, 0);
 }
@@ -34,7 +34,7 @@ void UIHealth::UpdateHpGauge(const float& elapsedTime)
 	const float maxHealth = Player::Instance().GetMaxHp();
 	const float currentHealth = Player::Instance().GetHp();
 	const float health = currentHealth / maxHealth;	//	0`1‚É‚·‚é
-	GetTransform()->SetSizeX(GAUGE_SIZE_X * health);
+	hpGauge_->GetTransform()->SetSizeX(GAUGE_SIZE_X * health);
 
 }
 
@@ -73,7 +73,7 @@ void UIHealth::CheckDamage()
 void UIHealth::Render()
 {
 	hpGaugeBack_->Render();
-	UI::Render();
+	hpGauge_->Render();
 	hpFrame_->Render();
 }
 

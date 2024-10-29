@@ -24,19 +24,19 @@ void SceneDemo::Initialize()
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
 
 	/* ----- UI初期化 ----- */
-	ui_[static_cast<int>(UI_GAME::HpGaugeBack)] = new UI(L"./Resources/Image/HpGaugeBack.png");	//	生成したらUIクラスでマネージャーに登録される
-	ui_[static_cast<int>(UI_GAME::HpGauge)] = new UI(L"./Resources/Image/HpGauge.png");
-	ui_[static_cast<int>(UI_GAME::HpFrame)] = new UI(L"./Resources/Image/HpFrame.png");
-	ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->GetTransform()->SetPosition(88, 41);
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->SetName("HpGaugeBack");
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGauge))->GetTransform()->SetPosition(85, 40);
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGauge))->SetName("HpGauge");
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpFrame))->GetTransform()->SetPosition(0, 0);
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpFrame))->SetName("HpFrame");
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::Instructions))->GetTransform()->SetPosition(24, 250);
-	UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::Instructions))->SetName("Instructions");
-	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする
+	//ui_[static_cast<int>(UI_GAME::HpGaugeBack)] = new UI(L"./Resources/Image/HpGaugeBack.png");	//	生成したらUIクラスでマネージャーに登録される
+	//ui_[static_cast<int>(UI_GAME::HpGauge)] = new UI(L"./Resources/Image/HpGauge.png");
+	//ui_[static_cast<int>(UI_GAME::HpFrame)] = new UI(L"./Resources/Image/HpFrame.png");
+	//ui_[static_cast<int>(UI_GAME::Instructions)] = new UI(L"./Resources/Image/Instructions.png");
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->GetTransform()->SetPosition(88, 41);
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGaugeBack))->SetName("HpGaugeBack");
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGauge))->GetTransform()->SetPosition(85, 40);
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpGauge))->SetName("HpGauge");
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpFrame))->GetTransform()->SetPosition(0, 0);
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::HpFrame))->SetName("HpFrame");
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::Instructions))->GetTransform()->SetPosition(24, 250);
+	//UIManager::Instance().GetUIFromNum(static_cast<int>(UI_GAME::Instructions))->SetName("Instructions");
+	//UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする
 
 	/* ----- ステージ初期化 ----- */
 	stage_[0] = std::make_unique<Stage>();			//	シティモデル
@@ -416,7 +416,7 @@ void SceneDemo::Render()
 		//	操作方法描画
 		if (waveStartTimer_ <= 0.0f && isResult_ == false)
 		{
-			ui_[static_cast<int>(UI_GAME::Instructions)]->Render();
+			//ui_[static_cast<int>(UI_GAME::Instructions)]->Render();
 		}
 
 		//	ゲームクリア

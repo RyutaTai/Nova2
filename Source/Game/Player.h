@@ -126,7 +126,7 @@ private:
 	//AnimationType					currentAnimNum_;										//	現在のアニメーション番号
 	float							turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
 	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;				//	ステートマシン
-	static constexpr int			MAX_HP = 100;
+	static constexpr int			MAX_HP = 100;											//	最大HP
 
 	bool							isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
 	bool							isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
@@ -135,6 +135,8 @@ private:
 	bool				isTraget_	= false;	//	ターゲットがいるか
 	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
 	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
+
+	bool				isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
 
 	//	オーディオ
 	SoundListener listener_ = {};	//	リスナー

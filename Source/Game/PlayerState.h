@@ -90,7 +90,11 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
+		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+
+	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }
@@ -113,6 +117,7 @@ namespace PlayerState
 
 	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }
@@ -135,6 +140,7 @@ namespace PlayerState
 
 	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }
@@ -157,6 +163,7 @@ namespace PlayerState
 
 	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }
@@ -179,6 +186,7 @@ namespace PlayerState
 
 	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }
@@ -201,6 +209,7 @@ namespace PlayerState
 
 	private:
 		JudgeTime judgeTime_ = {};
+		bool isCurrectInput_ = false;	//	³‚µ‚¢“ü—Í‚ªæ‚ê‚Ä‚¢‚½‚çtrue
 
 	};
 }

@@ -41,10 +41,10 @@ void UIManager::Finalize()
 
 void UIManager::SetDrawFlag(const bool& drawFlag)
 {
-	for (UI*& ui : userInterfaces_)
-	{
-		ui->SetRenderFlag(drawFlag);
-	}
+	//for (UI*& ui : userInterfaces_)
+	//{
+	//	ui->SetRenderFlag(drawFlag);
+	//}
 }
 
 //	”Ô†‚©‚çUI‚ðŽæ“¾
@@ -57,14 +57,14 @@ UI* UIManager::GetUIFromNum(int num)
 }
 
 //	–¼‘O‚©‚çUI‚ðŽæ“¾
-UI* UIManager::GetUIFromName(const std::string& name)
-{
-	for (UI*& ui : userInterfaces_)
-	{
-		if (ui->GetName().compare(name)) return ui;
-	}
-	_ASSERT_EXPR(false, L"UI is not found.");
-}
+//UI* UIManager::GetUIFromName(const std::string& name)
+//{
+//	/*for (UI*& ui : userInterfaces_)
+//	{
+//		if (ui->GetName().compare(name)) return ui;
+//	}
+//	_ASSERT_EXPR(false, L"UI is not found.");*/
+//}
 
 void UIManager::Render()
 {

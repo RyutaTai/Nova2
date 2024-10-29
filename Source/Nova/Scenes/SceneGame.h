@@ -11,7 +11,6 @@
 #include "../../Game/Drone.h"
 #include "../PostProcess/Bloom.h"
 #include "../../Game/UI.h"
-#include "../../Game/UIHealth.h"
 
 class SceneGame : public Scene
 {

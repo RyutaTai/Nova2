@@ -194,6 +194,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\UIInstructions.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
@@ -282,8 +283,10 @@
     <ClCompile Include="Source\Nova\Scenes\SceneTitle.cpp" />
     <ClCompile Include="Source\Game\UIManager.cpp" />
     <ClCompile Include="Source\Game\TitleState.cpp" />
+    <ClCompile Include="Source\Game\UITempo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\UIInstructions.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
@@ -383,6 +386,7 @@
     <ClInclude Include="Source\Nova\Scenes\SceneManager.h" />
     <ClInclude Include="Source\Nova\Scenes\SceneTitle.h" />
     <ClInclude Include="Source\Game\TitleState.h" />
+    <ClInclude Include="Source\Game\UITempo.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Game\Shaders\BulletCoverPS.hlsl">

@@ -262,20 +262,18 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.55f);
 		judgeTime_.SetMaxJudgeTime(0.735f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
-	void ComboOne1::Update(const float& elpasedTime)
+	void ComboOne1::Update(const float& elapsedTime)
 	{
 		// TODO:アニメーションの長さ調整
 		
-		//
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		bool isCorrectTime = judgeTime_.IsJudgeFlag(currentAnimationSeconds);
-		bool isHit = owner_->JointVsEnemiesAndBullet(elpasedTime, "ik_hand_r", 5.0f);	//	敵と弾丸との当たり判定
-
-		if ( isHit && isCorrectTime)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true && isCurrectInput_ == true)
 		{
-			//owner_->ChangeState(Player::StateType::Idle);
 			owner_->ChangeState(Player::StateType::ComboOne2);
 			return;
 		}
@@ -284,6 +282,23 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
+	}
+
+	bool ComboOne1::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	{
+		//	時間での判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+			return false;
+
+		//	ノードと、敵または弾丸との当たり判定当たり判定
+		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return false;
+		}
+
+		return true;
 	}
 
 	void ComboOne1::Finalize()
@@ -308,11 +323,15 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.230f);
 		judgeTime_.SetMaxJudgeTime(0.250f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true /*&& isCurrectInput_ == true*/)	//	ComboOne2も短い
 		{
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			return;
@@ -363,11 +382,15 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.285f);
 		judgeTime_.SetMaxJudgeTime(0.60f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
 	void ComboOne3::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true /*&& isCurrectInput_ == true*/)	//	ComboOne3はフレームがめっちゃ短い
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			return;
@@ -418,11 +441,15 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.07f);
 		judgeTime_.SetMaxJudgeTime(0.11f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
 	void ComboOne4::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true && isCurrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne5);
 			return;
@@ -473,11 +500,15 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.262f);
 		judgeTime_.SetMaxJudgeTime(0.326f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
 	void ComboOne5::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true && isCurrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne6);
 			return;
@@ -529,11 +560,15 @@ namespace PlayerState
 		judgeTime_.SetMinJudgeTime(0.519f);
 		judgeTime_.SetMaxJudgeTime(0.931f);
 
+		//	キー入力判定初期化
+		isCurrectInput_ = false;
+
 	}
 
 	void ComboOne6::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_foot_l") == true)
+		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
+		if (IsHit(elapsedTime, judgeTime_, "ik_foot_l") == true && isCurrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne7);
 			return;

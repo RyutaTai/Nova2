@@ -63,6 +63,8 @@ Sprite::~Sprite()
 //	•`‰æˆ—
 void Sprite::Render()
 {
+	if (renderFlag_ == false)return;	//	•`‰æƒtƒ‰ƒO‚ªfalse‚È‚çˆ—‚µ‚È‚¢
+
 	Graphics& graphics = Graphics::Instance();
 
 	D3D11_VIEWPORT viewport{};

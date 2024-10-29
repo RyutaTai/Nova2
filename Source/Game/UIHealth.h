@@ -20,6 +20,7 @@ public:
 
 private:
 	std::unique_ptr<Sprite> hpFrame_;
+	std::unique_ptr<Sprite> hpGauge_;
 	std::unique_ptr<Sprite> hpGaugeBack_;
 
 	const float GAUGE_SIZE_X = 440.0f;		//	HPゲージの画像サイズX

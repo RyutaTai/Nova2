@@ -5,7 +5,8 @@ namespace DragonkinState
 {
 	void IdleState::Initialize()
 	{
-
+		//	アニメーションセット
+		//owner_->PlayAnimation()
 	}
 
 	void IdleState::Update(const float& elapsedTime)

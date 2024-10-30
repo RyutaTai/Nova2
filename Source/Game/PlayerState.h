@@ -90,12 +90,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);	//	経過時間更新
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
-
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 	};
 }
 
@@ -113,11 +116,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }
@@ -136,11 +143,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }
@@ -159,11 +170,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }
@@ -182,11 +197,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }
@@ -205,11 +224,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
-		bool isCurrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }
@@ -228,10 +251,15 @@ namespace PlayerState
 		void Finalize()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName);
+		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime judgeTime_ = {};
+		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
+		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 
 	};
 }

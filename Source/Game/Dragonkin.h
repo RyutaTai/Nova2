@@ -16,12 +16,12 @@ public:
 	bool RayVsHorizontal(const float& elapsedTime)override;
 	void Move(const float& elapsedTime)override {}
 
-	void DrawDebug()	override;
+	void DrawDebug()override;
 	void DrawDebugPrimitive()override;
 
 private:
 	//	アニメーション情報(Boss)
-	enum DragonkinAnimation
+	enum AnimationType
 	{
 		ANIM_ATTACK01 = 0, 	//	
 		ANIM_ATTACK02,

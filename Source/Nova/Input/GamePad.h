@@ -33,7 +33,7 @@ public:
 	void Update();
 
 	// スロット設定
-	void SetSlot(int slot_) { this->slot_ = slot_; }
+	void SetSlot(const int& slot) { this->slot_ = slot; }
 
 	// ボタン入力状態の取得
 	GamePadButton GetButton() const { return buttonState_[0]; }

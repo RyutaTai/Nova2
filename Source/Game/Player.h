@@ -80,7 +80,7 @@ public:
 	void PlayEffect();
 
 	//	指定したキーが押されているか
-	const bool GetButtonDown(const GamePadButton& gamePad) { return Input::Instance().GetGamePad().GetButtonDown()& gamePad; }
+	const bool GetButtonDown(const GamePadButton& gamePadButton) { return Input::Instance().GetGamePad().GetButtonDown()& gamePadButton; }
 
 	//	判定
 	bool RayVsVertical(const float& elapsedTime)override;		//	ステージとの当たり判定(垂直方向)
@@ -98,16 +98,18 @@ public:
 	
 	void UpdateListener();	//	リスナー情報更新
 
-	void SetIsPose(bool isPose)							{ isPose_ = isPose; }
-	void SetIsHitEnemy(bool isHitEnemy)					{ isHitEnemy_ = isHitEnemy; }
-	void SetEffectScale(float scale)					{ effectScale_ = scale; }
-	void SetPlayEffectFlag(bool playEffect)				{ playEffectFlag_ = playEffect; }
-	void SetEffectPos(const DirectX::XMFLOAT3& pos)		{ effectPos_ = pos; }
-
+	void SetIsPose(const bool& isPose)				{ isPose_ = isPose; }
+	void SetIsHitEnemy(const bool& isHitEnemy)		{ isHitEnemy_ = isHitEnemy; }
+	void SetEffectScale(const float& scale)			{ effectScale_ = scale; }
+	void SetPlayEffectFlag(const bool& playEffect)	{ playEffectFlag_ = playEffect; }
+	void SetEffectPos(const DirectX::XMFLOAT3& pos)	{ effectPos_ = pos; }
+	void SetAutoCombo(const bool& isAutoCombo)		{ isAutoCombo_ = isAutoCombo; }
+	
 	const int	GetMaxHp()		const	{ return MAX_HP; }
 	bool		GetPose()		const	{ return isPose_; }
 	bool		IsHItEnemy()	const	{ return isHitEnemy_; }
 	bool		IsPlayEffect()	const	{ return playEffectFlag_; }
+	bool		IsAutoCombo()	const	{ return isAutoCombo_; }
 	int									GetCurrentAnimNum();			//	現在再生中のアニメーション番号取得
 	AnimationType						GetCurrentAnimType();			//	現在再生中のアニメーションタイプ取得
 	float						const	GetCurrentAnimationSeconds();	//	現在のアニメーション再生時間取得
@@ -118,25 +120,25 @@ public:
 private:
 	static Player* instance_;
 
-	std::shared_ptr <Effect>		effectResource_;										//	エフェクト
-	float							effectScale_ = 5.0f;									//	エフェクトスケール
-	DirectX::XMFLOAT3				effectPos_ = {};										//	エフェクト再生位置
-	bool							playEffectFlag_ = false;								//	エフェクト再生フラグ
-	bool							drawEffectFlag_ = true;									//	エフェクト描画フラグ(falseなら描画しない)
-	//AnimationType					currentAnimNum_;										//	現在のアニメーション番号
-	float							turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
+	std::shared_ptr <Effect>	effectResource_;										//	エフェクト
 	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;				//	ステートマシン
-	static constexpr int			MAX_HP = 100;											//	最大HP
+	float						effectScale_ = 5.0f;									//	エフェクトスケール
+	DirectX::XMFLOAT3			effectPos_ = {};										//	エフェクト再生位置
+	bool						playEffectFlag_ = false;								//	エフェクト再生フラグ
+	bool						drawEffectFlag_ = true;									//	エフェクト描画フラグ(falseなら描画しない)
+	//AnimationType				currentAnimNum_;										//	現在のアニメーション番号
+	float						turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
+	static constexpr int		MAX_HP = 100;											//	最大HP
 
-	bool							isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
-	bool							isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
+	bool						isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
+	bool						isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
 
 	//	ターゲット
-	bool				isTraget_	= false;	//	ターゲットがいるか
-	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
-	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
+	bool						isTraget_	= false;	//	ターゲットがいるか
+	float						serchRange_ = 10.0f;	//	ターゲットを見つける範囲
+	DirectX::XMFLOAT3			targetPos	= {};		//	ターゲット位置
 
-	bool				isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
+	bool						isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
 
 	//	オーディオ
 	SoundListener listener_ = {};	//	リスナー

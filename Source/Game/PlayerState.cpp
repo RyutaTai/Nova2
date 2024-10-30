@@ -259,20 +259,28 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.55f);
-		judgeTime_.SetMaxJudgeTime(0.735f);
+		animJudgeTime_.SetMinJudgeTime(0.55f);
+		animJudgeTime_.SetMaxJudgeTime(0.735f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.735f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
 	void ComboOne1::Update(const float& elapsedTime)
 	{
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+
 		// TODO:アニメーションの長さ調整
-		
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true && isCurrectInput_ == true)
+
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne2);
 			return;
@@ -284,11 +292,11 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne1::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne1::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -299,6 +307,28 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne1::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+			return;
+		}
+
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		{
+			isCorrectInput_ = true;
+		}
+
+	}
+
+	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne1::Finalize()
@@ -320,18 +350,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.230f);
-		judgeTime_.SetMaxJudgeTime(0.250f);
+		animJudgeTime_.SetMinJudgeTime(0.230f);
+		animJudgeTime_.SetMaxJudgeTime(0.250f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.25f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
 
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true /*&& isCurrectInput_ == true*/)	//	ComboOne2も短い
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_l") == true && isCorrectInput_ == true)	//	ComboOne2も短い
 		{
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			return;
@@ -343,11 +376,11 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne2::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne2::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -358,6 +391,23 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne2::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne2::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne2::Finalize()
@@ -379,18 +429,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.285f);
-		judgeTime_.SetMaxJudgeTime(0.60f);
+		animJudgeTime_.SetMinJudgeTime(0.285f);
+		animJudgeTime_.SetMaxJudgeTime(0.60f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.60f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
 
 	}
 
 	void ComboOne3::Update(const float& elapsedTime)
 	{
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true /*&& isCurrectInput_ == true*/)	//	ComboOne3はフレームがめっちゃ短い
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)	//	ComboOne3はフレームがめっちゃ短い
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			return;
@@ -402,11 +455,11 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne3::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne3::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -417,6 +470,23 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne3::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne3::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne3::Finalize()
@@ -438,18 +508,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.07f);
-		judgeTime_.SetMaxJudgeTime(0.11f);
+		animJudgeTime_.SetMinJudgeTime(0.07f);
+		animJudgeTime_.SetMaxJudgeTime(0.11f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.11f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
 
 	}
 
 	void ComboOne4::Update(const float& elapsedTime)
 	{
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_l") == true && isCurrectInput_ == true)
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_l") == true && isCorrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne5);
 			return;
@@ -462,11 +535,11 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne4::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne4::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -477,6 +550,23 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne4::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne4::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne4::Finalize()
@@ -497,18 +587,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.262f);
-		judgeTime_.SetMaxJudgeTime(0.326f);
+		animJudgeTime_.SetMinJudgeTime(0.262f);
+		animJudgeTime_.SetMaxJudgeTime(0.326f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.32f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
 
 	}
 
 	void ComboOne5::Update(const float& elapsedTime)
 	{
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true && isCurrectInput_ == true)
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne6);
 			return;
@@ -521,11 +614,11 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne5::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne5::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -536,6 +629,23 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne5::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne5::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne5::Finalize()
@@ -557,18 +667,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.519f);
-		judgeTime_.SetMaxJudgeTime(0.931f);
+		animJudgeTime_.SetMinJudgeTime(0.519f);
+		animJudgeTime_.SetMaxJudgeTime(0.931f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(0.93f);
 
 		//	キー入力判定初期化
-		isCurrectInput_ = false;
+		isCorrectInput_ = false;
 
 	}
 
 	void ComboOne6::Update(const float& elapsedTime)
 	{
-		isCurrectInput_ = owner_->GetButtonDown(GamePad::BTN_B);
-		if (IsHit(elapsedTime, judgeTime_, "ik_foot_l") == true && isCurrectInput_ == true)
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_foot_l") == true && isCorrectInput_ == true)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne7);
 			return;
@@ -581,11 +694,11 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne6::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne6::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -598,6 +711,23 @@ namespace PlayerState
 		return true;
 	}
 	
+	void ComboOne6::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne6::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
+	}
+
 	void ComboOne6::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
@@ -617,14 +747,18 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		judgeTime_.SetMinJudgeTime(0.703f);
-		judgeTime_.SetMaxJudgeTime(1.09f);
+		animJudgeTime_.SetMinJudgeTime(0.703f);
+		animJudgeTime_.SetMaxJudgeTime(1.09f);
+		inputJudgeTime_.SetMinJudgeTime(0.0f);
+		inputJudgeTime_.SetMaxJudgeTime(1.0f);
 
 	}
 
 	void ComboOne7::Update(const float& elapsedTime)
 	{
-		if (IsHit(elapsedTime, judgeTime_, "ik_hand_r") == true)
+		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		JudgeInput(inputJudgeTime_, GamePad::BTN_B);
+		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true)
 		{
 			
 		}
@@ -636,11 +770,11 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne7::IsHit(const float& elapsedTime, JudgeTime judgeTime, const std::string& nodeName)
+	bool ComboOne7::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (judgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
 		//	ノードと、敵または弾丸との当たり判定当たり判定
@@ -651,6 +785,23 @@ namespace PlayerState
 		}
 
 		return true;
+	}
+
+	void ComboOne7::JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton)
+	{
+		//	オートコンボがオンなら入力判定をtrueにする
+		if (owner_->IsAutoCombo())
+		{
+			isCorrectInput_ = true;
+		}
+
+		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
+
+	}
+
+	void ComboOne7::UpdateElapsedTime(const float& elapsedTime)
+	{
+		stateElapsedTime_ += elapsedTime;
 	}
 
 	void ComboOne7::Finalize()

@@ -22,9 +22,11 @@ void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav");
+	//bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_44100Hz_16bit.wav");
 	AudioManager::Instance().Register(bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]);
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
-
+	//	BGM再生
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->Play(true);
 	/* ----- スプライト初期化 ----- */
 	//sprite_[static_cast<int>(SPRITE_GAME::BACK)] = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Game.png");
 
@@ -119,8 +121,7 @@ void SceneGame::Reset()
 //	更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
-	//	BGM再生
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->Play(true);
+	
 
 	GamePad& gamePad = Input::Instance().GetGamePad();
 

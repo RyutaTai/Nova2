@@ -13,8 +13,9 @@ public:
 	void SetMinJudgeTime(const float& minTime) { minJudgeTime_ = minTime; }		//	”»’èŠÔ‚Ì‰ºŒÀ’lİ’è
 	void SetMaxJudgeTime(const float& maxTime) { maxJudgeTime_ = maxTime; }		//	”»’èŠÔ‚ÌãŒÀ’lİ’è
 
-	const float GetMinTime()const { return minJudgeTime_; }
-	const float GetMaxTime()const { return maxJudgeTime_; }
+	const float CalcJudgeDuration()	const { return maxJudgeTime_ - minJudgeTime_; }	//	”»’èŠÔ‚Ì’·‚³æ“¾
+	const float GetMinTime()		const { return minJudgeTime_; }
+	const float GetMaxTime()		const { return maxJudgeTime_; }
 
 private:
 	float minJudgeTime_ = 0.0f;		//	”»’è‚·‚éŠÔ‚Ì‰ºŒÀ’l

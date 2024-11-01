@@ -17,6 +17,7 @@ public:
 
 	void ShadowRender(const float& scale = 1.0f);
 	void Update(const float& elapsedTime);
+	void EmissiveUpdate(const float& elapsedTime);	//	エミッシブ更新処理
 	void Render();
 	void DrawDebug();
 
@@ -48,8 +49,13 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
-	float frequencyMax_ = 15000.0f;
+	static const int FrequencyDataMax = 120;
+	float currentFrequencyValue_ = 0.0f;
+	float frequencyMinValue_ = 0.0f;
+	float frequencyMaxValue_ = 0.0f;
+	float frequencyData_[FrequencyDataMax];
 	int frequencyIndex_ = 509;
+	float emissiveFactor_ = 15.0f;
 	float emissiveIntencityMin_ = 0.1f;
 	float emissiveIntencityMax_ = 15.0f;
 	std::unique_ptr<Midi> midi_ = nullptr;				//	emissiveタイミング判定用midi

@@ -33,7 +33,7 @@ AudioSource3D::~AudioSource3D()
 	if (dspSetting_.outputMatrix_ != nullptr) delete dspSetting_.outputMatrix_;
 }
 
-void AudioSource3D::Update(FLOAT32 elapsedtime)
+void AudioSource3D::Update(FLOAT32 elapsedTime)
 {
 	sourceVoice_->GetState(&state_, XAUDIO2_VOICE_NOSAMPLESPLAYED);
 
@@ -41,8 +41,8 @@ void AudioSource3D::Update(FLOAT32 elapsedtime)
 	if (isPlaying_ == false)return;
 
 	//	再生時間更新
-	AddPlayTimer(elapsedtime);
-	AddTotalPlayTimer(elapsedtime);
+	AddPlayTimer(elapsedTime);
+	AddTotalPlayTimer(elapsedTime);
 
 	//	音源データの長さを超えたら再生時間リセット
 	float length = GetPlayLengthFloat();
@@ -148,7 +148,7 @@ void AudioSource3D::DrawDebug()
 
 	//	再生時間表示
 	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);
-	ImGui::DragFloat("PlayTimer", &playTimer_);
+	ImGui::DragFloat("PlayTimer", &timer_);
 
 	ImGui::End();
 	Graphics::Instance().GetDebugRenderer()->DrawSphere(emitter_->position_, emitter_->minDistance_, { 0.0f, 0.0f, 1.0f, 1.0f });

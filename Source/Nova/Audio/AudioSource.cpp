@@ -10,12 +10,12 @@ AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource)
 {
 	HRESULT hr = S_OK;
 
-	wfe_ = resource->GetWaveForMatex();
+	wfx_ = resource->GetWaveForMatex();
 
 	//	ソースボイスを生成
 	hr = xaudio->CreateSourceVoice(
 		&sourceVoice_,							//	ソースボイスのインスタンスを返す(必須)
-		&wfe_,									//	ソースボイスへ渡すWAVEFORMATRIXの構造体を返す(必須)
+		&wfx_,									//	ソースボイスへ渡すWAVEFORMATRIXの構造体を返す(必須)
 		XAUDIO2_VOICE_USEFILTER,				//	ソースボイスへ使用する効果を指定する
 		XAUDIO2_MAX_FREQ_RATIO					//	最大許容再生速度を指定 デフォルトで2.0f, 最大でXAUDIO2_MAX_FREQ_RATIO(1024.0f)まで設定可能
 	);
@@ -59,6 +59,13 @@ void AudioSource::Update(FLOAT32 elapsedTime)
 
 	//	再生中でないなら処理しない
 	if (!isPlaying_)return;
+
+	//	音源データの長さを超えたら再生時間リセット
+	float length = GetPlayLengthFloat();
+	if (GetPlayTimer() >= length)
+	{
+		ResetPlayTimer();
+	}
 
 	if(state_.BuffersQueued != 0)
 	{
@@ -113,7 +120,7 @@ void AudioSource::Play(BOOL loop)
 	sourceVoice_->SubmitSourceBuffer(&buffer_);
 	HRESULT hr = sourceVoice_->Start();
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	playTimer_ = 0.0f;
+	timer_ = 0.0f;
 	isPlaying_ = true;
 }
 
@@ -150,7 +157,8 @@ size_t AudioSource::GetCurrentSample()const
 	XAUDIO2_VOICE_STATE vs;
 	sourceVoice_->GetState(&vs);
 
-	return (size_t(vs.SamplesPlayed) * size_t(wfe_.nBlockAlign)) % buffer_.AudioBytes;
+	return (size_t(vs.SamplesPlayed) * size_t(wfx_.nBlockAlign)) % buffer_.AudioBytes;
+	//return (size_t(vs.SamplesPlayed) * size_t(wfx_.nBlockAlign)) % buffer_.AudioBytes;
 }
 
 void AudioSource::SetVolume(FLOAT32 volume, BOOL useDb)
@@ -233,7 +241,7 @@ void AudioSource::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff, FLOAT32 overq
 {
 	filterParameters_.Type = type;				//	使うフィルターの種類
 	filterParameters_.Frequency					//	カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
-		= cutoff / wfe_.nSamplesPerSec * 6.0f;	//	式:カットオフ周波数 / サンプリングレート * 6.0f 例 : 7350 / 44100 * 6.0f = 1.0f(正確には1.000002fだがまあこれでおｋ)
+		= cutoff / wfx_.nSamplesPerSec * 6.0f;	//	式:カットオフ周波数 / サンプリングレート * 6.0f 例 : 7350 / 44100 * 6.0f = 1.0f(正確には1.000002fだがまあこれでおｋ)
 												//	単極フィルターを使う場合はXAudio2CutoffFrequencyToOnePoleCoefficient()というマクロを使う(XAUDIO2_HELPER_FUNCTIONSが必要)
 	
 	filterParameters_.OneOverQ = overq;			//	実際にどのくらいの音量がカットされているかを指定する
@@ -245,8 +253,8 @@ void AudioSource::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff, FLOAT32 overq
 //	再生中かどうか
 bool AudioSource::IsPlay()
 {
-	//	再生中かどうか lengthfFloat_(音源の長さ)より再生時間(playTimer_)が小さかったら再生中
-	//return lengthFloat_ > playTimer_;
+	//	再生中かどうか lengthfFloat_(音源の長さ)より再生時間(timer_)が小さかったら再生中
+	//return lengthFloat_ > timer_;
 
 	sourceVoice_->GetState(&state_);
 
@@ -258,7 +266,7 @@ void AudioSource::DrawDebug()
 #ifdef USE_IMGUI
 	bool isPlay = IsPlay();
 	ImGui::Checkbox("IsPlay", &isPlay);						//	再生中かどうか
-	ImGui::DragFloat("PlayTimer", &playTimer_);				//	再生時間
+	ImGui::DragFloat("PlayTimer", &timer_);				//	再生時間
 	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);	//	合計再生時間
 #endif
 }

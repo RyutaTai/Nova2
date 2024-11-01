@@ -63,22 +63,56 @@ void Stage::Update(const float& elapsedTime)
 	//	midi更新処理
 	midi_->Update(elapsedTime);
 
+	//	エミッシブ更新処理
+	EmissiveUpdate(elapsedTime);
+
+}
+
+//	エミッシブ更新処理
+void Stage::EmissiveUpdate(const float& elapsedTime)
+{
 	//	周波数データ更新
 	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
+	//frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
+
+	//	frequencyData_更新(配列のデータをずらし、新しいデータを設定)
+	for (int i = FrequencyDataMax - 1; 0 < i; --i)
+	{
+		frequencyData_[i] = frequencyData_[i - 1];
+	}
+	currentFrequencyValue_ = frequency_->GetAmplitudeSpectrum(frequencyIndex_);
+	frequencyData_[0] = currentFrequencyValue_;
+
+	frequencyMinValue_ = FLT_MAX;				//	周波数の最小値
+	for (int i = 0; i < FrequencyDataMax; ++i)
+	{
+		if (frequencyData_[i] < frequencyMinValue_)	//	最小値更新
+		{
+			frequencyMinValue_ = frequencyData_[i];
+		}
+	}
+
+	frequencyMaxValue_ = FLT_MIN;
+	for (int i = 0; i < FrequencyDataMax; ++i)
+	{
+		float frequency = frequencyData_[i] - frequencyMinValue_;
+		if (frequencyMaxValue_ < frequency)	//	最大値更新
+		{
+			frequencyMaxValue_ = frequency;
+		}
+	}
+
+	//	フーリエ変換で取得した振幅
+	float frequencyValue = currentFrequencyValue_;
+	if (frequencyMaxValue_ > 0.0f)frequencyValue = (frequencyValue - frequencyMinValue_) / frequencyMaxValue_;
+
+	//	BPM取得
+	//float bpm = AudioManager::Instance().GetAudioResource("Game.wav")->GetWaveFormat().GetBPM();
 
 	//	emissiveIntensity_更新
-	float frequencity = frequency_->GetAmplitudeSpectrum(frequencyIndex_) / frequencyMax_;
-	frequencity *= emissiveIntencityMax_;
-	emissiveConstant_.emissiveIntensity_ = std::clamp(frequencity,emissiveIntencityMin_, emissiveIntencityMax_);
-	/*if (midi_->IsCurrentTimeNoteOn())
-	{
-		emissiveConstant_.emissiveIntensity_ = maxEmissiveIntencity_;
-	}
-	else
-	{
-		emissiveConstant_.emissiveIntensity_ = 0.0f;
-	}*/
-
+	emissiveConstant_.emissiveIntensity_ = frequencyValue * emissiveFactor_;
+	/*emissiveConstant_.emissiveIntensity_ = std::clamp(currentFrequencyValue,
+		emissiveIntencityMin_, emissiveIntencityMax_);*/
 }
 
 //	コリジョンメッシュの当たり判定
@@ -162,8 +196,11 @@ void Stage::DrawDebug()
 		{
 			frequency_->DrawDebug();
 			ImGui::DragInt("FrequencyIndex", &frequencyIndex_, 1.0f, 0);
-			ImGui::DragFloat("FrequencyMax", &frequencyMax_, 1.0f, 0.0f);
-			ImGui::DragFloat("EmissiveFactor", &emissiveConstant_.emissiveIntensity_, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("CurrentFrequency", &currentFrequencyValue_, 1.0f, 0.0f);
+			ImGui::DragFloat("FrequencyMin", &frequencyMinValue_, 1.0f, 0.0f);
+			ImGui::DragFloat("FrequencyMax", &frequencyMaxValue_, 1.0f, 0.0f);
+			ImGui::DragFloat("EmissiveIntencity", &emissiveConstant_.emissiveIntensity_, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("EmissiveFactor", &emissiveFactor_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMin", &emissiveIntencityMin_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMax", &emissiveIntencityMax_, 1.0f, 0.0f);
 		}

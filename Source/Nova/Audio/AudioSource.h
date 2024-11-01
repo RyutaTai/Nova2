@@ -37,7 +37,7 @@ public:
 	void Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 cutoff = 7350.0f, FLOAT32 overq = 1.0f);
 
 	// タイマー加算
-	void AddPlayTimer(FLOAT32 elapsedTime) { playTimer_ += elapsedTime; }
+	void AddPlayTimer(const FLOAT32& elapsedTime) { timer_ += elapsedTime; }
 	void AddTotalPlayTimer(const FLOAT32& elapsedTime) { totalPlayTimer_ += elapsedTime; }
 
 	virtual void DrawDebug();
@@ -49,14 +49,16 @@ public: // getter setter
 	UINT32 GetPlayLength() const { return length_; }
 	FLOAT32 GetPlayLengthFloat() const { return lengthFloat_; }
 
-	FLOAT32 GetPlayTimer() const { return playTimer_; }
-	void ResetPlayTimer() { playTimer_ = 0.0f; }
+	FLOAT32 GetPlayTimer() const { return timer_; }
+	void ResetPlayTimer() { timer_ = 0.0f; }
 
 	FLOAT32 GetTotalPlayTimer()const { return totalPlayTimer_; }
 
 	XAUDIO2_VOICE_SENDS* GetSfxSendList() { return &SFXSendList_; }
 
 	FLOAT32 GetVolume() const { return lastVolume_; }
+
+	const WAVEFORMATEX& GetWaveFormat() const { return wfx_; }	//	WAVEフォーマット取得
 
 	XAUDIO2_VOICE_STATE GetState() const { return state_; }
 
@@ -65,7 +67,7 @@ public: // getter setter
 	size_t GetAudioBytes() const { return buffer_.AudioBytes; }	//	バッファーのサイズ取得
 
 	size_t GetCurrentSample()const;		//	現在の再生位置をサンプル単位で取得
-	
+
 	std::string	GetName()const { return name_; }
 
 	bool IsPlay();
@@ -85,10 +87,10 @@ protected:
 	IXAudio2SourceVoice* sourceVoice_ = nullptr;
 
 	// WAVEフォーマット情報
-	WAVEFORMATEX wfe_;
+	WAVEFORMATEX wfx_;
 
 	// 現在の再生時間(音データのどこまで再生したか)
-	FLOAT32 playTimer_ = 0.0f;
+	FLOAT32 timer_ = 0.0f;
 
 	//	今までの再生時間(ループしてもリセットしない)
 	FLOAT32 totalPlayTimer_ = 0.0f;

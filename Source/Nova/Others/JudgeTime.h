@@ -13,6 +13,9 @@ public:
 	void SetMinJudgeTime(const float& minTime) { minJudgeTime_ = minTime; }		//	判定時間の下限値設定
 	void SetMaxJudgeTime(const float& maxTime) { maxJudgeTime_ = maxTime; }		//	判定時間の上限値設定
 
+	const float GetMinTime()const { return minJudgeTime_; }
+	const float GetMaxTime()const { return maxJudgeTime_; }
+
 private:
 	float minJudgeTime_ = 0.0f;		//	判定する時間の下限値
 	float maxJudgeTime_ = FLT_MAX;	//	判定する時間の上限値

@@ -809,30 +809,32 @@ float const Player::GetCurrentAnimationSeconds()
 //	デバッグ描画
 void Player::DrawDebug()
 {
-	//	ステート表示
-	DrawStateStr();
-	//stateMachine_->DrawDebug();
-
-	//	ステージヒット文字列
-	std::string hitStage = "";
-	if (isHitStage_)hitStage = "true";
-	else hitStage = "false";
-
-	//	アニメーション関連
-	//int currentAnimationIndex = GetCurrentBlendAnimationIndex();		//	現在のアニメーション番号取得
-	//float weight = GetWeight();										//	weight値取得		
-	//float blendRate = GetBlendRate();
-
 	if (ImGui::TreeNode(u8"Playerプレイヤー"))
 	{
-		ImGui::Checkbox("IsPose", &isPose_);
+
+		//	ステート表示
+		DrawStateStr();
+		//stateMachine_->DrawDebug();
+
+		//	ステージヒット文字列
+		std::string hitStage = "";
+		if (isHitStage_)hitStage = "true";
+		else hitStage = "false";
+
+		//	アニメーション関連
+		//int currentAnimationIndex = GetCurrentBlendAnimationIndex();		//	現在のアニメーション番号取得
+		//float weight = GetWeight();										//	weight値取得		
+		//float blendRate = GetBlendRate();
+
+		ImGui::Checkbox("IsPose", &isPose_);				//	ポーズフラグ
 		ImGui::Checkbox("PlayEffect", &playEffectFlag_);	//	エフェクト再生フラグ
 		ImGui::Checkbox("DrawEffect", &drawEffectFlag_);	//	エフェクト描画フラグ
-		ImGui::Checkbox("Invincible", &isInvincible_);
-		ImGui::Checkbox("AddGravity", &isAddGravity_);
+		ImGui::Checkbox("Invincible", &isInvincible_);		//	無敵フラグ
+		ImGui::Checkbox("AddGravity", &isAddGravity_);		//	重力フラグ
+		ImGui::Checkbox("AutoCombo", &isAutoCombo_);		//	オートコンボフラグ
 
 		Character::DrawDebug();
-	
+
 		ImGui::DragFloat("Gravity", &gravity_, 0.1f, 0.0f);												//	重力
 		ImGui::DragFloat("EffectScale", &effectScale_, 0.01f, -FLT_MAX, FLT_MAX);						//	エフェクトスケール
 		//ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.01f, -FLT_MAX, FLT_MAX);				//	アニメーション再生速度
@@ -843,11 +845,11 @@ void Player::DrawDebug()
 		ImGui::Text(u8"HitStage %s", hitStage.c_str());													//	ステージと当たっているか
 		ImGui::DragFloat("Gravity", &gravity_, 0.01f, -FLT_MAX, FLT_MAX);								//	重力
 		ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.01f, 0.0f, FLT_MAX);								//	移動する速さ
-		
+
 		ImGui::DragFloat("RayPosRadius", &rayPosRadius_);	//	レイキャストの始点終点を表す球の半径
-		
+
 		ImGui::DragFloat3("ConeDirection", &coneDirection_.x, 0.01f, -FLT_MAX, FLT_MAX);
-		
+
 		DrawDummyRay();
 
 		if (ImGui::TreeNode("3DAudio_Listener"))

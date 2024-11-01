@@ -399,6 +399,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
@@ -478,6 +479,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
@@ -558,6 +560,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
@@ -637,6 +640,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
@@ -717,6 +721,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
@@ -793,6 +798,7 @@ namespace PlayerState
 		if (owner_->IsAutoCombo())
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
 		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);

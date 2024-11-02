@@ -23,10 +23,10 @@ public:
 
 	void FFT(std::vector<Complex>& x);				//	フーリエ変換
 
-	std::vector<float> HammingWindow(const int& count);	//	ハミング窓
+	std::vector<float>	HammingWindow(const int& count);	//	ハミング窓
 
-	std::vector<float> GetAmplitudeSpectrum() { return amplitudeSpectrum_; }
-	float GetAmplitudeSpectrum(const int& index) { return amplitudeSpectrum_.at(index); }
+	std::vector<float>	GetAmplitudeSpectrum() { return amplitudeSpectrum_; }
+	float				GetAmplitudeSpectrum(const int& index) { return amplitudeSpectrum_.at(index); }
 
 private:
 	static constexpr float AUDIO_PI			= 3.14159265358979323846f;

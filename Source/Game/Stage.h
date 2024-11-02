@@ -23,6 +23,7 @@ public:
 	void UpdateEmissive(const float& elapsedTime);	//	エミッシブ更新処理
 	void UpdateFrequencyMin();
 	void UpdateFrequencyMax();
+	float CalculateAutocorrelation(const float data[], const int& lag);
 
 	bool Collision(_In_ DirectX::XMFLOAT3 rayPosition, _In_ DirectX::XMFLOAT3 rayDirection, _In_ const DirectX::XMFLOAT4X4& transform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit = 1.0e+7f, _In_ bool skipIf = false/*Once the first intersection is found, the process is interrupted.*/) const;
@@ -55,7 +56,8 @@ private:
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;
 	float				frequencyData_[FrequencyDataMax];
-	int					frequencyIndex_			= 509;
+	int					frequencyIndex_			= 265;
+	//int					frequencyIndex_			= 509;
 	float				currentFrequencyValue_	= 0.0f;
 	float				frequencyMinValue_		= 0.0f;
 	float				frequencyMaxValue_		= 0.0f;
@@ -65,4 +67,8 @@ private:
 	std::unique_ptr<Midi> midi_ = nullptr;				//	emissiveタイミング判定用midi
 
 	std::unique_ptr<Frequency> frequency_ = nullptr;	//	音の周波数データ(emissiveIntencityの計算に使う)
+
+
+	float threshold_ = 2100.0f;
+	float defaultEmissiveIntensity_ = 10.0f;
 };

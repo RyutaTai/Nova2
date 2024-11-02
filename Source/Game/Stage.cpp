@@ -71,6 +71,7 @@ void Stage::Update(const float& elapsedTime)
 //	エミッシブ更新処理
 void Stage::UpdateEmissive(const float& elapsedTime)
 {
+#if 1	//	通常
 	//	frequencyを使用しないならemissiveIntensityを1.0fに設定
 	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
 
@@ -101,6 +102,49 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 	emissiveConstant_.emissiveIntensity_ = frequencyValue * emissiveFactor_;
 	/*emissiveConstant_.emissiveIntensity_ = std::clamp(currentFrequencyValue,
 		emissiveIntencityMin_, emissiveIntencityMax_);*/
+
+#else	//	currentFrequencyValue_にcurrent閾値を設定し、それを越していないならエミッシブにデフォルト値を設定してreturnする
+
+	//	frequencyを使用しないならemissiveIntensityを1.0fに設定
+	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
+
+	//	周波数データ更新
+	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
+	//frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
+
+	//	frequencyData_更新(配列のデータをずらし、新しいデータを設定)
+	for (int i = FrequencyDataMax - 1; 0 < i; --i)
+	{
+		frequencyData_[i] = frequencyData_[i - 1];
+	}
+	currentFrequencyValue_ = frequency_->GetAmplitudeSpectrum(frequencyIndex_);
+
+	//	閾値に達していなければデフォルト値を設定してreturn
+	if (currentFrequencyValue_ < threshold_)
+	{
+		emissiveConstant_.emissiveIntensity_ = defaultEmissiveIntensity_;
+		return;
+	}
+
+	frequencyData_[0] = currentFrequencyValue_;
+
+	//	frequencyの最大値と最小値を更新
+	UpdateFrequencyMin();
+	UpdateFrequencyMax();
+
+	//	フーリエ変換で取得した振幅
+	float frequencyValue = currentFrequencyValue_;
+	if (frequencyMaxValue_ > 0.0f)frequencyValue = (frequencyValue - frequencyMinValue_) / frequencyMaxValue_;
+
+	//	BPM取得
+	//float bpm = AudioManager::Instance().GetAudioResource("Game.wav")->GetWaveFormat().GetBPM();
+
+	//	emissiveIntensity_更新
+	emissiveConstant_.emissiveIntensity_ = frequencyValue * emissiveFactor_;
+	/*emissiveConstant_.emissiveIntensity_ = std::clamp(currentFrequencyValue,
+		emissiveIntencityMin_, emissiveIntencityMax_);*/
+
+#endif
 }
 
 //	振幅最小値更新処理
@@ -128,6 +172,18 @@ void Stage::UpdateFrequencyMax()
 			frequencyMaxValue_ = frequency;
 		}
 	}
+}
+
+float Stage::CalculateAutocorrelation(const float data[], const int& lag)
+{
+	float result = 0.0f;
+
+	for (int i = 0; i < FrequencyDataMax - lag; ++i)
+	{
+		result += data[i] * data[i + lag];
+	}
+
+	return result / (FrequencyDataMax - lag);
 }
 
 //	コリジョンメッシュの当たり判定
@@ -216,6 +272,8 @@ void Stage::DrawDebug()
 			ImGui::DragFloat("FrequencyMin", &frequencyMinValue_, 1.0f, 0.0f);
 			ImGui::DragFloat("FrequencyMax", &frequencyMaxValue_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencity", &emissiveConstant_.emissiveIntensity_, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("DefaultEmissiveIntencity", &defaultEmissiveIntensity_, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("EmissiveThreshold", &threshold_, 0.1f, 0.0f, FLT_MAX);
 			ImGui::DragFloat("EmissiveFactor", &emissiveFactor_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMin", &emissiveIntencityMin_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMax", &emissiveIntencityMax_, 1.0f, 0.0f);

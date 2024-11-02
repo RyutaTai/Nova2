@@ -44,7 +44,7 @@ bool Input::CommandConfirm(const Command& command, const float& frame)
 }
 
 //	入)力情報更新処理
-void Input::UpdateKeyData(const float& elapsedTime)
+void Input::UpdateKeyData()
 {
 	//	キー入力状態を取得
 	bool up		= (gamePad_.GetButton() & GamePad::BTN_UP) != 0;
@@ -84,13 +84,23 @@ void Input::UpdateKeyData(const float& elapsedTime)
 	//	スタックされた入力情報の経過時間を更新
 	for (int i = 0; i < MaxInputKey; ++i)
 	{
-		inputKeys_[i].frame_ += elapsedTime;
+		inputKeys_[i].frame_++;
 		if (inputKeys_[i].frame_ > SaveFrame)	//	入力保持時間を超えたら無効にする
 		{
-			inputKeys_[i].key_ = -1;
+			inputKeys_[i].key_ = 0;
 		}
 	}
 
+}
+
+//	入力情報リセット
+void Input::ResetInputData()
+{
+	for (int i = 0; i < MaxInputKey; ++i)
+	{
+		inputKeys_[i].frame_ = 0;
+		inputKeys_[i].key_ = 0;
+	}
 }
 
 //	デバッグ描画

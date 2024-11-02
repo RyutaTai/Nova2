@@ -17,7 +17,8 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
 #if 1   //自分で変えた
     size_t          SPsize      = audioSource->GetAudioBytes();     //  オーディオのバッファサイズ取得
     const BYTE*     SPdata      = audioSource->GetAudioData();
-    std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);
+    //std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);
+    auto* audioVector = audioSource->GetAudioData();
     int             SPNowData   = audioSource->GetCurrentSample();  //  現在のサンプル
     int             SPNowBlock  = SPNowData / blockCount_;          //  現在のブロック計算
 

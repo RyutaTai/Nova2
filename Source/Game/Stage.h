@@ -17,9 +17,12 @@ public:
 
 	void ShadowRender(const float& scale = 1.0f);
 	void Update(const float& elapsedTime);
-	void EmissiveUpdate(const float& elapsedTime);	//	エミッシブ更新処理
 	void Render();
 	void DrawDebug();
+
+	void UpdateEmissive(const float& elapsedTime);	//	エミッシブ更新処理
+	void UpdateFrequencyMin();
+	void UpdateFrequencyMax();
 
 	bool Collision(_In_ DirectX::XMFLOAT3 rayPosition, _In_ DirectX::XMFLOAT3 rayDirection, _In_ const DirectX::XMFLOAT4X4& transform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit = 1.0e+7f, _In_ bool skipIf = false/*Once the first intersection is found, the process is interrupted.*/) const;
@@ -49,15 +52,16 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
-	static const int FrequencyDataMax = 120;
-	float currentFrequencyValue_ = 0.0f;
-	float frequencyMinValue_ = 0.0f;
-	float frequencyMaxValue_ = 0.0f;
-	float frequencyData_[FrequencyDataMax];
-	int frequencyIndex_ = 509;
-	float emissiveFactor_ = 15.0f;
-	float emissiveIntencityMin_ = 0.1f;
-	float emissiveIntencityMax_ = 15.0f;
+	bool				useFrequency_			= true;
+	static const int	FrequencyDataMax		= 120;
+	float				frequencyData_[FrequencyDataMax];
+	int					frequencyIndex_			= 509;
+	float				currentFrequencyValue_	= 0.0f;
+	float				frequencyMinValue_		= 0.0f;
+	float				frequencyMaxValue_		= 0.0f;
+	float				emissiveFactor_			= 15.0f;
+	float				emissiveIntencityMin_	= 0.1f;
+	float				emissiveIntencityMax_	= 15.0f;
 	std::unique_ptr<Midi> midi_ = nullptr;				//	emissiveタイミング判定用midi
 
 	std::unique_ptr<Frequency> frequency_ = nullptr;	//	音の周波数データ(emissiveIntencityの計算に使う)

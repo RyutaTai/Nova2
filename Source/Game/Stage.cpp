@@ -64,13 +64,16 @@ void Stage::Update(const float& elapsedTime)
 	midi_->Update(elapsedTime);
 
 	//	エミッシブ更新処理
-	EmissiveUpdate(elapsedTime);
+	UpdateEmissive(elapsedTime);
 
 }
 
 //	エミッシブ更新処理
-void Stage::EmissiveUpdate(const float& elapsedTime)
+void Stage::UpdateEmissive(const float& elapsedTime)
 {
+	//	frequencyを使用しないならemissiveIntensityを1.0fに設定
+	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
+
 	//	周波数データ更新
 	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
 	//frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
@@ -83,24 +86,9 @@ void Stage::EmissiveUpdate(const float& elapsedTime)
 	currentFrequencyValue_ = frequency_->GetAmplitudeSpectrum(frequencyIndex_);
 	frequencyData_[0] = currentFrequencyValue_;
 
-	frequencyMinValue_ = FLT_MAX;				//	周波数の最小値
-	for (int i = 0; i < FrequencyDataMax; ++i)
-	{
-		if (frequencyData_[i] < frequencyMinValue_)	//	最小値更新
-		{
-			frequencyMinValue_ = frequencyData_[i];
-		}
-	}
-
-	frequencyMaxValue_ = FLT_MIN;
-	for (int i = 0; i < FrequencyDataMax; ++i)
-	{
-		float frequency = frequencyData_[i] - frequencyMinValue_;
-		if (frequencyMaxValue_ < frequency)	//	最大値更新
-		{
-			frequencyMaxValue_ = frequency;
-		}
-	}
+	//	frequencyの最大値と最小値を更新
+	UpdateFrequencyMin();
+	UpdateFrequencyMax();
 
 	//	フーリエ変換で取得した振幅
 	float frequencyValue = currentFrequencyValue_;
@@ -113,6 +101,33 @@ void Stage::EmissiveUpdate(const float& elapsedTime)
 	emissiveConstant_.emissiveIntensity_ = frequencyValue * emissiveFactor_;
 	/*emissiveConstant_.emissiveIntensity_ = std::clamp(currentFrequencyValue,
 		emissiveIntencityMin_, emissiveIntencityMax_);*/
+}
+
+//	振幅最小値更新処理
+void Stage::UpdateFrequencyMin()
+{
+	frequencyMinValue_ = FLT_MAX;				//	周波数の最小値
+	for (int i = 0; i < FrequencyDataMax; ++i)
+	{
+		if (frequencyData_[i] < frequencyMinValue_)	//	最小値更新
+		{
+			frequencyMinValue_ = frequencyData_[i];
+		}
+	}
+}
+
+//	振幅最大値更新処理
+void Stage::UpdateFrequencyMax()
+{
+	frequencyMaxValue_ = FLT_MIN;
+	for (int i = 0; i < FrequencyDataMax; ++i)
+	{
+		float frequency = frequencyData_[i] - frequencyMinValue_;
+		if (frequencyMaxValue_ < frequency)	//	最大値更新
+		{
+			frequencyMaxValue_ = frequency;
+		}
+	}
 }
 
 //	コリジョンメッシュの当たり判定
@@ -195,6 +210,7 @@ void Stage::DrawDebug()
 		if (ImGui::TreeNode("Frequency Data"))
 		{
 			frequency_->DrawDebug();
+			ImGui::Checkbox("UseFrequency", &useFrequency_);
 			ImGui::DragInt("FrequencyIndex", &frequencyIndex_, 1.0f, 0);
 			ImGui::DragFloat("CurrentFrequency", &currentFrequencyValue_, 1.0f, 0.0f);
 			ImGui::DragFloat("FrequencyMin", &frequencyMinValue_, 1.0f, 0.0f);

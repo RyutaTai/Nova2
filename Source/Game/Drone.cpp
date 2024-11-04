@@ -314,7 +314,7 @@ void Drone::DrawDebug()
 
 	if (ImGui::TreeNode(u8"Drone ドローン"))
 	{
-		GetTransform()->DrawDebug();
+		//GetTransform()->DrawDebug();
 		Character::DrawDebug();
 		ImGui::Checkbox("Invincible", &isInvincible_);		//	無敵フラグ設定
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);	//	スケール

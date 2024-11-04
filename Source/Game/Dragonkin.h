@@ -9,8 +9,8 @@ public:
 	~Dragonkin()override {}
 
 	void Initialize()override;
-	void Update(const float& elapsedTime)		override;
-	void Render()		override;
+	void Update(const float& elapsedTime)override;
+	void Render()override;
 
 	bool RayVsVertical(const float& elapsedTime)override;
 	bool RayVsHorizontal(const float& elapsedTime)override;

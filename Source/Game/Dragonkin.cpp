@@ -70,7 +70,7 @@ void Dragonkin::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Dragonkin—³l"))
 	{
-		GetTransform()->DrawDebug();
+		Character::DrawDebug();
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::TreePop();

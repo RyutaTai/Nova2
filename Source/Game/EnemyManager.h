@@ -24,12 +24,12 @@ public:
 	void Register(Enemy* enemy);		//	エネミー登録
 	void Clear();						//	エネミー全削除
 	void Remove(Enemy* enemy);			//	エネミー削除
-	void DroneSpawn(int spawn);			//	ドローン生成
+	void DroneSpawn(const int& spawn);			//	ドローン生成
 	
 	void DrawDebug();
 	void DrawDebugPrimitive();
 
-	Enemy*				GetEnemy(int index)		{ return enemies_.at(index); }					//	エネミー取得
+	Enemy*				GetEnemy(const int& index)		{ return enemies_.at(index); }					//	エネミー取得
 	std::vector<Enemy*> GetEnemies()			{ return enemies_; }							//	エネミー取得
 	int					GetEnemyCount() const	{ return static_cast<int>(enemies_.size()); }	//	エネミー数取得
 

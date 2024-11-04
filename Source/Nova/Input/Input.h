@@ -33,8 +33,8 @@ static const InputKey NotK = (1 << 21);		//	キック
 
 //	最大キー入力数
 static const int MaxInputKey = 256;
-//	入力を保持する時間
-static const int SaveFrame = 60;
+//	入力を保持する時間(SaveFrame分のフレーム数保持)
+static const int SaveFrame = 256;
 
 //	コマンド
 using Command = std::vector<InputKey>;
@@ -42,6 +42,7 @@ using Command = std::vector<InputKey>;
 struct InputData
 {
 	InputKey	key_	= 0;		//	入力されたキー情報
+	//float		frame_	= 0;		//	入力されて何フレーム経過したか
 	int			frame_	= 0;		//	入力されて何フレーム経過したか
 };
 
@@ -55,8 +56,8 @@ public:
 public:
 	static Input& Instance() { return *instance_; }	//	インスタンス取得
 
-	void Update();									//	更新処理
-	void UpdateKeyData();							//	入力情報更新処理
+	void Update(const float& elapsedTime);			//	更新処理
+	void UpdateKeyData(const float& elapsedTime);	//	入力情報更新処理
 	void DrawDebug();								//	デバッグ描画
 
 	void SetInputKey(const InputKey& key);			//	入力キー設定

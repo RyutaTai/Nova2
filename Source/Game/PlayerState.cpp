@@ -319,11 +319,17 @@ namespace PlayerState
 		}
 
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
-		if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 2.0f))
 		{
 			isCorrectInput_ = true;
+			return;
 		}
 
+		//	入力されていなかったらキャンセル
+		owner_->ChangeState(Player::StateType::Idle);
+		return;
 	}
 
 	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
@@ -357,6 +363,9 @@ namespace PlayerState
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -402,8 +411,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne2::UpdateElapsedTime(const float& elapsedTime)
@@ -437,6 +451,9 @@ namespace PlayerState
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -482,8 +499,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne3::UpdateElapsedTime(const float& elapsedTime)
@@ -517,6 +539,9 @@ namespace PlayerState
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -563,8 +588,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne4::UpdateElapsedTime(const float& elapsedTime)
@@ -597,6 +627,9 @@ namespace PlayerState
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -643,8 +676,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne5::UpdateElapsedTime(const float& elapsedTime)
@@ -678,6 +716,9 @@ namespace PlayerState
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -724,8 +765,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+	//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne6::UpdateElapsedTime(const float& elapsedTime)
@@ -756,6 +802,12 @@ namespace PlayerState
 		animJudgeTime_.SetMaxJudgeTime(1.09f);
 		inputJudgeTime_.SetMinJudgeTime(0.0f);
 		inputJudgeTime_.SetMaxJudgeTime(1.0f);
+
+		//	キー入力判定初期化
+		isCorrectInput_ = false;
+
+		//	ステート経過時間初期化
+		stateElapsedTime_ = 0.0f;
 
 	}
 
@@ -801,8 +853,13 @@ namespace PlayerState
 			return;
 		}
 
-		isCorrectInput_ = owner_->GetButtonDown(gamePadButton);
-
+		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
+		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
+		Command command = { Key6 };
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		{
+			isCorrectInput_ = true;
+		}
 	}
 
 	void ComboOne7::UpdateElapsedTime(const float& elapsedTime)

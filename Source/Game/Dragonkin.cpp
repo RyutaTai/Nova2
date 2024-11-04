@@ -4,16 +4,22 @@
 
 //	コンストラクタ
 Dragonkin::Dragonkin()
-	:Enemy("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2")
+	:Enemy("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.gltf")
 {
+	myType_ = ENEMY_TYPE::DRAGONKIN;
 	
 }
 
 //	初期化
 void Dragonkin::Initialize()
 {
-	myType_ = ENEMY_TYPE::DRAGONKIN;
 	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);	//	待機アニメーションセット
+
+	//	スケール
+	float scale = 0.0001f;
+	//float scale = 10.0f;
+	GetTransform()->SetScaleFactor(scale);
+
 }
 
 //	更新処理
@@ -64,7 +70,7 @@ void Dragonkin::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Dragonkin竜人"))
 	{
-		//GetTransform()->DrawDebug();
+		GetTransform()->DrawDebug();
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::TreePop();

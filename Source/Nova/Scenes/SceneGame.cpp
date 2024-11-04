@@ -64,8 +64,7 @@ void SceneGame::Initialize()
 	player_->Initialize();
 
 	/* ----- エネミー初期化 ----- */
-	//dragonkin_ = std::make_unique<Dragonkin>("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.glb");
-	//dragonkin_ = std::make_unique<Dragonkin>("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.fbx");
+	//dragonkin_ = std::make_unique<Dragonkin>();
 	//dragonkin_->Initialize();
 
 	//drone_ = std::make_unique<Drone>("./Resources/Model/Drone/Drone.glb");

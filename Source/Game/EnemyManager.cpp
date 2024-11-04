@@ -122,7 +122,7 @@ void EnemyManager::Remove(Enemy* enemy)
 }
 
 //	ƒhƒ[ƒ“¶¬(GameState‚ÅŒÄ‚ñ‚Å‚¢‚é)
-void EnemyManager::DroneSpawn(int spawn)
+void EnemyManager::DroneSpawn(const int& spawn)
 {
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
 	DirectX::XMFLOAT3 playerForward = Player::Instance().GetTransform()->CalcForward();

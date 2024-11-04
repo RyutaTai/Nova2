@@ -83,7 +83,7 @@ void Framework::Update(const float& elapsedTime)
 	IMGUI_CTRL_CLEAR_FRAME();
 
 	//	Input更新処理
-	input_.Update();
+	input_.Update(elapsedTime);
 
 	//	オーディオ更新処理
 	AudioManager::Instance().Update(elapsedTime);
@@ -271,6 +271,7 @@ void Framework::DrawDebug()
 	ImGui::Text("Current FPS: %.2f", fps_);
 	
 	graphics_.DrawDebug();
+	input_.DrawDebug();
 
 	ImGui::End();
 }

@@ -1,5 +1,7 @@
 #include "Frequency.h"
 
+#include <algorithm>
+
 #include "../../../External/imgui/imgui.h"
 #include "../../Nova/Others/Converter.h"
 
@@ -111,7 +113,12 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
     //sec = bgm->GetCurrent_Time();
 
 #endif
-
+	
+#if 0   //  BPM取得(テンポ解析、テンポ推定)
+    float samplingRate = 44100.0f;;
+    AnalyzeBPM(SPdata, SPsize,samplingRate);    //  BPM更新
+#endif
+    
     audioTimer_ = audioSource->GetPlayTimer();
 
 }
@@ -125,11 +132,19 @@ std::vector<float> Frequency::HammingWindow(const int& count)
     for (int i = 0; i < count; ++i)
     {
         float h;
-        //h = 0.54f - (0.46f * cosf((2 * AUDIO_PI * i) / (count - 1)));   //  ハミング窓
-		h = 0.42 - 0.5 * cosf(2 * AUDIO_PI * i / (count - 1)) + 0.08 * cosf(4 * AUDIO_PI * i / (count - 1));   //  ブラックマン窓
+        h = 0.54f - (0.46f * cosf((2 * AUDIO_PI * i) / (count - 1)));   //  ハミング窓
+		//h = 0.42 - 0.5 * cosf(2 * AUDIO_PI * i / (count - 1)) + 0.08 * cosf(4 * AUDIO_PI * i / (count - 1));   //  ブラックマン窓
         hm.emplace_back(h);
     }
     return hm;
+}
+
+float Frequency::HammingWindow(const int& index, const int& count)
+{
+	float h;
+	h = 0.54f - (0.46f * cosf((2 * AUDIO_PI * index) / (count - 1)));   //  ハミング窓
+	//h = 0.42 - 0.5 * cosf(2 * AUDIO_PI * index / (count - 1)) + 0.08 * cosf(4 * AUDIO_PI * index / (count - 1));   //  ブラックマン窓
+	return h;
 }
 
 //  フーリエ変換
@@ -178,10 +193,110 @@ void Frequency::FFT(std::vector<Complex>& x)
     }
 }
 
+//  ベクトルの平方和を計算する関数
+double Frequency::Power(const double& a, const double& b)
+{
+    return sqrt(a * a + b * b);
+}
+
+//  ピークを見つける関数
+void Frequency::FindPeak3(const double* r, const int& length, int* peakX) 
+{
+    std::vector<int> peaks;
+    for (int i = 1; i < length - 1; i++) 
+    {
+        if (r[i] > r[i - 1] && r[i] > r[i + 1]) 
+        {
+            peaks.push_back(i);
+        }
+    }
+
+    //  上位3つのピークを格納
+    std::sort(peaks.begin(), peaks.end(), [&](int a, int b) { return r[a] > r[b]; });
+    for (int i = 0; i < 3; i++)
+    {
+        peakX[i] = (i < peaks.size()) ? peaks[i] : -1;
+    }
+}
+
+//  BPM解析
+void Frequency::AnalyzeBPM(const uint8_t* data, const int& dataSize, const int& sampleRate) 
+{
+    // uint8_tからshortに変換する処理を行う
+    std::vector<short> shortData(dataSize / sizeof(short));
+    std::memcpy(shortData.data(), data, dataSize); // データをコピー
+
+    const int FRAME_LEN = 512;
+    int N = dataSize / sizeof(short) / 2 / FRAME_LEN;
+    std::vector<double> vol(N, 0);
+
+    //  フレームの音量計算
+    double frame[FRAME_LEN];
+    unsigned long i = 0;
+    int j = 0, m = 0;
+    while (i <= dataSize / sizeof(short) && m < N) 
+    {
+        frame[j++] = data[i]; //    フレームの音声データを取得
+        if (j == FRAME_LEN) 
+        {
+            double sum = 0;
+            for (int n = 0; n < FRAME_LEN; n++) 
+            {
+                sum += frame[n] * frame[n];
+            }
+            vol[m++] = sqrt(sum / FRAME_LEN);
+            j = 0; //   次フレームへ
+        }
+        i += 2; //  サンプルサイズをスキップ
+    }
+
+    //  音量差分
+    std::vector<double> diff(N, 0);
+    for (int i = 1; i < N; i++)
+    {
+        diff[i] = max(0.0, vol[i] - vol[i - 1]); // 増加分のみ
+    }
+
+    //  テンポ解析
+    std::vector<double> a(240 - 60 + 1, 0);
+    std::vector<double> b(240 - 60 + 1, 0);
+    std::vector<double> r(240 - 60 + 1, 0);
+    const double s = double(sampleRate) / FRAME_LEN;
+
+    for (int bpm = 60; bpm <= 240; bpm++) 
+    {
+        double aSum = 0, bSum = 0;
+        double f = double(bpm) / 60;
+        for (int n = 0; n < N; n++)
+        {
+			double win = HammingWindow(n, N);
+            aSum += diff[n] * cos(2.0 * M_PI * f * n / s) * win;
+            bSum += diff[n] * sin(2.0 * M_PI * f * n / s) * win;
+        }
+        a[bpm - 60] = aSum / N;
+        b[bpm - 60] = bSum / N;
+        r[bpm - 60] = sqrt(Power(a[bpm - 60], b[bpm - 60]));
+    }
+
+    // ピーク解析
+    int peakX[3];
+    FindPeak3(r.data(), 240 - 60 + 1, peakX);
+    for (int idx = 0; idx < 3; idx++)
+    {
+        if (peakX[idx] < 0)
+        {
+            break;
+        }
+        int peakBPM = peakX[idx] + 60;
+        bpm_ = peakBPM;
+    }
+}
+
 //  デバッグ描画
 void Frequency::DrawDebug()
 {  
     // Plot imageData using ImGui
+    ImGui::DragFloat("BPM", &bpm_);
     ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
     ImGui::PlotLines("Old Amplitude Spectrum", oldAmplitudeSpectrum_.data(), static_cast<int>(oldAmplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
     std::vector<float> squaredValue;

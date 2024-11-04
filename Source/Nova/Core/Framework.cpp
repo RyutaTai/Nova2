@@ -78,11 +78,11 @@ bool Framework::Initialize()
 }
 
 //	更新処理
-void Framework::Update(const float& elapsedTime/*Elapsed seconds from last frame*/)
+void Framework::Update(const float& elapsedTime)
 {
 	IMGUI_CTRL_CLEAR_FRAME();
 
-	//	Input初期化
+	//	Input更新処理
 	input_.Update();
 
 	//	オーディオ更新処理
@@ -198,9 +198,9 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LP
 	case WM_SIZE:
 	{
 #if 1
-		RECT client_rect{};
-		GetClientRect(hwnd, &client_rect);
-		graphics_.OnSizeChanged(static_cast<UINT64>(client_rect.right - client_rect.left), client_rect.bottom - client_rect.top);
+		RECT clientRect{};
+		GetClientRect(hwnd, &clientRect);
+		graphics_.OnSizeChanged(static_cast<UINT64>(clientRect.right - clientRect.left), clientRect.bottom - clientRect.top);
 #endif
 		break;
 	}

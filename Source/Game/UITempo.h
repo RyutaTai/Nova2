@@ -14,7 +14,10 @@ public:
 	void DrawDebug()override;
 
 private:
-	std::unique_ptr<Sprite> tempo_;	//	テンポサポート
+	std::unique_ptr<Sprite> center_;				//	テンポガイドの中心
+	std::unique_ptr<Sprite> leftSemicircle_;	//	左半円
+	std::unique_ptr<Sprite> rightSemicircle_;	//	右半円
+
 
 };
 

@@ -34,16 +34,29 @@ void Input::SetInputKey(const InputKey& key)
 //	猶予フレーム内にコマンドが押されているか
 bool Input::CommandConfirm(const Command& command, const float& frame)
 {
-	int currentCommand = command.at(0);	//	コマンドの最初から確認する
-	for (int i = 0; i < MaxInputKey; ++i)
+	int count = 0;
+	//	command配列の後ろからイテレータで入力コマンドと比較
+	for (Command::const_reverse_iterator it = command.rbegin(); it != command.rend(); it++)
 	{
-
+		InputKey key = *it;
+		//	現在のイテレータがさしてるkeyを検索して
+		//	見つかるまでループしてカウントを増やす
+		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != key)
+		{
+			count++;
+		}
+		//	時間での判断、カウントが判定フレーム以内じゃなかったらfalse
+		if (count >= frame || count == MaxInputKey)
+		{
+			return false;
+		}
+		//	カウントを増やして次のcommand配列のキーと比較
+		count++;
 	}
-
-	return false;
+	return true;
 }
 
-//	入)力情報更新処理
+//	入力情報更新処理
 void Input::UpdateKeyData()
 {
 	//	キー入力状態を取得
@@ -87,6 +100,7 @@ void Input::UpdateKeyData()
 		inputKeys_[i].frame_++;
 		if (inputKeys_[i].frame_ > SaveFrame)	//	入力保持時間を超えたら無効にする
 		{
+			inputKeys_[i].frame_ = 0;
 			inputKeys_[i].key_ = 0;
 		}
 	}

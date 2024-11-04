@@ -100,8 +100,6 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 
 	//	emissiveIntensity_更新
 	emissiveConstant_.emissiveIntensity_ = frequencyValue * emissiveFactor_;
-	/*emissiveConstant_.emissiveIntensity_ = std::clamp(currentFrequencyValue,
-		emissiveIntencityMin_, emissiveIntencityMax_);*/
 
 #else	//	currentFrequencyValue_にcurrent閾値を設定し、それを越していないならエミッシブにデフォルト値を設定してreturnする
 

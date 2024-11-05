@@ -333,8 +333,8 @@ void SceneGame::Render()
 		Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 		Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
-		//EnemyManager::Instance().Render();
-		dragonkin_->Render();
+		EnemyManager::Instance().Render();
+		//dragonkin_->Render();
 		//drone_->Render();
 
 		if (bloomer_)

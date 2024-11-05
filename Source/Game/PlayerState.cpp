@@ -286,12 +286,14 @@ namespace PlayerState
 			return;
 		}
 		else if (owner_->IsPlayAnimation() == false)
+		//if (stateElapsedTime_ > animJudgeTime_.GetMaxTime())
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
 	}
 
+	//	animJudgeTime‚ÉŽû‚Ü‚Á‚Ä‚¢‚ÄAUŒ‚‚ªƒqƒbƒg‚µ‚Ä‚¢‚é‚©”»’f‚·‚é
 	bool ComboOne1::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	ŽžŠÔ‚Å‚Ì”»’è
@@ -321,8 +323,8 @@ namespace PlayerState
 		//	”»’èŽžŠÔ“à‚ÉŽw’è‚µ‚½ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚çisCorrectInput_‚ðtrue‚É‚·‚é
 		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
 		Command command = { Key6 };
-		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 10.0f))
-		//if (Input::Instance().CommandConfirm(command, 10.0f))
+		//if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 10.0f))
+		if (Input::Instance().CommandConfirm(command, 10.0f))
 		{
 			isCorrectInput_ = true;
 			return;

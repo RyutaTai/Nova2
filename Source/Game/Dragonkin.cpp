@@ -8,6 +8,28 @@ Dragonkin::Dragonkin()
 {
 	myType_ = ENEMY_TYPE::DRAGONKIN;
 	
+	//	ステートセット(Dragonkin::StateTypeの順と合わせる)
+	//stateMachine_.reset(new StateMachine<State<Player>>());
+	//stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機
+	//stateMachine_->RegisterState(new PlayerState::MoveState(this));		//	移動
+	//stateMachine_->RegisterState(new PlayerState::AttackState(this));		//	攻撃
+	//stateMachine_->RegisterState(new PlayerState::ComboOne1(this));		//	コンボ0_1
+	//stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
+	//stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
+	//stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
+	//stateMachine_->RegisterState(new PlayerState::ComboOne5(this));		//	コンボ0_5
+	//stateMachine_->RegisterState(new PlayerState::ComboOne6(this));		//	コンボ0_6
+	//stateMachine_->RegisterState(new PlayerState::ComboOne7(this));		//	コンボ0_7
+	//stateMachine_->RegisterState(new PlayerState::DodgeState(this));		//	回避
+
+	//stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
+	//PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
+
+	//	モデルのルート設定
+	int rootNodeIndex = GetNodeIndex("root");
+	SetRootJointIndex(rootNodeIndex);
+
+
 }
 
 //	初期化
@@ -20,9 +42,8 @@ void Dragonkin::Initialize()
 	//GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
 
 	//	スケール
-	//float scale = 0.0001f;
-	////float scale = 10.0f;
-	//GetTransform()->SetScaleFactor(scale);
+	float scale = 0.0001f;
+	GetTransform()->SetScaleFactor(scale);
 
 }
 

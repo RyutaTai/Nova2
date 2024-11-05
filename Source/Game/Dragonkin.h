@@ -8,18 +8,7 @@ public:
 	Dragonkin();
 	~Dragonkin()override {}
 
-	void Initialize()override;
-	void Update(const float& elapsedTime)override;
-	void Render()override;
-
-	bool RayVsVertical(const float& elapsedTime)override;
-	bool RayVsHorizontal(const float& elapsedTime)override;
-	void Move(const float& elapsedTime)override {}
-
-	void DrawDebug()override;
-	void DrawDebugPrimitive()override;
-
-private:
+public:
 	//	アニメーション情報(Boss)
 	enum AnimationType
 	{
@@ -62,5 +51,38 @@ private:
 		ANIM_CINE03,
 		MAX,
 	};
+
+	//	ステートの種類
+	enum class StateType
+	{
+		Idle = 0, 		//	待機
+		Move,			//	移動
+		Attack,			//	攻撃
+		ComboOne1,		//	コンボ0_1
+		ComboOne2,		//	コンボ0_2
+		ComboOne3,		//	コンボ0_3
+		ComboOne4,		//	コンボ0_4
+		ComboOne5,		//	コンボ0_5
+		ComboOne6,		//	コンボ0_6
+		ComboOne7,		//	コンボ0_7
+		Dodge,		//	回避
+		Max,			//	ステート最大数
+	};
+
+public:
+	void Initialize()override;
+	void Update(const float& elapsedTime)override;
+	void Render()override;
+
+	bool RayVsVertical(const float& elapsedTime)override;
+	bool RayVsHorizontal(const float& elapsedTime)override;
+	void Move(const float& elapsedTime)override {}
+
+	void DrawDebug()override;
+	void DrawDebugPrimitive()override;
+
+private:
+
+
 };
 

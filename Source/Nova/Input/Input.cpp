@@ -45,7 +45,7 @@ bool Input::CommandConfirm(const Command& command, const float& frame)
 		InputKey key = *it;
 		//	現在のイテレータがさしてるkeyを検索して
 		//	見つかるまでループしてカウントを増やす
-		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != key)
+		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != false)
 		{
 			count++;
 		}

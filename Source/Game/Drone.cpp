@@ -316,8 +316,8 @@ void Drone::DrawDebug()
 	{
 		//GetTransform()->DrawDebug();
 		Character::DrawDebug();
-		ImGui::Checkbox("Invincible", &isInvincible_);		//	無敵フラグ設定
-		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);	//	スケール
+		ImGui::Checkbox("Invincible", &isInvincible_);							//	無敵フラグ設定
+		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
 		ImGui::DragFloat("TurnSpeed", &turnSpeed_, 1.0f, -FLT_MAX, FLT_MAX);	//	旋回速度
 		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);
 		ImGui::Checkbox("Bullet Launch ", &bulletLaunch_);						//	弾丸発射

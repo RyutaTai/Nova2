@@ -15,10 +15,14 @@ void Dragonkin::Initialize()
 {
 	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);	//	待機アニメーションセット
 
+
+	//	座標系変換
+	//GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
+
 	//	スケール
-	float scale = 0.0001f;
-	//float scale = 10.0f;
-	GetTransform()->SetScaleFactor(scale);
+	//float scale = 0.0001f;
+	////float scale = 10.0f;
+	//GetTransform()->SetScaleFactor(scale);
 
 }
 

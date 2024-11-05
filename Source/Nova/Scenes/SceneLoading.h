@@ -27,9 +27,9 @@ private:
 		BACK,				//	背景画像
 		LOADING,			//	ローディング　テキスト
 		TITLE_TEXT,
-		MAX,				//	スプライトの上限数
+		Max,				//	スプライトの上限数
 	};
-	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_LOADING::MAX)];
+	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_LOADING::Max)];
 
 	//	ローディングスレッド
 	static void LoadingThread(SceneLoading* scene);

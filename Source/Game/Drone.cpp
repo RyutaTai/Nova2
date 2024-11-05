@@ -14,6 +14,9 @@
 Drone::Drone()
 	:Enemy("./Resources/Model/Drone/Drone.gltf")
 {
+	//	自分の種類を設定
+	myType_ = EnemyType::Drone;
+
 	//	ステートセット(Drone::StateTypeの順と合わせる)
 	stateMachine_.reset(new StateMachine<State<Drone>>());
 	stateMachine_->RegisterState(new DroneState::IdleState(this));			//	待機
@@ -36,7 +39,7 @@ Drone::~Drone()
 void Drone::Initialize()
 {
 	//	アニメーションセット
-	myType_ = ENEMY_TYPE::DRONE;
+	myType_ = EnemyType::Drone;
 
 	//	初期位置設定
 	/*DirectX::XMFLOAT3 position = { 190,700,1620 };

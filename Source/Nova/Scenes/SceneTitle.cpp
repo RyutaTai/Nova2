@@ -57,7 +57,7 @@ void SceneTitle::Initialize()
 //	èIóπâª
 void SceneTitle::Finalize()
 {
-	for (int i = 0; i < static_cast<int>(SPRITE_TITLE::MAX); i++)
+	for (int i = 0; i < static_cast<int>(SPRITE_TITLE::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
 		{

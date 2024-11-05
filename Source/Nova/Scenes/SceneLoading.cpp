@@ -32,7 +32,7 @@ void SceneLoading::Finalize()
 	}
 
 	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::MAX); i++)
+	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
 		{
@@ -119,7 +119,7 @@ void SceneLoading::LoadingThread(SceneLoading* scene)
 void SceneLoading::DrawDebug()
 {
 	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::MAX); i++)
+	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
 		{

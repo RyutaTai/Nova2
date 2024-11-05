@@ -36,7 +36,7 @@ private:
 	{
 		Ground,
 		Building,
-		MAX,
+		Max,
 	};
 
 	struct EmissiveConstants

@@ -41,9 +41,9 @@ private:
 	{
 		SHORT = 0,
 		LONG,
-		MAX,
+		Max,
 	};
-	Effect* effect_[EFFECT_TYPE::MAX] = {};
+	Effect* effect_[EFFECT_TYPE::Max] = {};
 
 	enum class AUDIO_SE_BULLET	//	3D�Ŗ炷SE
 	{

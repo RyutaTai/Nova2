@@ -49,7 +49,7 @@ public:
 		ANIM_BD05,
 		ANIM_CINE02,
 		ANIM_CINE03,
-		MAX,
+		Max,
 	};
 
 	//	ステートの種類

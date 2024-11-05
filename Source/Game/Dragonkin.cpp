@@ -6,7 +6,7 @@
 Dragonkin::Dragonkin()
 	:Enemy("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.gltf")
 {
-	myType_ = ENEMY_TYPE::DRAGONKIN;
+	myType_ = EnemyType::Dragonkin;
 	
 	//	ステートセット(Dragonkin::StateTypeの順と合わせる)
 	//stateMachine_.reset(new StateMachine<State<Player>>());
@@ -22,9 +22,6 @@ Dragonkin::Dragonkin()
 	//stateMachine_->RegisterState(new PlayerState::ComboOne7(this));		//	コンボ0_7
 	//stateMachine_->RegisterState(new PlayerState::DodgeState(this));		//	回避
 
-	//stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
-	//PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
-
 	//	モデルのルート設定
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
@@ -35,14 +32,20 @@ Dragonkin::Dragonkin()
 //	初期化
 void Dragonkin::Initialize()
 {
-	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);	//	待機アニメーションセット
+
+	//stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
+	//PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);			//	待機アニメーション再生
+	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);						//	待機アニメーションセット
+
+	//	位置設定
+	GetTransform()->SetPosition({ 23.0f, 0.0f,3.0f });
 
 
 	//	座標系変換
 	//GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
 
 	//	スケール
-	float scale = 0.0001f;
+	float scale = 0.04f;
 	GetTransform()->SetScaleFactor(scale);
 
 }

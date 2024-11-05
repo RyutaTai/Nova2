@@ -443,7 +443,7 @@ void SceneDemo::Render()
 void SceneDemo::Finalize()
 {
 	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_GAME::MAX); i++)
+	for (int i = 0; i < static_cast<int>(SPRITE_GAME::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
 		{

@@ -30,7 +30,7 @@ private:
 	{
 		FIRE = 0,		//	弾の周りのエフェクト
 		EXPLOSION,		//	爆発
-		MAX,			//	最大数
+		Max,			//	最大数
 	};
 
 private:
@@ -38,8 +38,8 @@ private:
 	//float							speed_		= 1.0f;						//	弾の速さ
 	float							lifeTimer_ = 3.0f;						//	弾の生存時間
 	DirectX::XMFLOAT3				target_ = { 0,0,0 };					//	ターゲット位置
-	std::shared_ptr <Effect>		effectResource_[EFFECT::MAX];			//	エフェクト		
-	float							effectScale_[EFFECT::MAX] = { 1.0f };	//	エフェクトスケール
+	std::shared_ptr <Effect>		effectResource_[EFFECT::Max];			//	エフェクト		
+	float							effectScale_[EFFECT::Max] = { 1.0f };	//	エフェクトスケール
 
 };
 

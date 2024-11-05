@@ -21,14 +21,14 @@ void SceneModelCheck::Initialize()
 	//object_[static_cast<int>(MODEL_ModelCheck::SHOGI_BOARD)] = std::make_unique<GameObject>("./Resources/Model/old/Shogi/shogiboard.fbx", true);//	将棋盤
 #endif
 	//object_[static_cast<int>(MODEL_ModelCheck::CITY)] = std::make_unique<GameObject>("./Resources/Model/cybercity-2099-v2/city.fbx", true);//	シティモデル
-	//object_[static_cast<int>(MODEL_ModelCheck::DRONE)] = std::make_unique<GameObject>("./Resources/Model/Drone/Drone.fbx",true);
-	//object_[(int)MODEL_CHECK::DRAGONKIN] = std::make_unique<GameObject>("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.fbx");
+	//object_[static_cast<int>(MODEL_ModelCheck::Drone)] = std::make_unique<GameObject>("./Resources/Model/Drone/Drone.fbx",true);
+	//object_[(int)MODEL_CHECK::Dragonkin] = std::make_unique<GameObject>("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.fbx");
 	//object_[(int)MODEL_ModelCheck::PLAYER] = std::make_unique<GameObject>("./Resources/Model/free-mixamo-retextured-model/source/model2.fbx");
 	//object_[(int)MODEL_CHECK::CUBE] = std::make_unique<GameObject>("./Resources/Model/Cube/source/Cube.000.fbx", true);
 
 	//	TODO:ModelPixelShaderモデルごとにピクセルシェーダー設定 ここで作ったものを描画前にセットする(別で書く)
 	//Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/CityPS.cso", modelPixelShader_[(int)MODEL_CHECK::CITY].ReleaseAndGetAddressOf());
-	//Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/DronePS.cso", modelPixelShader_[(int)MODEL_CHECK::DRONE].ReleaseAndGetAddressOf());
+	//Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/DronePS.cso", modelPixelShader_[(int)MODEL_CHECK::Drone].ReleaseAndGetAddressOf());
 
 	//	SceneConstant
 	D3D11_BUFFER_DESC desc;
@@ -82,9 +82,9 @@ void SceneModelCheck::ShadowRender()
 		object_[(int)MODEL_CHECK::SHOGI_BOARD]->ShadowRender(1.0f);
 	}*/
 	
-	//object_[(int)MODEL_ModelCheck::DRONE]->ShadowRender(1.0f);
+	//object_[(int)MODEL_ModelCheck::Drone]->ShadowRender(1.0f);
 
-	//for (int i = 0; i < static_cast<int>(MODEL_ModelCheck::MAX); i++)
+	//for (int i = 0; i < static_cast<int>(MODEL_ModelCheck::Max); i++)
 	//{
 	//	if (object_[i] != nullptr)
 	//	{
@@ -248,7 +248,7 @@ void SceneModelCheck::Render()
 void SceneModelCheck::Finalize()
 {
 	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_MODEL_CHECK::MAX); i++)
+	for (int i = 0; i < static_cast<int>(SPRITE_MODEL_CHECK::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
 		{
@@ -256,7 +256,7 @@ void SceneModelCheck::Finalize()
 		}
 	}
 	//	ステージ終了化
-	for (int i = 0; i < static_cast<int>(MODEL_CHECK::MAX); i++)
+	for (int i = 0; i < static_cast<int>(MODEL_CHECK::Max); i++)
 	{
 		if (object_[i] != nullptr)
 		{

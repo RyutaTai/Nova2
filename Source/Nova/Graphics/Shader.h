@@ -17,7 +17,7 @@ public:
 		COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/,
 		LINEAR_BORDER_OPAQUE_BLACK,
 		POINT_CLAMP,
-		MAX,
+		Max,
 	};
 
 	enum class DEPTH_STENCIL_STATE
@@ -26,7 +26,7 @@ public:
 		ZT_ON_ZW_OFF,
 		ZT_OFF_ZW_ON,
 		ZT_OFF_ZW_OFF,
-		MAX,
+		Max,
 	};
 
 	enum class BLEND_STATE
@@ -35,7 +35,7 @@ public:
 		ADD,
 		SUBTRACT,
 		REV_SUBTRACT,	//	ReverseSubtract
-		MAX,
+		Max,
 	};
 
 	enum class RASTERIZER_STATE
@@ -45,7 +45,7 @@ public:
 		CULL_NONE,
 		//CULL_BACK,
 		WIREFRAME_CULL_NONE,
-		MAX,
+		Max,
 	};
 
 public:
@@ -63,9 +63,9 @@ public:
 	HRESULT CreatePsFromCso(ID3D11Device* device, const char* csoName, ID3D11PixelShader** pixelShader);
 
 private:
-	Microsoft::WRL::ComPtr <ID3D11SamplerState>			samplerStates_[static_cast<UINT>(SAMPLER_STATE::MAX)];
-	Microsoft::WRL::ComPtr <ID3D11DepthStencilState>	depthStencilStates_[static_cast<UINT>(DEPTH_STENCIL_STATE::MAX)];
-	Microsoft::WRL::ComPtr <ID3D11BlendState>			blendStates_[static_cast<UINT>(BLEND_STATE::MAX)];
-	Microsoft::WRL::ComPtr <ID3D11RasterizerState>		rasterizerStates_[static_cast<UINT>(RASTERIZER_STATE::MAX)];
+	Microsoft::WRL::ComPtr <ID3D11SamplerState>			samplerStates_[static_cast<UINT>(SAMPLER_STATE::Max)];
+	Microsoft::WRL::ComPtr <ID3D11DepthStencilState>	depthStencilStates_[static_cast<UINT>(DEPTH_STENCIL_STATE::Max)];
+	Microsoft::WRL::ComPtr <ID3D11BlendState>			blendStates_[static_cast<UINT>(BLEND_STATE::Max)];
+	Microsoft::WRL::ComPtr <ID3D11RasterizerState>		rasterizerStates_[static_cast<UINT>(RASTERIZER_STATE::Max)];
 
 };

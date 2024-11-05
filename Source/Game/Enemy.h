@@ -7,13 +7,13 @@
 class Enemy :public Character
 {
 protected:
-	enum class ENEMY_TYPE		//	Enemyの種類
+	enum class EnemyType		//	Enemyの種類
 	{
-		DRONE = 0,
-		DRAGONKIN,
-		MAX,
+		Drone = 0,
+		Dragonkin,
+		Max,
 	};
-	ENEMY_TYPE myType_;
+	EnemyType myType_;
 
 	enum class STATE	//	ステート
 	{
@@ -54,13 +54,13 @@ public:
 	//virtual bool OnMessage(const Telegram& msg);																//	メッセージ受信関数
 	virtual void				Destroy();
 
-	ENEMY_TYPE					GetMyType()										{ return myType_; }				//	敵の種類取得
+	EnemyType					GetMyType()										{ return myType_; }				//	敵の種類取得
 	//StateMachine <Enemy>*	GetStateMachine()	{ return stateMachine_; }
 	DirectX::XMFLOAT3			GetTargetPosition()								{ return targetPosition_; }		//	ターゲットポジション取得
 	float						GetStateTimer()									{ return stateTimer_; }			//	ステートタイマー取得
 
 	void						SetDamaged(bool damaged) { damaged_ = damaged; }		//	ダメージフラグ設定
-	void						SetMyType(ENEMY_TYPE myType)					{ myType_ = myType; }			//	自分の種類設定
+	void						SetMyType(EnemyType myType)					{ myType_ = myType; }			//	自分の種類設定
 	virtual void				SetRandomTargetPosition();														//	ターゲット位置をランダム設定
 	void						SetTargetPosition(DirectX::XMFLOAT3 position)	{ targetPosition_ = position; }	//	ターゲットポジション設定
 	void						SetStateTimer(float timer)						{ stateTimer_ = timer; }		//	ステートタイマー設定

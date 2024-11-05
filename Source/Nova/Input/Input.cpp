@@ -45,13 +45,13 @@ bool Input::CommandConfirm(const Command& command, const float& frame)
 		InputKey key = *it;
 		//	現在のイテレータがさしてるkeyを検索して
 		//	見つかるまでループしてカウントを増やす
-		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != false)
+		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != key)
 		{
 			count++;
 		}
 		//	時間での判断、カウントが判定フレーム以内じゃなかったらfalse
-		if (inputKeys_[count].frame_ >= frame || count == MaxInputKey)
-		//if (count >= frame || count == MaxInputKey)
+		//if (inputKeys_[count].frame_ >= frame || count == MaxInputKey)
+		if (count >= frame || count == MaxInputKey)
 		{
 			return false;
 		}

@@ -1053,6 +1053,23 @@ void GltfModel::Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>
         {
         const Node& node{ nodes_.at(nodeIndex) };
 
+        if (node.skin_ > -1)
+        {
+            const Skin& skin{ skins_.at(node.skin_) };
+            PrimitiveJointConstants primitiveJointData{};
+            for (size_t jointIndex = 0; jointIndex < skin.joints_.size(); ++jointIndex)
+            {
+                DirectX::XMStoreFloat4x4(&primitiveJointData.matrices_[jointIndex],
+                    DirectX::XMLoadFloat4x4(&skin.inverseBindMatrices_.at(jointIndex)) *
+                    // --- GLTF_ANIMATION ---
+                    //DirectX::XMLoadFloat4x4(&animatedNodes.at(skin.joints_.at(jointIndex)).globalTransform_) *
+                    DirectX::XMLoadFloat4x4(&nodes_.at(skin.joints_.at(jointIndex)).globalTransform_) *
+                    DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&node.globalTransform_))
+                );
+            }
+            deviceContext->UpdateSubresource(primitiveJointCbuffer_.Get(), 0, 0, &primitiveJointData, 0, 0);
+            deviceContext->VSSetConstantBuffers(2, 1, primitiveJointCbuffer_.GetAddressOf());
+        }
         if (node.mesh_ > -1)
         {
             const Mesh& mesh{ meshes_.at(node.mesh_) };
@@ -1116,23 +1133,7 @@ void GltfModel::Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>
 
             }
         }
-        if (node.skin_ > -1)
-        {
-            const Skin& skin{ skins_.at(node.skin_) };
-            PrimitiveJointConstants primitiveJointData{};
-            for (size_t jointIndex = 0; jointIndex < skin.joints_.size(); ++jointIndex)
-            {
-                DirectX::XMStoreFloat4x4(&primitiveJointData.matrices_[jointIndex],
-                    DirectX::XMLoadFloat4x4(&skin.inverseBindMatrices_.at(jointIndex)) *
-                    // --- GLTF_ANIMATION ---
-                    //DirectX::XMLoadFloat4x4(&animatedNodes.at(skin.joints_.at(jointIndex)).globalTransform_) *
-                    DirectX::XMLoadFloat4x4(&nodes_.at(skin.joints_.at(jointIndex)).globalTransform_) *
-                    DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&node.globalTransform_))
-                );
-            }
-            deviceContext->UpdateSubresource(primitiveJointCbuffer_.Get(), 0, 0, &primitiveJointData, 0, 0);
-            deviceContext->VSSetConstantBuffers(2, 1, primitiveJointCbuffer_.GetAddressOf());
-        }
+        
         for (std::vector<int>::value_type childIndex : node.children_)
         {
             traverse(childIndex);

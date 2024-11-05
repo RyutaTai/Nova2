@@ -321,14 +321,15 @@ namespace PlayerState
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
 		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
 		Command command = { Key6 };
-		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 2.0f))
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 10.0f))
+		//if (Input::Instance().CommandConfirm(command, 10.0f))
 		{
 			isCorrectInput_ = true;
 			return;
 		}
 
 		//	入力されていなかったらキャンセル
-		owner_->ChangeState(Player::StateType::Idle);
+		//owner_->ChangeState(Player::StateType::Idle);
 		return;
 	}
 
@@ -414,7 +415,7 @@ namespace PlayerState
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
 		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
 		Command command = { Key6 };
-		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 3.0f))
+		if (inputJudgeTime_.IsJudgeFlag(stateElapsedTime_) && Input::Instance().CommandConfirm(command, 10.0f))
 		{
 			isCorrectInput_ = true;
 		}

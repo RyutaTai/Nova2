@@ -64,9 +64,6 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
 	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
 	stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
-	stateMachine_->RegisterState(new PlayerState::ComboOne5(this));		//	コンボ0_5
-	stateMachine_->RegisterState(new PlayerState::ComboOne6(this));		//	コンボ0_6
-	stateMachine_->RegisterState(new PlayerState::ComboOne7(this));		//	コンボ0_7
 	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
 
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
@@ -882,7 +879,7 @@ void Player::DrawStateStr()
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
 		"Idle","Move","Attack",
-		"ComboOne1","ComboOne2","ComboOne3","ComboOne4","ComboOne5","ComboOne6","ComboOne7",
+		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
 		"Doege"
 	};
 

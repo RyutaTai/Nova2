@@ -52,9 +52,6 @@ public:
 		ComboOne2,		//	コンボ0_2
 		ComboOne3,		//	コンボ0_3
 		ComboOne4,		//	コンボ0_4
-		ComboOne5,		//	コンボ0_5
-		ComboOne6,		//	コンボ0_6
-		ComboOne7,		//	コンボ0_7
 		Dodge,		//	回避
 		Max,			//	ステート最大数
 	};

@@ -91,14 +91,15 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);	//	経過時間更新
 
 	private:
 		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
+		float		acceptInputFrame_ = 0.0f;		//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
 		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 	};
 }
 
@@ -117,14 +118,17 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		static constexpr int AnimJudgeCount = 2;	//	アニメーション判定区間の数
+		struct JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
+		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
+		float		acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
 		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		bool		isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
 
 	};
 }
@@ -144,14 +148,17 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
-		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		static constexpr int AnimJudgeCount = 3;	//	アニメーション判定区間の数
+		struct JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
+		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
+		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
 		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
+		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		bool		isHit_ = false;
 
 	};
 }
@@ -171,95 +178,16 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
+		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
 		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
+		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
+		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
 		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
-
-	};
-}
-
-//	コンボ01_5
-namespace PlayerState
-{
-	class ComboOne5 :public State<Player>
-	{
-	public:
-		ComboOne5(Player* owner) :State(owner) {}
-		~ComboOne5() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-
-	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
-		void UpdateElapsedTime(const float& elapsedTime);
-
-	private:
-		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
-
-	};
-}
-
-//	コンボ01_6
-namespace PlayerState
-{
-	class ComboOne6 :public State<Player>
-	{
-	public:
-		ComboOne6(Player* owner) :State(owner) {}
-		~ComboOne6() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-
-	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
-		void UpdateElapsedTime(const float& elapsedTime);
-
-	private:
-		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
-
-	};
-}
-
-//	コンボ01_7
-namespace PlayerState
-{
-	class ComboOne7 :public State<Player>
-	{
-	public:
-		ComboOne7(Player* owner) :State(owner) {}
-		~ComboOne7() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-
-	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const GamePadButton& gamePadButton);
-		void UpdateElapsedTime(const float& elapsedTime);
-
-	private:
-		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
-		JudgeTime	inputJudgeTime_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
+		bool		isHit_ = false;
 
 	};
 }

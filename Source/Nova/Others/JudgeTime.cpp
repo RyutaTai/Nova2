@@ -11,3 +11,10 @@ const bool JudgeTime::IsJudgeFlag(const float& time)const
 {
 	return (minJudgeTime_ < time) && (time < maxJudgeTime_);
 }
+
+//	”»’èŽžŠÔÝ’è
+void JudgeTime::SetJudgeTime(const float& minTime,const float& maxTime)
+{
+	minJudgeTime_ = minTime; 
+	maxJudgeTime_ = maxTime;
+}

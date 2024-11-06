@@ -44,8 +44,8 @@ bool Input::CommandConfirm(const Command& command, const float& frame)
 	{
 		InputKey key = *it;
 		//	現在のイテレータがさしてるkeyを検索して
-		//	見つかるまでループしてカウントを増やす
-		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != false)
+		//	見つかるまでループして、inputKeys_[count].key_にkeyのフラグが立っていない場合カウントを増やす
+		while (count < MaxInputKey && (inputKeys_[count].key_ & key) != key)
 		{
 			count++;
 		}
@@ -103,12 +103,12 @@ bool Input::CommandConfirm(const Command& command, const float& frame)
 void Input::UpdateKeyData(const float& elapsedTime)
 {
 	//	キー入力状態を取得
-	bool up		= (gamePad_.GetButton()		& GamePad::BTN_UP) != 0;
-	bool right	= (gamePad_.GetButton()		& GamePad::BTN_RIGHT) != 0;
-	bool down	= (gamePad_.GetButton()		& GamePad::BTN_DOWN) != 0;
-	bool left	= (gamePad_.GetButtonDown() & GamePad::BTN_LEFT) != 0;
-	bool punch	= (gamePad_.GetButton()		& GamePad::BTN_Y) != 0;
-	bool kick	= (gamePad_.GetButton()		& GamePad::BTN_B) != 0;
+	bool up		= (gamePad_.GetButton()	& GamePad::BTN_UP) != 0;
+	bool right	= (gamePad_.GetButton()	& GamePad::BTN_RIGHT) != 0;
+	bool down	= (gamePad_.GetButton()	& GamePad::BTN_DOWN) != 0;
+	bool left	= (gamePad_.GetButton()	& GamePad::BTN_LEFT) != 0;
+	bool punch	= (gamePad_.GetButton()	& GamePad::BTN_Y) != 0;
+	bool kick	= (gamePad_.GetButton()	& GamePad::BTN_B) != 0;
 	//	スティック入力値をキー入力に割り当て
 	if (gamePad_.GetAxisLX() < -0.5f)	left = true;
 	if (gamePad_.GetAxisLX() > 0.5f)	right = true;

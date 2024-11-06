@@ -10,6 +10,7 @@ public:
 
 	const bool IsJudgeFlag(const float& time)const;	//	ŠÔ‚ªminJudgeTime_‚ÆmaxJudgeTime_‚ÌŠÔ‚É‚ ‚é‚©”»’f
 
+	void SetJudgeTime(const float& minTime, const float& maxTime);
 	void SetMinJudgeTime(const float& minTime) { minJudgeTime_ = minTime; }		//	”»’èŠÔ‚Ì‰ºŒÀ’lİ’è
 	void SetMaxJudgeTime(const float& maxTime) { maxJudgeTime_ = maxTime; }		//	”»’èŠÔ‚ÌãŒÀ’lİ’è
 

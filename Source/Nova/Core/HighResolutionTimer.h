@@ -108,6 +108,10 @@ public:
 		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&thisTime_));
 		// Time difference between this frame and the previous.
 		deltaTime_ = (thisTime_ - lastTime_) * secondsPerCount_;
+		if (deltaTime_ > 1.0f)
+		{
+			deltaTime_ = 1.0f;
+		}
 
 		// Prepare for next frame.
 		lastTime_ = thisTime_;

@@ -38,7 +38,7 @@ private:
 
 public:
 	Drone();
-	~Drone()override;
+	~Drone()override {}
 
 	void Initialize()	override;
 	void Update(const float& elapsedTime)		override;

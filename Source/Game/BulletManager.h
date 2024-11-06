@@ -44,7 +44,7 @@ public:
 	const float& GetCoverScale() const { return coverScale_; }
 
 	//	–³“Gó‘ÔƒZƒbƒg
-	void SetInvincible(bool isInvincible);
+	void SetInvincible(const bool& isInvincible);
 
 	//	’eŠÛæ“¾
 	std::vector<Bullet*> GetBullets() { return bullets_; }

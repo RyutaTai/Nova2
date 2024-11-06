@@ -62,19 +62,17 @@ private:
 	std::unique_ptr	<Stage>		stage_[2];	
 	std::unique_ptr	<Player>	player_;
 	std::unique_ptr	<Dragonkin>	dragonkin_;
-	Drone*		drone_[5];
-	std::unique_ptr<StateMachine<State<SceneGame>>>	stateMachine_ = nullptr;		//	ステートマシン
+	std::unique_ptr<StateMachine<State<SceneGame>>>		stateMachine_ = nullptr;		//	ステートマシン
 
 	/* ----- 描画関係 ----- */
-	std::unique_ptr<GltfModel>					gltfModel_;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shaderResourceViews_[8];
-	std::unique_ptr<Bloom>						bloomer_			= nullptr;		//	BLOOM
+	std::unique_ptr<Bloom>						bloomer_ = nullptr;		//	BLOOM
 	std::unique_ptr<FrameBuffer>				framebuffers_[8];
 	std::unique_ptr<FullScreenQuad>				bitBlockTransfer_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	pixelShaders_[8];
-	DirectX::XMFLOAT4							lightDirection_		= { 0,-1,0,0 };
-	float										nearZ_				= 50.0f;
-	float										farZ_				= 400000.0f;
+	DirectX::XMFLOAT4							lightDirection_ = { 0,-1,0,0 };
+	float										nearZ_ = 50.0f;
+	float										farZ_ = 400000.0f;
 
 	/* ----- スプライト ----- */
 	enum SPRITE_GAME

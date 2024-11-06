@@ -69,6 +69,13 @@ bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
 	return false;
 }
 
+//	”jŠüˆ—
+void Dragonkin::Destroy()
+{
+
+	Enemy::Destroy();	//	©g‚ğ”jŠü
+}
+
 //	•`‰æˆ—
 void Dragonkin::Render()
 {

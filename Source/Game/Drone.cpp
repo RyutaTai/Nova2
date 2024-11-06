@@ -30,11 +30,6 @@ Drone::Drone()
 
 }
 
-Drone::~Drone()
-{
-	
-}
-
 //	‰Šú‰»
 void Drone::Initialize()
 {

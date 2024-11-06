@@ -101,7 +101,7 @@ void BulletManager::CoverModelUpdate(const float& elapsedTime)
 }
 
 //	ñ≥ìGèÛë‘ÉZÉbÉg
-void BulletManager::SetInvincible(bool isInvincible)
+void BulletManager::SetInvincible(const bool& isInvincible)
 {
 	for (Bullet* bullet : bullets_)
 	{

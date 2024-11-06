@@ -276,7 +276,7 @@ namespace PlayerState
 
 		// TODO:アニメーションの長さ調整
 
-		Command command = { KeyK };	//入力判定
+		Command command = { KeyK };	//	入力判定
 		JudgeInput(cancellationTime_, command);
 
 		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)

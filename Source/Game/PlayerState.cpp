@@ -252,7 +252,6 @@ namespace PlayerState
 	void ComboOne1::Initialize()
 	{
 		//	アニメーションセット
-		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f, 0.9f);
 		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f);
 
 		//	ルートモーション
@@ -286,7 +285,6 @@ namespace PlayerState
 			return;
 		}
 		else if (owner_->IsPlayAnimation() == false)
-		//if (stateElapsedTime_ > animJudgeTime_.GetMaxTime())
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
@@ -320,9 +318,6 @@ namespace PlayerState
 			return;
 		}
 
-		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
-		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
-		
 		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
 		
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
@@ -331,8 +326,6 @@ namespace PlayerState
 			return;
 		}
 
-		//	入力されていなかったらキャンセル
-		//owner_->ChangeState(Player::StateType::Idle);
 		return;
 	}
 
@@ -522,7 +515,6 @@ namespace PlayerState
 		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
 
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
-		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
 			isCorrectInput_ = true;
@@ -610,7 +602,6 @@ namespace PlayerState
 		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
 
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
-		//if (inputJudgeTime.IsJudgeFlag(stateElapsedTime_) && owner_->GetButtonDown(gamePadButton))
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
 			isCorrectInput_ = true;

@@ -45,6 +45,7 @@ public:
 	const DirectX::XMMATRIX		GetViewMatrix()const{ return viewMatrix_; }					//	ビュー行列取得
 	const DirectX::XMMATRIX		GetProjectionMatrix()const{ return projectionMatrix_; }		//	プロジェクション行列取得
 	const DirectX::XMMATRIX		CalcViewProjectionMatrix();									//	ビュープロジェクション行列取得	
+	const DirectX::XMMATRIX		CalcInvViewProjectionMatrix();								//	ビュープロジェクション行列取得	
 	const DirectX::XMFLOAT3		GetEye()	const	{ return eye_; }						//	視点取得
 	const DirectX::XMFLOAT3		GetFocus()	const	{ return focus_; }						//	注視点取得
 	const DirectX::XMFLOAT3		GetUp()		const	{ return up_; }							//	カメラ上方向取得
@@ -62,6 +63,7 @@ private:
 	DirectX::XMMATRIX viewMatrix_;								//	ビュー行列
 	DirectX::XMMATRIX projectionMatrix_;						//	プロジェクション行列
 	DirectX::XMMATRIX viewProjectionMatrix_;					//	ビュープロジェクション行列
+	DirectX::XMMATRIX invViewProjectionMatrix_;					//	ビュープロジェクション逆行列
 	DirectX::XMFLOAT3 eye_;										//	カメラの視点
 	DirectX::XMFLOAT3 focus_		= { 0,-10,10 };				//	カメラの注視点
 	DirectX::XMFLOAT3 angle_		= { 0,0,0 };				//	カメラの回転値

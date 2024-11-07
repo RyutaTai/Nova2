@@ -195,6 +195,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game\UIInstructions.cpp" />
+    <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
     <ClCompile Include="Source\Game\UIHealth.cpp" />
@@ -287,6 +288,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\UIInstructions.h" />
+    <ClInclude Include="Source\Nova\Graphics\Decal.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />
     <ClInclude Include="Source\Game\UIHealth.h" />
@@ -431,6 +433,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Nova\Shaders\DecalPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Nova\Shaders\DecalVs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Nova\Shaders\FinalPassPs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -524,6 +534,7 @@
     <None Include="Source\Nova\Shaders\BidirectionalReflectanceDistributionFunction.hlsli" />
     <None Include="Source\Nova\Shaders\Bloom.hlsli" />
     <None Include="Source\Nova\Shaders\Debug.hlsli" />
+    <None Include="Source\Nova\Shaders\Decal.hlsli" />
     <None Include="Source\Nova\Shaders\FullscreenQuad.hlsli" />
     <None Include="Source\Nova\Shaders\GeometricPrimitive.hlsli" />
     <None Include="Source\Nova\Shaders\GltfModel.hlsli" />

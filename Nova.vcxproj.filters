@@ -269,6 +269,7 @@
     <ClCompile Include="Source\Game\Target.cpp" />
     <ClCompile Include="Source\Game\UIInstructions.cpp" />
     <ClCompile Include="Source\Game\UITempo.cpp" />
+    <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -510,6 +511,7 @@
     <ClInclude Include="Source\Game\Target.h" />
     <ClInclude Include="Source\Game\UIInstructions.h" />
     <ClInclude Include="Source\Game\UITempo.h" />
+    <ClInclude Include="Source\Nova\Graphics\Decal.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">
@@ -599,6 +601,12 @@
     <FxCompile Include="Source\Game\Shaders\PlayerPS.hlsl">
       <Filter>Nova\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Nova\Shaders\DecalPs.hlsl">
+      <Filter>Nova\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Nova\Shaders\DecalVs.hlsl">
+      <Filter>Nova\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Nova\Shaders\Debug.hlsli">
@@ -629,6 +637,9 @@
       <Filter>Nova\Shaders</Filter>
     </None>
     <None Include="Source\Nova\Shaders\Bloom.hlsli">
+      <Filter>Nova\Shaders</Filter>
+    </None>
+    <None Include="Source\Nova\Shaders\Decal.hlsli">
       <Filter>Nova\Shaders</Filter>
     </None>
   </ItemGroup>

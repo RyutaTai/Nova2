@@ -247,6 +247,7 @@ void SceneGame::Render()
 	Graphics::Instance().SetViewProjection(Camera::Instance().CalcViewProjectionMatrix());
 	Graphics::Instance().SetLightDirection(lightDirection_);
 	Graphics::Instance().SetCameraPosition({ 0,0,1,0 });
+	Graphics::Instance().SetInvViewProjection(Camera::Instance().CalcInvViewProjectionMatrix());
 
 	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
 	deviceContext->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);

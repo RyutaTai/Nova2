@@ -64,10 +64,13 @@ HRESULT LoadTextureFromFile(ID3D11Device* device, const wchar_t* fileName,
 	}
 	resources.insert(std::make_pair(fileName, *shaderResourceView));
 	
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
-	hr = resource.Get()->QueryInterface<ID3D11Texture2D>(texture2D.GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	texture2D->GetDesc(texture2dDesc);
+	if (texture2dDesc)
+	{
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2D;
+		hr = resource.Get()->QueryInterface<ID3D11Texture2D>(texture2D.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+		texture2D->GetDesc(texture2dDesc);
+	}
 
 	return hr;
 }

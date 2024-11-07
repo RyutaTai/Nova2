@@ -11,6 +11,7 @@
 #include "../../Game/Drone.h"
 #include "../PostProcess/Bloom.h"
 #include "../../Game/UI.h"
+#include "../Graphics/Decal.h"
 
 class SceneGame : public Scene
 {
@@ -46,15 +47,15 @@ public:
 	void Reset();
 
 	void SetChangeTitleTimer(const float& changeTitleTimer) { changeTitleTimer_ = changeTitleTimer; }
-	void ChangeToTitle(bool changeTitle) { changeTitle_ = changeTitle; }
-	void SetWaveStartTimer(float timer) { waveStartTimer_ = timer; }
-	void SetGameOver(bool gameOver) { isGameOver_ = gameOver; }
-	void SetGameClear(bool gameClear) { isGameClear_ = gameClear; }
-	void SetIsResult(bool isResult) { isResult_ = isResult; }
+	void ChangeToTitle(bool changeTitle)	{ changeTitle_ = changeTitle; }
+	void SetWaveStartTimer(float timer)		{ waveStartTimer_ = timer; }
+	void SetGameOver(bool gameOver)			{ isGameOver_ = gameOver; }
+	void SetGameClear(bool gameClear)		{ isGameClear_ = gameClear; }
+	void SetIsResult(bool isResult)			{ isResult_ = isResult; }
 
-	float	GetWaveStartTimer() { return waveStartTimer_; }
-	float	GetChangeTitleTimer() { return changeTitleTimer_; }
-	bool	GetIsResult() { return isResult_; }
+	float	GetWaveStartTimer()		{ return waveStartTimer_; }
+	float	GetChangeTitleTimer()	{ return changeTitleTimer_; }
+	bool	GetIsResult()			{ return isResult_; }
 
 	//	ゲーム用変数
 private:
@@ -73,6 +74,12 @@ private:
 	DirectX::XMFLOAT4							lightDirection_ = { 0,-1,0,0 };
 	float										nearZ_ = 50.0f;
 	float										farZ_ = 400000.0f;
+
+	// DECAL
+	std::unique_ptr<Decal> decal_;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> sceneDepthStencilBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> decalDepthStencilBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> decalDepthStencilTexture_;
 
 	/* ----- スプライト ----- */
 	enum SPRITE_GAME

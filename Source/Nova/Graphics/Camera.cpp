@@ -76,6 +76,13 @@ const DirectX::XMMATRIX Camera::CalcViewProjectionMatrix()
 	return viewProjectionMatrix_;
 }
 
+//	ビュープロジェクション逆行列算出
+const DirectX::XMMATRIX Camera::CalcInvViewProjectionMatrix()
+{
+	invViewProjectionMatrix_ = DirectX::XMMatrixInverse(NULL, CalcViewProjectionMatrix());
+	return invViewProjectionMatrix_;
+}
+
 //	指定方向を向く
 void Camera::SetLookAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus, const DirectX::XMFLOAT3& up)
 {

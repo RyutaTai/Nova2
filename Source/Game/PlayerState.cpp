@@ -246,7 +246,7 @@ namespace PlayerState
 
 }
 
-//	コンボ01_1
+//	コンボ01_1(右パンチ)
 namespace PlayerState
 {
 	void ComboOne1::Initialize()
@@ -262,6 +262,11 @@ namespace PlayerState
 		acceptInputFrame_ = 10.0f;							//	先行入力受付フレーム
 		cancellationTime_.SetJudgeTime(0.6f, 1.16f);		//	キャンセル可能時間
 
+		//	アニメーション速度変化区間セット
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.32f);		//	
+		animSpeedChangeInterval_[1].SetJudgeTime(0.32f, 0.67f);		//	
+		animSpeedChangeInterval_[2].SetJudgeTime(0.67f, 1.167f);	//	
+
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
 
@@ -273,18 +278,20 @@ namespace PlayerState
 	void ComboOne1::Update(const float& elapsedTime)
 	{
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
+		UpdateAnimationSpeed();			//	アニメーション速度更新
 
 		// TODO:アニメーションの長さ調整
 
 		Command command = { KeyK };	//	入力判定
 		JudgeInput(cancellationTime_, command);
 
-		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)
+		if (isCorrectInput_ /*&& IsHit(elapsedTime, animJudgeTime_, "ik_hand_r")*/)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne2);
+			isCorrectInput_ = false;
 			return;
 		}
-		else if (owner_->IsPlayAnimation() == false)
+		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
@@ -302,7 +309,7 @@ namespace PlayerState
 		//	ノードと、敵または弾丸との当たり判定当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
-			owner_->ChangeState(Player::StateType::Idle);
+			//owner_->ChangeState(Player::StateType::Idle);
 			return false;
 		}
 
@@ -332,6 +339,17 @@ namespace PlayerState
 	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
 	{
 		stateElapsedTime_ += elapsedTime;
+	}
+
+	//	アニメーション速度の微調整
+	void ComboOne1::UpdateAnimationSpeed()
+	{
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+
+		if(animSpeedChangeInterval_[0].IsJudgeFlag())owner_->
+		if(animSpeedChangeInterval_[1].IsJudgeFlag())
+		if(animSpeedChangeInterval_[2].IsJudgeFlag())
+
 	}
 
 	void ComboOne1::Finalize()
@@ -377,16 +395,17 @@ namespace PlayerState
 			isHit_ = true;
 		}
 
-		if (isHit_ == true && isCorrectInput_ == true)	//	ComboOne2も短い
+		if (isCorrectInput_)	//	入力判定がtrueならコンボを進める
 		{
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			return;
 		}
-		else if (owner_->IsPlayAnimation() == false)
+		if (owner_->IsPlayAnimation() == false)	//	アニメーション再生が終わったら待機へ遷移
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
+
 	}
 
 	bool ComboOne2::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
@@ -399,7 +418,7 @@ namespace PlayerState
 		//	ノードと、敵または弾丸との当たり判定当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
-			owner_->ChangeState(Player::StateType::Idle);
+			//owner_->ChangeState(Player::StateType::Idle);
 			return false;
 		}
 
@@ -474,12 +493,12 @@ namespace PlayerState
 		{
 			isHit_ = true;
 		}
-		if (isHit_ == true && isCorrectInput_ == true)	//	ComboOne3はフレームがめっちゃ短い
+		if (isCorrectInput_)	//	
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			return;
 		}
-		else if (owner_->IsPlayAnimation() == false)
+		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
@@ -496,7 +515,7 @@ namespace PlayerState
 		//	ノードと、敵または弾丸との当たり判定当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
-			owner_->ChangeState(Player::StateType::Idle);
+			//owner_->ChangeState(Player::StateType::Idle);
 			return false;
 		}
 
@@ -561,11 +580,12 @@ namespace PlayerState
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
 		Command command = { KeyK };	//入力判定
 		JudgeInput(cancellationTime_, command);
-		if (IsHit(elapsedTime, animJudgeTime_, "ik_hand_r") == true && isCorrectInput_ == true)
+		IsHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+		if (isCorrectInput_)
 		{
 			
 		}
-		else if (owner_->IsPlayAnimation() == false)
+		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
@@ -583,7 +603,7 @@ namespace PlayerState
 		//	ノードと、敵または弾丸との当たり判定当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
-			owner_->ChangeState(Player::StateType::Idle);
+			//owner_->ChangeState(Player::StateType::Idle);
 			return false;
 		}
 

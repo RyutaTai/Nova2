@@ -785,7 +785,7 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 }
 #endif
 
-void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes)
+void GltfModel::Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes)
 {
     _ASSERT_EXPR(animations_.size() > animationIndex, L"animationSize <= animationIndex.");
     _ASSERT_EXPR(animatedNodes.size() == nodes_.size(), L"animationNodeSize != nodesSize.");

@@ -77,17 +77,17 @@ void SceneGame::Initialize()
 	D3D11_TEXTURE2D_DESC texture2dDesc;
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 
-	//LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sunset_jhbcentral_4k.dds",
-	//	shaderResourceViews_[0].GetAddressOf(), &texture2dDesc);
-	//
-	//LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/diffuse_iem.dds",
-	//	shaderResourceViews_[1].GetAddressOf(), &texture2dDesc);
-	//
-	//LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/specular_pmrem.dds",
-	//	shaderResourceViews_[2].GetAddressOf(), &texture2dDesc);
-	//
-	//LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/lut_ggx.dds",
-	//	shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sunset_jhbcentral_4k.dds",
+		shaderResourceViews_[0].GetAddressOf(), &texture2dDesc);
+	
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/diffuse_iem.dds",
+		shaderResourceViews_[1].GetAddressOf(), &texture2dDesc);
+	
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/specular_pmrem.dds",
+		shaderResourceViews_[2].GetAddressOf(), &texture2dDesc);
+	
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/lut_ggx.dds",
+		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
 
 	//	ÉuÉãÅ[ÉÄ
 	framebuffers_[0] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);

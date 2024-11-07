@@ -370,26 +370,27 @@ public:
 	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	void UpdateAnimation(const float& elapsedTime);
 
-	void Animate(size_t animationIndex, float time, std::vector<Node>& animatedNodes);
+	void Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes);
 	void AppendAnimation(const std::string& filename);
 	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes);
 	bool IsPlayAnimation()const;
 
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShader設定
-	
-	Transform* GetTransform() { return &transform_; }
-	int	GetCurrentAnimNum();	//	現在再生中のアニメーション番号
-	float const GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
-	DirectX::XMFLOAT3 GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform);		//	ジョイントポジション取得
-	DirectX::XMFLOAT3 GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
-	const int GetNodeIndex(const std::string& nodeName);
-	std::vector<Node>* GetNodes() { return &nodes_; }
+	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
+	void SetUseRootMotion(bool useRootMotion);
+	void SetAnimationSpeed(const float& animSpeed) { animationSpeed_ = animSpeed; }
+
+	Transform*			GetTransform() { return &transform_; }
+	int					GetCurrentAnimNum();	//	現在再生中のアニメーション番号
+	float const			GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
+	DirectX::XMFLOAT3	GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform);		//	ジョイントポジション取得
+	DirectX::XMFLOAT3	GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
+	const int			GetNodeIndex(const std::string& nodeName);
+	std::vector<Node>*	GetNodes() { return &nodes_; }
 
 	//	ルートモーション
 	void RootMotion(const float& scaleFactor);
 
-	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
-	void SetUseRootMotion(bool useRootMotion);
 
 private:
 	void FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName);

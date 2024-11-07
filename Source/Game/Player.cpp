@@ -27,34 +27,6 @@ Player::Player()
 	_ASSERT_EXPR(instance_ == instance_, L"already instance");
 	instance_ = this;
 
-	//	アニメーション追加
-	{
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Idle_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Idle_Combat_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Walk_F_0_Loop_IP_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_Start_IP_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_Loop_IP_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Run_F_0_End_IP_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_F_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_R_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_B_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Jump_L_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Double_Jump_0_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-1_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-2_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-3_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Combo_01-4_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Front_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Right_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Back_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Left_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Front_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Right_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Back_Seq.FBX");
-		//AppendAnimation("./Resources/Model/test/Animation/Idle/Dodge_Air_Left_Seq.FBX");
-	}
-
 	//	ステートセット(Player::StateTypeの順と合わせる)
 	stateMachine_.reset(new StateMachine<State<Player>>());
 	stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機

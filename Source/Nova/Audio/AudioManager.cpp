@@ -34,7 +34,7 @@ void AudioManager::Initialize()
 //	デストラクタ
 AudioManager::~AudioManager()
 {
-	
+	//	オーディオ全削除
 	Clear();
 
 	//	マスタリングボイス破棄

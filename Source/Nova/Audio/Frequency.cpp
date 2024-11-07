@@ -7,7 +7,7 @@
 
 void Frequency::Initialize()
 {
-    // Hamming窓の生成
+    //  Hamming窓の生成
     hamming_ = HammingWindow(blockCount_);
 
     oldAmplitudeSpectrum_.resize(blockCount_, 0.0f);
@@ -115,7 +115,7 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
 #endif
 	
 #if 0   //  BPM取得(テンポ解析、テンポ推定)
-    float samplingRate = 44100.0f;;
+    float samplingRate = 44100.0f;
     AnalyzeBPM(SPdata, SPsize,samplingRate);    //  BPM更新
 #endif
     
@@ -213,7 +213,7 @@ void Frequency::FindPeak3(const double* r, const int& length, int* peakX)
 
     //  上位3つのピークを格納
     std::sort(peaks.begin(), peaks.end(), [&](int a, int b) { return r[a] > r[b]; });
-    for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
     {
         peakX[i] = (i < peaks.size()) ? peaks[i] : -1;
     }

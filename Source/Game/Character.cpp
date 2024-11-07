@@ -154,9 +154,9 @@ void Character::Turn(const float& elapsedTime, float vx, float vz, float speed)
 }
 
 //	アニメーション再生
-void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendTime,const float& startFrame)
+void Character::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame)
 {
-	gltfModelResource_->PlayAnimation(index, loop, speed, blendTime, startFrame);
+	gltfModelResource_->PlayAnimation(index, loop, blendTime, startFrame);
 }
 
 //	アニメーション更新処理

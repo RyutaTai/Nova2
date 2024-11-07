@@ -367,7 +367,7 @@ public:
 	void Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>& animatedNodes*/);
 	void DrawDebug();
 
-	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	void UpdateAnimation(const float& elapsedTime);
 
 	void Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes);
@@ -378,7 +378,7 @@ public:
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShader設定
 	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
 	void SetUseRootMotion(bool useRootMotion);
-	void SetAnimationSpeed(const float& animSpeed) { animationSpeed_ = animSpeed; }
+	void SetAnimationSpeed(const float& animationSpeed) { animationSpeed_ = animationSpeed; }
 
 	Transform*			GetTransform() { return &transform_; }
 	int					GetCurrentAnimNum();	//	現在再生中のアニメーション番号

@@ -711,9 +711,9 @@ bool Player::DummyRay(const float& elapsedTime)
 }
 
 //	アニメーション
-void Player::PlayAnimation(AnimationType index, const bool& loop, const float& speed, const float& blendTime, const float& startFrame)
+void Player::PlayAnimation(AnimationType index, const bool& loop, const float& blendTime, const float& startFrame)
 {
-	Character::PlayAnimation(static_cast<int>(index), loop, speed, blendTime, startFrame);
+	Character::PlayAnimation(static_cast<int>(index), loop, blendTime, startFrame);
 }
 
 //	スティック入力値から移動ベクトルを取得

@@ -89,7 +89,7 @@ public:
 	bool JointVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか
 
-	void PlayAnimation(AnimationType index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(AnimationType index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	//void PlayBlendAnimation(AnimationType index, bool loop, float speed = 1.0f);
 	//void PlayBlendAnimation(AnimationType index1, AnimationType index2, bool loop, float speed = 1.0f) { GameObject::PlayBlendAnimation(static_cast<int>(index1), static_cast<int>(index2), loop, speed); }
 	

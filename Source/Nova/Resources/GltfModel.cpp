@@ -717,7 +717,7 @@ void GltfModel::UpdateAnimation(const float elapsedTime)
 
 #else
 
-void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendTime,const float& startFrame)
+void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame)
 {
     Animate(animationClip_, currentAnimationSeconds_, animatedNodes_[0]);
     animationClip_ = index;
@@ -727,7 +727,6 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& s
     factor_ = 0.0f;
 
     isAnimationLoop_ = loop;
-    animationSpeed_ = speed;
     transitionState_ = 1;
     animationEndFlag_ = false;
 

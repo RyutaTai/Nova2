@@ -33,14 +33,6 @@ namespace PlayerState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 
-	private:
-		static constexpr float velocityScaleMax_ = 30.0f;	//	
-		static constexpr float walkTimerAdd_ = 10.0f;		//	walkTimer加算量
-		static constexpr float walkoToRunInterval_ = 0.5f;	//	歩きから走りに切り替えるまでの時間
-		static constexpr float velocityAdd_ = 0.1f;			//	velocityScale加算量		
-		float walkTimer_		= 0.0f;						//	歩き状態に入ってどのくらい経過したか
-		float velocityScale_	= 3.0f;						//	Velocityに掛ける係数
-
 	};
 }
 
@@ -122,15 +114,17 @@ namespace PlayerState
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
 		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
+		void UpdateAnimationSpeed();
 
 	private:
 		static constexpr int AnimJudgeCount = 2;	//	アニメーション判定区間の数
-		struct JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
-		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
-		float		acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
-		bool		isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
+		JudgeTime			animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
+		JudgeTime			animSpeedChangeInterval_[4] = {};		//	判定を取るアニメーション区間
+		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
+		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
+		float				stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
+		bool				isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
+		bool				isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
 
 	};
 }

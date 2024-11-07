@@ -23,8 +23,8 @@ public:
 	void Update(const float& elapsedTime);	//	更新処理
 
 	//	オーディオソース読み込み
-	std::shared_ptr<AudioSource> LoadAudioSource(const char* filename);
-	std::shared_ptr<AudioSource3D> LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
+	std::shared_ptr<AudioSource>	LoadAudioSource(const char* filename);
+	std::shared_ptr<AudioSource3D>	LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
 
 	void Register(std::shared_ptr<AudioSource> audio);		//	オーディオ登録
 	void Clear();											//	オーディオ全削除

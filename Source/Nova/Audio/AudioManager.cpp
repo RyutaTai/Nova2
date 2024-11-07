@@ -34,6 +34,9 @@ void AudioManager::Initialize()
 //	デストラクタ
 AudioManager::~AudioManager()
 {
+	
+	Clear();
+
 	//	マスタリングボイス破棄
 	if (masteringVoice_ != nullptr)
 	{
@@ -99,7 +102,7 @@ void AudioManager::Remove(AudioSource* audio)
 
 }
 
-//	オーディオ
+//	オーディオ全削除
 void AudioManager::Clear()
 {
 	for (std::shared_ptr<AudioSource> audio : audioResources_)

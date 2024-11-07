@@ -30,12 +30,13 @@ public:
 	virtual void Move(const float& elpasedTime);
 	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
 
-	void PlayAnimation(const int& index, const bool& loop = false, const float& speed = 1.0f, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
 	void UpdateAnimation(const float& elapsedTime);
 	bool IsPlayAnimation()const;
 
 	void AppendAnimation(const std::string& filename);
 	void SetVelocity(const DirectX::XMFLOAT3& velocity)			{ velocity_ = velocity; }
+	void SetAnimationSpeed(const float& animationSpeed)			{ gltfModelResource_->SetAnimationSpeed(animationSpeed); }
 	void SetAcceleration(const DirectX::XMFLOAT3& acceleration) { acceleration_ = acceleration; }
 	void SetMoveSpeed(const float& moveSpeed)					{ moveSpeed_ = moveSpeed; }
 	void SetPixelShader(const char* csoName);		//	ピクセルシェーダー設定

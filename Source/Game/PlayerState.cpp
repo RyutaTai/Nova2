@@ -17,7 +17,8 @@ namespace PlayerState
 	void IdleState::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.2f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.2f);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 	void IdleState::Update(const float& elapsedTime)
@@ -41,7 +42,7 @@ namespace PlayerState
 
 	void IdleState::Finalize()
 	{
-
+		owner_->SetAnimationSpeed(1.0f);
 	}
 }
 
@@ -50,36 +51,16 @@ namespace PlayerState
 {
 	void MoveState::Initialize()
 	{
-#if 0
 		//	アニメーションセット
-		owner_->PlayBlendAnimation(Player::AnimationType::ANIM_WALK, true);
+		owner_->PlayAnimation(Player::AnimationType::Run, true, 0.25f);
+		owner_->SetAnimationSpeed(1.2f);
 
-		owner_->SetWeight(0.5f);
-#endif
-		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Walk , true, 1.0f, 0.2f);
+		owner_->SetMoveSpeed(4.0f);
 
-		//	更新処理に使う変数初期化
-		walkTimer_ = 0.0f;
-		velocityScale_ = 1.0f;
 	}
 
 	void MoveState::Update(const float& elapsedTime)
 	{
-#if 0
-		//	アニメーションのweight値を加算
-		owner_->AddWeight(elapsedTime);
-#endif
-		//	一定以上の時間が経過したら走りモーションへ移行
-		walkTimer_ += walkTimerAdd_ * elapsedTime;
-		//owner_->MultiplyVelocityXZ(velocityScale_, elapsedTime);
-		if (walkTimer_ > walkoToRunInterval_ && owner_->GetCurrentAnimType() != Player::AnimationType::Run)
-		{
-			owner_->PlayAnimation(Player::AnimationType::Run, true, 1.0f, 0.2f);
-			owner_->SetMoveSpeed(4.5f);	//	移動スピード切り替え
-		}
-		//else velocityScale_ += velocityAdd_ * elapsedTime;
-
 		//	移動入力がなくなったら待機ステートへ遷移
 		if (!owner_->InputMove(elapsedTime))
 		{
@@ -93,6 +74,7 @@ namespace PlayerState
 	void MoveState::Finalize()
 	{
 		owner_->SetMoveSpeed(2.0f);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 }
 
@@ -101,20 +83,10 @@ namespace PlayerState
 {
 	void AttackState::Initialize()
 	{
-#if 0
-		//	アニメーションセット
-		owner_->PlayBlendAnimation(Player::AnimationType::ANIM_PUNCH, false, 2.0f);
-
-		//	weight値セット
-		//owner_->SetWeight(0.0f);
-		owner_->SetWeight(1.0f);
-
-		//	ブレンド率設定
-		owner_->SetBlendRate(1.0f);	//	いる?
-#endif
 		//	アニメーションセット
 		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 2.0f, 0.0f);
-		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 
 		//	当たり判定タイマー初期化
 		judgeTimer_ = 0.0f;
@@ -122,12 +94,6 @@ namespace PlayerState
 
 	void AttackState::Update(const float& elapsedTime)
 	{
-		//	weight加算
-		//owner_->AddWeight(elapsedTime);
-
-		//	アニメーション更新処理
-		//owner_->UpdateBlendAnimation(elapsedTime);
-
 #if 1
 		//	アニメーション再生が終わったら待機ステートへ遷移
 		if (owner_->IsPlayAnimation() == false /* && isMove_ == false*/)
@@ -242,6 +208,7 @@ namespace PlayerState
 	void AttackState::Finalize()
 	{
 		judgeTimer_ = 0.0f;
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 }
@@ -252,7 +219,8 @@ namespace PlayerState
 	void ComboOne1::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
@@ -260,12 +228,12 @@ namespace PlayerState
 		//	判定時間セット
 		animJudgeTime_.SetJudgeTime(0.55f, 0.735f);			//	アニメーション判定区間
 		acceptInputFrame_ = 10.0f;							//	先行入力受付フレーム
-		cancellationTime_.SetJudgeTime(0.6f, 1.16f);		//	キャンセル可能時間
+		cancellationTime_.SetJudgeTime(0.3f, 1.16f);		//	キャンセル可能時間
 
 		//	アニメーション速度変化区間セット
-		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.32f);		//	
-		animSpeedChangeInterval_[1].SetJudgeTime(0.32f, 0.67f);		//	
-		animSpeedChangeInterval_[2].SetJudgeTime(0.67f, 1.167f);	//	
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.32f);		//	パンチ前
+		animSpeedChangeInterval_[1].SetJudgeTime(0.32f, 0.67f);		//	パンチ
+		animSpeedChangeInterval_[2].SetJudgeTime(0.67f, 1.167f);	//	パンチ後
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
@@ -285,7 +253,9 @@ namespace PlayerState
 		Command command = { KeyK };	//	入力判定
 		JudgeInput(cancellationTime_, command);
 
-		if (isCorrectInput_ /*&& IsHit(elapsedTime, animJudgeTime_, "ik_hand_r")*/)
+		IsHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+
+		if (isCorrectInput_)	//	入力判定がtrueなら
 		{
 			owner_->ChangeState(Player::StateType::ComboOne2);
 			isCorrectInput_ = false;
@@ -346,15 +316,18 @@ namespace PlayerState
 	{
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 
-		if(animSpeedChangeInterval_[0].IsJudgeFlag())owner_->
-		if(animSpeedChangeInterval_[1].IsJudgeFlag())
-		if(animSpeedChangeInterval_[2].IsJudgeFlag())
-
+		if(animSpeedChangeInterval_[0].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(2.5f);
+		else if(animSpeedChangeInterval_[1].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.5f);
+		else if(animSpeedChangeInterval_[2].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.1f);
 	}
 
 	void ComboOne1::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 }
@@ -365,7 +338,8 @@ namespace PlayerState
 	void ComboOne2::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_2, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_2, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
@@ -375,6 +349,12 @@ namespace PlayerState
 		animJudgeTime_[1].SetJudgeTime(0.29f, 0.63f);
 		acceptInputFrame_ = 10.0f;
 		cancellationTime_.SetJudgeTime(0.64f, 1.617f);
+
+		//	アニメーション再生速度変化区間セット
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.23f);		//	左パンチ出すまで
+		animSpeedChangeInterval_[1].SetJudgeTime(0.24f, 0.55f);		//	左パンチからアッパー
+		animSpeedChangeInterval_[2].SetJudgeTime(0.56f, 1.3f);		//	アッパーから構え
+		animSpeedChangeInterval_[3].SetJudgeTime(1.1f, 1.617f);		//	構えから待機に戻る
 
 		//	キー入力判定初期化
 		isCorrectInput_ = false;
@@ -390,10 +370,7 @@ namespace PlayerState
 		Command command = { KeyK };		//	入力判定
 		JudgeInput(cancellationTime_, command);
 		IsHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
-		if (IsHit(elapsedTime, animJudgeTime_[1], "ik_hand_r"))
-		{
-			isHit_ = true;
-		}
+		IsHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
 
 		if (isCorrectInput_)	//	入力判定がtrueならコンボを進める
 		{
@@ -449,9 +426,25 @@ namespace PlayerState
 		stateElapsedTime_ += elapsedTime;
 	}
 
+	//	アニメーション再生速度の微調整
+	void ComboOne2::UpdateAnimationSpeed()
+	{
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+
+		if (animSpeedChangeInterval_[0].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.2f);
+		else if (animSpeedChangeInterval_[1].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.1f);
+		else if (animSpeedChangeInterval_[2].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.5f);
+		else if (animSpeedChangeInterval_[3].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.5f);
+	}
+
 	void ComboOne2::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 }
@@ -462,7 +455,8 @@ namespace PlayerState
 	void ComboOne3::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
@@ -489,11 +483,9 @@ namespace PlayerState
 		JudgeInput(cancellationTime_, command);
 		IsHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
 		IsHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
-		if (IsHit(elapsedTime, animJudgeTime_[2], "ik_foot_l"))
-		{
-			isHit_ = true;
-		}
-		if (isCorrectInput_)	//	
+		IsHit(elapsedTime, animJudgeTime_[2], "ik_foot_l");
+
+		if (isCorrectInput_)	//	入力判定がtrueなら
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			return;
@@ -548,6 +540,7 @@ namespace PlayerState
 	void ComboOne3::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 }
@@ -558,7 +551,8 @@ namespace PlayerState
 	void ComboOne4::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
 		owner_->SetUseRootMotion(true);
@@ -578,13 +572,10 @@ namespace PlayerState
 	void ComboOne4::Update(const float& elapsedTime)
 	{
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
-		Command command = { KeyK };	//入力判定
+		Command command = { KeyK };		//	入力判定
 		JudgeInput(cancellationTime_, command);
 		IsHit(elapsedTime, animJudgeTime_, "ik_hand_r");
-		if (isCorrectInput_)
-		{
-			
-		}
+		
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
@@ -636,6 +627,7 @@ namespace PlayerState
 	void ComboOne4::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 }
 
@@ -644,7 +636,8 @@ namespace PlayerState
 {
 	void DodgeState::Initialize()
 	{
-		owner_->PlayAnimation(Player::AnimationType::DodgeFront, false, 1.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::DodgeFront, false, 0.0f);
+		owner_->SetAnimationSpeed(1.0f);
 	}
 
 	void DodgeState::Update(const float& elapsedTime)
@@ -654,6 +647,6 @@ namespace PlayerState
 
 	void DodgeState::Finalize()
 	{
-
+		owner_->SetAnimationSpeed(1.0f);
 	}
 }

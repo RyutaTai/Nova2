@@ -11,12 +11,12 @@ public:
 	Decal(ID3D11Device* device, const wchar_t* filename);
 	virtual ~Decal() = default;
 
-	void Add(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& normal, const float& scale)
-	{
-		spots_.push_back({ position, normal, scale });
-	}
+	void Add(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& normal, const float& scale);
 	void Blit(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* const* depthStencilShaderResourceView);
 
+	VOID DrawDebug();
+
+public:
 	struct Spot
 	{
 		DirectX::XMFLOAT3 position_ = { 0, 0, 0 };
@@ -24,6 +24,7 @@ public:
 		float scale_ = 1.0f;
 	};
 	std::vector<Spot> spots_;
+	int spotsIndex_ = 0;	//	ImGuiでデバッグする際に使用
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	decalTexture_;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		decalDepthStencilState_;

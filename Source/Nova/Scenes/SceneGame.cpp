@@ -97,6 +97,9 @@ void SceneGame::Initialize()
 	bloomer_ = std::make_unique<Bloom>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(device, "./Resources/Shader/FinalPassPs.cso", pixelShaders_[0].ReleaseAndGetAddressOf());
 
+	//	デカール初期化
+	DecalInitialize();
+
 	//	ステート登録
 	stateMachine_.reset(new StateMachine<State<SceneGame>>());
 	stateMachine_->RegisterState(new GameState::Wave1State(this));		//	Wave1
@@ -106,6 +109,41 @@ void SceneGame::Initialize()
 	stateMachine_->RegisterState(new GameState::GameOverState(this));	//	ゲームオーバー
 	//	初期ステート設定
 	stateMachine_->SetState(static_cast<int>(SceneGameState::Wave1));	//	初期ステートセット
+
+}
+
+//	デカール関連初期化
+void SceneGame::DecalInitialize()
+{
+	//decal = std::make_unique<decltype(decal)::element_type>(device.Get(), L"./resources/gun_holes.png");
+	decal_ = std::make_unique<Decal>(Graphics::Instance().GetDevice(), L"./Resources/Image/AdobeStock_529863775.png");
+
+	// create cloned depth stencil buffer
+	HRESULT hr = S_OK;
+	Microsoft::WRL::ComPtr<ID3D11Resource> resource;
+	framebuffers_[0]->shaderResourceViews_[1]->GetResource(resource.GetAddressOf());
+	hr = resource->QueryInterface<ID3D11Texture2D>(sceneDepthStencilBuffer_.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	D3D11_TEXTURE2D_DESC texture2dDesc{};
+	sceneDepthStencilBuffer_->GetDesc(&texture2dDesc);
+	_ASSERT_EXPR(texture2dDesc.Format == DXGI_FORMAT_R24G8_TYPELESS, "format of depth steencil buffer must be DXGI_FORMAT_R24G8_TYPELESS");
+
+	hr = Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, 0, decalDepthStencilBuffer_.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	hr = Graphics::Instance().GetDevice()->CreateShaderResourceView(decalDepthStencilBuffer_.Get(), &shaderResourceViewDesc, decalDepthStencilTexture_.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	//	テスト
+	DirectX::XMFLOAT3 pos = { 0,1,0 };
+	DirectX::XMFLOAT3 normal = { 0,1,0 };
+	float scale = 10.0f;
+	decal_->Add(pos, normal, scale);
 
 }
 
@@ -354,6 +392,23 @@ void SceneGame::Render()
 			};
 			bitBlockTransfer_->Blit(deviceContext, shaderResourceViews, 0, 2, pixelShaders_[0].Get());
 		}
+
+		//	デカール
+		if(decal_)
+		{
+			framebuffers_[0]->Activate(deviceContext);
+
+			// copy depth stencil buffers
+			deviceContext->CopyResource(decalDepthStencilBuffer_.Get(), sceneDepthStencilBuffer_.Get());
+			deviceContext->ClearDepthStencilView(framebuffers_[0]->depthStencilView_.Get(), D3D11_CLEAR_STENCIL, 0.0f, 0);
+#if 0
+			Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
+#else
+			Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::MULTIPLY);
+#endif
+			decal_->Blit(deviceContext, decalDepthStencilTexture_.GetAddressOf());
+		}
+
 	}
 
 	/* ----- エフェクト描画 ----- */
@@ -434,6 +489,25 @@ void SceneGame::Render()
 	/* ----- UI描画 ----- */
 	UIManager::Instance().Render();
 
+	// UNIT.32
+	framebuffers_[1]->Clear(deviceContext);
+	framebuffers_[1]->Activate(deviceContext);
+	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF);
+	Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);
+	Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::NONE);
+	bitBlockTransfer_->Blit(deviceContext, framebuffers_[0]->shaderResourceViews_[0].GetAddressOf(), 0, 1, pixelShaders_[0].Get());
+	framebuffers_[1]->Deactivate(deviceContext);
+#if 0
+	immediate_context->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
+	bit_block_transfer->blit(immediate_context.Get(), framebuffers[1]->shader_resource_views[0].GetAddressOf(), 0, 1);
+#endif
+
+	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF);
+	Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);
+	ID3D11ShaderResourceView* shaderResourceViews[2]{ framebuffers_[0]->shaderResourceViews_[0].Get(), framebuffers_[1]->shaderResourceViews_[0].Get() };
+	bitBlockTransfer_->Blit(deviceContext, shaderResourceViews, 0, 2, pixelShaders_[1].Get());
+
+
 }
 
 //	終了化
@@ -459,6 +533,7 @@ void SceneGame::DrawDebug()
 	ImGui::DragFloat4("LightDirection", &lightDirection_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	ライトの向き
 
 	if (bloomer_)bloomer_->DrawDebug();	//	Bloom
+	if (decal_)decal_->DrawDebug();		//	Decal
 	ShadowMap::Instance().DrawDebug();	//	Shadow
 
 	Camera::Instance().DrawDebug();		//	Camera

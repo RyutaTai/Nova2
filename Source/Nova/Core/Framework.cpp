@@ -274,4 +274,7 @@ void Framework::DrawDebug()
 	input_.DrawDebug();
 
 	ImGui::End();
+
+	SceneManager::Instance().DrawDebug();	//	ƒV[ƒ“‚²‚Æ‚ÌDrawDebug()
+
 }

@@ -20,6 +20,7 @@ public:
 
 	void ShadowRender();
 	void Render();
+	void DrawDebug();
 
 	void Clear();
 	void ChangeScene(Scene* scene);

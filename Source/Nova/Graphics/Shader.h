@@ -31,10 +31,12 @@ public:
 
 	enum class BLEND_STATE
 	{
+		NONE,
 		ALPHA,
 		ADD,
 		SUBTRACT,
 		REV_SUBTRACT,	//	ReverseSubtract
+		MULTIPLY,
 		Max,
 	};
 

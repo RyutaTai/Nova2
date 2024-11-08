@@ -1,5 +1,7 @@
 #include "Decal.h"
 
+#include <algorithm>
+
 #include "Shader.h"
 #include "Graphics.h"
 #include "../Resources/Texture.h"
@@ -257,5 +259,29 @@ void Decal::Blit(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* c
 
 	deviceContext->OMSetDepthStencilState(cachedDepthStencilState.Get(), 0);
 	deviceContext->RSSetState(cachedRasterizerState.Get());
+
+}
+
+void Decal::Add(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& normal, const float& scale)
+{
+	spots_.push_back({ position, normal, scale });
+}
+
+void Decal::DrawDebug()
+{
+	if (ImGui::TreeNode("Decal"))
+	{
+		if (spots_.empty() == false)
+		{
+			ImGui::InputInt("SpotsIndex", &spotsIndex_);
+			spotsIndex_ = std::clamp(spotsIndex_, 0, static_cast<int>(spots_.size()));
+			ImGui::DragFloat3("SpotPosition",	&spots_[spotsIndex_].position_.x);
+			ImGui::DragFloat3("SpotNormal",		&spots_[spotsIndex_].normal_.x);
+			ImGui::DragFloat("SpotScale",		&spots_[spotsIndex_].scale_);
+		}
+
+
+		ImGui::TreePop();
+	}
 
 }

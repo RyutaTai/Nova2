@@ -39,6 +39,8 @@ public:
 	void Render()							override;
 	void DrawDebug()						override;
 
+	void DecalInitialize();
+
 	void ChangeState(SceneGameState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 
 	void LoadWaveSprite(const wchar_t* filename);

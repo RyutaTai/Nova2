@@ -185,7 +185,7 @@ float Stage::CalculateAutocorrelation(const float data[], const int& lag)
 }
 
 //	コリジョンメッシュの当たり判定
-bool Stage::Collision(_In_ DirectX::XMFLOAT3 rayStartPosition, _In_ DirectX::XMFLOAT3 rayDirection, _In_ const DirectX::XMFLOAT4X4& transform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
+bool Stage::Collision(_In_ const DirectX::XMFLOAT3& rayStartPosition, _In_ const DirectX::XMFLOAT3& rayDirection, _In_ const DirectX::XMFLOAT4X4& stageTransform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 	_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit, _In_ bool skipIf) const
 {
 #if 0
@@ -206,7 +206,7 @@ bool Stage::Collision(_In_ DirectX::XMFLOAT3 rayStartPosition, _In_ DirectX::XMF
 	}
 #else
 	//	空間分割
-	if (collisionMesh_->RaycastWithSpaceDivision(rayStartPosition, rayDirection, transform, intersectionPosition, intersectionNormal, intersectionMesh, intersectionMaterial, rayLengthLimit, skipIf))
+	if (collisionMesh_->RaycastWithSpaceDivision(rayStartPosition, rayDirection, stageTransform, intersectionPosition, intersectionNormal, intersectionMesh, intersectionMaterial, rayLengthLimit, skipIf))
 	{
 		OutputDebugStringA("Position:");
 		OutputDebugStringA("Intersected : ");

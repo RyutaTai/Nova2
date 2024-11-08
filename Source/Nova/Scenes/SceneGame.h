@@ -59,8 +59,6 @@ public:
 	float	GetChangeTitleTimer()	{ return changeTitleTimer_; }
 	bool	GetIsResult()			{ return isResult_; }
 
-	void RayVsMouse();
-
 	//	ゲーム用変数
 private:
 	/* ----- オブジェクト ----- */
@@ -79,7 +77,7 @@ private:
 	float										nearZ_ = 50.0f;
 	float										farZ_ = 400000.0f;
 
-	// DECAL
+	//	DECAL
 	std::unique_ptr<Decal> decal_;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> sceneDepthStencilBuffer_;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> decalDepthStencilBuffer_;

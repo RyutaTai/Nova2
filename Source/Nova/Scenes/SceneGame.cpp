@@ -140,17 +140,18 @@ void SceneGame::DecalInitialize()
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	//	テスト
-	DirectX::XMFLOAT3 pos = { 0,1,0 };
+	DirectX::XMFLOAT3 pos = { 0.0f, 10.0f, 0.0f };
 	DirectX::XMFLOAT3 cameraFront = Camera::Instance().GetFront();
 	DirectX::XMFLOAT3 normal;
-	float scale = 0.2f;
-#if 1
+	float scale = 20.2f;
+#if 0
 	DirectX::XMStoreFloat3(&normal, DirectX::XMVectorScale(DirectX::XMLoadFloat3(&cameraFront), -1.0f));
 #else
 	normal = { 1,1,1 };
 #endif
 	decal_->Add(pos, normal, scale);
 
+	
 }
 
 //	リセット
@@ -254,7 +255,14 @@ void SceneGame::Update(const float& elapsedTime)
 	{
 		SceneManager::Instance().ChangeScene(new SceneTitle);
 	}
-
+	//	レイキャストの結果を受け取る変数
+	//DirectX::XMFLOAT3 intersectionPos;
+	//DirectX::XMFLOAT3 intersectionNormal;
+	//std::string intersectionMesh;
+	//std::string intersectionMaterial;
+	//Camera::Instance().RayCastVsStage(intersectionPos, intersectionNormal, intersectionMesh, intersectionMaterial);
+	//float scale = 30.0f;
+	//decal_->Add(intersectionPos, intersectionNormal, scale);
 }
 
 //	ポーズにする

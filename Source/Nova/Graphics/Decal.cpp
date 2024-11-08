@@ -265,15 +265,24 @@ void Decal::Blit(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* c
 void Decal::Add(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& normal, const float& scale)
 {
 	spots_.push_back({ position, normal, scale });
+	if (spots_.size() < SpotsDataMax_)return;
+
+	/*for (int i = 0; i < SpotsDataMax_ - 1; ++i)
+	{
+		spots_.at(i) = spots_.at(i + 1);
+	}
+	spots_.erase(spots_.begin() + SpotsDataMax_ - 1);*/
 }
 
 void Decal::DrawDebug()
 {
 	if (ImGui::TreeNode("Decal"))
 	{
+		spotsIndexMax_ = spots_.size() - 1;
 		if (spots_.empty() == false)
 		{
 			ImGui::InputInt("SpotsIndex", &spotsIndex_);
+			ImGui::InputInt("SpotsIndexMax", &spotsIndexMax_);
 			spotsIndex_ = std::clamp(spotsIndex_, 0, static_cast<int>(spots_.size()));
 			ImGui::DragFloat3("SpotPosition",	&spots_[spotsIndex_].position_.x);
 			ImGui::DragFloat3("SpotNormal",		&spots_[spotsIndex_].normal_.x);

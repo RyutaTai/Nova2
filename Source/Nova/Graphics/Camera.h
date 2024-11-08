@@ -56,7 +56,7 @@ public:
 	bool						GetIsPose()			{ return isPose_; }
 
 	bool						IsCameraMove()		{ return cameraMove_; }					//	ƒJƒƒ‰‰‰o’†‚©‚Ç‚¤‚©
-
+	bool						RayCastVsStage(DirectX::XMFLOAT3& intersectionPos, DirectX::XMFLOAT3& intersectionNormal, std::string& intersectionMesh, std::string& intersectionMaterial);
 private:
 	Transform transform_;
 

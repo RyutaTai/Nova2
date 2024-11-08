@@ -7,6 +7,7 @@
 #include "../Others/MathHelper.h"
 #include "../Others/Easing.h"
 #include "../Input/Input.h"
+#include "../../Game/Stage.h"
 
 //	コンストラクタ
 Camera::Camera()
@@ -365,6 +366,18 @@ void Camera::DebugCamera(const float& elapsedTime)
 
 	//	カメラの視点と注視点を設定
 	Camera::Instance().SetLookAt(eye_, focus_, DirectX::XMFLOAT3(0, 1, 0));
+}
+
+//	カメラからステージへレイキャスト
+bool Camera::RayCastVsStage(DirectX::XMFLOAT3& intersectionPos, DirectX::XMFLOAT3& intersectionNormal, std::string& intersectionMesh, std::string& intersectionMaterial)
+{
+	//	レイキャストに必要なパラメータ
+	DirectX::XMFLOAT3 pos = GetEye();
+	DirectX::XMFLOAT3 dir = GetFront();
+	DirectX::XMFLOAT4X4 transform = {};								//	ステージのワールド変換行列
+	DirectX::XMStoreFloat4x4(&transform, Stage::Instance().GetTransform()->CalcWorld());
+
+	return Stage::Instance().Collision(pos, dir, transform, intersectionPos, intersectionNormal, intersectionMesh, intersectionMaterial);
 }
 
 //	リセット

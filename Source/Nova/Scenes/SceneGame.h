@@ -59,6 +59,8 @@ public:
 	float	GetChangeTitleTimer()	{ return changeTitleTimer_; }
 	bool	GetIsResult()			{ return isResult_; }
 
+	void RayVsMouse();
+
 	//	ゲーム用変数
 private:
 	/* ----- オブジェクト ----- */

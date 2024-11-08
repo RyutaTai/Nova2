@@ -38,7 +38,6 @@ FrameBuffer::FrameBuffer(ID3D11Device* device, uint32_t width, uint32_t height, 
 		shaderResourceViews_[0].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-	// BLOOM
 	if (hasDepthstencil)
 	{
 		Microsoft::WRL::ComPtr <ID3D11Texture2D> depthStencilBuffer;

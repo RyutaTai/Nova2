@@ -141,8 +141,14 @@ void SceneGame::DecalInitialize()
 
 	//	テスト
 	DirectX::XMFLOAT3 pos = { 0,1,0 };
-	DirectX::XMFLOAT3 normal = { 0,1,0 };
-	float scale = 10.0f;
+	DirectX::XMFLOAT3 cameraFront = Camera::Instance().GetFront();
+	DirectX::XMFLOAT3 normal;
+	float scale = 0.2f;
+#if 1
+	DirectX::XMStoreFloat3(&normal, DirectX::XMVectorScale(DirectX::XMLoadFloat3(&cameraFront), -1.0f));
+#else
+	normal = { 1,1,1 };
+#endif
 	decal_->Add(pos, normal, scale);
 
 }
@@ -158,8 +164,6 @@ void SceneGame::Reset()
 //	更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
-	
-
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	/* ----- カメラ更新処理 ----- */
@@ -340,11 +344,8 @@ void SceneGame::Render()
 #endif
 
 		/* ----- モデル描画 ----- */
-		if (bloomer_)
-		{
-			framebuffers_[0]->Clear(deviceContext);
-			framebuffers_[0]->Activate(deviceContext);
-		}
+		framebuffers_[0]->Clear(deviceContext);
+		framebuffers_[0]->Activate(deviceContext);
 
 		deviceContext->PSSetShaderResources(32, 1, shaderResourceViews_[0].GetAddressOf());
 		deviceContext->PSSetShaderResources(33, 1, shaderResourceViews_[1].GetAddressOf());
@@ -396,8 +397,6 @@ void SceneGame::Render()
 		//	デカール
 		if(decal_)
 		{
-			framebuffers_[0]->Activate(deviceContext);
-
 			// copy depth stencil buffers
 			deviceContext->CopyResource(decalDepthStencilBuffer_.Get(), sceneDepthStencilBuffer_.Get());
 			deviceContext->ClearDepthStencilView(framebuffers_[0]->depthStencilView_.Get(), D3D11_CLEAR_STENCIL, 0.0f, 0);
@@ -489,7 +488,6 @@ void SceneGame::Render()
 	/* ----- UI描画 ----- */
 	UIManager::Instance().Render();
 
-	// UNIT.32
 	framebuffers_[1]->Clear(deviceContext);
 	framebuffers_[1]->Activate(deviceContext);
 	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF);
@@ -497,16 +495,6 @@ void SceneGame::Render()
 	Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::NONE);
 	bitBlockTransfer_->Blit(deviceContext, framebuffers_[0]->shaderResourceViews_[0].GetAddressOf(), 0, 1, pixelShaders_[0].Get());
 	framebuffers_[1]->Deactivate(deviceContext);
-#if 0
-	immediate_context->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
-	bit_block_transfer->blit(immediate_context.Get(), framebuffers[1]->shader_resource_views[0].GetAddressOf(), 0, 1);
-#endif
-
-	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF);
-	Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);
-	ID3D11ShaderResourceView* shaderResourceViews[2]{ framebuffers_[0]->shaderResourceViews_[0].Get(), framebuffers_[1]->shaderResourceViews_[0].Get() };
-	bitBlockTransfer_->Blit(deviceContext, shaderResourceViews, 0, 2, pixelShaders_[1].Get());
-
 
 }
 

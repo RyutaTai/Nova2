@@ -377,7 +377,7 @@ public:
 
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShaderê›íË
 	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
-	void SetUseRootMotion(bool useRootMotion);
+	void SetUseRootMotion(const bool& useRootMotion);
 	void SetAnimationSpeed(const float& animationSpeed) { animationSpeed_ = animationSpeed; }
 
 	Transform*			GetTransform() { return &transform_; }

@@ -49,12 +49,12 @@ public:
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit = 1.0e+7f, _In_ bool skipIf = false/*Once the first intersection is found, the process is interrupted.*/) const;
 
 	//	空間分割を利用したレイキャスト
-	bool RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosition, _In_ DirectX::XMFLOAT3 rayDirection, _In_ const DirectX::XMFLOAT4X4& transform,
+	bool RaycastWithSpaceDivision(_In_ const DirectX::XMFLOAT3& rayStartPosition, _In_ const DirectX::XMFLOAT3& rayDirection, _In_ const DirectX::XMFLOAT4X4& transform,
 		_Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial,
-		_In_ float rayLengthLimit, _In_ bool skipIf) const;
+		_In_ const float& rayLengthLimit, _In_ const bool& skipIf) const;
 
 	//	エリアごとに分割する
-	void CreateAreas(int gridSizeX, int gridSizeZ);
+	void CreateAreas(const int& gridSizeX, const int& gridSizeZ);
 
 };

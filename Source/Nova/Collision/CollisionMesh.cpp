@@ -222,11 +222,11 @@ CollisionMesh::CollisionMesh(ID3D11Device* device, const std::string& fileName, 
 }
 
 //	エリアを作成・登録し、エリアに含まれる三角形を登録
-void CollisionMesh::CreateAreas(int gridSizeX, int gridSizeZ)
+void CollisionMesh::CreateAreas(const int& gridSizeX, const int& gridSizeZ)
 {
 	for (Mesh& mesh : meshes_)
 	{
-		// メッシュのバウンディングボックス取得
+		//	メッシュのバウンディングボックス取得
 		auto& minBB = mesh.meshBoundingBox_[0];
 		auto& maxBB = mesh.meshBoundingBox_[1];
 
@@ -236,7 +236,7 @@ void CollisionMesh::CreateAreas(int gridSizeX, int gridSizeZ)
 		float cellSizeX = sizeX / gridSizeX;
 		float cellSizeZ = sizeZ / gridSizeZ;
 
-		// エリアを作成し、バウンディングボックスを設定
+		//	エリアを作成し、バウンディングボックスを設定
 		for (int x = 0; x < gridSizeX; ++x)
 		{
 			for (int z = 0; z < gridSizeZ; ++z)
@@ -244,7 +244,7 @@ void CollisionMesh::CreateAreas(int gridSizeX, int gridSizeZ)
 				Mesh::Area area;
 				area.areaBoundingBox_.Center = {
 					minBB.x + cellSizeX * (x + 0.5f),
-					(minBB.y + maxBB.y) / 2,  // 中心はy軸の中間
+					(minBB.y + maxBB.y) / 2,  //	中心はy軸の中間
 					minBB.z + cellSizeZ * (z + 0.5f)
 				};
 				area.areaBoundingBox_.Extents = { cellSizeX / 2, (maxBB.y - minBB.y) / 2, cellSizeZ / 2 };
@@ -253,13 +253,13 @@ void CollisionMesh::CreateAreas(int gridSizeX, int gridSizeZ)
 			}
 		}
 
-		// 各三角形をエリアに登録
+		//	各三角形をエリアに登録
 		for (int triIndex = 0; triIndex < mesh.triangles_.size(); ++triIndex)
 		{
 			auto& triangle = mesh.triangles_[triIndex];
 			for (Mesh::Area& area : mesh.areas_)
 			{
-				// 三角形がエリアに含まれるかどうか判定
+				//	三角形がエリアに含まれるかどうか判定
 				DirectX::XMVECTOR v0 = DirectX::XMLoadFloat3(&triangle.positions_[0]);
 				DirectX::XMVECTOR v1 = DirectX::XMLoadFloat3(&triangle.positions_[1]);
 				DirectX::XMVECTOR v2 = DirectX::XMLoadFloat3(&triangle.positions_[2]);
@@ -404,21 +404,21 @@ bool CollisionMesh::Raycast(_In_ DirectX::XMFLOAT3 rayStartPosition, _In_ Direct
 	return intersectionCount > 0;
 }
 
-bool CollisionMesh::RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosition,
-	_In_ DirectX::XMFLOAT3 rayDirection,
+bool CollisionMesh::RaycastWithSpaceDivision(_In_ const DirectX::XMFLOAT3& rayStartPosition,
+	_In_ const DirectX::XMFLOAT3& rayDirection,
 	_In_ const DirectX::XMFLOAT4X4& transform,
 	_Out_ DirectX::XMFLOAT3& intersectionPosition,
 	_Out_ DirectX::XMFLOAT3& intersectionNormal,
 	_Out_ std::string& intersectionMesh,
 	_Out_ std::string& intersectionMaterial,
-	_In_ float rayLengthLimit,
-	_In_ bool skipIf) const
+	_In_ const float& rayLengthLimit,
+	_In_ const bool& skipIf) const
 {
-	// モデルのワールド変換行列を取得し、逆行列を計算する
+	//	モデルのワールド変換行列を取得し、逆行列を計算する
 	DirectX::XMMATRIX T = DirectX::XMLoadFloat4x4(&transform);
 	DirectX::XMMATRIX inverseT = DirectX::XMMatrixInverse(nullptr, T);
 
-	// レイの始点と方向をモデル空間に変換する
+	//	レイの始点と方向をモデル空間に変換する
 	DirectX::XMFLOAT3 localRayStart, localRayDirection;
 	DirectX::XMStoreFloat3(&localRayStart, DirectX::XMVector3TransformCoord(XMLoadFloat3(&rayStartPosition), inverseT));
 	DirectX::XMStoreFloat3(&localRayDirection, DirectX::XMVector3TransformNormal(XMLoadFloat3(&rayDirection), inverseT));
@@ -426,62 +426,62 @@ bool CollisionMesh::RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosi
 	const DirectX::XMVECTOR RayStart = XMLoadFloat3(&localRayStart);
 	const DirectX::XMVECTOR Direction = DirectX::XMVector3Normalize(XMLoadFloat3(&localRayDirection)); // 正規化
 
-	// Direction がゼロベクトルかどうかをチェック
+	//	Direction がゼロベクトルかどうかをチェック
 	if (DirectX::XMVector3Equal(Direction, DirectX::XMVectorZero()))
 	{
-		return false; // ゼロベクトルの場合は処理をスキップ
+		return false; //	ゼロベクトルの場合は処理をスキップ
 	}
 
 	bool hit = false;
 	float closestDistance = FLT_MAX;
 
-	// 各メッシュについて処理を行う
+	//	各メッシュについて処理を行う
 	for (const auto& mesh : meshes_)
 	{
-		// AABBとの交差判定
+		//	AABBとの交差判定
 		const float* AABBMin = reinterpret_cast<const float*>(&mesh.meshBoundingBox_[0]);
 		const float* AABBMax = reinterpret_cast<const float*>(&mesh.meshBoundingBox_[1]);
 		if (!IntersectRayAABB(reinterpret_cast<const float*>(&localRayStart), reinterpret_cast<const float*>(&localRayDirection), AABBMin, AABBMax))
 		{
-			continue; // 交差しなければ次のメッシュへ
+			continue; //	交差しなければ次のメッシュへ
 		}
 
-		// 各エリアについて処理を行う
+		//	各エリアについて処理を行う
 		for (const auto& area : mesh.areas_)
 		{
 			float distance = FLT_MAX;
 
-			// レイがエリアに交差するか確認
+			//	レイがエリアに交差するか確認
 			if (area.areaBoundingBox_.Intersects(RayStart, Direction, distance))
 			{
-				// エリア内の三角形でレイキャストを行う
+				//	エリア内の三角形でレイキャストを行う
 				for (int triIndex : area.triangleIndices_)
 				{
 					const auto& triangle = mesh.triangles_[triIndex];
 
-					// 三角形の頂点をロード
+					//	三角形の頂点をロード
 					const DirectX::XMVECTOR A = XMLoadFloat3(&triangle.positions_[0]);
 					const DirectX::XMVECTOR B = XMLoadFloat3(&triangle.positions_[1]);
 					const DirectX::XMVECTOR C = XMLoadFloat3(&triangle.positions_[2]);
 
-					// 三角形の法線を計算
+					//	三角形の法線を計算
 					const DirectX::XMVECTOR N = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(DirectX::XMVectorSubtract(B, A), DirectX::XMVectorSubtract(C, A)));
 					const float d = DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, A));
 					const float denominator = DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, Direction));
 
-					// 三角形が平行でない場合、交差を検出する
+					//	三角形が平行でない場合、交差を検出する
 					if (denominator < 0)
 					{
 						const float numerator = d - DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, RayStart));
 						const float t = numerator / denominator;
 
-						// レイが三角形と交差し、かつレイの長さ制限内にある場合
+						//	レイが三角形と交差し、かつレイの長さ制限内にある場合
 						if (t > 0 && t < rayLengthLimit)
 						{
-							// 交差点を計算
+							//	交差点を計算
 							DirectX::XMVECTOR Q = DirectX::XMVectorAdd(RayStart, DirectX::XMVectorScale(Direction, t));
 
-							// 交差点が三角形の内部にあるかどうかを判定する
+							//	交差点が三角形の内部にあるかどうかを判定する
 							const DirectX::XMVECTOR QA = DirectX::XMVectorSubtract(A, Q);
 							const DirectX::XMVECTOR QB = DirectX::XMVectorSubtract(B, Q);
 							const DirectX::XMVECTOR QC = DirectX::XMVectorSubtract(C, Q);
@@ -504,20 +504,20 @@ bool CollisionMesh::RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosi
 
 							hit = true;
 
-							// 交差点が最短距離より近い場合、情報を更新
+							//	交差点が最短距離より近い場合、情報を更新
 							if (t < closestDistance)
 							{
 								closestDistance = t;
 
-								// ワールド空間に戻して交差点の位置と法線を設定
+								//	ワールド空間に戻して交差点の位置と法線を設定
 								XMStoreFloat3(&intersectionPosition, XMVector3TransformCoord(Q, T));
 								XMStoreFloat3(&intersectionNormal, N);
 								intersectionMesh = mesh.name_;
-								intersectionMaterial = triangle.materialName_; // 材質名を取得
+								intersectionMaterial = triangle.materialName_; //	マテリアルを取得
 
 								if (skipIf)
 								{
-									return true; // 最初の交差点で終了
+									return true;	//	最初の交差点で終了
 								}
 							}
 						}
@@ -529,127 +529,3 @@ bool CollisionMesh::RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosi
 	return hit;
 }
 
-//bool CollisionMesh::RaycastWithSpaceDivision(_In_ DirectX::XMFLOAT3 rayStartPosition,
-//	_In_ DirectX::XMFLOAT3 rayDirection,
-//	_In_ const DirectX::XMFLOAT4X4& transform,
-//	_Out_ DirectX::XMFLOAT3& intersectionPosition,
-//	_Out_ DirectX::XMFLOAT3& intersectionNormal,
-//	_Out_ std::string& intersectionMesh,
-//	_Out_ std::string& intersectionMaterial,
-//	_In_ float rayLengthLimit,
-//	_In_ bool skipIf) const
-//{
-//	// モデルのワールド変換行列を取得し、逆行列を計算する
-//	DirectX::XMMATRIX T = DirectX::XMLoadFloat4x4(&transform);
-//	DirectX::XMMATRIX inverseT = DirectX::XMMatrixInverse(nullptr, T);
-//
-//	// レイの始点と方向をモデル空間に変換する
-//	DirectX::XMFLOAT3 localRayStart, localRayDirection;
-//	DirectX::XMStoreFloat3(&localRayStart, DirectX::XMVector3TransformCoord(XMLoadFloat3(&rayStartPosition), inverseT));
-//	DirectX::XMStoreFloat3(&localRayDirection, DirectX::XMVector3TransformNormal(XMLoadFloat3(&rayDirection), inverseT));
-//
-//	const DirectX::XMVECTOR RayStart = XMLoadFloat3(&localRayStart);
-//	const DirectX::XMVECTOR Direction = DirectX::XMVector3Normalize(XMLoadFloat3(&localRayDirection)); // 正規化
-//
-//	// Direction がゼロベクトルかどうかをチェック
-//	if (DirectX::XMVector3Equal(Direction, DirectX::XMVectorZero()))
-//	{
-//		return false; // ゼロベクトルの場合は処理をスキップ
-//	}
-//
-//	bool hit = false;
-//	float closestDistance = FLT_MAX;
-//
-//	// 各メッシュについて処理を行う
-//	for (const auto& mesh : meshes_)
-//	{
-//		// AABBとの交差判定
-//		const float* AABBMin = reinterpret_cast<const float*>(&mesh.meshBoundingBox_[0]);
-//		const float* AABBMax = reinterpret_cast<const float*>(&mesh.meshBoundingBox_[1]);
-//		if (!IntersectRayAABB(reinterpret_cast<const float*>(&localRayStart), reinterpret_cast<const float*>(&localRayDirection), AABBMin, AABBMax))
-//		{
-//			continue; // 交差しなければ次のメッシュへ
-//		}
-//
-//		// 各エリアについて処理を行う
-//		for (const auto& area : mesh.areas_)
-//		{
-//			float distance = FLT_MAX;
-//
-//			// レイがエリアに交差するか確認
-//			if (area.areaBoundingBox_.Intersects(RayStart, Direction, distance))
-//			{
-//				// エリア内の三角形でレイキャスト
-//				for (int triIndex : area.triangleIndices_)
-//				{
-//					const auto& triangle = mesh.triangles_[triIndex];
-//
-//					// 三角形の頂点をロード
-//					const DirectX::XMVECTOR A = XMLoadFloat3(&triangle.positions_[0]);
-//					const DirectX::XMVECTOR B = XMLoadFloat3(&triangle.positions_[1]);
-//					const DirectX::XMVECTOR C = XMLoadFloat3(&triangle.positions_[2]);
-//
-//					// 三角形の法線を計算
-//					const DirectX::XMVECTOR N = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(DirectX::XMVectorSubtract(B, A), DirectX::XMVectorSubtract(C, A)));
-//					const float d = DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, A));
-//					const float denominator = DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, Direction));
-//
-//					// 三角形が平行でない場合、交差を検出する
-//					if (denominator < 0)
-//					{
-//						const float numerator = d - DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, RayStart));
-//						const float t = numerator / denominator;
-//
-//						// レイが三角形と交差し、かつレイの長さ制限内にある場合
-//						if (t > 0 && t < rayLengthLimit)
-//						{
-//							// 交差点を計算
-//							DirectX::XMVECTOR Q = DirectX::XMVectorAdd(RayStart, DirectX::XMVectorScale(Direction, t));
-//
-//							// 交差点が三角形の内部にあるかどうかを判定する
-//							const DirectX::XMVECTOR QA = DirectX::XMVectorSubtract(A, Q);
-//							const DirectX::XMVECTOR QB = DirectX::XMVectorSubtract(B, Q);
-//							const DirectX::XMVECTOR QC = DirectX::XMVectorSubtract(C, Q);
-//
-//							DirectX::XMVECTOR U = DirectX::XMVector3Cross(QB, QC);
-//							DirectX::XMVECTOR V = DirectX::XMVector3Cross(QC, QA);
-//							if (DirectX::XMVectorGetX(DirectX::XMVector3Dot(U, V)) < 0)
-//							{
-//								continue;
-//							}
-//							U = DirectX::XMVector3Cross(QA, QB);
-//							if (DirectX::XMVectorGetX(DirectX::XMVector3Dot(U, V)) < 0)
-//							{
-//								continue;
-//							}
-//							if (DirectX::XMVectorGetX(DirectX::XMVector3Dot(V, U)) < 0)
-//							{
-//								continue;
-//							}
-//
-//							hit = true;
-//
-//							// 交差点が最短距離より近い場合、情報を更新
-//							if (t < closestDistance)
-//							{
-//								closestDistance = t;
-//
-//								// ワールド空間に戻して交差点の位置と法線を設定
-//								XMStoreFloat3(&intersectionPosition, XMVector3TransformCoord(Q, T));
-//								XMStoreFloat3(&intersectionNormal, N);
-//								intersectionMesh = mesh.name_;
-//								intersectionMaterial = triangle.materialName_; // 材質名を取得
-//
-//								if (skipIf)
-//								{
-//									return true; // 最初の交差点で終了
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//	return hit;
-//}

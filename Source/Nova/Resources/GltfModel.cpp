@@ -1033,13 +1033,13 @@ void GltfModel::RootMotion(const float& scaleFactor)
     lastPosition_ = position;
 }
 
-void GltfModel::SetUseRootMotion(bool useRootMotion)
+void GltfModel::SetUseRootMotion(const bool& useRootMotion)
 {
     useRootMotionMovement_ = useRootMotion;
     isFirstTimeRootMotion_ = true;
 }
 
-void GltfModel::Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>& animatedNodes*/)
+void GltfModel::Render(const DirectX::XMMATRIX& worldNodes)
 {
     ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
     deviceContext->PSSetShaderResources(0, 1, materialResourceView_.GetAddressOf());

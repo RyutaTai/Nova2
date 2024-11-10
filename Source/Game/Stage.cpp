@@ -51,7 +51,7 @@ Stage::Stage()
 	frequency_->Initialize();
 
 	D3D11_TEXTURE2D_DESC texture2dDesc;
-	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", projectionMappingTexture_.GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", fftSRV_.GetAddressOf(), &texture2dDesc);
 
 }
 
@@ -248,9 +248,12 @@ void Stage::ShadowRender(const float& scale)
 //	描画処理
 void Stage::Render()
 {
-
 	// PROJECTION_MAPPING
+#if 0
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, projectionMappingTexture_.GetAddressOf());
+#else
+	CreateProjectionMappingTextureFromFFT();	//	プロジェクションマッピング用のテクスチャを作成し、シェーダーリソースにセット
+#endif
 
 	//	エミッシブ定数バッファをGPUに送る
 	Graphics::Instance().GetDeviceContext()->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
@@ -263,11 +266,56 @@ void Stage::Render()
 
 }
 
+//	FFTのデータからプロジェクションマッピング用のテクスチャを生成し、セットする
+void Stage::CreateProjectionMappingTextureFromFFT()
+{
+	std::vector<float> fftData = frequency_->GetAmplitudeSpectrum(); // FFT結果を取得
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = fftData.data();
+	initData.SysMemPitch = sizeof(float) * fftData.size();
+
+	//	FFTデータをもとにテクスチャを作成
+	D3D11_TEXTURE2D_DESC texture2dDesc = {};
+	texture2dDesc.Width = fftData.size();
+	texture2dDesc.Height = 1; // 1行のテクスチャとして表現
+	texture2dDesc.MipLevels = 1;
+	texture2dDesc.ArraySize = 1;
+	texture2dDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	texture2dDesc.SampleDesc.Count = 1;
+	texture2dDesc.Usage = D3D11_USAGE_DYNAMIC;
+	texture2dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texture2dDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> fftTexture;
+	Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, &initData, fftTexture.GetAddressOf());
+
+	//	テクスチャをシェーダーリソースにバインド(スロット番号 : 15)
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texture2dDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, fftSRV_.GetAddressOf());
+
+}
+
 //	デバッグ描画
 void Stage::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
+		//	FFTデータから生成したテクスチャ
+		if (ImGui::TreeNode(u8"fftSRV"))
+		{
+			D3D11_VIEWPORT viewport;
+			UINT numViewports{ 1 };
+			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
+			auto srv = fftSRV_.Get();
+			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
+			ImGui::TreePop();
+		}
+
 		//	周波数データのデバッグ描画
 		if (ImGui::TreeNode("Frequency Data"))
 		{
@@ -283,6 +331,7 @@ void Stage::DrawDebug()
 			ImGui::DragFloat("EmissiveFactor", &emissiveFactor_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMin", &emissiveIntencityMin_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMax", &emissiveIntencityMax_, 1.0f, 0.0f);
+			ImGui::TreePop();
 		}
 
 		gltfStaticModelResource_->DrawDebug();

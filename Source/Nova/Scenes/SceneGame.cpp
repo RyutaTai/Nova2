@@ -40,10 +40,7 @@ void SceneGame::Initialize()
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
 	/* ----- ステージ初期化 ----- */
-	//stage_[0] = std::make_unique<Stage>("./Resources/Model/syougiban.glb");
-	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city_collision_ground2_correct.glb");//	シティモデル(地面のみ)
 	stage_[0] = std::make_unique<Stage>();							//	シティモデル
-	//stage_[0] = std::make_unique<Stage>("./Resources/Model/cybercity-2099-v2/city.fbx", true);					//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */
 	D3D11_BUFFER_DESC desc;
@@ -97,9 +94,6 @@ void SceneGame::Initialize()
 	bloomer_ = std::make_unique<Bloom>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(device, "./Resources/Shader/FinalPassPs.cso", pixelShaders_[0].ReleaseAndGetAddressOf());
 
-	//	デカール初期化
-	DecalInitialize();
-
 	//	ステート登録
 	stateMachine_.reset(new StateMachine<State<SceneGame>>());
 	stateMachine_->RegisterState(new GameState::Wave1State(this));		//	Wave1
@@ -150,55 +144,6 @@ void SceneGame::Update(const float& elapsedTime)
 	/* ----- UI更新処理 ----- */
 	UIManager::Instance().Update(elapsedTime);
 
-	//	HP更新処理
-
-	//	HP描画
-#if 0
-	{
-		int hp = Player::Instance().GetHp();
-
-		//	TODO:後で描画処理ではなく更新処理に移す
-		//	HPが減少している間、hpDecreaseTimerを減少させる
-		static float hpDecreaseTimer = 1.0f;	//	タイマー
-		float hpDecreaseSpeed = 20.0f;			//	HP減少速度(大きくするほど速くなる)
-		float hpGaugeMaxX = 4.4f;
-
-		float targetSizeX = hpGaugeMaxX * (hp / 2.0f);
-		float currentSizeX = ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->GetSizeX();
-
-		//	hpGaugeBackのサイズがhpGaugeのサイズに近づくようにする
-		if (currentSizeX > targetSizeX)
-		{
-			//	等速でサイズを減少させる
-			currentSizeX -= hpDecreaseSpeed * elapsedTime;
-
-			//	ターゲットサイズ以下に行き過ぎないように調整
-			if (currentSizeX < targetSizeX)
-			{
-				currentSizeX = targetSizeX;
-			}
-			ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->SetSizeX(currentSizeX);
-		}
-		else
-		{
-			//	既にサイズが等しい場合、即座にターゲットサイズを設定
-			ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->GetTransform()->SetSizeX(targetSizeX);
-			hpDecreaseTimer = 1.0f;
-		}
-		ui_[static_cast<int>(UI_GAME::HpGaugeBack)]->Render();
-
-		ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->SetSizeX(targetSizeX);
-		ui_[static_cast<int>(UI_GAME::HpGauge)]->Render();
-
-		ui_[static_cast<int>(UI_GAME::HpFrame)]->Render();
-	}
-
-	int hp = Player::Instance().GetHp();
-	ui_[static_cast<int>(UI_GAME::HpGauge)]->GetTransform()->SetSizeX(14.24 * hp);
-
-	//hpGauge->GetTransform()->SetSize(1280, 720);	//	画像サイズ
-#endif
-
 	//	ゲームクリアへの遷移はWeve3 State内で行っている
 		
 	//	ゲームオーバー
@@ -214,22 +159,6 @@ void SceneGame::Update(const float& elapsedTime)
 		SceneManager::Instance().ChangeScene(new SceneTitle);
 	}
 	
-	// PROJECTION_MAPPING
-	float projectionMappingRotation = Graphics::Instance().GetProjectionMappingRotation();
-	DirectX::XMFLOAT3 projectionMappingEye = Graphics::Instance().GetProjectionMappingEye();
-	DirectX::XMFLOAT3 projectionMappingFocus = Graphics::Instance().GetProjectionMappingFocus();
-	float projectionMappingFovy = Graphics::Instance().GetProjectionMappingFovy();
-	projectionMappingRotation += elapsedTime * 180;
-	DirectX::XMMATRIX ProjectionMappingTransform =
-		DirectX::XMMatrixLookAtLH(
-			DirectX::XMLoadFloat3(&projectionMappingEye),
-			DirectX::XMLoadFloat3(&projectionMappingFocus),
-			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMappingRotation), 0))) *
-		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMappingFovy), 1.0f, 1.0f, 500.0f);
-	Graphics::Instance().SetProjectionMappingTransform(ProjectionMappingTransform);
-	Graphics::Instance().SetProjectionMappingRotation(projectionMappingRotation);
-	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
-	Graphics::Instance().GetDeviceContext()->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
 }
 
 //	ポーズにする
@@ -261,13 +190,29 @@ void SceneGame::Render()
 
 	Camera::Instance().SetPerspectiveFov();
 
+	//	シーン定数バッファ更新
 	Graphics::Instance().SetViewProjection(Camera::Instance().CalcViewProjectionMatrix());
 	Graphics::Instance().SetLightDirection(lightDirection_);
 	Graphics::Instance().SetCameraPosition({ 0,0,1,0 });
 	Graphics::Instance().SetInvViewProjection(Camera::Instance().CalcInvViewProjectionMatrix());
 	
+	// PROJECTION_MAPPING
+	float projectionMappingRotation = Graphics::Instance().GetProjectionMappingRotation();
+	DirectX::XMFLOAT3 projectionMappingEye = Graphics::Instance().GetProjectionMappingEye();
+	DirectX::XMFLOAT3 projectionMappingFocus = Graphics::Instance().GetProjectionMappingFocus();
+	float projectionMappingFovy = Graphics::Instance().GetProjectionMappingFovy();
+	//projectionMappingRotation += elapsedTime * 180;
+	DirectX::XMMATRIX ProjectionMappingTransform =
+		DirectX::XMMatrixLookAtLH(
+			DirectX::XMLoadFloat3(&projectionMappingEye),
+			DirectX::XMLoadFloat3(&projectionMappingFocus),
+			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMappingRotation), 0))) *
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMappingFovy), 1.0f, 1.0f, 500.0f);
+	Graphics::Instance().SetProjectionMappingTransform(ProjectionMappingTransform);
+	Graphics::Instance().SetProjectionMappingRotation(projectionMappingRotation);
 	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
-	//deviceContext->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
+
 	deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
 

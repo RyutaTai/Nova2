@@ -28,6 +28,8 @@ public:
 	bool Collision(_In_ const DirectX::XMFLOAT3& rayPosition, _In_ const DirectX::XMFLOAT3& rayDirection, _In_ const DirectX::XMFLOAT4X4& stageTransform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit = 1.0e+7f, _In_ bool skipIf = false/*Once the first intersection is found, the process is interrupted.*/) const;
 
+	void CreateProjectionMappingTextureFromFFT();	//	FFTのデータからプロジェクションマッピング用のテクスチャを生成し、セットする
+
 	Transform* GetTransform() { return gltfStaticModelResource_->GetTransform(); }
 	Frequency* GetFrequency() { return frequency_.get(); }	//	音の周波数データ取得
 
@@ -53,7 +55,7 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> projectionMappingTexture_;	// projectionMapping
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fftSRV_;	// projectionMapping
 
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;

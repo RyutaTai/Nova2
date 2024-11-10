@@ -31,6 +31,10 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     row_major float4x4  viewProjection;
     float4              lightDirection;
     float4              cameraPosition;
+    row_major float4x4  lightViewProjection;    //	Shadow
+    row_major float4x4  invViewProjection;      //	Skymap
+    // PROJECTION_MAPPING
+    row_major float4x4  projectionMappingTransform;
 };
 
 static const uint PRIMITIVE_MAX_JOINTS = 512;

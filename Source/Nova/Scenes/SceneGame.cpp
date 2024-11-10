@@ -112,48 +112,6 @@ void SceneGame::Initialize()
 
 }
 
-//	デカール関連初期化
-void SceneGame::DecalInitialize()
-{
-	//decal = std::make_unique<decltype(decal)::element_type>(device.Get(), L"./resources/gun_holes.png");
-	decal_ = std::make_unique<Decal>(Graphics::Instance().GetDevice(), L"./Resources/Image/AdobeStock_529863775.png");
-
-	// create cloned depth stencil buffer
-	HRESULT hr = S_OK;
-	Microsoft::WRL::ComPtr<ID3D11Resource> resource;
-	framebuffers_[0]->shaderResourceViews_[1]->GetResource(resource.GetAddressOf());
-	hr = resource->QueryInterface<ID3D11Texture2D>(sceneDepthStencilBuffer_.GetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-	D3D11_TEXTURE2D_DESC texture2dDesc{};
-	sceneDepthStencilBuffer_->GetDesc(&texture2dDesc);
-	_ASSERT_EXPR(texture2dDesc.Format == DXGI_FORMAT_R24G8_TYPELESS, "format of depth steencil buffer must be DXGI_FORMAT_R24G8_TYPELESS");
-
-	hr = Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, 0, decalDepthStencilBuffer_.GetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-	hr = Graphics::Instance().GetDevice()->CreateShaderResourceView(decalDepthStencilBuffer_.Get(), &shaderResourceViewDesc, decalDepthStencilTexture_.GetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-	//	テスト
-	DirectX::XMFLOAT3 pos = { 0.0f, 10.0f, 0.0f };
-	DirectX::XMFLOAT3 cameraFront = Camera::Instance().GetFront();
-	DirectX::XMFLOAT3 normal;
-	float scale = 20.2f;
-#if 0
-	DirectX::XMStoreFloat3(&normal, DirectX::XMVectorScale(DirectX::XMLoadFloat3(&cameraFront), -1.0f));
-#else
-	normal = { 1,1,1 };
-#endif
-	decal_->Add(pos, normal, scale);
-
-	
-}
-
 //	リセット
 void SceneGame::Reset()
 {
@@ -255,14 +213,23 @@ void SceneGame::Update(const float& elapsedTime)
 	{
 		SceneManager::Instance().ChangeScene(new SceneTitle);
 	}
-	//	レイキャストの結果を受け取る変数
-	//DirectX::XMFLOAT3 intersectionPos;
-	//DirectX::XMFLOAT3 intersectionNormal;
-	//std::string intersectionMesh;
-	//std::string intersectionMaterial;
-	//Camera::Instance().RayCastVsStage(intersectionPos, intersectionNormal, intersectionMesh, intersectionMaterial);
-	//float scale = 30.0f;
-	//decal_->Add(intersectionPos, intersectionNormal, scale);
+	
+	// PROJECTION_MAPPING
+	float projectionMappingRotation = Graphics::Instance().GetProjectionMappingRotation();
+	DirectX::XMFLOAT3 projectionMappingEye = Graphics::Instance().GetProjectionMappingEye();
+	DirectX::XMFLOAT3 projectionMappingFocus = Graphics::Instance().GetProjectionMappingFocus();
+	float projectionMappingFovy = Graphics::Instance().GetProjectionMappingFovy();
+	projectionMappingRotation += elapsedTime * 180;
+	DirectX::XMMATRIX ProjectionMappingTransform =
+		DirectX::XMMatrixLookAtLH(
+			DirectX::XMLoadFloat3(&projectionMappingEye),
+			DirectX::XMLoadFloat3(&projectionMappingFocus),
+			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMappingRotation), 0))) *
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMappingFovy), 1.0f, 1.0f, 500.0f);
+	Graphics::Instance().SetProjectionMappingTransform(ProjectionMappingTransform);
+	Graphics::Instance().SetProjectionMappingRotation(projectionMappingRotation);
+	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
 }
 
 //	ポーズにする
@@ -298,9 +265,9 @@ void SceneGame::Render()
 	Graphics::Instance().SetLightDirection(lightDirection_);
 	Graphics::Instance().SetCameraPosition({ 0,0,1,0 });
 	Graphics::Instance().SetInvViewProjection(Camera::Instance().CalcInvViewProjectionMatrix());
-
+	
 	Graphics::SceneConstants sceneConstants = Graphics::Instance().GetSceneConstant();
-	deviceContext->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
+	//deviceContext->UpdateSubresource(sceneConstantBuffer_.Get(), 0, 0, &sceneConstants, 0, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer_.GetAddressOf());
 
@@ -340,14 +307,14 @@ void SceneGame::Render()
 			Graphics::Instance().SetViewProjection(V * Projection);
 
 			ID3D11Buffer* shadowConstantBuffer = ShadowMap::Instance().GetConstantBuffer();
-			Graphics::SceneConstants sceneConstant = Graphics::Instance().GetSceneConstant();
-			deviceContext->UpdateSubresource(shadowConstantBuffer, 0, 0, &sceneConstant, 0, 0);
-			deviceContext->VSSetConstantBuffers(1, 1, &shadowConstantBuffer);
-			deviceContext->PSSetConstantBuffers(1, 1, &shadowConstantBuffer);
+			//Graphics::SceneConstants sceneConstant = Graphics::Instance().GetSceneConstant();
+			//deviceContext->UpdateSubresource(shadowConstantBuffer, 0, 0, &sceneConstant, 0, 0);
+			//deviceContext->VSSetConstantBuffers(1, 1, &shadowConstantBuffer);
+			//deviceContext->PSSetConstantBuffers(1, 1, &shadowConstantBuffer);
 
 			// SHADOW : bind shadow map at slot 8
 			ID3D11ShaderResourceView* srv = ShadowMap::Instance().GetShaderResourceView();
-			deviceContext->PSSetShaderResources(8, 1, &srv);
+			//deviceContext->PSSetShaderResources(8, 1, &srv);
 		}
 #endif
 
@@ -402,20 +369,6 @@ void SceneGame::Render()
 			bitBlockTransfer_->Blit(deviceContext, shaderResourceViews, 0, 2, pixelShaders_[0].Get());
 		}
 
-		//	デカール
-		if(decal_)
-		{
-			// copy depth stencil buffers
-			deviceContext->CopyResource(decalDepthStencilBuffer_.Get(), sceneDepthStencilBuffer_.Get());
-			deviceContext->ClearDepthStencilView(framebuffers_[0]->depthStencilView_.Get(), D3D11_CLEAR_STENCIL, 0.0f, 0);
-#if 0
-			Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
-#else
-			Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::MULTIPLY);
-#endif
-			decal_->Blit(deviceContext, decalDepthStencilTexture_.GetAddressOf());
-		}
-
 	}
 
 	/* ----- エフェクト描画 ----- */
@@ -423,28 +376,12 @@ void SceneGame::Render()
 		Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::SOLID);
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 		Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
-#if 1
+
 		DirectX::XMFLOAT4X4 view;
 		DirectX::XMStoreFloat4x4(&view, Camera::Instance().GetViewMatrix());
 		DirectX::XMFLOAT4X4 projection;
 		DirectX::XMStoreFloat4x4(&projection, Camera::Instance().GetProjectionMatrix());
 		EffectManager::Instance().Render(view, projection);
-#else
-		D3D11_VIEWPORT viewport;
-		UINT numViewports{ 1 };
-		Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
-		float aspectRatio{ viewport.Width / viewport.Height };
-		DirectX::XMMATRIX Projection{ DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(60), aspectRatio, 0.1f, 10000.0f) };
-		DirectX::XMVECTOR Eye{ DirectX::XMLoadFloat3(&Camera::Instance().GetEye()) };
-		DirectX::XMVECTOR Focus{DirectX::XMLoadFloat3(&Camera::Instance().GetFocus()) };
-		DirectX::XMVECTOR Up{ DirectX::XMLoadFloat3(&Camera::Instance().GetUp()) };
-		DirectX::XMMATRIX V{ DirectX::XMMatrixLookAtLH(Eye, Focus, Up) };
-		DirectX::XMFLOAT4X4 view;
-		DirectX::XMStoreFloat4x4(&view, V);
-		DirectX::XMFLOAT4X4 projection;
-		DirectX::XMStoreFloat4x4(&projection, Projection);
-		EffectManager::Instance().Render(view, projection);
-#endif
 	}
 
 	/* ----- デバッグプリミティブ描画 ----- */
@@ -529,7 +466,6 @@ void SceneGame::DrawDebug()
 	ImGui::DragFloat4("LightDirection", &lightDirection_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	ライトの向き
 
 	if (bloomer_)bloomer_->DrawDebug();	//	Bloom
-	if (decal_)decal_->DrawDebug();		//	Decal
 	ShadowMap::Instance().DrawDebug();	//	Shadow
 
 	Camera::Instance().DrawDebug();		//	Camera

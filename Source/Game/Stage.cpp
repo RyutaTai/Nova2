@@ -4,6 +4,7 @@
 
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Audio/AudioManager.h"
+#include "../Nova/Resources/Texture.h"
 
 Stage* Stage::instance_ = nullptr;
 
@@ -48,6 +49,9 @@ Stage::Stage()
 	//	音の周波数データ生成、初期化
 	frequency_ = std::make_unique<Frequency>();
 	frequency_->Initialize();
+
+	D3D11_TEXTURE2D_DESC texture2dDesc;
+	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", projectionMappingTexture_.GetAddressOf(), &texture2dDesc);
 
 }
 
@@ -244,6 +248,10 @@ void Stage::ShadowRender(const float& scale)
 //	描画処理
 void Stage::Render()
 {
+
+	// PROJECTION_MAPPING
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, projectionMappingTexture_.GetAddressOf());
+
 	//	エミッシブ定数バッファをGPUに送る
 	Graphics::Instance().GetDeviceContext()->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
 	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(3, 1, emissiveConstantBuffer_.GetAddressOf());

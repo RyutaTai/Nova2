@@ -53,6 +53,8 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfƒ‚ƒfƒ‹
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> projectionMappingTexture_;	// projectionMapping
+
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;
 	float				frequencyData_[FrequencyDataMax];

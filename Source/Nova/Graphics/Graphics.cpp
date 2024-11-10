@@ -436,13 +436,27 @@ void Graphics::DrawDebug()
 			}
 
 		}
+
+		// PROJECTION_MAPPING
+		if (ImGui::TreeNode("ProjectionMapping"))
+		{
+			ImGui::DragFloat3("Eye", &projectionMappingEye_.x);
+
+			ImGui::DragFloat3("Focus", &projectionMappingFocus_.x);
+			ImGui::DragFloat("Rotation", &projectionMappingRotation_);
+
+			ImGui::SliderFloat("Fovy", &projectionMappingFovy_, 10.0f, 180.0f);
+
+			ImGui::TreePop();
+		}
+
+
 		{
 			ImVec2 displaySize = ImGui::GetIO().DisplaySize;
 			ImVec2 framebufferScale = ImGui::GetIO().DisplayFramebufferScale;
 			ImGui::Text("Display Size: %.2f, %.2f", displaySize.x, displaySize.y);
 			ImGui::Text("Framebuffer Scale: %.2f, %.2f", framebufferScale.x, framebufferScale.y);
 		}
-
 
 		ImGui::DragFloat4("LightDirection", &sceneConstant_.lightDirection_.x);
 		ImGui::TreePop();

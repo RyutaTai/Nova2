@@ -77,12 +77,6 @@ private:
 	float										nearZ_ = 50.0f;
 	float										farZ_ = 400000.0f;
 
-	//	DECAL
-	std::unique_ptr<Decal> decal_;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> sceneDepthStencilBuffer_;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> decalDepthStencilBuffer_;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> decalDepthStencilTexture_;
-
 	/* ----- スプライト ----- */
 	enum SPRITE_GAME
 	{

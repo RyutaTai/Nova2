@@ -1,45 +1,3 @@
-//  FBX
-#if 0
-
-#include "../../Nova/Shaders/Model.hlsli"
-
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
-
-SamplerState samplerStates[3] : register(s0);
-Texture2D textureMaps[4] : register(t0);
-
-//  SHADOW
-SamplerComparisonState comparisonSamplerState : register(s5);
-Texture2D shadowMap : register(t8);
-
-float4 main(VS_OUT pin) : SV_TARGET
-{
-#if 1
-    float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC], pin.texcoord) * pin.color;
-    return color;
-#endif
-    
-#if 0
-    float4 color0 = textureMaps[0].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
-    float4 color1 = textureMaps[1].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
-    float4 color2 = textureMaps[2].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
-    float4 color3 = textureMaps[3].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
-    float4 finalColor = (color0 + color1 + color2 + color3);
-    const float GAMMA = 1 / 2.2f;
-    finalColor.rgb = pow(finalColor.rgb, GAMMA);
-    float alpha = color0.a;
-    return float4(finalColor.xyz, alpha);
-#endif
-
-#if 0    
-    return textureMaps[0].Sample(samplerStates[ANISOTROPIC], pin.texcoord) * pin.color;
-#endif
-    
-}
-#endif
-
 #include "../../Nova/Shaders/GltfModel.hlsli"
 #include "../../Nova/Shaders/BidirectionalReflectanceDistributionFunction.hlsli"
 
@@ -50,6 +8,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 #define OCCLUSION_TEXTURE 4
 
 Texture2D<float4> materialTextures[5] : register(t1);
+// PROJECTION_MAPPING
+Texture2D projectionMappingTexture : register(t15);
 
 struct TextureInfo
 {
@@ -97,13 +57,13 @@ StructuredBuffer<MaterialConstants> materials : register(t0);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-#if 1
     const float GAMMA = 2.2f;
     
     const MaterialConstants materialConstant = materials[material];
     
     float4 baseColorFactor = materialConstant.pbrMetallicRoughness.baseColorFactor;
     
+    //  ベースカラー
     const int baseColorTexture = materialConstant.pbrMetallicRoughness.baseColorTexture.index;
     if (baseColorTexture > -1)
     {
@@ -112,11 +72,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         baseColorFactor *= sampled;
     }
     
-    
-    //return baseColorFactor;
- 
-    
-    
+    //  エミッシブ
     float3 emissiveFactor = materialConstant.emissiveFactor;
     const int emissiveTexture = materialConstant.emissiveTexture.index;
     if (emissiveTexture > -1)
@@ -126,6 +82,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         emissiveFactor *= sampled.rgb;
     }
     
+    //  ラフネス・メタリック
     float roughnessFactor = materialConstant.pbrMetallicRoughness.roughnessFactor * 0.25f;
     float metallicFactor = materialConstant.pbrMetallicRoughness.metallicFactor;
     const int metallicRoughnessTexture = materialConstant.pbrMetallicRoughness.metallicRoughnessTexture.index;
@@ -136,6 +93,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         metallicFactor *= sampled.b;
     }
     
+    //  オクルージョン
     float occlusionFactor = 1.0f;
     const int occlusionTexture = materialConstant.occlusionTexture.index;
     if (occlusionTexture > -1)
@@ -195,29 +153,22 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 emissive = emissiveFactor * emissiveIntensity;
     diffuse = lerp(diffuse, diffuse * occlusionFactor, occlusionStrength);
     specular = lerp(specular, specular * occlusionFactor, occlusionStrength);
- 
-    float3 Lo = diffuse + specular + emissive;
+    
+    // PROJECTION_MAPPING
+    const float projectionMappingColorIntensity = 10;
+    float3 projectionMappingColor = 0;
+    float4 projectionTexturePosition = mul(pin.wPosition, projectionMappingTransform);
+    projectionTexturePosition /= projectionTexturePosition.w;
+    projectionTexturePosition.x = projectionTexturePosition.x * 0.5 + 0.5;
+    projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;
+    if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
+    {
+        float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a * projectionMappingColorIntensity;
+    }
+    
+    float3 Lo = diffuse + specular + emissive + projectionMappingColor /*PROJECTION_MAPPING*/;
     return float4(Lo, baseColorFactor.a);
 
-#endif
-    
-#if 0   //  Unit38以前
-    const MaterialConstants materialConstant = materials[material];
-    
-    float4 baseColor = materialConstant.pbrMetallicRoughness.baseColorTexture.index > -1 ?
-    materialTextures[BASECOLOR_TEXTURE].Sample(samplerStates[ANISOTROPIC], pin.texcoord) :
-    materialConstant.pbrMetallicRoughness.baseColorFactor;
-    
-    float3 emissive = materialConstant.emissiveTexture.index > -1 ?
-    materialTextures[EMISSIVE_TEXTURE].Sample(samplerStates[ANISOTROPIC], pin.texcoord).rgb :
-    materialConstant.emissiveFactor;
-
-    float3 N = normalize(pin.wNormal.xyz);
-    float3 L = normalize(-lightDirection.xyz);
-    
-    float3 color = max(0, dot(N, L)) * baseColor.rgb + emissive;
-    
-    return float4(color, baseColor.a);
-#endif
     
 }

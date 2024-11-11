@@ -1,18 +1,14 @@
 #pragma once
-#if 0
-
-
-class Enemy;
 
 //	é¿çsîªíË
+template<class T>
 class JudgmentBase
 {
 public:
-	JudgmentBase(Enemy* enemy) :owner(enemy) {}
+	JudgmentBase(T* owner) :owner_(owner) {}
 	virtual bool Judgment() = 0;
 
 protected:
-	Enemy* owner;
+	T* owner_;
 
 };
-#endif

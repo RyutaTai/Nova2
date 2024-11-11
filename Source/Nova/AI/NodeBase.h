@@ -1,5 +1,5 @@
 #pragma once
-#if 0
+
 #include <vector>
 #include <string>
 
@@ -13,12 +13,13 @@ class BehaviorData;
 #define debug_new new(_NORMAL_BLOCK,__FILE__,__LINE__)
 
 //	ノード
+template<class T>
 class NodeBase
 {
 public:
 	//	コンストラクタ
 	NodeBase(std::string name,NodeBase* parent,NodeBase* sibling,int priority,
-		BehaviorTree::SelectRule selectRule,JudgmentBase* judgment,ActionBase* action,int hierarchyNo) :
+		BehaviorTree<T>::SelectRule selectRule,JudgmentBase* judgment,ActionBase<T>* action,int hierarchyNo) :
 		name(name),parent(parent),sibling(sibling),priority(priority),
 		selectRule(selectRule),judgment(judgment),action(action),hierarchyNo(hierarchyNo),
 		children(NULL)
@@ -63,17 +64,16 @@ public:
 	//	ノード推論
 	NodeBase* Inference(BehaviorData* data);
 	//	実行
-	ActionBase::State Run(float elapsedTime);
+	ActionBase<T>::State Run(float elapsedTime);
 	std::vector	<NodeBase*>		children;		//	子ノード
 
 protected:
 	std::string					name;			//	名前
-	BehaviorTree::SelectRule	selectRule;		//	選択ルール
+	BehaviorTree<T>::SelectRule	selectRule;		//	選択ルール
 	JudgmentBase*				judgment;		//	判定クラス
-	ActionBase*					action;			//	実行クラス
+	ActionBase<T>*				action;			//	実行クラス
 	unsigned int				priority;		//	優先順位
 	NodeBase*					parent;			//	親ノード
 	NodeBase*					sibling;		//	兄弟ノード
 	int							hierarchyNo;	//	階層番号
 };
-#endif

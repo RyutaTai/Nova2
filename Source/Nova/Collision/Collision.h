@@ -47,62 +47,62 @@ public:
 		const DirectX::XMFLOAT3& cylinderPosition, float cylinderRadius, float cylinderHeight,
 		DirectX::XMFLOAT3& outCylinderPosition);
 	
-	//	球Vs三角形
-	static bool IntersectSphereVsTriangle(
-		const DirectX::XMVECTOR& spherePos,
-		float radius,
-		const DirectX::XMVECTOR trianglePos[3],
-		IntersectionResult* result = {},
-		bool triangleNormOnly = false);
+	////	球Vs三角形
+	//static bool IntersectSphereVsTriangle(
+	//	const DirectX::XMVECTOR& spherePos,
+	//	float radius,
+	//	const DirectX::XMVECTOR trianglePos[3],
+	//	IntersectionResult* result = {},
+	//	bool triangleNormOnly = false);
 
-	//	スフィアキャストVsモデル（メッシュ）
-	static bool IntersectSphereCastVsModel(
-		const DirectX::XMFLOAT3& start,			//	スフィアキャストのスタートの位置の球の中心
-		const DirectX::XMFLOAT3& end,  			//	スフィアキャストのエンドの位置の球の中心
-		float radius,
-		const Model* model,
-		HitResultVector* result = {});
-	static bool IntersectSphereCastVsModel(
-		const DirectX::XMVECTOR& start,			//	スフィアキャストのスタートの位置の球の中心
-		const DirectX::XMVECTOR& end,  			//	スフィアキャストのエンドの位置の球の中心
-		float radius,
-		const Model* model,
-		HitResultVector* result = {});
+	////	スフィアキャストVsモデル（メッシュ）
+	//static bool IntersectSphereCastVsModel(
+	//	const DirectX::XMFLOAT3& start,			//	スフィアキャストのスタートの位置の球の中心
+	//	const DirectX::XMFLOAT3& end,  			//	スフィアキャストのエンドの位置の球の中心
+	//	float radius,
+	//	const Model* model,
+	//	HitResultVector* result = {});
+	//static bool IntersectSphereCastVsModel(
+	//	const DirectX::XMVECTOR& start,			//	スフィアキャストのスタートの位置の球の中心
+	//	const DirectX::XMVECTOR& end,  			//	スフィアキャストのエンドの位置の球の中心
+	//	float radius,
+	//	const Model* model,
+	//	HitResultVector* result = {});
 
-	//	スフィアキャストVs三角形
-	static bool IntersectSphereCastVsTriangle(
-		const DirectX::XMVECTOR& sphereCastStart,		//	スフィアキャストの発射点（球の中心）
-		const DirectX::XMVECTOR& sphereCastDirection,	//	スフィアキャストの向き。要正規化
-		float sphereCastDist,
-		float sphereCastRadius,							//	スフィアキャストの半径
-		const DirectX::XMVECTOR trianglePos[3],
-		HitResult* result = {},
-		bool firstSphereChk = false);					//	スフィアキャストの発射点の球が既に三角形に接している場合にfalseを返すチェックを行うかどうか
+	////	スフィアキャストVs三角形
+	//static bool IntersectSphereCastVsTriangle(
+	//	const DirectX::XMVECTOR& sphereCastStart,		//	スフィアキャストの発射点（球の中心）
+	//	const DirectX::XMVECTOR& sphereCastDirection,	//	スフィアキャストの向き。要正規化
+	//	float sphereCastDist,
+	//	float sphereCastRadius,							//	スフィアキャストの半径
+	//	const DirectX::XMVECTOR trianglePos[3],
+	//	HitResult* result = {},
+	//	bool firstSphereChk = false);					//	スフィアキャストの発射点の球が既に三角形に接している場合にfalseを返すチェックを行うかどうか
 
-	//	レイVs球
-	static bool IntersectRayVsSphere(
-		const DirectX::XMVECTOR& rayStart,
-		const DirectX::XMVECTOR& rayDirection,		// 要正規化
-		float rayDist,
-		const DirectX::XMVECTOR& spherePos,
-		float radius,
-		HitResultVector* result = {});
+	////	レイVs球
+	//static bool IntersectRayVsSphere(
+	//	const DirectX::XMVECTOR& rayStart,
+	//	const DirectX::XMVECTOR& rayDirection,		// 要正規化
+	//	float rayDist,
+	//	const DirectX::XMVECTOR& spherePos,
+	//	float radius,
+	//	HitResultVector* result = {});
 
-	//	レイVs円柱
-	static bool IntersectRayVsOrientedCylinder(
-		const DirectX::XMVECTOR& rayStart,
-		const DirectX::XMVECTOR& rayDirection,		// 要正規化
-		float rayDist,
-		const DirectX::XMVECTOR& startCylinder,
-		const DirectX::XMVECTOR& endCylinder,
-		float radius,
-		HitResultVector* result = {},
-		DirectX::XMVECTOR* onCenterLinPos = {});
+	////	レイVs円柱
+	//static bool IntersectRayVsOrientedCylinder(
+	//	const DirectX::XMVECTOR& rayStart,
+	//	const DirectX::XMVECTOR& rayDirection,		// 要正規化
+	//	float rayDist,
+	//	const DirectX::XMVECTOR& startCylinder,
+	//	const DirectX::XMVECTOR& endCylinder,
+	//	float radius,
+	//	HitResultVector* result = {},
+	//	DirectX::XMVECTOR* onCenterLinPos = {});
 
-	//	外部の点に対する三角形内部の最近点を取得する
-	static bool GetClosestPointPointTriangle(
-		const DirectX::XMVECTOR& point,
-		const DirectX::XMVECTOR trianglePos[3],
-		DirectX::XMVECTOR& nearPos);
+	////	外部の点に対する三角形内部の最近点を取得する
+	//static bool GetClosestPointPointTriangle(
+	//	const DirectX::XMVECTOR& point,
+	//	const DirectX::XMVECTOR trianglePos[3],
+	//	DirectX::XMVECTOR& nearPos);
 
 };

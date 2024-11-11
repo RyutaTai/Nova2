@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "State.h"
 
 template <class T>

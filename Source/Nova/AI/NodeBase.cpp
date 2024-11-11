@@ -1,4 +1,3 @@
-#if 0
 #include "NodeBase.h"
 
 #include <random>
@@ -238,4 +237,4 @@ ActionBase::State NodeBase::Run(float elapsedTime)
 	}
 	return ActionBase::State::Failed;
 }
-#endif
+

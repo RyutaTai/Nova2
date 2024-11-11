@@ -1,12 +1,11 @@
 #pragma once
-#if 0
-class Enemy;
 
 //	行動処理基底クラス
+template<class T>
 class ActionBase
 {
 public:
-	ActionBase(Enemy* enemy):owner(enemy){}
+	ActionBase(T* owner):owner_(owner){}
 	//	実行情報
 	enum class State
 	{
@@ -16,10 +15,9 @@ public:
 	};
 
 	//	実行処理(純粋仮想関数)
-	virtual ActionBase::State Run(float elapsedTime) = 0;
+	virtual ActionBase<T>::State Run(const float& elapsedTime) = 0;
 
 protected:
-	Enemy* owner;
+	T* owner_;
 	int step = 0;
 };
-#endif

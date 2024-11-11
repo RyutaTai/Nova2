@@ -1,10 +1,10 @@
-#if 0
 #include "BehaviorData.h"
 
 #include "NodeBase.h"
 
 //	シーケンスノードのポップ
-NodeBase* BehaviorData::PopSequenceNode()
+template<class T>
+NodeBase<T>* BehaviorData<T>::PopSequenceNode()
 {
 	//	空ならNULL
 	if (sequenceStack.empty() != 0)
@@ -21,7 +21,8 @@ NodeBase* BehaviorData::PopSequenceNode()
 }
 
 //	シーケンスステップのゲッター
-int BehaviorData::GetSequenceStep(std::string name)
+template<class T>
+int BehaviorData<T>::GetSequenceStep(std::string name)
 {
 	if (runSequenceStepMap.count(name) == 0)
 	{
@@ -32,13 +33,15 @@ int BehaviorData::GetSequenceStep(std::string name)
 }
 
 //	シーケンスステップのセッター
-void BehaviorData::SetSequenceStep(std::string name, int step)
+template<class T>
+void BehaviorData<T>::SetSequenceStep(std::string name, int step)
 {
 	runSequenceStepMap.at(name) = step;
 }
 
 //	初期化
-void BehaviorData::Init()
+template<class T>
+void BehaviorData<T>::Init()
 {
 	runSequenceStepMap.clear();
 	while (sequenceStack.size() > 0)
@@ -46,4 +49,3 @@ void BehaviorData::Init()
 		sequenceStack.pop();
 	}
 }
-#endif

@@ -194,6 +194,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\DragonkinAction.cpp" />
+    <ClCompile Include="Source\Game\DragonkinJudgment.cpp" />
     <ClCompile Include="Source\Game\UIInstructions.cpp" />
     <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
@@ -222,7 +224,6 @@
     <ClCompile Include="Source\Game\BulletStraight.cpp" />
     <ClCompile Include="Source\Game\Character.cpp" />
     <ClCompile Include="Source\Game\Dragonkin.cpp" />
-    <ClCompile Include="Source\Game\DragonkinState.cpp" />
     <ClCompile Include="Source\Game\Drone.cpp" />
     <ClCompile Include="Source\Game\DroneState.cpp" />
     <ClCompile Include="Source\Game\Enemy.cpp" />
@@ -232,13 +233,10 @@
     <ClCompile Include="Source\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Game\Stage.cpp" />
     <ClCompile Include="Source\Game\UI.cpp" />
-    <ClCompile Include="Source\Nova\AI\ActionDerived.cpp" />
     <ClCompile Include="Source\Nova\AI\BehaviorData.cpp" />
     <ClCompile Include="Source\Nova\AI\BehaviorTree.cpp" />
-    <ClCompile Include="Source\Nova\AI\JudgmentDerived.cpp" />
     <ClCompile Include="Source\Nova\AI\MetaAI.cpp" />
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
-    <ClCompile Include="Source\Nova\AI\State.cpp" />
     <ClCompile Include="Source\Nova\AI\StateDerived.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio3DSystem.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioSource.cpp" />
@@ -287,6 +285,8 @@
     <ClCompile Include="Source\Game\UITempo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\DragonkinAction.h" />
+    <ClInclude Include="Source\Game\DragonkinJudgment.h" />
     <ClInclude Include="Source\Game\UIInstructions.h" />
     <ClInclude Include="Source\Nova\Graphics\Decal.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
@@ -316,7 +316,6 @@
     <ClInclude Include="Source\Game\BulletStraight.h" />
     <ClInclude Include="Source\Game\Character.h" />
     <ClInclude Include="Source\Game\Dragonkin.h" />
-    <ClInclude Include="Source\Game\DragonkinState.h" />
     <ClInclude Include="Source\Game\Drone.h" />
     <ClInclude Include="Source\Game\DroneState.h" />
     <ClInclude Include="Source\Game\Enemy.h" />
@@ -328,11 +327,9 @@
     <ClInclude Include="Source\Game\UI.h" />
     <ClInclude Include="Source\Game\UIManager.h" />
     <ClInclude Include="Source\Nova\AI\ActionBase.h" />
-    <ClInclude Include="Source\Nova\AI\ActionDerived.h" />
     <ClInclude Include="Source\Nova\AI\BehaviorData.h" />
     <ClInclude Include="Source\Nova\AI\BehaviorTree.h" />
     <ClInclude Include="Source\Nova\AI\JudgmentBase.h" />
-    <ClInclude Include="Source\Nova\AI\JudgmentDerived.h" />
     <ClInclude Include="Source\Nova\AI\MetaAI.h" />
     <ClInclude Include="Source\Nova\AI\NodeBase.h" />
     <ClInclude Include="Source\Nova\AI\State.h" />

@@ -3,49 +3,45 @@
 #include "NodeBase.h"
 
 //	シーケンスノードのポップ
-template<class T>
-NodeBase<T>* BehaviorData<T>::PopSequenceNode()
+NodeBase* BehaviorData::PopSequenceNode()
 {
-	//	空ならNULL
-	if (sequenceStack.empty() != 0)
+	//	空ならnullptrを返す
+	if (sequenceStack_.empty() != 0)
 	{
 		return nullptr;
 	}
-	NodeBase* node = sequenceStack.top();
+	NodeBase* node = sequenceStack_.top();
 	if (node != nullptr)
 	{
 		//	取り出したデータを削除
-		sequenceStack.pop();
+		sequenceStack_.pop();
 	}
 	return node;
 }
 
 //	シーケンスステップのゲッター
-template<class T>
-int BehaviorData<T>::GetSequenceStep(std::string name)
+int BehaviorData::GetSequenceStep(std::string name)
 {
-	if (runSequenceStepMap.count(name) == 0)
+	if (runSequenceStepMap_.count(name) == 0)
 	{
-		runSequenceStepMap.insert(std::make_pair(name,0));
+		runSequenceStepMap_.insert(std::make_pair(name,0));
 	}
 
-	return runSequenceStepMap.at(name);
+	return runSequenceStepMap_.at(name);
 }
 
 //	シーケンスステップのセッター
-template<class T>
-void BehaviorData<T>::SetSequenceStep(std::string name, int step)
+void BehaviorData::SetSequenceStep(std::string name, int step)
 {
-	runSequenceStepMap.at(name) = step;
+	runSequenceStepMap_.at(name) = step;
 }
 
 //	初期化
-template<class T>
-void BehaviorData<T>::Init()
+void BehaviorData::Initialize()
 {
-	runSequenceStepMap.clear();
-	while (sequenceStack.size() > 0)
+	runSequenceStepMap_.clear();
+	while (sequenceStack_.size() > 0)
 	{
-		sequenceStack.pop();
+		sequenceStack_.pop();
 	}
 }

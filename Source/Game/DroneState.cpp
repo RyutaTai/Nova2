@@ -18,6 +18,16 @@ namespace DroneState
 
 	}
 
+	void IdleState::DrawDebug()
+	{
+		if (ImGui::TreeNode("IdleState"))
+		{
+
+			ImGui::TreePop();
+		}
+
+	}
+
 }
 
 //	サーチステート
@@ -40,6 +50,16 @@ namespace DroneState
 	{
 
 	}
+
+	void SearchState::DrawDebug()
+	{
+		if (ImGui::TreeNode("SearchState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	移動ステート
@@ -59,6 +79,16 @@ namespace DroneState
 	{
 
 	}
+
+	void MoveState::DrawDebug()
+	{
+		if (ImGui::TreeNode("MoveState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	攻撃ステート
@@ -88,6 +118,16 @@ namespace DroneState
 	{
 
 	}
+
+	void AttackState::DrawDebug()
+	{
+		if (ImGui::TreeNode("AttackState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	回避ステート
@@ -107,4 +147,14 @@ namespace DroneState
 	{
 
 	}
+
+	void AvoidanceState::DrawDebug()
+	{
+		if (ImGui::TreeNode("AvoidanceState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }

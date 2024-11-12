@@ -1,6 +1,11 @@
 #pragma once
 
 #include "Enemy.h"
+#include "../Nova/AI/BehaviorTree.h"
+
+class BehaviorTree;
+class BehaviorData;
+class NodeBase;
 
 class Dragonkin : public Enemy
 {
@@ -10,7 +15,7 @@ public:
 
 public:
 	//	アニメーション情報(Boss)
-	enum AnimationType
+	enum class AnimationType
 	{
 		ANIM_ATTACK01 = 0, 	//	
 		ANIM_ATTACK02,
@@ -65,7 +70,7 @@ public:
 		ComboOne5,		//	コンボ0_5
 		ComboOne6,		//	コンボ0_6
 		ComboOne7,		//	コンボ0_7
-		Dodge,		//	回避
+		Dodge,			//	回避
 		Max,			//	ステート最大数
 	};
 
@@ -82,7 +87,15 @@ public:
 	void DrawDebug()override;
 	void DrawDebugPrimitive()override;
 
+	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+
 private:
+	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理
+
+private:
+	BehaviorTree*	behaviorTree_	= nullptr;
+	BehaviorData*	behaviorData_	= nullptr;
+	NodeBase*		activeNode_		= nullptr;
 
 
 };

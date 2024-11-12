@@ -16,6 +16,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -32,6 +33,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -48,6 +50,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 		void UpdateJudgeTimer(const float& elapsedTime) { judgeTimer_ += elapsedTime; }
 		//bool PunchAttack(const float& elapsedTime, const std::string& meshName, const std::string& boneName);
@@ -80,6 +83,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
@@ -109,6 +113,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
@@ -118,7 +123,7 @@ namespace PlayerState
 
 	private:
 		static constexpr int AnimJudgeCount = 2;	//	アニメーション判定区間の数
-		JudgeTime			animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
+		JudgeTime			animJudgeTime_[AnimJudgeCount] = {};	//	判定を取るアニメーション区間
 		JudgeTime			animSpeedChangeInterval_[4] = {};		//	判定を取るアニメーション区間
 		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
 		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
@@ -141,6 +146,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
@@ -171,6 +177,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
@@ -200,6 +207,7 @@ namespace PlayerState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }

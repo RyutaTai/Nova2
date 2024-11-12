@@ -44,6 +44,14 @@ namespace PlayerState
 	{
 		owner_->SetAnimationSpeed(1.0f);
 	}
+
+	void IdleState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Idle"))
+		{
+
+		}
+	}
 }
 
 //	移動ステート
@@ -75,6 +83,14 @@ namespace PlayerState
 	{
 		owner_->SetMoveSpeed(2.0f);
 		owner_->SetAnimationSpeed(1.0f);
+	}
+
+	void MoveState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Move"))
+		{
+
+		}
 	}
 }
 
@@ -211,6 +227,14 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
+	void AttackState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Attack"))
+		{
+
+		}
+	}
+
 }
 
 //	コンボ01_1(右パンチ)
@@ -330,6 +354,21 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
+	void ComboOne1::DrawDebug()
+	{
+		if (ImGui::TreeNode("ComboOne1"))
+		{
+			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
+			
+			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
+			float cancellationTimeMax = cancellationTime_.GetMaxTime();
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
+			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+
+		}
+	}
+
 }
 
 //	コンボ01_2
@@ -447,6 +486,21 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
+	void ComboOne2::DrawDebug()
+	{
+		if (ImGui::TreeNode("ComboOne2"))
+		{
+			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
+
+			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
+			float cancellationTimeMax = cancellationTime_.GetMaxTime();
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
+			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+
+		}
+	}
+
 }
 
 //	コンボ01_3
@@ -543,6 +597,21 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
+	void ComboOne3::DrawDebug()
+	{
+		if (ImGui::TreeNode("ComboOne3"))
+		{
+			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
+
+			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
+			float cancellationTimeMax = cancellationTime_.GetMaxTime();
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
+			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+
+		}
+	}
+
 }
 
 //	コンボ01_4
@@ -629,6 +698,21 @@ namespace PlayerState
 		owner_->SetUseRootMotion(false);
 		owner_->SetAnimationSpeed(1.0f);
 	}
+
+	void ComboOne4::DrawDebug()
+	{
+		if (ImGui::TreeNode("ComboOne4"))
+		{
+			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
+
+			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
+			float cancellationTimeMax = cancellationTime_.GetMaxTime();
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
+			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
+			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+
+		}
+	}
 }
 
 //	回避ステート
@@ -648,5 +732,13 @@ namespace PlayerState
 	void DodgeState::Finalize()
 	{
 		owner_->SetAnimationSpeed(1.0f);
+	}
+
+	void DodgeState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Dodge"))
+		{
+
+		}
 	}
 }

@@ -37,6 +37,15 @@ namespace GameState
 
 	}
 
+	void Wave1State::DrawDebug()
+	{
+		if (ImGui::TreeNode("Wave1State"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	ウェーブ2（敵2体）
@@ -72,6 +81,16 @@ namespace GameState
 	{
 
 	}
+
+	void Wave2State::DrawDebug()
+	{
+		if (ImGui::TreeNode("Wave2State"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	ウェーブ3（敵5体）
@@ -107,6 +126,16 @@ namespace GameState
 	{
 
 	}
+
+	void Wave3State::DrawDebug()
+	{
+		if (ImGui::TreeNode("Wave3State"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	ゲームクリア
@@ -132,6 +161,16 @@ namespace GameState
 	{
 
 	}
+
+	void GameClearState::DrawDebug()
+	{
+		if (ImGui::TreeNode("GameClearState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	ゲームオーバー
@@ -157,5 +196,15 @@ namespace GameState
 	{
 		
 	}
+
+	void GameOverState::DrawDebug()
+	{
+		if (ImGui::TreeNode("GameOverState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 

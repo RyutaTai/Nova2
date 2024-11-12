@@ -15,6 +15,8 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
+
 	};
 }
 
@@ -30,6 +32,7 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -46,6 +49,7 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -62,6 +66,7 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -78,6 +83,7 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		float changeTitleTimer_ = 4.0f;
@@ -97,6 +103,7 @@ namespace GameState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		float changeTitleTimer_ = 4.0f;

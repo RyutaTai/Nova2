@@ -1,5 +1,7 @@
 #include "Dragonkin.h"
 
+#include "DragonkinAction.h"
+#include "../Nova/AI/BehaviorData.h"
 #include "../Nova/Graphics/Graphics.h"
 
 //	コンストラクタ
@@ -26,6 +28,12 @@ Dragonkin::Dragonkin()
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
 
+	//	ビヘイビアツリー設定
+	behaviorData_ = new BehaviorData();
+	behaviorTree_ = new BehaviorTree(this);
+
+	behaviorTree_->AddNode("",		"Root", 0, BehaviorTree::SelectRule::Priority,	nullptr, nullptr);									//	ルートノード
+	behaviorTree_->AddNode("Root",	"Idle", 0, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::IdleAction(this));	//	待機ノード(末端)
 
 }
 
@@ -48,12 +56,34 @@ void Dragonkin::Initialize()
 	float scale = 0.04f;
 	GetTransform()->SetScaleFactor(scale);
 
+	//	当たり判定用高さ、半径設定
+	
+
+	PlayAnimation(AnimationType::ANIM_IDLE02, true, 0.2f);	//	アニメーション再生確認
+
 }
 
 //	更新処理
 void Dragonkin::Update(const float& elapsedTime)
 {
+	//UpdateBehaviorTree(elapsedTime);	//	ビヘイビアツリー更新
+}
 
+//	ビヘイビアツリー更新処理
+void Dragonkin::UpdateBehaviorTree(const float& elapsedTime)
+{
+	//	現在実行されているノードが無ければ
+	if (activeNode_ == nullptr)
+	{
+		//	次に実行するノードを推論する
+		activeNode_ = behaviorTree_->ActiveNodeInference(behaviorData_);
+	}
+	//	現在実行するノードがあれば
+	if (activeNode_ != nullptr)
+	{
+		//	ビヘイビアツリーからノードを実行
+		activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_, elapsedTime);
+	}
 }
 
 //	ステージとの当たり判定
@@ -67,6 +97,12 @@ bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
 {
 
 	return false;
+}
+
+//	アニメーション
+void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame)
+{
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame);
 }
 
 //	破棄処理
@@ -89,14 +125,13 @@ void Dragonkin::Render()
 //	デバッグプリミティブ描画
 void Dragonkin::DrawDebugPrimitive()
 {
-	//DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-	//
-	////	衝突判定用のデバッグ球を描画
-	//debugRenderer->DrawSphere(this->GetTransform()->GetPosition(), radius_, DirectX::XMFLOAT4(0, 0, 0, 1));
-	//debugRenderer->DrawSphere(this->GetTransform()->GetPosition(), radius_, DirectX::XMFLOAT4(0, 0, 0, 1));
-	//
-	////	索敵範囲描画(円柱)
-	//debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 30.0f, { 0,1,0.1f,1.0f });
+	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+	//	衝突判定用のデバッグ球を描画
+	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), radius_, height_, DirectX::XMFLOAT4(0, 0, 0, 1));
+
+	//	索敵範囲描画(円柱)
+	//debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0,1,0.1f,1.0f });
 
 }
 

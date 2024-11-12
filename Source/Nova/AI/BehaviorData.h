@@ -6,28 +6,28 @@
 
 #include "BehaviorTree.h"
 
-template<class T>
 class NodeBase;
+class Enemy;
 
 //	Behavior保存データ
-template<class T>
 class BehaviorData
 {
 public:
 	//	コンストラクタ
-	BehaviorData() { Init(); }
-	//	初期化
-	void Init();
+	BehaviorData() { Initialize(); }
 	//	シーケンスノードのプッシュ
-	void PushSequenceNode(NodeBase<T>* node) { sequenceStack.push(node); }
+	void PushSequenceNode(NodeBase* node) { sequenceStack_.push(node); }
 	//	シーケンスノードのポップ
-	NodeBase<T>* PopSequenceNode();
+	NodeBase* PopSequenceNode();
 	//	シーケンスステップのゲッター
 	int GetSequenceStep(std::string name);
 	//	シーケンスステップのセッター
 	void SetSequenceStep(std::string name, int step);
+	// 初期化
+	void Initialize();
+
 private:
-	std::stack	<NodeBase<T>*>		sequenceStack;			//	実行する中間ノードをスタック
-	std::map	<std::string, int>	runSequenceStepMap;		//	実行中の中間ノードのステップを記録
+	std::stack<NodeBase*>		sequenceStack_;			//	実行する中間ノードをスタック
+	std::map<std::string, int>	runSequenceStepMap_;	//	実行中の中間ノードのステップを記録]
 
 };

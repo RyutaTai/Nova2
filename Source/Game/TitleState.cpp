@@ -31,6 +31,15 @@ namespace TitleState
 
 	}
 
+	void MainState::DrawDebug()
+	{
+		if (ImGui::TreeNode("MainState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	Setting
@@ -50,6 +59,16 @@ namespace TitleState
 	{
 
 	}
+
+	void SettingState::DrawDebug()
+	{
+		if (ImGui::TreeNode("SettingState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	Fade
@@ -73,4 +92,14 @@ namespace TitleState
 	{
 
 	}
+
+	void FadeState::DrawDebug()
+	{
+		if (ImGui::TreeNode("FadeState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }

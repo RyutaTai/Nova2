@@ -49,31 +49,26 @@ public:
 	virtual void				Render()		override = 0;
 	virtual void				DrawDebug()		override = 0;
 	virtual void				DrawDebugPrimitive() = 0;
-
-	virtual bool				SearchPlayer();																	//	プレイヤー索敵
-	//virtual bool OnMessage(const Telegram& msg);																//	メッセージ受信関数
+	virtual bool				SearchPlayer();																//	プレイヤー索敵
+	//virtual bool OnMessage(const Telegram& msg);															//	メッセージ受信関数
 	virtual void				Destroy();
 
+	void						SetDamaged(const bool& damaged)		{ damaged_ = damaged; }					//	ダメージフラグ設定
+	void						SetMyType(const EnemyType& myType)	{ myType_ = myType; }					//	自分の種類設定
+	virtual void				SetRandomTargetPosition();													//	ターゲット位置をランダム設定
+	void						SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }	//	ターゲットポジション設定
+	void						SetRunTimer(const float& timer) { runTimer_ = timer; }			//	ステートタイマー設定
+
 	EnemyType					GetMyType()										{ return myType_; }				//	敵の種類取得
-	//StateMachine <Enemy>*	GetStateMachine()	{ return stateMachine_; }
 	DirectX::XMFLOAT3			GetTargetPosition()								{ return targetPosition_; }		//	ターゲットポジション取得
-	float						GetStateTimer()									{ return stateTimer_; }			//	ステートタイマー取得
-
-	void						SetDamaged(bool damaged) { damaged_ = damaged; }		//	ダメージフラグ設定
-	void						SetMyType(EnemyType myType)					{ myType_ = myType; }			//	自分の種類設定
-	virtual void				SetRandomTargetPosition();														//	ターゲット位置をランダム設定
-	void						SetTargetPosition(DirectX::XMFLOAT3 position)	{ targetPosition_ = position; }	//	ターゲットポジション設定
-	void						SetStateTimer(float timer)						{ stateTimer_ = timer; }		//	ステートタイマー設定
-
+	float						GetRunTimer()									{ return runTimer_; }			//	ステートタイマー取得
 
 protected:
-	//StateMachine <Enemy>*		stateMachine_	= nullptr;								//	ステートマシン
-
 	DirectX::XMFLOAT3			targetPosition_		=	{ 0.0f,0.0f,0.0f };				//	ターゲット位置
 	DirectX::XMFLOAT3			territoryOrigin_	=	{ 0.0f,0.0f,0.0f };				//	索敵範囲の原点
 	float						territoryRange_		=	10.0f;							//	索敵範囲
 	float						searchRange_		=	50.0f;							//	索敵距離
-	float						stateTimer_			=	0.0f;							//
+	float						runTimer_			=	0.0f;							//
 	bool						damaged_			=	false;							//	攻撃を受けたかどうか
 
 };

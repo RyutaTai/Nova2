@@ -14,6 +14,7 @@ namespace TitleState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -29,6 +30,7 @@ namespace TitleState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -44,6 +46,7 @@ namespace TitleState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	private:
 		static constexpr float FADE_TIME = 1.5f;	//	フェードする時間

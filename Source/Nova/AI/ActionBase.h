@@ -1,11 +1,12 @@
 #pragma once
 
+class Dragonkin;
+
 //	行動処理基底クラス
-template<class T>
 class ActionBase
 {
 public:
-	ActionBase(T* owner):owner_(owner){}
+	ActionBase(Dragonkin* enemy):owner_(enemy){}
 	//	実行情報
 	enum class State
 	{
@@ -14,10 +15,11 @@ public:
 		Complete,	//	実行成功
 	};
 
-	//	実行処理(純粋仮想関数)
-	virtual ActionBase<T>::State Run(const float& elapsedTime) = 0;
+	virtual ActionBase::State Run(const float& elapsedTime) = 0;	//	実行処理
+	virtual void DrawDebug() = 0;									//	デバッグ描画
 
 protected:
-	T* owner_;
-	int step = 0;
+	Dragonkin* owner_ = nullptr;
+	int step_ = 0;
+
 };

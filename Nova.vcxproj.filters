@@ -181,16 +181,7 @@
     <ClCompile Include="Source\Nova\AI\MetaAI.cpp">
       <Filter>Nova\AI\MetaAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Nova\AI\StateDerived.cpp">
-      <Filter>Nova\AI\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Nova\AI\BehaviorData.cpp">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Nova\AI\BehaviorTree.cpp">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Nova\AI\NodeBase.cpp">
       <Filter>Nova\AI\BehaviorBaseAI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Nova\Resources\Midi.cpp" />
@@ -262,6 +253,8 @@
     <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
     <ClCompile Include="Source\Game\DragonkinJudgment.cpp" />
     <ClCompile Include="Source\Game\DragonkinAction.cpp" />
+    <ClCompile Include="Source\Nova\AI\BehaviorData.cpp" />
+    <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -408,25 +401,10 @@
     <ClInclude Include="Source\Nova\AI\State.h">
       <Filter>Nova\AI\State</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Nova\AI\StateDerived.h">
-      <Filter>Nova\AI\State</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Nova\AI\StateMachine.h">
       <Filter>Nova\AI\State</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Nova\AI\ActionBase.h">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Nova\AI\BehaviorData.h">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Nova\AI\BehaviorTree.h">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Nova\AI\JudgmentBase.h">
-      <Filter>Nova\AI\BehaviorBaseAI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Nova\AI\NodeBase.h">
       <Filter>Nova\AI\BehaviorBaseAI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Nova\Resources\Midi.h" />
@@ -499,6 +477,10 @@
     <ClInclude Include="Source\Nova\Graphics\Decal.h" />
     <ClInclude Include="Source\Game\DragonkinJudgment.h" />
     <ClInclude Include="Source\Game\DragonkinAction.h" />
+    <ClInclude Include="Source\Nova\AI\ActionBase.h" />
+    <ClInclude Include="Source\Nova\AI\BehaviorData.h" />
+    <ClInclude Include="Source\Nova\AI\JudgmentBase.h" />
+    <ClInclude Include="Source\Nova\AI\NodeBase.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

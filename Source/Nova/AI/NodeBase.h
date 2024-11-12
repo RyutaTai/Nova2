@@ -13,24 +13,23 @@ class BehaviorData;
 #define debug_new new(_NORMAL_BLOCK,__FILE__,__LINE__)
 
 //	ノード
-template<class T>
 class NodeBase
 {
 public:
 	//	コンストラクタ
 	NodeBase(std::string name,NodeBase* parent,NodeBase* sibling,int priority,
-		BehaviorTree<T>::SelectRule selectRule,JudgmentBase* judgment,ActionBase<T>* action,int hierarchyNo) :
-		name(name),parent(parent),sibling(sibling),priority(priority),
-		selectRule(selectRule),judgment(judgment),action(action),hierarchyNo(hierarchyNo),
-		children(NULL)
+		BehaviorTree::SelectRule selectRule,JudgmentBase* judgment,ActionBase* action,int hierarchyNo) :
+		name_(name),parent_(parent),sibling_(sibling),priority_(priority),
+		selectRule_(selectRule),judgment_(judgment),action_(action),hierarchyNo_(hierarchyNo),
+		children_(NULL)
 	{
 	}
 	//	デストラクタ
 	~NodeBase();
 	//	名前ゲッター
-	std::string GetName() { return name; }
+	std::string GetName() { return name_; }
 	//	親ノードゲッター
-	NodeBase* GetParent() { return parent; }
+	NodeBase* GetParent() { return parent_; }
 	//	子ノードゲッター
 	NodeBase* GetChild(int index);
 	//	子ノードゲッター(末尾)
@@ -38,42 +37,45 @@ public:
 	//	子ノードゲッター(先頭)
 	NodeBase* GetTopChild();
 	//	兄弟ノードゲッター
-	NodeBase* GetSibling() { return sibling; }
+	NodeBase* GetSibling() { return sibling_; }
 	//	階層番号ゲッター
-	int GetHirerchyNo() { return hierarchyNo; }
+	int GetHirerchyNo() { return hierarchyNo_; }
 	//	優先順位ゲッター
-	int GetPriority() { return priority; }
+	int GetPriority() { return priority_; }
 	//	親ノードセッター
-	void SetParent(NodeBase* parent) { this->parent = parent; }
+	void SetParent(NodeBase* parent) { this->parent_ = parent; }
 	//	子ノード追加
-	void AddChild(NodeBase* child) { children.push_back(child); }
+	void AddChild(NodeBase* child) { children_.push_back(child); }
 	//	兄弟ノードセッター
-	void SetSibling(NodeBase* sibling) {this->sibling = sibling;}
+	void SetSibling(NodeBase* sibling) {this->sibling_ = sibling;}
 	//	行動データを持っているか
-	bool HasAction() { return action != nullptr ? true : false; }
+	bool HasAction() { return action_ != nullptr ? true : false; }
 	//	実行可否判定
 	bool Judgment();
 	//	優先順位選択
-	NodeBase* SelectPriority(std::vector <NodeBase*>* list);
+	NodeBase* SelectPriority(std::vector<NodeBase*>* list);
 	//	ランダム選択
-	NodeBase* SelectRandom(std::vector <NodeBase*>* list);
+	NodeBase* SelectRandom(std::vector<NodeBase*>* list);
 	//	シーケンス選択
-	NodeBase* SelectSequence(std::vector <NodeBase*>* list, BehaviorData* data);
+	NodeBase* SelectSequence(std::vector<NodeBase*>* list, BehaviorData* data);
 	//	ノード検索
 	NodeBase* SearchNode(std::string searchName);
 	//	ノード推論
-	NodeBase* Inference(BehaviorData* data);
+	NodeBase* Inference(Enemy* enemy, BehaviorData* data);
 	//	実行
-	ActionBase<T>::State Run(float elapsedTime);
-	std::vector	<NodeBase*>		children;		//	子ノード
+	ActionBase::State Run(float elapsedTime);
+
+public:
+	std::vector<NodeBase*>		children_;		//	子ノード
 
 protected:
-	std::string					name;			//	名前
-	BehaviorTree<T>::SelectRule	selectRule;		//	選択ルール
-	JudgmentBase*				judgment;		//	判定クラス
-	ActionBase<T>*				action;			//	実行クラス
-	unsigned int				priority;		//	優先順位
-	NodeBase*					parent;			//	親ノード
-	NodeBase*					sibling;		//	兄弟ノード
-	int							hierarchyNo;	//	階層番号
+	std::string					name_;			//	名前
+	BehaviorTree::SelectRule	selectRule_;	//	選択ルール
+	JudgmentBase*				judgment_;		//	判定クラス
+	ActionBase*					action_;		//	実行クラス
+	unsigned int				priority_;		//	優先順位
+	NodeBase*					parent_;		//	親ノード
+	NodeBase*					sibling_;		//	兄弟ノード
+	int							hierarchyNo_;	//	階層番号
+
 };

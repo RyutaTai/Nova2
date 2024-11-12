@@ -15,6 +15,7 @@ namespace DroneState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -31,6 +32,7 @@ namespace DroneState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -47,6 +49,7 @@ namespace DroneState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }
@@ -63,6 +66,7 @@ namespace DroneState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 		void LaunchBullet();
 		void Attack();
@@ -82,6 +86,7 @@ namespace DroneState
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }

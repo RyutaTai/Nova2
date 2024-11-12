@@ -683,9 +683,9 @@ bool Player::DummyRay(const float& elapsedTime)
 }
 
 //	アニメーション
-void Player::PlayAnimation(AnimationType index, const bool& loop, const float& blendTime, const float& startFrame)
+void Player::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame)
 {
-	Character::PlayAnimation(static_cast<int>(index), loop, blendTime, startFrame);
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame);
 }
 
 //	スティック入力値から移動ベクトルを取得
@@ -783,7 +783,7 @@ void Player::DrawDebug()
 
 		//	ステート表示
 		DrawStateStr();
-		//stateMachine_->DrawDebug();
+		stateMachine_->DrawDebug();
 
 		//	ステージヒット文字列
 		std::string hitStage = "";

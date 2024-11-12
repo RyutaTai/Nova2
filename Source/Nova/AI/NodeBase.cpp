@@ -1,65 +1,63 @@
 #include "NodeBase.h"
 
-#include <random>
-
 #include "JudgmentBase.h"
-#include "EnemyBlueSlime.h"
 #include "BehaviorData.h"
 #include "ActionBase.h"
+#include "../Others/MathHelper.h"
 
 //	デストラクタ
 NodeBase::~NodeBase()
 {
-	delete judgment;
-	delete action;
+	delete judgment_;
+	delete action_;
 }
 
 //	子ノードゲッター
 NodeBase* NodeBase::GetChild(int index)
 {
-	if (children.size() <= index)
+	if (children_.size() <= index)//修正
 	{
 		return nullptr;
 	}
-	return children.at(index);
+	return children_.at(index);
 }
 
 //	子ノードゲッター(末尾)
 NodeBase* NodeBase::GetLastChild()
 {
-	if (children.size() == 0)
+	if (children_.size() == 0)
 	{
 		return nullptr;
 	}
 
-	return children.at(children.size() - 1);
+	return children_.at(children_.size() - 1);
 }
 
 //	子ノードゲッター(先頭)
 NodeBase* NodeBase::GetTopChild()
 {
-	if (children.size() == 0)
+	if (children_.size() == 0)
 	{
 		return nullptr;
 	}
 
-	return children.at(0);
+	return children_.at(0);
 }
-
 
 //	ノード検索
 NodeBase* NodeBase::SearchNode(std::string searchName)
 {
 	//	名前が一致
-	if (name == searchName)
+	if (name_ == searchName)
 	{
 		return this;
 	}
-	else {
+	else 
+	{
 		//	子ノードで検索
-		for (auto itr = children.begin(); itr != children.end(); itr++)
+		for (auto it = children_.begin(); it != children_.end(); it++)
 		{
-			NodeBase* ret = (*itr)->SearchNode(searchName);
+			NodeBase* ret = (*it)->SearchNode(searchName);
 
 			if (ret != nullptr)
 			{
@@ -72,32 +70,26 @@ NodeBase* NodeBase::SearchNode(std::string searchName)
 }
 
 //	ノード推論
-NodeBase* NodeBase::Inference(BehaviorData* data)
+NodeBase* NodeBase::Inference(Enemy* enemy, BehaviorData* data)
 {
 	std::vector<NodeBase*> list;
 	NodeBase* result = nullptr;
 
-	//	childrenの数だけループを行う。
-	for (int i = 0; i < children.size(); i++)
+	for (int i = 0; i < children_.size(); i++)
 	{
-		//	children.at(i)->judgmentがnullptrでなければ
-		if (children.at(i)->judgment != nullptr)
+		if (children_.at(i)->judgment_ != nullptr)
 		{
-			//	children.at(i)->judgment->Judgment()関数を実行し、trueであれば
-			//	listにchildren.at(i)を追加していく
-			if (children.at(i)->judgment->Judgment())
-			{
-				list.emplace_back(children.at(i));
-			}
+			if (children_.at(i)->judgment_->Judgment())list.emplace_back(children_.at(i));
 		}
-		else {
+		else 
+		{
 			//	判定クラスがなければ無条件に追加
-			list.emplace_back(children.at(i));
+			list.emplace_back(children_.at(i));
 		}
 	}
 
 	//	選択ルールでノード決め
-	switch (selectRule)
+	switch (selectRule_)
 	{
 		//	優先順位
 	case BehaviorTree::SelectRule::Priority:
@@ -121,9 +113,10 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 		{
 			return result;
 		}
-		else {
+		else 
+		{
 			//	決まったノードで推論開始
-			result = result->Inference(data);
+			result = result->Inference(enemy, data);
 		}
 	}
 
@@ -136,32 +129,26 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
 	NodeBase* selectNode = nullptr;
 	int priority = INT_MAX;
 
-	//	一番優先順位が高いノードを探してselectNodeに格納
+	//	listに実行可能なノードが登録されている
+	//	listに登録されたノードの中で一番優先順位が高いものを探してselectNodeに格納(数が小さい程優先は高い）
 	for (NodeBase* node : *list)
 	{
-		if (node->GetPriority() < priority)		//	より優先度が高かったら
+		if (priority >node->GetPriority())	//	前回より優先順位が高かったら
 		{
-			priority	= node->GetPriority();	//	比較用の変数の優先度を上書き
-			selectNode	= node;					//	優先度が高いノードを選択
+			priority = node->GetPriority();
+			selectNode = node;
 		}
 	}
-
 	return selectNode;
 }
-
 
 //	ランダムでノード選択
 NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* list)
 {
 	int selectNo = 0;
 	//	listのサイズで乱数を取得してselectNoに格納
-	std::random_device rnd;     //	非決定的な乱数生成器を生成
-	std::mt19937 mt(rnd());     //	メルセンヌ・ツイスタの32ビット版、引数は初期シード値
-	std::uniform_int_distribution<> randNode(0, list->size() - 1); //	[0, list->size()] 範囲の一様乱数
-	selectNo = randNode(mt);
+	selectNo = Mathf::RandomRange(0, list->size() - 1);
 	
-	//	rand関数の場合
-	//	selectNo = rand() % list->size();//0 ～ (list->size() - 1 ) 例:rand() % 6 なら　0～5までの乱数
 	//	listのselectNo番目の実態をリターン
 	return (*list).at(selectNo);
 }
@@ -171,58 +158,68 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 {
 	int step = 0;
 
-	//	指定されている中間ノードのがシーケンスがどこまで実行されたか取得する
-	step = data->GetSequenceStep(name);
+	//	この中間ノードが次に実行すべきstepを取得する
+	step = data->GetSequenceStep(name_);
 
 	//	中間ノードに登録されているノード数以上の場合、
-	if (step >= children.size())
+	if (step >= children_.size())
 	{
-		//	ルールによって処理を切り替える
-		//	ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
-		//	ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
-		if (selectRule == BehaviorTree::SelectRule::SequentialLooping)
+		//	ルールによってシーケンシャルの処理を切り替える（ルールはthisで参照可能）
+		//	①ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
+		//	②ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
+		if (selectRule_ == BehaviorTree::SelectRule::SequentialLooping)
 		{
 			step = 0;
 		}
-		if (selectRule == BehaviorTree::SelectRule::Sequence)
+		else if (selectRule_ == BehaviorTree::SelectRule::Sequence)
 		{
 			return nullptr;
 		}
+
 	}
 	//	実行可能リストに登録されているデータの数だけループを行う
-	for (; step < children.size(); step++) {
-		for (auto itr = list->begin(); itr != list->end(); itr++)
+#if 1
+	for (auto itr = list->begin(); itr != list->end(); itr++)
+	{
+		//	子ノードが実行可能リストに含まれているか
+		if (children_.at(step)->GetName() == (*itr)->GetName())
 		{
-			//	子ノードが実行可能リストに含まれているか
-			if (children.at(step)->GetName() == (*itr)->GetName())
-			{
-				//	現在の実行ノードの保存、次に実行するステップの保存を行った後、
-				//	現在のステップ番号のノードをリターンしなさい
-				//	スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノード。
-				data->PushSequenceNode(this);
-
-				//	また、次に実行する中間ノードとステップ数を保存する
-				//	保存にはdata->SetSequenceStep関数を使用。
-				//	保存データは中間ノードの名前と次のステップ数です(step + 1)
-				data->SetSequenceStep(this->name, step + 1);
-
-				//	ステップ番号目の子ノードを実行ノードとしてリターンする
-				return children.at(step);
-			}
+			//	現在の実行ノードをスタックに保存、次に実行するステップの保存を行った後、
+			//	現在のステップ番号のノードをreturn
+			//	①スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノードであるthis。
+			//	②次に中間ノードと「次のステップ数」を保存する
+			//		ステップ数の保存にはdata->SetSequenceStep関数を使用する事。
+			//		引数はこの中間ノードの名前(this->name)とステップ数+1です(step + 1)
+			//	③ステップ番号目の子ノードを実行ノードとしてreturn
+			data->PushSequenceNode(this);
+			data->SetSequenceStep(this->name_, step + 1);
+			return children_.at(step);
 		}
 	}
+#else
+	for (NodeBase* node : *list)
+	{
+		//	子ノードが実行可能リストに含まれているか
+		if (children.at(step)->GetName() == node->GetName())
+		{
+			data->PushSequenceNode(this);
+			data->SetSequenceStep(this->name, step + 1);
+			return children.at(step);
+		}
+	}
+#endif
 
-	//	指定された中間ノードに実行可能ノードがないのでnullptrをリターンする
+	//	指定された中間ノードに実行可能ノードがないのでnullptrをreturn
 	return nullptr;
+
 }
 
 //	判定
 bool NodeBase::Judgment()
 {
-	//	judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
-	if (judgment != nullptr)
+	//	judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をreturn
 	{
-		return judgment->Judgment();
+		return judgment_->Judgment();
 	}
 	return true;
 }
@@ -230,11 +227,11 @@ bool NodeBase::Judgment()
 //	ノード実行
 ActionBase::State NodeBase::Run(float elapsedTime)
 {
-	//	actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
-	if (action != nullptr)
+	//	actionがあるか判断。あればメンバ関数Run()実行した結果をreturn
+	if (action_ != nullptr)
 	{
-		return action->Run(elapsedTime);
+		return action_->Run(elapsedTime);
 	}
+
 	return ActionBase::State::Failed;
 }
-

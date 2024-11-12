@@ -6,7 +6,7 @@
 //	BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class BattleJudgment : public JudgmentBase<Dragonkin>
+	class BattleJudgment : public JudgmentBase
 	{
 	public:
 		BattleJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
@@ -19,7 +19,7 @@ namespace DragonkinJudgment
 //	AttackNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class AttackJudgment : public JudgmentBase<Dragonkin>
+	class AttackJudgment : public JudgmentBase
 	{
 	public:
 		AttackJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
@@ -32,7 +32,7 @@ namespace DragonkinJudgment
 //	SkillNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class SkillJudgment : public JudgmentBase<Dragonkin>
+	class SkillJudgment : public JudgmentBase
 	{
 	public:
 		SkillJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
@@ -45,7 +45,7 @@ namespace DragonkinJudgment
 //	WanderNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class WanderJudgment : public JudgmentBase<Dragonkin>
+	class WanderJudgment : public JudgmentBase
 	{
 	public:
 		WanderJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
@@ -58,7 +58,7 @@ namespace DragonkinJudgment
 //	Escape‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class EscapeJudgment : public JudgmentBase<Dragonkin>
+	class EscapeJudgment : public JudgmentBase
 	{
 	public:
 		EscapeJudgment(Dragonkin* owner) :JudgmentBase(owner) {};

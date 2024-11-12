@@ -27,6 +27,11 @@ namespace DragonkinAction
 	};
 }
 
+namespace DragonkinAction
+{
+
+}
+
 //	ƒXƒLƒ‹UŒ‚s“®
 namespace DragonkinAction
 {

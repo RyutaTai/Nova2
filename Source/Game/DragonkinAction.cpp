@@ -15,10 +15,6 @@ namespace DragonkinAction
 			owner_->PlayAnimation(Dragonkin::AnimationType::ANIM_IDLE01, true, 0.2f);
 			step_++;
 			break;
-		//case 1:
-		//	if (owner_->IsPlayAnimation() == false) step_ = 0;
-
-		//	break;
 		case 1:
 			runTimer -= elapsedTime;
 			// タイマー更新
@@ -29,14 +25,14 @@ namespace DragonkinAction
 			{
 				owner_->SetRandomTargetPosition();
 				step_ = 0;
-				//return ActionBase::State::Complete;
+				return ActionBase::State::Complete;
 			}
 
 			// プレイヤーを見つけた時
 			if (owner_->SearchPlayer())
 			{
 				step_ = 0;
-				//return ActionBase::State::Complete;
+				return ActionBase::State::Complete;
 			}
 			break;
 		}
@@ -59,7 +55,7 @@ namespace DragonkinAction
 {
 	ActionBase::State NormalAction::Run(const float& elapsedTime)
 	{
-		return ActionBase::State::Run;
+		
 	}
 
 	void NormalAction::DrawDebug()

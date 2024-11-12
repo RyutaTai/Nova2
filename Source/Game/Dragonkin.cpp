@@ -57,9 +57,8 @@ void Dragonkin::Initialize()
 	GetTransform()->SetScaleFactor(scale);
 
 	//	当たり判定用高さ、半径設定
-	
-
-	//PlayAnimation(AnimationType::ANIM_IDLE02, true, 0.2f);	//	アニメーション再生確認
+	//radius_ = 10.0f;
+	//height_=
 
 	SetAnimationSpeed(1.0f);
 }
@@ -104,9 +103,9 @@ bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
 }
 
 //	アニメーション
-void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame)
+void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
 {
-	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame);
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
 }
 
 //	破棄処理

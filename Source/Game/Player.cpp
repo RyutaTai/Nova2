@@ -72,6 +72,7 @@ void Player::Initialize()
 	//	座標系変換
 	GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
 
+	//	当たり判定用半径、高さ設定
 	radius_ = 0.7f;
 	height_ = 4.4f;
 
@@ -683,9 +684,9 @@ bool Player::DummyRay(const float& elapsedTime)
 }
 
 //	アニメーション
-void Player::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame)
+void Player::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
 {
-	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame);
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
 }
 
 //	スティック入力値から移動ベクトルを取得

@@ -87,7 +87,7 @@ public:
 	void DrawDebug()override;
 	void DrawDebugPrimitive()override;
 
-	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 
 private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理

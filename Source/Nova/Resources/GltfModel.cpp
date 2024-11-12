@@ -686,44 +686,14 @@ GltfModel::BufferView GltfModel::MakeBufferView(const tinygltf::Accessor& access
     return bufferView;
 }
 
-#if 0
-//  アニメーション再生
-void GltfModel::PlayAnimation(const int index, const bool loop, const float speed)
-{
-    currentAnimationIndex_ = index;
-    isAnimationLoop_ = loop;
-    animationSpeed_ = speed;
-    currentAnimationSeconds_ = 0.0f;
-}
-
-//  アニメーション更新処理
-void GltfModel::UpdateAnimation(const float elapsedTime)
-{
-    //  アニメーションデータがあれば
-    if (animations_.size() > 0)
-    {
-        currentAnimationSeconds_ += elapsedTime * animationSpeed_;
-
-        //  アニメーション更新
-        Animate(currentAnimationIndex_, currentAnimationSeconds_, nodes_);
-
-        //  巻き戻し処理
-        if (isAnimationLoop_ && animations_.at(currentAnimationIndex_).duration_ < currentAnimationSeconds_)
-        {
-            currentAnimationSeconds_ = 0.0f;
-        }
-    }
-}
-
-#else
-
-void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame)
+void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
 {
     Animate(animationClip_, currentAnimationSeconds_, animatedNodes_[0]);
     animationClip_ = index;
     
     Animate(index, startFrame, animatedNodes_[1]);
     currentAnimationSeconds_ = startFrame;
+    blendAnimationSeconds_ = 0.0f;
     factor_ = 0.0f;
 
     isAnimationLoop_ = loop;
@@ -740,13 +710,13 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 
     if (transitionState_ > 0 && transitionTime_ > 0.0f)
     {
-		factor_ = currentAnimationSeconds_ / transitionTime_;
+		factor_ = blendAnimationSeconds_ / transitionTime_;
 		BlendAnimations(animatedNodes_[0], animatedNodes_[1], factor_, blendedAnimatedNodes_);
-        currentAnimationSeconds_ += elapsedTime;
+        blendAnimationSeconds_ += elapsedTime;
 		if (factor_ > 1.0f)
 		{
 			transitionState_ = 0;
-            currentAnimationSeconds_ = 0.0f;
+            blendAnimationSeconds_ = 0.0f;
 		}
         nodes_ = blendedAnimatedNodes_;
     }
@@ -769,13 +739,8 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
                 //currentAnimationSeconds_ = 0.0f;
             }
         }
-        static std::vector<GltfModel::Node> animatedNode = nodes_;
-        Animate(animationClip_, currentAnimationSeconds_, animatedNode);
-        nodes_ = animatedNode;
-
-        //Animate(animationClip_, time_, animatedNodes_[1]);
-        //Render(immediate_context.Get(), world, animated_nodes[animation_clip]);
-        //nodes_ = animatedNodes_[animationClip_];
+        Animate(animationClip_, currentAnimationSeconds_, nodes_);
+        
     }
 
     //  ルートモーション
@@ -1238,6 +1203,7 @@ void GltfModel::Render(const DirectX::XMMATRIX& world)
     }
 } };
 #endif
+
     for (std::vector<int>::value_type nodeIndex : scenes_.at(0).nodes_)
     {
         traverse(nodeIndex);

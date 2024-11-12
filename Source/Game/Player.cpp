@@ -127,7 +127,7 @@ void Player::Update(const float& elapsedTime)
 	//Move(elapsedTime);	//	inputMoveにもある
 
 	//	アニメーション更新処理
-	UpdateAnimation(elapsedTime);
+	//UpdateAnimation(elapsedTime);
 	
 	//DummyRay(elapsedTime);
 

@@ -16,6 +16,10 @@ namespace DragonkinAction
 			step_++;
 			break;
 		case 1:
+			if (owner_->IsPlayAnimation() == false) step_ = 0;
+
+			break;
+		case 2:
 			runTimer -= elapsedTime;
 			// タイマー更新
 			owner_->SetRunTimer(runTimer);

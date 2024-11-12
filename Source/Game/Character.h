@@ -30,7 +30,7 @@ public:
 	virtual void Move(const float& elpasedTime);
 	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
 
-	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 	void UpdateAnimation(const float& elapsedTime);
 	bool IsPlayAnimation()const;
 
@@ -79,7 +79,6 @@ protected:
 	float				height_ = 195.0f;	//	高さ
 
 	int					hp_ = 100;											//	現在のHP
-	float				animationSpeed_ = 1.0f;								//	アニメーションを再生する速さ
 	float				turnSpeed_		= DirectX::XMConvertToRadians(720);	//	旋回する速さ
 	float				moveSpeed_		= 2.0f;								//	移動する速さ
 	bool				isInvincible_	= false;							//	無敵かどうか

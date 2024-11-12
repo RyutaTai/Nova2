@@ -61,6 +61,7 @@ void Dragonkin::Initialize()
 
 	//PlayAnimation(AnimationType::ANIM_IDLE02, true, 0.2f);	//	アニメーション再生確認
 
+	SetAnimationSpeed(1.0f);
 }
 
 //	更新処理
@@ -145,7 +146,6 @@ void Dragonkin::DrawDebug()
 	{
 		Character::DrawDebug();
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
-		ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::TreePop();
 	}
 }

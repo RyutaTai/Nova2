@@ -367,7 +367,7 @@ public:
 	void Render(const DirectX::XMMATRIX& world/*, const std::vector<Node>& animatedNodes*/);
 	void DrawDebug();
 
-	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f);
+	void PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 	void UpdateAnimation(const float& elapsedTime);
 
 	void Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes);
@@ -415,6 +415,7 @@ private:
 	int		currentAnimationIndex_		= -1;		//	アニメーション番号
 	float	animationSpeed_				= 0.0f;		//	再生速度
 	float   currentAnimationSeconds_	= 0.0f;		//	現在のアニメーション再生時間
+	float   blendAnimationSeconds_		= 0.0f;		//	ブレンドアニメーション時間
 	bool	useRootMotionMovement_		= false;	//	ルートモーションの移動値を使うか
 	std::vector<GltfModel::Node> animatedNodes_[2];
 	std::vector<GltfModel::Node> blendedAnimatedNodes_;

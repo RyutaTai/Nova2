@@ -59,14 +59,17 @@ void Dragonkin::Initialize()
 	//	当たり判定用高さ、半径設定
 	
 
-	PlayAnimation(AnimationType::ANIM_IDLE02, true, 0.2f);	//	アニメーション再生確認
+	//PlayAnimation(AnimationType::ANIM_IDLE02, true, 0.2f);	//	アニメーション再生確認
 
 }
 
 //	更新処理
 void Dragonkin::Update(const float& elapsedTime)
 {
-	//UpdateBehaviorTree(elapsedTime);	//	ビヘイビアツリー更新
+	//	アニメーション更新処理
+	UpdateAnimation(elapsedTime);
+
+	UpdateBehaviorTree(elapsedTime);	//	ビヘイビアツリー更新
 }
 
 //	ビヘイビアツリー更新処理

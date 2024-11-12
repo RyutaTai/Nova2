@@ -747,7 +747,6 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
     RootMotion(transform_.GetScaleFactor());
 
 }
-#endif
 
 void GltfModel::Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes)
 {

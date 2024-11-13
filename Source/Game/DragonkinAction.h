@@ -15,21 +15,28 @@ namespace DragonkinAction
 	};
 }
 
-//	通常攻撃
+//	通常殴打
 namespace DragonkinAction
 {
-	class NormalAction : public ActionBase
+	class AttackPunch :public ActionBase
 	{
 	public:
-		NormalAction(Dragonkin* owner) :ActionBase(owner) {}
+		AttackPunch(Dragonkin* owner):ActionBase(owner){}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
 	};
 }
 
+//	通常キック
 namespace DragonkinAction
 {
-
+	class AttackKick :public ActionBase
+	{
+	public:
+		AttackKick(Dragonkin* owner) :ActionBase(owner) {}
+		ActionBase::State Run(const float& elapsedTime)override;
+		void DrawDebug()override;
+	};
 }
 
 //	スキル攻撃行動

@@ -308,6 +308,5 @@ void Frequency::DrawDebug()
     ImGui::PlotLines("Squared Amplitude Spectrum", squaredValue.data(), static_cast<int>(squaredValue.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
     ImGui::PlotLines("Hamming", hamming_.data(), static_cast<int>(hamming_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
     ImGui::DragFloat("PlayTime", &audioTimer_);
-    ImGui::TreePop();
    
 }

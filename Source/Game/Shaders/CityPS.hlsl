@@ -11,6 +11,8 @@ Texture2D<float4> materialTextures[5] : register(t1);
 // PROJECTION_MAPPING
 Texture2D projectionMappingTexture : register(t15);
 
+
+
 struct TextureInfo
 {
     int index;
@@ -163,7 +165,26 @@ float4 main(VS_OUT pin) : SV_TARGET
     projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
-        float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        //float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        // quantize coordinates
+        const float bands = 30.0;
+        const float segs = 40.0;
+        float2 p;
+#if 0
+        p.x = projectionTexturePosition.x;
+        p.y = projectionTexturePosition.y;
+#else
+        p.x = pin.texcoord.x;   //  スペクトラムが出るが、位置を調整したい
+        p.y = pin.texcoord.y;
+#endif
+
+        //float4 projectionTextureColor = float4(lerp(float3(0.0, 2.0, 0.0), float3(2.0, 0.0, 0.0), sqrt(pin.texcoord.y)), 1.0);
+        float4 projectionTextureColor = float4(1,0,0, 1.0);
+        float fft = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], float2(p.x, 0.0));
+        
+        // mask for bar graph
+        float mask = (p.y < fft) ? 1.0 : 0.1;
+        projectionTextureColor *= mask;
         projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a * projectionMappingColorIntensity;
     }
     

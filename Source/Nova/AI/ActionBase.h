@@ -1,12 +1,12 @@
 #pragma once
 
-class Dragonkin;
+class Enemy;
 
 //	行動処理基底クラス
 class ActionBase
 {
 public:
-	ActionBase(Dragonkin* enemy):owner_(enemy){}
+	ActionBase(Enemy* enemy):owner_(enemy){}
 	//	実行情報
 	enum class State
 	{
@@ -19,7 +19,7 @@ public:
 	virtual void DrawDebug() = 0;									//	デバッグ描画
 
 protected:
-	Dragonkin* owner_ = nullptr;
+	Enemy* owner_ = nullptr;
 	int step_ = 0;
 
 };

@@ -270,6 +270,13 @@ void Stage::Render()
 void Stage::CreateProjectionMappingTextureFromFFT()
 {
 	std::vector<float> fftData = frequency_->GetAmplitudeSpectrum(); // FFTŒ‹‰Ê‚ðŽæ“¾
+
+	for (auto& fft : fftData)
+	{
+		fft /= 100000.0f;
+	}
+
+
 	D3D11_SUBRESOURCE_DATA initData = {};
 	initData.pSysMem = fftData.data();
 	initData.SysMemPitch = sizeof(float) * fftData.size();

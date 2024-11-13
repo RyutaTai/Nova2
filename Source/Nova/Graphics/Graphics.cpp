@@ -229,19 +229,19 @@ void Graphics::CreateSwapChain(IDXGIFactory6* dxgiFactory6)
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer{};
-	D3D11_TEXTURE2D_DESC texture2d_desc{};
-	texture2d_desc.Width = frameBufferDimensions_.cx;
-	texture2d_desc.Height = frameBufferDimensions_.cy;
-	texture2d_desc.MipLevels = 1;
-	texture2d_desc.ArraySize = 1;
-	texture2d_desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	texture2d_desc.SampleDesc.Count = 1;
-	texture2d_desc.SampleDesc.Quality = 0;
-	texture2d_desc.Usage = D3D11_USAGE_DEFAULT;
-	texture2d_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	texture2d_desc.CPUAccessFlags = 0;
-	texture2d_desc.MiscFlags = 0;
-	hr = device_->CreateTexture2D(&texture2d_desc, NULL, depthStencilBuffer.GetAddressOf());
+	D3D11_TEXTURE2D_DESC texture2dDesc{};
+	texture2dDesc.Width = frameBufferDimensions_.cx;
+	texture2dDesc.Height = frameBufferDimensions_.cy;
+	texture2dDesc.MipLevels = 1;
+	texture2dDesc.ArraySize = 1;
+	texture2dDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	texture2dDesc.SampleDesc.Count = 1;
+	texture2dDesc.SampleDesc.Quality = 0;
+	texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+	texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	texture2dDesc.CPUAccessFlags = 0;
+	texture2dDesc.MiscFlags = 0;
+	hr = device_->CreateTexture2D(&texture2dDesc, NULL, depthStencilBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
@@ -461,5 +461,6 @@ void Graphics::DrawDebug()
 		ImGui::DragFloat4("LightDirection", &sceneConstant_.lightDirection_.x);
 		ImGui::TreePop();
 	}
+
 
 }

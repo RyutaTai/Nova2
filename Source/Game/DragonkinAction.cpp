@@ -12,15 +12,15 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-			owner_->PlayAnimation(Dragonkin::AnimationType::ANIM_IDLE01, true, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::ANIM_IDLE01), true, 0.2f);
 			step_++;
 			break;
 		case 1:
 			runTimer -= elapsedTime;
-			// タイマー更新
+			//	タイマー更新
 			owner_->SetRunTimer(runTimer);
 
-			// 待機時間が過ぎた時
+			//	待機時間が過ぎた時
 			if (runTimer <= 0.0f)
 			{
 				owner_->SetRandomTargetPosition();
@@ -28,7 +28,7 @@ namespace DragonkinAction
 				return ActionBase::State::Complete;
 			}
 
-			// プレイヤーを見つけた時
+			//	プレイヤーを見つけた時
 			if (owner_->SearchPlayer())
 			{
 				step_ = 0;
@@ -50,21 +50,12 @@ namespace DragonkinAction
 
 }
 
-//	通常攻撃
+//	通常殴打
 namespace DragonkinAction
 {
-	ActionBase::State NormalAction::Run(const float& elapsedTime)
+	ActionBase::State AttackPunch::Run(const float& elapsedTime)
 	{
-		
-	}
-
-	void NormalAction::DrawDebug()
-	{
-		if (ImGui::TreeNode("NormalAction"))
-		{
-
-			ImGui::TreePop();
-		}
+		return ActionBase::State::Run;
 	}
 }
 

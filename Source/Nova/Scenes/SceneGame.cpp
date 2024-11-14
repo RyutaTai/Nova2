@@ -74,18 +74,27 @@ void SceneGame::Initialize()
 	D3D11_TEXTURE2D_DESC texture2dDesc;
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 
+#if 1
 	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sunset_jhbcentral_4k.dds",
 		shaderResourceViews_[0].GetAddressOf(), &texture2dDesc);
-	
 	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/diffuse_iem.dds",
 		shaderResourceViews_[1].GetAddressOf(), &texture2dDesc);
-	
 	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/specular_pmrem.dds",
 		shaderResourceViews_[2].GetAddressOf(), &texture2dDesc);
-	
-	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/lut_ggx.dds",
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sheen_pmrem.dds",
 		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
+#endif
 
+#if 0
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/tears_of_steel_bridge_4k/tears_of_steel_bridge_4k.dds",
+		shaderResourceViews_[0].GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/tears_of_steel_bridge_4k/diffuse_iem.dds",
+		shaderResourceViews_[1].GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/tears_of_steel_bridge_4k/specular_pmrem.dds",
+		shaderResourceViews_[2].GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/tears_of_steel_bridge_4k/sheen_pmrem.dds",
+		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
+#endif
 	//	ÉuÉãÅ[ÉÄ
 	framebuffers_[0] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	framebuffers_[1] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);	//	sprite

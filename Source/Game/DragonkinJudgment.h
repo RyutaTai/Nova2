@@ -3,6 +3,19 @@
 #include "../Nova/AI/JudgmentBase.h"
 #include "Dragonkin.h"
 
+//	IdleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
+namespace DragonkinJudgment
+{
+	class IdleJudgment : public JudgmentBase
+	{
+	public:
+		IdleJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
+		// ”»’è
+		bool Judgment();
+
+	};
+}
+
 //	BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
@@ -16,13 +29,26 @@ namespace DragonkinJudgment
 	};
 }
 
-//	AttackNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
+//	AttackPunchNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
-	class AttackJudgment : public JudgmentBase
+	class AttackPunchJudgment : public JudgmentBase
 	{
 	public:
-		AttackJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
+		AttackPunchJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
+		//	”»’è
+		bool Judgment();
+
+	};
+}
+
+//	AttackPunchNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
+namespace DragonkinJudgment
+{
+	class AttackKickJudgment : public JudgmentBase
+	{
+	public:
+		AttackKickJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
 		//	”»’è
 		bool Judgment();
 

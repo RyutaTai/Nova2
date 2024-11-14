@@ -23,7 +23,7 @@
 //   float4 cameraPosition;             // Offset:   80 Size:    16
 //   row_major float4x4 lightViewProjection;// Offset:   96 Size:    64 [unused]
 //   row_major float4x4 invViewProjection;// Offset:  160 Size:    64 [unused]
-//   row_major float4x4 projectionMappingTransform;// Offset:  224 Size:    64 [unused]
+//   row_major float4x4 projectionMappingTransform;// Offset:  224 Size:    64
 //
 // }
 //
@@ -107,12 +107,14 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // samplerStates[1]                  sampler      NA          NA             s1      1 
 // samplerStates[2]                  sampler      NA          NA             s2      1 
+// samplerStates[3]                  sampler      NA          NA             s3      1 
 // materials                         texture  struct         r/o             t0      1 
 // materialTextures[0]               texture  float4          2d             t1      1 
 // materialTextures[1]               texture  float4          2d             t2      1 
 // materialTextures[2]               texture  float4          2d             t3      1 
 // materialTextures[3]               texture  float4          2d             t4      1 
 // materialTextures[4]               texture  float4          2d             t5      1 
+// projectionMappingTexture          texture  float4          2d            t15      1 
 // diffuseIem                        texture  float4        cube            t33      1 
 // specularPmrem                     texture  float4        cube            t34      1 
 // lutGgx                            texture  float4          2d            t35      1 
@@ -127,7 +129,7 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// POSITION                 0   xyzw        1     NONE   float   xyz 
+// POSITION                 0   xyzw        1     NONE   float   xyzw
 // NORMAL                   0   xyzw        2     NONE   float   xyz 
 // TANGENT                  0   xyzw        3     NONE   float   xyzw
 // TEXCOORD                 0   xy          4     NONE   float   xy  
@@ -142,20 +144,22 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB0[5], immediateIndexed
-dcl_constantbuffer CB1[6], immediateIndexed
+dcl_constantbuffer CB1[18], immediateIndexed
 dcl_constantbuffer CB3[1], immediateIndexed
 dcl_sampler s1, mode_default
 dcl_sampler s2, mode_default
+dcl_sampler s3, mode_default
 dcl_resource_structured t0, 96
 dcl_resource_texture2d (float,float,float,float) t1
 dcl_resource_texture2d (float,float,float,float) t2
 dcl_resource_texture2d (float,float,float,float) t3
 dcl_resource_texture2d (float,float,float,float) t4
 dcl_resource_texture2d (float,float,float,float) t5
+dcl_resource_texture2d (float,float,float,float) t15
 dcl_resource_texturecube (float,float,float,float) t33
 dcl_resource_texturecube (float,float,float,float) t34
 dcl_resource_texture2d (float,float,float,float) t35
-dcl_input_ps linear v1.xyz
+dcl_input_ps linear v1.xyzw
 dcl_input_ps linear v2.xyz
 dcl_input_ps linear v3.xyzw
 dcl_input_ps linear v4.xy
@@ -294,31 +298,31 @@ add r5.xyz, r2.xyzx, r5.xyzx
 mul r5.xyz, r0.wwww, r5.xyzx
 add r5.xyz, r5.xyzx, l(0.040000, 0.040000, 0.040000, 0.000000)  // r5.x <- f0.x; r5.y <- f0.y; r5.z <- f0.z
 
-#line 109
+#line 110
 mov r6.xyz, l(1.000000,1.000000,1.000000,0)  // r6.x <- f90.x; r6.y <- f90.y; r6.z <- f90.z
 
-#line 110
+#line 111
 mul r1.w, r0.y, r0.y  // r1.w <- alphaRoughness
 
-#line 111
+#line 112
 mov r7.xyz, -r2.xyzx
 add r7.xyz, r7.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
 mul r7.xyz, r0.wwww, r7.xyzx
 add r2.xyz, r2.xyzx, r7.xyzx  // r2.x <- cDiff.x; r2.y <- cDiff.y; r2.z <- cDiff.z
 
-#line 114
+#line 115
 mov r7.xyz, -v1.xyzx
 add r7.xyz, r7.xyzx, cb1[5].xyzx
 dp3 r0.w, r7.xyzx, r7.xyzx
 rsq r0.w, r0.w
 mul r7.xyz, r0.wwww, r7.xyzx  // r7.x <- V.x; r7.y <- V.y; r7.z <- V.z
 
-#line 116
+#line 117
 dp3 r0.w, v2.xyzx, v2.xyzx
 rsq r0.w, r0.w
 mul r8.xyz, r0.wwww, v2.xyzx  // r8.x <- N.x; r8.y <- N.y; r8.z <- N.z
 
-#line 117
+#line 118
 ine r0.w, l(0, 0, 0, 0), cb0[4].y
 dp3 r3.x, v3.xyzx, v3.xyzx
 rsq r3.x, r3.x
@@ -326,11 +330,11 @@ mul r9.xyz, r3.xxxx, v3.xyzx
 itof r10.xyz, l(1, 0, 0, 0)
 movc r9.xyz, r0.wwww, r9.xyzx, r10.xyzx  // r9.x <- T.x; r9.y <- T.y; r9.z <- T.z
 
-#line 118
+#line 119
 ine r0.w, l(0, 0, 0, 0), cb0[4].y
 movc r0.w, r0.w, v3.w, l(1.000000)  // r0.w <- sigma
 
-#line 119
+#line 120
 dp3 r3.x, r8.xyzx, r9.xyzx
 mul r10.xyz, r3.xxxx, r8.xyzx
 mov r10.xyz, -r10.xyzx
@@ -339,7 +343,7 @@ dp3 r3.x, r9.xyzx, r9.xyzx
 rsq r3.x, r3.x
 mul r9.xyz, r3.xxxx, r9.xyzx  // r9.x <- T.x; r9.y <- T.y; r9.z <- T.z
 
-#line 120
+#line 121
 mul r10.xyz, r8.yzxy, r9.zxyz
 mul r11.xyz, r8.zxyz, r9.yzxy
 mov r11.xyz, -r11.xyzx
@@ -349,32 +353,32 @@ dp3 r0.w, r10.xyzx, r10.xyzx
 rsq r0.w, r0.w
 mul r10.xyz, r0.wwww, r10.xyzx  // r10.x <- B.x; r10.y <- B.y; r10.z <- B.z
 
-#line 122
+#line 123
 mov r3.y, r3.y  // r3.y <- normalTexture
 
-#line 123
+#line 124
 ilt r0.w, l(-1), r3.y
 if_nz r0.w
 
-#line 125
+#line 126
   sample_indexable(texture2d)(float,float,float,float) r3.xyz, v4.xyxx, t3.xyzw, s1  // r3.x <- sampled.x; r3.y <- sampled.y; r3.z <- sampled.z
 
-#line 126
+#line 127
   mov r3.xyz, r3.xyzx  // r3.x <- normalFactor.x; r3.y <- normalFactor.y; r3.z <- normalFactor.z
 
-#line 127
+#line 128
   mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
   mov r11.xyz, l(-1.000000,-1.000000,-1.000000,-0.000000)
   add r3.xyz, r3.xyzx, r11.xyzx  // r3.x <- normalFactor.x; r3.y <- normalFactor.y; r3.z <- normalFactor.z
 
-#line 128
+#line 129
   mov r4.z, l(1.000000)
   mul r3.xyz, r3.xyzx, r4.xxzx
   dp3 r0.w, r3.xyzx, r3.xyzx
   rsq r0.w, r0.w
   mul r3.xyz, r0.wwww, r3.xyzx  // r3.x <- normalFactor.x; r3.y <- normalFactor.y; r3.z <- normalFactor.z
 
-#line 129
+#line 130
   mul r4.xyz, r9.xyzx, r3.xxxx
   mul r9.xyz, r10.xyzx, r3.yyyy
   add r4.xyz, r4.xyzx, r9.xyzx
@@ -384,53 +388,53 @@ if_nz r0.w
   rsq r0.w, r0.w
   mul r8.xyz, r0.wwww, r3.xyzx
 
-#line 130
+#line 131
 endif 
 
-#line 132
+#line 133
 itof r3.xyz, l(0, 0, 0, 0)  // r3.x <- diffuse.x; r3.y <- diffuse.y; r3.z <- diffuse.z
 
-#line 133
+#line 134
 itof r4.xyz, l(0, 0, 0, 0)  // r4.x <- specular.x; r4.y <- specular.y; r4.z <- specular.z
 
-#line 136
+#line 137
 mov r9.xyz, -cb1[4].xyzx
 dp3 r0.w, r9.xyzx, r9.xyzx
 rsq r0.w, r0.w
 mul r9.xyz, r0.wwww, r9.xyzx  // r9.x <- L.x; r9.y <- L.y; r9.z <- L.z
 
-#line 137
+#line 138
 mov r10.xyz, l(1.000000,1.000000,1.000000,0)  // r10.x <- Li.x; r10.y <- Li.y; r10.z <- Li.z
 
-#line 138
+#line 139
 dp3 r0.w, r8.xyzx, r9.xyzx
 max r0.w, r0.w, l(0.000000)  // r0.w <- NoL
 
-#line 139
+#line 140
 dp3 r4.w, r8.xyzx, r7.xyzx
 max r4.w, r4.w, l(0.000000)  // r4.w <- NoV
 
-#line 140
+#line 141
 lt r5.w, l(0.000000), r0.w
 lt r6.w, l(0.000000), r4.w
 or r5.w, r5.w, r6.w
 if_nz r5.w
 
-#line 143
+#line 144
   add r9.xyz, r7.xyzx, r9.xyzx
   dp3 r5.w, r9.xyzx, r9.xyzx
   rsq r5.w, r5.w
   mul r9.xyz, r5.wwww, r9.xyzx  // r9.x <- H.x; r9.y <- H.y; r9.z <- H.z
 
-#line 145
+#line 146
   dp3 r5.w, r8.xyzx, r9.xyzx
   max r5.w, r5.w, l(0.000000)  // r5.w <- NoH
 
-#line 146
+#line 147
   dp3 r6.w, r9.xyzx, r7.xyzx
   max r6.w, r6.w, l(0.000000)  // r6.w <- HoV
 
-#line 148
+#line 149
   mul r9.xyz, r0.wwww, r10.xyzx
   nop 
   mov r11.xyz, r5.xyzx
@@ -468,11 +472,11 @@ if_nz r5.w
   div r12.xyz, r2.xyzx, r7.wwww
   mul r11.xyz, r11.xyzx, r12.xyzx  // r11.x <- <BrdfLambertian return value>.x; r11.y <- <BrdfLambertian return value>.y; r11.z <- <BrdfLambertian return value>.z
 
-#line 148 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
+#line 149 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
   mul r9.xyz, r9.xyzx, r11.xyzx
   add r3.xyz, r3.xyzx, r9.xyzx
 
-#line 149
+#line 150
   mul r9.xyz, r0.wwww, r10.xyzx
   nop 
   mov r10.xyz, r5.xyzx
@@ -566,14 +570,14 @@ if_nz r5.w
   mul r6.xyz, r0.wwww, r6.xyzx
   mul r6.xyz, r1.wwww, r6.xyzx  // r6.x <- <BrdfSpecularGgx return value>.x; r6.y <- <BrdfSpecularGgx return value>.y; r6.z <- <BrdfSpecularGgx return value>.z
 
-#line 149 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
+#line 150 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
   mul r6.xyz, r6.xyzx, r9.xyzx
   add r4.xyz, r4.xyzx, r6.xyzx
 
-#line 150
+#line 151
 endif 
 
-#line 152
+#line 153
 nop 
 mov r8.xyz, r8.xyzx
 mov r7.xyz, r7.xyzx
@@ -663,10 +667,10 @@ mul r0.w, r0.w, r2.x  // r0.w <- kD
 add r2.xyz, r0.wwww, r9.yzwy
 mul r2.xyz, r6.xyzx, r2.xyzx  // r2.x <- <IblRadianceLambertian return value>.x; r2.y <- <IblRadianceLambertian return value>.y; r2.z <- <IblRadianceLambertian return value>.z
 
-#line 152 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
+#line 153 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
 add r2.xyz, r2.xyzx, r3.xyzx  // r2.x <- diffuse.x; r2.y <- diffuse.y; r2.z <- diffuse.z
 
-#line 153
+#line 154
 nop 
 mov r8.xyz, r8.xyzx
 mov r7.xyz, r7.xyzx
@@ -752,32 +756,83 @@ add r0.xyw, r3.yyyy, r0.xyxw  // r0.x <- fssEss.x; r0.y <- fssEss.y; r0.w <- fss
 #line 83
 mul r0.xyw, r0.xyxw, r6.xyxz  // r0.x <- <IblRadianceGgx return value>.x; r0.y <- <IblRadianceGgx return value>.y; r0.w <- <IblRadianceGgx return value>.z
 
-#line 153 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
+#line 154 "E:\Program\Nova2\Source\Game\Shaders\CityPS.hlsl"
 add r0.xyw, r0.xyxw, r4.xyxz  // r0.x <- specular.x; r0.y <- specular.y; r0.w <- specular.z
 
-#line 155
+#line 156
 mul r1.xyz, r1.xyzx, cb3[0].xxxx  // r1.x <- emissive.x; r1.y <- emissive.y; r1.z <- emissive.z
 
-#line 156
+#line 157
 mul r3.xyz, r0.zzzz, r2.xyzx
 mov r4.xyz, -r2.xyzx
 add r3.xyz, r3.xyzx, r4.xyzx
 mul r3.xyz, r3.xyzx, r3.wwww
 add r2.xyz, r2.xyzx, r3.xyzx
 
-#line 157
+#line 158
 mul r3.xyz, r0.zzzz, r0.xywx
 mov r4.xyz, -r0.xywx
 add r3.xyz, r3.xyzx, r4.xyzx
 mul r3.xyz, r3.xyzx, r3.wwww
 add r0.xyz, r0.xywx, r3.xyzx  // r0.z <- specular.z
 
-#line 191
-add r0.xyz, r0.xyzx, r2.xyzx
-add r0.xyz, r1.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
+#line 161
+itof r0.w, l(10)  // r0.w <- projectionMappingColorIntensity
+
+#line 162
+itof r3.xyz, l(0, 0, 0, 0)  // r3.x <- projectionMappingColor.x; r3.y <- projectionMappingColor.y; r3.z <- projectionMappingColor.z
+
+#line 163
+mul r4.xy, v1.xxxx, cb1[14].zwzz
+mul r4.zw, v1.yyyy, cb1[15].zzzw
+add r4.xy, r4.zwzz, r4.xyxx
+mul r4.zw, v1.zzzz, cb1[16].zzzw
+add r4.xy, r4.zwzz, r4.xyxx
+mul r4.zw, v1.wwww, cb1[17].zzzw
+add r4.xy, r4.zwzz, r4.xyxx  // r4.x <- projectionTexturePosition.z; r4.y <- projectionTexturePosition.w
+
+#line 164
+div r1.w, r4.x, r4.y  // r1.w <- projectionTexturePosition.z
+
+#line 167
+max r3.w, r1.w, l(0.000000)
+min r3.w, r3.w, l(1.000000)
+eq r1.w, r1.w, r3.w
+if_nz r1.w
+
+#line 179
+  mov r1.w, v4.y  // r1.w <- p.y
+
+#line 183
+  itof r4.xyz, l(1, 0, 0, 0)  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z
+  mov r4.w, l(1.000000)  // r4.w <- projectionTextureColor.w
+
+#line 184
+  mov r5.x, v4.x
+  mov r5.y, l(0)
+  sample_indexable(texture2d)(float,float,float,float) r3.w, r5.xyxx, t15.yzwx, s3  // r3.w <- fft
+
+#line 187
+  lt r1.w, r1.w, r3.w
+  movc r1.w, r1.w, l(1.000000), l(0.100000)  // r1.w <- mask
+
+#line 188
+  mul r4.xyzw, r1.wwww, r4.xyzw
+
+#line 189
+  mul r4.xyz, r4.wwww, r4.xyzx
+  mul r3.xyz, r0.wwww, r4.xyzx
+
+#line 190
+endif 
 
 #line 192
+add r0.xyz, r0.xyzx, r2.xyzx
+add r0.xyz, r1.xyzx, r0.xyzx
+add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
+
+#line 193
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 363 instruction slots used
+// Approximately 390 instruction slots used

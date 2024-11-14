@@ -106,6 +106,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float occlusionStrength = materialConstant.occlusionTexture.strength;
     
     const float3 f0 = lerp(0.04f, baseColorFactor.rgb, metallicFactor);
+    
     const float3 f90 = 1.0f;
     const float alphaRoughness = roughnessFactor * roughnessFactor;
     const float3 cDiff = lerp(baseColorFactor.rgb, 0.0f, metallicFactor);

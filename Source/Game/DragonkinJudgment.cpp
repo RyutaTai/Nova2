@@ -1,22 +1,44 @@
 #include "DragonkinJudgment.h"
 
-//	BattleJudgement
+//	IdleJudgment
+namespace DragonkinJudgment
+{
+	bool IdleJudgment::Judgment()
+	{
+		//	プレイヤーを見つけていなかったら待機
+		if (owner_->SearchPlayer() == false)return true;
+
+		return false;
+	}
+}
+
+//	BattleJudgment
 namespace DragonkinJudgment
 {
 	bool BattleJudgment::Judgment()
 	{
 		
-		return false;
+		return true;
 	}
 }
 
-//	AttackJudgement
+//	AttackPunchJudgment
 namespace DragonkinJudgment
 {
-	bool AttackJudgment::Judgment()
+	bool AttackPunchJudgment::Judgment()
 	{
 
-		return false;
+		return true;
+	}
+}
+
+//	AttackKickJudgment
+namespace DragonkinJudgment
+{
+	bool AttackKickJudgment::Judgment()
+	{
+
+		return true;
 	}
 }
 

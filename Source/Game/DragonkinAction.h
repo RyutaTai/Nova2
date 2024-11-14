@@ -18,10 +18,10 @@ namespace DragonkinAction
 //	í èÌâ£ë≈
 namespace DragonkinAction
 {
-	class AttackPunch :public ActionBase
+	class AttackPunchAction :public ActionBase
 	{
 	public:
-		AttackPunch(Dragonkin* owner):ActionBase(owner){}
+		AttackPunchAction(Dragonkin* owner):ActionBase(owner){}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
 	};
@@ -30,10 +30,22 @@ namespace DragonkinAction
 //	í èÌÉLÉbÉN
 namespace DragonkinAction
 {
-	class AttackKick :public ActionBase
+	class AttackKickAction :public ActionBase
 	{
 	public:
-		AttackKick(Dragonkin* owner) :ActionBase(owner) {}
+		AttackKickAction(Dragonkin* owner) :ActionBase(owner) {}
+		ActionBase::State Run(const float& elapsedTime)override;
+		void DrawDebug()override;
+	};
+}
+
+//	í èÌóÉçUåÇ
+namespace DragonkinAction
+{
+	class AttackWingAction :public ActionBase
+	{
+	public:
+		AttackWingAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
 	};

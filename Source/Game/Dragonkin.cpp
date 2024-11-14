@@ -1,6 +1,7 @@
 #include "Dragonkin.h"
 
 #include "DragonkinAction.h"
+#include "DragonkinJudgment.h"
 #include "../Nova/AI/BehaviorData.h"
 #include "../Nova/Graphics/Graphics.h"
 
@@ -32,15 +33,19 @@ Dragonkin::Dragonkin()
 	behaviorData_ = new BehaviorData();
 	behaviorTree_ = new BehaviorTree(this);
 
-	behaviorTree_->AddNode("",		"Root", 0, BehaviorTree::SelectRule::Priority,	nullptr, nullptr);									//	ルートノード
-	behaviorTree_->AddNode("Root",	"Idle", 0, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::IdleAction(this));	//	待機ノード(末端)
+	behaviorTree_->AddNode("",			"Root",			0,	BehaviorTree::SelectRule::Priority,	nullptr,											nullptr);										//	ルートノード
+	behaviorTree_->AddNode("Root",		"Idle",			0,	BehaviorTree::SelectRule::Non,		new DragonkinJudgment::IdleJudgment(this),			new DragonkinAction::IdleAction(this));			//	待機ノード(末端)
+	behaviorTree_->AddNode("Root",		"Battle",		1,	BehaviorTree::SelectRule::Random,	new DragonkinJudgment::BattleJudgment(this),		nullptr);										//	戦闘ノード(中間)
+
+	behaviorTree_->AddNode("Battle",	"AttackPunch",	0,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackPunchAction(this));	//	通常パンチ攻撃(末端)
+	behaviorTree_->AddNode("Battle",	"AttackKick",	1,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackKickAction(this));	//	通常キック攻撃(末端)
+	behaviorTree_->AddNode("Battle",	"AttackWing",	2,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackWingAction(this));	//	通常キック攻撃(末端)
 
 }
 
 //	初期化
 void Dragonkin::Initialize()
 {
-
 	//stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
 	//PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);			//	待機アニメーション再生
 	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);						//	待機アニメーションセット
@@ -141,8 +146,15 @@ void Dragonkin::DrawDebugPrimitive()
 //	デバッグ描画
 void Dragonkin::DrawDebug()
 {
+	std::string str = "";
+	if (activeNode_ != nullptr)
+	{
+		str = activeNode_->GetName();
+	}
+
 	if (ImGui::TreeNode(u8"Dragonkin竜人"))
 	{
+		ImGui::Text(u8"Behavior　%s", str.c_str());	//	現在のビヘイビア
 		Character::DrawDebug();
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::TreePop();

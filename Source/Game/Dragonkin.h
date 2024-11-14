@@ -2,6 +2,7 @@
 
 #include "Enemy.h"
 #include "../Nova/AI/BehaviorTree.h"
+#include "../Nova/AI/NodeBase.h"
 
 class BehaviorTree;
 class BehaviorData;
@@ -17,9 +18,9 @@ public:
 	//	アニメーション情報(Boss)
 	enum class AnimationType
 	{
-		ANIM_ATTACK01 = 0, 	//	
-		ANIM_ATTACK02,
-		ANIM_ATTACK03,
+		AttackPunch = 0, 	//	
+		AttackKick,
+		AttackWing,
 		ANIM_ATTACK04,
 		ANIM_INIT01,
 		ANIM_INIT02,
@@ -33,7 +34,7 @@ public:
 		ANIM_SKIL06,
 		ANIM_SKIL07,
 		ANIM_SKIL08,
-		ANIM_IDLE01,		//	待機
+		Idle01,		//	待機
 		ANIM_IDLE02,		//	待機2
 		ANIM_WALK,
 		ANIM_DMG_DIE01,

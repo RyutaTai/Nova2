@@ -50,8 +50,15 @@ Stage::Stage()
 	frequency_ = std::make_unique<Frequency>();
 	frequency_->Initialize();
 
+#if MAGIC_CIRCLE
 	D3D11_TEXTURE2D_DESC texture2dDesc;
-	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", fftSRV_.GetAddressOf(), &texture2dDesc);
+	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", projectionMappingTexture_.GetAddressOf(), &texture2dDesc);
+#endif
+
+	//	スペクトラム用フレームバッファ
+	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(Graphics::Instance().GetDevice());
+	spectrumFramebuffer_ = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
+	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumPS.cso", spectrumPS_.GetAddressOf());
 
 }
 
@@ -248,18 +255,25 @@ void Stage::ShadowRender(const float& scale)
 //	描画処理
 void Stage::Render()
 {
+	ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
 	// PROJECTION_MAPPING
-#if 0
+#if MAGIC_CIRCLE
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, projectionMappingTexture_.GetAddressOf());
 #else
 	CreateProjectionMappingTextureFromFFT();	//	プロジェクションマッピング用のテクスチャを作成し、シェーダーリソースにセット
+	spectrumFramebuffer_->Clear(deviceContext, 0, 0, 0, 1);
+	spectrumFramebuffer_->Activate(deviceContext);
+	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 15, 0, spectrumPS_.Get());
+	spectrumFramebuffer_->Deactivate(deviceContext);
+	//spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf()
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf());
 #endif
 
 	//	エミッシブ定数バッファをGPUに送る
-	Graphics::Instance().GetDeviceContext()->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
-	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(3, 1, emissiveConstantBuffer_.GetAddressOf());
+	deviceContext->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
+	deviceContext->PSSetConstantBuffers(3, 1, emissiveConstantBuffer_.GetAddressOf());
 
-	//	ピクセルシェーダーセット
+	//	ピクセルシェーダーセッ
 	gltfStaticModelResource_->SetPixelShaderFromName("./Resources/Shader/CityPS.cso");
 
 	gltfStaticModelResource_->Render();		//	描画
@@ -271,18 +285,30 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 {
 	std::vector<float> fftData = frequency_->GetAmplitudeSpectrum(); // FFT結果を取得
 
+#if 0	//	正規化
+	float max = -1.0f;
 	for (auto& fft : fftData)
 	{
-		fft /= 100000.0f;
+		if (max < fft)max = fft;
 	}
 
-
+	for (auto& fft : fftData)
+	{
+		fft /= max;
+	}
+#else
+	for (auto& fft : fftData)
+	{
+		fft /= 100000;
+	}
+#endif
 	D3D11_SUBRESOURCE_DATA initData = {};
 	initData.pSysMem = fftData.data();
 	initData.SysMemPitch = sizeof(float) * fftData.size();
 
 	//	FFTデータをもとにテクスチャを作成
 	D3D11_TEXTURE2D_DESC texture2dDesc = {};
+#if MAGIC_CIRCLE
 	texture2dDesc.Width = fftData.size();
 	texture2dDesc.Height = 1; // 1行のテクスチャとして表現
 	texture2dDesc.MipLevels = 1;
@@ -300,10 +326,33 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = texture2dDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MipLevels = 1; WARNING_IPSEC_MM_POLICY_PRUNED;
 
 	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, fftSRV_.GetAddressOf());
+#else
+	texture2dDesc.Width = fftData.size();
+	texture2dDesc.Height = 1; // 1行のテクスチャとして表現
+	texture2dDesc.MipLevels = 1;
+	texture2dDesc.ArraySize = 1;
+	texture2dDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	texture2dDesc.SampleDesc.Count = 1;
+	texture2dDesc.Usage = D3D11_USAGE_DYNAMIC;
+	texture2dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texture2dDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> fftTexture;
+	Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, &initData, fftTexture.GetAddressOf());
+
+	//	テクスチャをシェーダーリソースにバインド(スロット番号 : 16)
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texture2dDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1; WARNING_IPSEC_MM_POLICY_PRUNED;
+
+	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, fftSRV_.GetAddressOf());
+#endif
 
 }
 

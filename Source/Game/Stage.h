@@ -6,6 +6,10 @@
 #include "../Nova/Collision/CollisionMesh.h"
 #include "../Nova/Resources/Midi.h"
 #include "../Nova/Audio/Frequency.h"
+#include "../Nova/Graphics/FrameBuffer.h"
+#include "../Nova/Graphics/FullScreenQuad.h"
+
+#define MAGIC_CIRCLE 0
 
 class Stage
 {
@@ -55,7 +59,21 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
+	//	FFT
+	std::unique_ptr<FullScreenQuad>				bitBlockTransfer_;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumPS_;
+	std::unique_ptr<FrameBuffer>				spectrumFramebuffer_;
+#if MAGIC_CIRCLE
+	const int SPECTRUM_WIDTH = 512;
+	const int SPECTRUM_HEIGHT = 512;
+#else
+	const int SPECTRUM_WIDTH = 2048;
+	const int SPECTRUM_HEIGHT = 2048;
+#endif
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fftSRV_;	// projectionMapping
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> projectionMappingTexture_;	//	画像をロードして使う
 
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;

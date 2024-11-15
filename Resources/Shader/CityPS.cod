@@ -783,56 +783,49 @@ itof r0.w, l(10)  // r0.w <- projectionMappingColorIntensity
 itof r3.xyz, l(0, 0, 0, 0)  // r3.x <- projectionMappingColor.x; r3.y <- projectionMappingColor.y; r3.z <- projectionMappingColor.z
 
 #line 163
-mul r4.xy, v1.xxxx, cb1[14].zwzz
-mul r4.zw, v1.yyyy, cb1[15].zzzw
-add r4.xy, r4.zwzz, r4.xyxx
-mul r4.zw, v1.zzzz, cb1[16].zzzw
-add r4.xy, r4.zwzz, r4.xyxx
-mul r4.zw, v1.wwww, cb1[17].zzzw
-add r4.xy, r4.zwzz, r4.xyxx  // r4.x <- projectionTexturePosition.z; r4.y <- projectionTexturePosition.w
+mul r4.xyzw, v1.xxxx, cb1[14].xyzw
+mul r5.xyzw, v1.yyyy, cb1[15].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw
+mul r5.xyzw, v1.zzzz, cb1[16].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw
+mul r5.xyzw, v1.wwww, cb1[17].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw  // r4.x <- projectionTexturePosition.x; r4.y <- projectionTexturePosition.y; r4.z <- projectionTexturePosition.z; r4.w <- projectionTexturePosition.w
 
 #line 164
-div r1.w, r4.x, r4.y  // r1.w <- projectionTexturePosition.z
+div r4.xyz, r4.xyzx, r4.wwww
+
+#line 165
+mul r1.w, r4.x, l(0.500000)
+add r5.x, r1.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
+
+#line 166
+mov r1.w, -r4.y
+mul r1.w, r1.w, l(0.500000)
+add r5.y, r1.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
 
 #line 167
-max r3.w, r1.w, l(0.000000)
-min r3.w, r3.w, l(1.000000)
-eq r1.w, r1.w, r3.w
+max r1.w, r4.z, l(0.000000)
+min r1.w, r1.w, l(1.000000)
+eq r1.w, r4.z, r1.w
 if_nz r1.w
 
-#line 179
-  mov r1.w, v4.y  // r1.w <- p.y
+#line 169
+  sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
-#line 183
-  itof r4.xyz, l(1, 0, 0, 0)  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z
-  mov r4.w, l(1.000000)  // r4.w <- projectionTextureColor.w
-
-#line 184
-  mov r5.x, v4.x
-  mov r5.y, l(0)
-  sample_indexable(texture2d)(float,float,float,float) r3.w, r5.xyxx, t15.yzwx, s3  // r3.w <- fft
-
-#line 187
-  lt r1.w, r1.w, r3.w
-  movc r1.w, r1.w, l(1.000000), l(0.100000)  // r1.w <- mask
-
-#line 188
-  mul r4.xyzw, r1.wwww, r4.xyzw
-
-#line 189
+#line 170
   mul r4.xyz, r4.wwww, r4.xyzx
   mul r3.xyz, r0.wwww, r4.xyzx
 
-#line 190
+#line 171
 endif 
 
-#line 192
+#line 173
 add r0.xyz, r0.xyzx, r2.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 
-#line 193
+#line 174
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 390 instruction slots used
+// Approximately 387 instruction slots used

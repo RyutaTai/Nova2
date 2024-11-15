@@ -167,6 +167,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
         float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        //float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
         projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a * projectionMappingColorIntensity;
     }
         

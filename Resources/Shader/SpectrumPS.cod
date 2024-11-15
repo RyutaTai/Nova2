@@ -44,26 +44,26 @@ dcl_temps 3
 //   v4.x <- pin.texcoord.x; v4.y <- pin.texcoord.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 27 "E:\Program\Nova2\Source\Game\Shaders\SpectrumPS.hlsl"
+#line 28 "E:\Program\Nova2\Source\Game\Shaders\SpectrumPS.hlsl"
 mov r0.x, v4.y  // r0.x <- p.y
 
-#line 31
-itof r1.xyzw, l(1, 0, 0, 1)  // r1.x <- projectionTextureColor.x; r1.y <- projectionTextureColor.y; r1.z <- projectionTextureColor.z; r1.w <- projectionTextureColor.w
+#line 33
+itof r1.xyzw, l(1, 0, 0, 1)  // r1.x <- fftTextureColor.x; r1.y <- fftTextureColor.y; r1.z <- fftTextureColor.z; r1.w <- fftTextureColor.w
 
-#line 32
+#line 34
 mov r2.x, v4.x
 mov r2.y, l(0)
 sample_indexable(texture2d)(float,float,float,float) r0.y, r2.xyxx, t16.yxzw, s1
 mov r0.y, r0.y  // r0.y <- fft
 
-#line 35
+#line 38
 lt r0.x, r0.x, r0.y
 movc r0.x, r0.x, l(1.000000), l(0.100000)  // r0.x <- mask
 
-#line 39
-mul r0.xyzw, r0.xxxx, r1.xyzw  // r0.x <- projectionTextureColor.x; r0.y <- projectionTextureColor.y; r0.z <- projectionTextureColor.z; r0.w <- projectionTextureColor.w
+#line 44
+mul r0.xyzw, r0.xxxx, r1.xyzw  // r0.x <- fftTextureColor.x; r0.y <- fftTextureColor.y; r0.z <- fftTextureColor.z; r0.w <- fftTextureColor.w
 
-#line 45
+#line 46
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 11 instruction slots used

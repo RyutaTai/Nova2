@@ -37,7 +37,7 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
         }
         else
         {
-            windowedData.emplace_back(0.0f);    //  ”ÍˆÍŠO‚È‚ç0‚ð’Ç‰Á        }
+            windowedData.emplace_back(0.0f);    //  ”ÍˆÍŠO‚È‚ç0‚ð’Ç‰Á
         }
     }
     FFT(windowedData);

@@ -273,7 +273,7 @@ void Stage::Render()
 	deviceContext->UpdateSubresource(emissiveConstantBuffer_.Get(), 0, 0, &emissiveConstant_, 0, 0);
 	deviceContext->PSSetConstantBuffers(3, 1, emissiveConstantBuffer_.GetAddressOf());
 
-	//	ピクセルシェーダーセッ
+	//	ピクセルシェーダーセット
 	gltfStaticModelResource_->SetPixelShaderFromName("./Resources/Shader/CityPS.cso");
 
 	gltfStaticModelResource_->Render();		//	描画
@@ -299,7 +299,7 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 #else
 	for (auto& fft : fftData)
 	{
-		fft /= 100000;
+		fft /= fftDivisionValue_;
 	}
 #endif
 	D3D11_SUBRESOURCE_DATA initData = {};
@@ -326,7 +326,7 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = texture2dDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1; WARNING_IPSEC_MM_POLICY_PRUNED;
+	srvDesc.Texture2D.MipLevels = 1; 
 
 	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, fftSRV_.GetAddressOf());
@@ -348,7 +348,7 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = texture2dDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1; WARNING_IPSEC_MM_POLICY_PRUNED;
+	srvDesc.Texture2D.MipLevels = 1;
 
 	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, fftSRV_.GetAddressOf());
@@ -362,19 +362,27 @@ void Stage::DrawDebug()
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
 		//	FFTデータから生成したテクスチャ
-		if (ImGui::TreeNode(u8"fftSRV"))
+		ImGui::Text(u8"SpectrumSRV_Slot15");
+		{
+			D3D11_VIEWPORT viewport;
+			UINT numViewports{ 1 };
+			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
+			auto srv = spectrumFramebuffer_->shaderResourceViews_[0].Get();
+			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
+		}
+		ImGui::Text(u8"fftSRV_Slot16");
 		{
 			D3D11_VIEWPORT viewport;
 			UINT numViewports{ 1 };
 			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
 			auto srv = fftSRV_.Get();
 			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
-			ImGui::TreePop();
 		}
 
 		//	周波数データのデバッグ描画
 		if (ImGui::TreeNode("Frequency Data"))
 		{
+			ImGui::DragFloat("FFTDivisionValue", &fftDivisionValue_);
 			frequency_->DrawDebug();
 			ImGui::Checkbox("UseFrequency", &useFrequency_);
 			ImGui::DragInt("FrequencyIndex", &frequencyIndex_, 1.0f, 0);

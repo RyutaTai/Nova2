@@ -74,6 +74,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fftSRV_;	// projectionMapping
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> projectionMappingTexture_;	//	画像をロードして使う
+	float fftDivisionValue_ = 50000.0f;	//	GPUに渡すFFTデータを割る値
 
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;

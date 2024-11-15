@@ -812,19 +812,19 @@ if_nz r1.w
 #line 169
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
-#line 170
+#line 171
   mul r4.xyz, r4.wwww, r4.xyzx
   mul r3.xyz, r0.wwww, r4.xyzx
 
-#line 171
+#line 172
 endif 
 
-#line 173
+#line 174
 add r0.xyz, r0.xyzx, r2.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 
-#line 174
+#line 175
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 

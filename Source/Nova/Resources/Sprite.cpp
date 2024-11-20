@@ -226,6 +226,8 @@ void Sprite::SpriteTransform::CutOut()
 	if (fabs(cutSize_.y) > 0)
 		cutSize_.y = 0;
 
+	isCut_ = false;
+
 }
 
 //	デバッグ描画

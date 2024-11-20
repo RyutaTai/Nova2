@@ -35,7 +35,7 @@ void SceneGame::Initialize()
 
 	/* ----- UI初期化(生成したらUIクラスでマネージャーに登録される) ----- */
 	UIHealth*		uiHealth		= new UIHealth();
-	UIInstructions* uiInstructions	= new UIInstructions();
+	//UIInstructions* uiInstructions	= new UIInstructions();
 	UITempo*		uiTempo			= new UITempo();
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
@@ -71,7 +71,7 @@ void SceneGame::Initialize()
 	//drone_->Initialize();
 
 	// --- テクスチャ読み込み ---
-	D3D11_TEXTURE2D_DESC texture2dDesc;
+	D3D11_TEXTURE2D_DESC texture2dDesc = {};
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 
 #if 1
@@ -362,7 +362,7 @@ void SceneGame::Render()
 		//	ウェーブ数描画
 		if (sprite_[SPRITE_GAME::WAVE] && waveStartTimer_ > 0)
 		{
-			sprite_[static_cast<int>(SPRITE_GAME::WAVE)]->Render();
+			//sprite_[static_cast<int>(SPRITE_GAME::WAVE)]->Render();
 		}
 
 		//	操作方法描画
@@ -402,6 +402,9 @@ void SceneGame::Finalize()
 {
 	//	UI終了化
 	//UIManager::Instance().Finalize();
+
+	//	エネミーマネージャー終了化
+	EnemyManager::Instance().Clear();
 
 }
 

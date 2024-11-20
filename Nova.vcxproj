@@ -194,6 +194,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Rhythm.cpp" />
     <ClCompile Include="Source\Game\DragonkinAction.cpp" />
     <ClCompile Include="Source\Game\DragonkinJudgment.cpp" />
     <ClCompile Include="Source\Game\UIInstructions.cpp" />
@@ -284,6 +285,8 @@
     <ClCompile Include="Source\Game\UITempo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Rhythm.h" />
+    <ClInclude Include="Source\Game\AudioResourceTable.h" />
     <ClInclude Include="Source\Game\DragonkinAction.h" />
     <ClInclude Include="Source\Game\DragonkinJudgment.h" />
     <ClInclude Include="Source\Game\UIInstructions.h" />

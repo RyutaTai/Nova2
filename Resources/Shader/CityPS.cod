@@ -776,9 +776,6 @@ add r3.xyz, r3.xyzx, r4.xyzx
 mul r3.xyz, r3.xyzx, r3.wwww
 add r0.xyz, r0.xywx, r3.xyzx  // r0.z <- specular.z
 
-#line 161
-itof r0.w, l(10)  // r0.w <- projectionMappingColorIntensity
-
 #line 162
 itof r3.xyz, l(0, 0, 0, 0)  // r3.x <- projectionMappingColor.x; r3.y <- projectionMappingColor.y; r3.z <- projectionMappingColor.z
 
@@ -795,26 +792,25 @@ add r4.xyzw, r4.xyzw, r5.xyzw  // r4.x <- projectionTexturePosition.x; r4.y <- p
 div r4.xyz, r4.xyzx, r4.wwww
 
 #line 165
-mul r1.w, r4.x, l(0.500000)
-add r5.x, r1.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
+mul r0.w, r4.x, l(0.500000)
+add r5.x, r0.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
 
 #line 166
-mov r1.w, -r4.y
-mul r1.w, r1.w, l(0.500000)
-add r5.y, r1.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
+mov r0.w, -r4.y
+mul r0.w, r0.w, l(0.500000)
+add r5.y, r0.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
 
 #line 167
-max r1.w, r4.z, l(0.000000)
-min r1.w, r1.w, l(1.000000)
-eq r1.w, r4.z, r1.w
-if_nz r1.w
+max r0.w, r4.z, l(0.000000)
+min r0.w, r0.w, l(1.000000)
+eq r0.w, r4.z, r0.w
+if_nz r0.w
 
 #line 169
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
 #line 171
-  mul r4.xyz, r4.wwww, r4.xyzx
-  mul r3.xyz, r0.wwww, r4.xyzx
+  mul r3.xyz, r4.wwww, r4.xyzx
 
 #line 172
 endif 
@@ -828,4 +824,4 @@ add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 387 instruction slots used
+// Approximately 385 instruction slots used

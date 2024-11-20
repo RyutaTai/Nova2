@@ -13,5 +13,11 @@ public:
 	virtual void Render();
 	virtual void DrawDebug();
 
+	void SetDrawFlag(const bool& drawFlag) { drawFlag_ = drawFlag; }
+	bool GetDrawFlag() { return drawFlag_; }
+
+private:
+	bool drawFlag_ = true;	//	•`‰æƒtƒ‰ƒO
+
 };
 

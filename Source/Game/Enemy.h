@@ -62,6 +62,7 @@ public:
 	EnemyType					GetMyType()										{ return myType_; }				//	敵の種類取得
 	DirectX::XMFLOAT3			GetTargetPosition()								{ return targetPosition_; }		//	ターゲットポジション取得
 	float						GetRunTimer()									{ return runTimer_; }			//	ステートタイマー取得
+	bool						IsUseOffsetY() { return useOffsetY_; }
 
 protected:
 	DirectX::XMFLOAT3			targetPosition_		=	{ 0.0f,0.0f,0.0f };				//	ターゲット位置
@@ -71,5 +72,6 @@ protected:
 	float						runTimer_			=	0.0f;							//
 	bool						damaged_			=	false;							//	攻撃を受けたかどうか
 
+	bool						useOffsetY_			= true;	//	当たり判定でY方向のオフセット値を使うか
 };
 

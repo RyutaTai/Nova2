@@ -71,7 +71,7 @@ private:
 
 	float fov_;													//	視野角
 	float range_			= 250.0f;							//	カメラとターゲットの距離を決めるのに使う
-	float rollSpeed_		= DirectX::XMConvertToRadians(45);	//	カメラの回転速度
+	float rollSpeed_		= DirectX::XMConvertToRadians(75);	//	カメラの回転速度
 	float maxAngleX_		= DirectX::XMConvertToRadians(45);	//	カメラの回転値制限
 	float minAngleX_		= DirectX::XMConvertToRadians(-45);	//	カメラの回転値制限
 	float moveSpeed_		=  2.0f;							//	カメラの移動速度

@@ -8,9 +8,9 @@
 void Frequency::Initialize()
 {
     //  Hamming窓の生成
-    hamming_ = HammingWindow(blockCount_);
+    hamming_ = HammingWindow(BlockCount);
 
-    oldAmplitudeSpectrum_.resize(blockCount_, 0.0f);
+    oldAmplitudeSpectrum_.resize(BlockCount, 0.0f);
 
 }
 
@@ -22,13 +22,13 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
     //std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);
     const uint8_t* audioVector  = audioSource->GetAudioData();
     int             SPNowData   = audioSource->GetCurrentSample();  //  現在のサンプル
-    int             SPNowBlock  = SPNowData / blockCount_;          //  現在のブロック計算
+    int             SPNowBlock  = SPNowData / BlockCount;          //  現在のブロック計算
 
     //  FFT変換
     std::vector<Complex> windowedData;
-    int spNowBlock = blockCount_ * SPNowBlock;
+    int spNowBlock = BlockCount * SPNowBlock;
 
-    for (int i = 0; i < blockCount_; ++i)
+    for (int i = 0; i < BlockCount; ++i)
     {
         int index = i + spNowBlock;
         if (index < SPsize)  // 範囲内かチェック
@@ -53,31 +53,37 @@ void Frequency::Update(const float& elapsedTime,const std::shared_ptr<AudioSourc
     float blendRate = 0.9f;
     for (size_t i = 0; i < amplitudeSpectrum_.size() - 1; ++i)
     {
-        amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum_[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
-        oldAmplitudeSpectrum_[i] = amplitudeSpectrum_[i];
+        if (i < oldAmplitudeSpectrum_.size())
+        {
+            amplitudeSpectrum_[i] = blendRate * oldAmplitudeSpectrum_[i] + ((1 - blendRate) * amplitudeSpectrum_[i]);
+        }
+        else
+        {
+            oldAmplitudeSpectrum_[i] = amplitudeSpectrum_[i];
+        }
     }
 #else
     UINT32 SPsize = audioSource->GetAudioBytes();
     //auto& SPdata = audioSource->GetAudioData();
     auto& SPdata = ConvertToVector(audioSource->GetAudioData(), SPsize);
     int SPNowData = audioSource->GetCurrentSample();    // 現在のサンプル
-    int SPNowBlock = SPNowData / blockCount_;    // 現在のブロック計算
+    int SPNowBlock = SPNowData / BlockCount;    // 現在のブロック計算
 
     // SPNowBlock が SPdata の範囲を超えないようにする
-    if (SPNowBlock * blockCount_ + blockCount_ > SPsize)
+    if (SPNowBlock * BlockCount + BlockCount > SPsize)
     {
-        SPNowBlock = (SPsize - blockCount_) / blockCount_;
+        SPNowBlock = (SPsize - BlockCount) / BlockCount;
     }
 
     // windowedDataのサイズをdataBlockSizeに設定する
-    std::vector<Complex> windowedData(blockCount_);
+    std::vector<Complex> windowedData(BlockCount);
 
-    for (int i = 0; i < blockCount_; ++i)
+    for (int i = 0; i < BlockCount; ++i)
     {
         // 範囲チェックを追加する
-        if ((i + blockCount_ * SPNowBlock) < SPsize)
+        if ((i + BlockCount * SPNowBlock) < SPsize)
         {
-            windowedData[i] = hamming_[i] * SPdata[i + blockCount_ * SPNowBlock];
+            windowedData[i] = hamming_[i] * SPdata[i + BlockCount * SPNowBlock];
         }
         else
         {

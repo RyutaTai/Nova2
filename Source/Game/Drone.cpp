@@ -54,7 +54,7 @@ void Drone::Initialize()
 	radius_ = 2.5f;
 
 	//	õ“G”ÍˆÍİ’è
-	searchRange_ = 15.0f;
+	searchRange_ = 11.0f;
 
 	//	HPİ’è
 	hp_ = MAX_HP;

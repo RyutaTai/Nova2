@@ -24,6 +24,7 @@ public:
 	void Render();
 	void DrawDebug();
 
+	void UpdateFFTConstantBuffer();					//	FFT定数バッファ更新処理
 	void UpdateEmissive(const float& elapsedTime);	//	エミッシブ更新処理
 	void UpdateFrequencyMin();
 	void UpdateFrequencyMax();
@@ -31,8 +32,6 @@ public:
 
 	bool Collision(_In_ const DirectX::XMFLOAT3& rayPosition, _In_ const DirectX::XMFLOAT3& rayDirection, _In_ const DirectX::XMFLOAT4X4& stageTransform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
 		_Out_ std::string& intersectionMesh, _Out_ std::string& intersectionMaterial, _In_ float rayLengthLimit = 1.0e+7f, _In_ bool skipIf = false/*Once the first intersection is found, the process is interrupted.*/) const;
-
-	void CreateProjectionMappingTextureFromFFT();	//	FFTのデータからプロジェクションマッピング用のテクスチャを生成し、セットする
 
 	Transform* GetTransform() { return gltfStaticModelResource_->GetTransform(); }
 	Frequency* GetFrequency() { return frequency_.get(); }	//	音の周波数データ取得
@@ -45,13 +44,20 @@ private:
 		Max,
 	};
 
-	struct EmissiveConstants
+	struct EmissiveConstant
 	{
 		float emissiveIntensity_;
 		float dummy_[3];
 	};
-	EmissiveConstants emissiveConstant_;
+	EmissiveConstant emissiveConstant_;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emissiveConstantBuffer_;
+
+	struct FFTConstant
+	{
+		float fftData_[Frequency::BlockCount];	//	FFTのデータを分割数分GPUに渡す
+	};
+	FFTConstant fftConstant_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> fftConstantBuffer_;
 
 private:
 	static Stage* instance_;
@@ -74,7 +80,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fftSRV_;	// projectionMapping
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> projectionMappingTexture_;	//	画像をロードして使う
-	float fftDivisionValue_ = 50000.0f;	//	GPUに渡すFFTデータを割る値
+	float fftDivisionValue_ = 10000.0f;	//	GPUに渡すFFTデータを割る値
 
 	bool				useFrequency_			= true;
 	static const int	FrequencyDataMax		= 120;

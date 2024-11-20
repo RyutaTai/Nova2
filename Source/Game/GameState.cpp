@@ -27,7 +27,13 @@ namespace GameState
 		//	ステート遷移
 		if (EnemyManager::Instance().GetEnemyCount() <= 0)
 		{
-			owner_->ChangeState(SceneGame::SceneGameState::Wave2);
+			//owner_->ChangeState(SceneGame::SceneGameState::Wave2);
+		}
+
+		//	ステート遷移
+		if (EnemyManager::Instance().GetEnemyCount() <= 0)
+		{
+			owner_->ChangeState(SceneGame::SceneGameState::Clear);
 		}
 
 	}

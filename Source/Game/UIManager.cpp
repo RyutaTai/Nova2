@@ -48,7 +48,7 @@ void UIManager::SetDrawFlag(const bool& drawFlag)
 }
 
 //	番号からUIを取得
-UI* UIManager::GetUIFromNum(int num)
+UI* UIManager::GetUIFromNum(const int& num)
 {
 	//	numがuserInterfaces_より大きかったらアサートで落とす
 	_ASSERT_EXPR(num < userInterfaces_.size(), L"UI num is too large.");
@@ -68,6 +68,9 @@ UI* UIManager::GetUIFromNum(int num)
 
 void UIManager::Render()
 {
+	//	UI全体描画フラグがfalseなら処理しない
+	if (allDrawFlag_ == false)return;
+
 	//	ステート設定
 	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 	Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
@@ -76,7 +79,7 @@ void UIManager::Render()
 	//	描画
 	for (UI*& ui : userInterfaces_)
 	{
-		ui->Render();
+		if (ui->GetDrawFlag()) ui->Render();
 	}
 }
 

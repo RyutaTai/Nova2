@@ -27,7 +27,7 @@ public:
 
 	void	SetDrawFlag(const bool& drawFlag);
 
-	UI*		GetUIFromNum(int num);
+	UI*		GetUIFromNum(const int& num);
 	UI*		GetUIFromName(const std::string& name);
 
 private:

@@ -36,11 +36,19 @@ Stage::Stage()
 
 	//	エミッシブ定数バッファ生成
 	D3D11_BUFFER_DESC bufferDesc{};
-	bufferDesc.ByteWidth = sizeof(EmissiveConstants);
+	bufferDesc.ByteWidth = sizeof(EmissiveConstant);
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	HRESULT hr;
 	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, emissiveConstantBuffer_.ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	//	FFT定数バッファ生成
+	bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(FFTConstant);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, fftConstantBuffer_.ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	//	midi生成
@@ -77,13 +85,16 @@ void Stage::Update(const float& elapsedTime)
 	//	エミッシブ更新処理
 	UpdateEmissive(elapsedTime);
 
+	//	FFT定数バッファ更新
+	UpdateFFTConstantBuffer();
+
 }
 
 //	エミッシブ更新処理
 void Stage::UpdateEmissive(const float& elapsedTime)
 {
 #if 1	//	通常
-	//	frequencyを使用しないならemissiveIntensityを1.0fに設定
+	//	frequencyを使用しないならemissiveIntensity_を1.0fに設定
 	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
 
 	//	周波数データ更新
@@ -257,13 +268,14 @@ void Stage::Render()
 {
 	ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
 	// PROJECTION_MAPPING
+	UpdateFFTConstantBuffer();
+	
 #if MAGIC_CIRCLE
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, projectionMappingTexture_.GetAddressOf());
 #else
-	CreateProjectionMappingTextureFromFFT();	//	プロジェクションマッピング用のテクスチャを作成し、シェーダーリソースにセット
 	spectrumFramebuffer_->Clear(deviceContext, 0, 0, 0, 1);
 	spectrumFramebuffer_->Activate(deviceContext);
-	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 15, 0, spectrumPS_.Get());
+	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 1, 0, spectrumPS_.Get());
 	spectrumFramebuffer_->Deactivate(deviceContext);
 	//spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf()
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf());
@@ -280,17 +292,19 @@ void Stage::Render()
 
 }
 
-//	FFTのデータからプロジェクションマッピング用のテクスチャを生成し、セットする
-void Stage::CreateProjectionMappingTextureFromFFT()
+//	FFT定数バッファ更新
+void Stage::UpdateFFTConstantBuffer()
 {
 	std::vector<float> fftData = frequency_->GetAmplitudeSpectrum(); // FFT結果を取得
 
-#if 0	//	正規化
-	float max = -1.0f;
-	for (auto& fft : fftData)
+#if 1	//	正規化
+	std::vector<float> copy = fftData;
+	std::sort(copy.begin(), copy.end(), [](float l, float r) {return l > r; });
+	float max = copy.at(30);
+	/*for (int index = 5; index < fftData.size() - 5 ; ++index)
 	{
-		if (max < fft)max = fft;
-	}
+		if (max < fftData.at(index))max = fftData.at(index);
+	}*/
 
 	for (auto& fft : fftData)
 	{
@@ -299,60 +313,23 @@ void Stage::CreateProjectionMappingTextureFromFFT()
 #else
 	for (auto& fft : fftData)
 	{
-		fft /= fftDivisionValue_;
+		fft = fft * fft *0.000004f;
+		//if (fft < 0.09f)fft *= 10;
 	}
 #endif
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = fftData.data();
-	initData.SysMemPitch = sizeof(float) * fftData.size();
 
-	//	FFTデータをもとにテクスチャを作成
-	D3D11_TEXTURE2D_DESC texture2dDesc = {};
-#if MAGIC_CIRCLE
-	texture2dDesc.Width = fftData.size();
-	texture2dDesc.Height = 1; // 1行のテクスチャとして表現
-	texture2dDesc.MipLevels = 1;
-	texture2dDesc.ArraySize = 1;
-	texture2dDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	texture2dDesc.SampleDesc.Count = 1;
-	texture2dDesc.Usage = D3D11_USAGE_DYNAMIC;
-	texture2dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texture2dDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> fftTexture;
-	Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, &initData, fftTexture.GetAddressOf());
+	//	FFT定数バッファ更新
+	for (int index = 0; index < Frequency::BlockCount; ++index)
+	{
+		fftConstant_.fftData_[index] = fftData.at(index);
+	}
 
-	//	テクスチャをシェーダーリソースにバインド(スロット番号 : 15)
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = texture2dDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1; 
+	int size = sizeof(FFTConstant);
 
-	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
-	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, fftSRV_.GetAddressOf());
-#else
-	texture2dDesc.Width = fftData.size();
-	texture2dDesc.Height = 1; // 1行のテクスチャとして表現
-	texture2dDesc.MipLevels = 1;
-	texture2dDesc.ArraySize = 1;
-	texture2dDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	texture2dDesc.SampleDesc.Count = 1;
-	texture2dDesc.Usage = D3D11_USAGE_DYNAMIC;
-	texture2dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texture2dDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> fftTexture;
-	Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, &initData, fftTexture.GetAddressOf());
-
-	//	テクスチャをシェーダーリソースにバインド(スロット番号 : 16)
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = texture2dDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	Graphics::Instance().GetDevice()->CreateShaderResourceView(fftTexture.Get(), &srvDesc, fftSRV_.GetAddressOf());
-	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, fftSRV_.GetAddressOf());
-#endif
+	//	FFT定数バッファをGPUに送る
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(fftConstantBuffer_.Get(), 0, 0, &fftConstant_, 0, 0);
+	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(10, 1, fftConstantBuffer_.GetAddressOf());
 
 }
 

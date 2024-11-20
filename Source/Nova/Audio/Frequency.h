@@ -34,11 +34,13 @@ public:
 	void	AnalyzeBPM(const uint8_t* data, const int& datasize, const int& sampleRate);    //  BPMを算出
 	float	GetBPM() { return bpm_; }	//	BPM取得
 
+public:
+	static constexpr int BlockCount = 2048;		//	ハミング窓サンプル数(何分割するか)
+
 private:
 	static constexpr float AUDIO_PI			= 3.14159265358979323846f;
 	static constexpr float AUDIO_PI_LONG	= 3.14159265358979323846264338328L;
 
-	static constexpr int blockCount_ = 2048;		//	ハミング窓サンプル数(何分割するか)
 	//static constexpr int blockCount_ = 1024;		//	ハミング窓サンプル数(何分割するか)
 
 	std::vector<float> amplitudeSpectrum_;			//	振幅スぺクトラム(周波数帯ごとのデシベル値)

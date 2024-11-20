@@ -62,12 +62,12 @@ void Player::Initialize()
 	effectScale_ = 1.0f;
 
 	//	位置設定
-	GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
+	//GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
+	GetTransform()->SetPosition({ 14.0f, 5.0f, -20.0f });
 
 	//	スケール設定
-	//float scale = 2.0f;
-	//GetTransform()->SetScaleFactor(-3.0f);
-	GetTransform()->SetScaleFactor(3.0f);
+	//GetTransform()->SetScaleFactor(3.0f);
+	GetTransform()->SetScaleFactor(1.9f);
 
 	//	座標系変換
 	GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
@@ -212,7 +212,11 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 		DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
 		float eRadius = enemy->GetRadius() + 0.1f;
 		float eHeight = enemy->GetHeight() * 2;
-		DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
+		DirectX::XMFLOAT3 ePosOffset = {};
+		if (enemy->IsUseOffsetY())
+		{
+			ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
+		}
 
 		//	球と円柱で当たり判定
 		//if (enemy->IsInvincible() == true)continue;	//	敵の無敵フラグがtrueなら処理しない(当たり判定もなくなる)

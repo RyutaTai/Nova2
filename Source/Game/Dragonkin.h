@@ -94,6 +94,8 @@ private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理
 
 private:
+	static const int MAX_HP = 40;
+
 	BehaviorTree*	behaviorTree_	= nullptr;
 	BehaviorData*	behaviorData_	= nullptr;
 	NodeBase*		activeNode_		= nullptr;

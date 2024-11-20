@@ -168,9 +168,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     {
         float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
         //float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
-        projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a * projectionMappingColorIntensity;
+        projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
     }
-        
+    
     float3 Lo = diffuse + specular + emissive + projectionMappingColor /*PROJECTION_MAPPING*/;
     return float4(Lo, baseColorFactor.a);
 

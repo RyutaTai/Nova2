@@ -29,6 +29,18 @@ Dragonkin::Dragonkin()
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
 
+	//	索敵範囲設定
+	searchRange_ = 13.5f;
+
+	//	当たり判定用高さ、半径設定
+	//radius_ = 1.79f;
+	radius_ = 3.0f;
+	height_ = 10.0f;
+	useOffsetY_ = false;
+
+	//	HP設定
+	hp_ = MAX_HP;
+
 	//	ビヘイビアツリー設定
 	behaviorData_ = new BehaviorData();
 	behaviorTree_ = new BehaviorTree(this);
@@ -53,18 +65,17 @@ void Dragonkin::Initialize()
 	//	位置設定
 	GetTransform()->SetPosition({ 23.0f, 0.0f,3.0f });
 
+	//	回転値設定
+	GetTransform()->SetRotationY(DirectX::XMConvertToRadians(-182.499f));
 
 	//	座標系変換
 	//GetTransform()->SetCoordinateSystem(Transform::CoordinateSystem::cRightYup);
 
 	//	スケール
-	float scale = 0.04f;
-	GetTransform()->SetScaleFactor(scale);
+	//GetTransform()->SetScaleFactor(0.04f);
+	GetTransform()->SetScaleFactor(0.025f);
 
-	//	当たり判定用高さ、半径設定
-	//radius_ = 10.0f;
-	//height_=
-
+	//	初期アニメーション再生速度設定
 	SetAnimationSpeed(1.0f);
 }
 
@@ -75,6 +86,13 @@ void Dragonkin::Update(const float& elapsedTime)
 	UpdateAnimation(elapsedTime);
 
 	UpdateBehaviorTree(elapsedTime);	//	ビヘイビアツリー更新
+
+	//	HPがなくなったら
+	if (hp_ <= 0)
+	{
+		Destroy();
+	}
+
 }
 
 //	ビヘイビアツリー更新処理
@@ -139,7 +157,8 @@ void Dragonkin::DrawDebugPrimitive()
 	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), radius_, height_, DirectX::XMFLOAT4(0, 0, 0, 1));
 
 	//	索敵範囲描画(円柱)
-	//debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0,1,0.1f,1.0f });
+	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0,1,0.1f,1.0f });
+
 
 }
 
@@ -157,6 +176,7 @@ void Dragonkin::DrawDebug()
 		ImGui::Text(u8"Behavior　%s", str.c_str());	//	現在のビヘイビア
 		Character::DrawDebug();
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
+		ImGui::DragFloat("SearchRange", &searchRange_, 0.01f);
 		ImGui::TreePop();
 	}
 }

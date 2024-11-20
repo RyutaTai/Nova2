@@ -25,7 +25,7 @@ void EnemyManager::Update(const float& elapsedTime)
 		}
 
 		//	弾丸処理
-		delete enemy;
+		//delete enemy;
 	}
 
 	//	破棄リストをクリア
@@ -107,10 +107,10 @@ void EnemyManager::Register(Enemy* enemy)
 //	エネミー全削除
 void EnemyManager::Clear()
 {
-	for (Enemy* enemy : enemies_)
+	/*for (Enemy* enemy : enemies_)
 	{
 		delete enemy;
-	}
+	}*/
 	enemies_.clear();
 }
 
@@ -122,6 +122,7 @@ void EnemyManager::Remove(Enemy* enemy)
 }
 
 //	ドローン生成(GameStateで呼んでいる)
+#if 0
 void EnemyManager::DroneSpawn(const int& spawn)
 {
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
@@ -144,6 +145,22 @@ void EnemyManager::DroneSpawn(const int& spawn)
 		drone->Initialize();	//	ドローン初期化
 	}
 }
+#else
+void EnemyManager::DroneSpawn(const int& spawn)
+{
+	for (int spawnCount = 0; spawnCount < spawn; spawnCount++)
+	{
+		Drone* drone = new Drone();	//	生成時に登録される
+		//	生成位置設定
+		DirectX::XMFLOAT3 pos =
+		{
+			37.42f, 5.08f, -10.2f
+		};
+		drone->GetTransform()->SetPosition(pos);
+		drone->Initialize();	//	ドローン初期化
+	}
+}
+#endif
 
 //	描画処理
 void EnemyManager::Render()

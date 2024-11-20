@@ -14,8 +14,8 @@ public:
 	static const GamePadButton BTN_B				= (1 <<  5);	//	Xキー
 	static const GamePadButton BTN_X				= (1 <<  6);	//	Cキー
 	static const GamePadButton BTN_Y				= (1 <<  7);	//	Vキー
-	static const GamePadButton BTN_START			= (1 <<  8);	//	Enterキー
-	static const GamePadButton BTN_BACK				= (1 <<  9);
+	static const GamePadButton BTN_START			= (1 <<  8);	//	Enterキー(Xboxコントローラーのメニューボタン)
+	static const GamePadButton BTN_BACK				= (1 <<  9);	//	Xboxコントローラーのビューボタン
 	static const GamePadButton BTN_LEFT_THUMB		= (1 << 10);
 	static const GamePadButton BTN_RIGHT_THUMB		= (1 << 11);
 	static const GamePadButton BTN_LEFT_SHOULDER	= (1 << 12);

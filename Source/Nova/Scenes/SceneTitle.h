@@ -24,13 +24,13 @@ public:
 	//	オーディオ
 	enum class AUDIO_SE_TITLE
 	{
-		CHOICE,		//	選択音
-		DECISION,	//	決定音
+		Choice,		//	選択音
+		Decision,	//	決定音
 		Max,		//	SE最大数
 	};
 	enum class AUDIO_BGM_TITLE
 	{
-		TITLE,		//	タイトルBGM
+		Title,		//	タイトルBGM
 		Max,		//	BGM最大数
 	};
 
@@ -59,9 +59,9 @@ private:
 private:	//	スプライト
 	enum class SPRITE_TITLE
 	{
-		BACK,				//	背景画像
-		GROOVE,				//	グルーブ テキストスプライト
-		KEY_TEXT,			//	キーテキスト
+		Back,				//	背景画像
+		Groove,				//	グルーブ(タイトルテキスト)
+		KeyText,			//	キーテキスト
 		Max,				//	スプライトの上限数
 	};
 	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_TITLE::Max)];

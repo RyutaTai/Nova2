@@ -426,7 +426,7 @@ bool Player::RayVsVertical(const float& elapsedTime)
 			GetTransform()->SetPosition(playerPos);
 
 			// Reflection
-			DirectX::XMStoreFloat3(&velocity_, DirectX::XMVector3Reflect(DirectX::XMLoadFloat3(&velocity_), DirectX::XMLoadFloat3(&intersectionNormal)));
+			//DirectX::XMStoreFloat3(&velocity_, DirectX::XMVector3Reflect(DirectX::XMLoadFloat3(&velocity_), DirectX::XMLoadFloat3(&intersectionNormal)));
 
 			isHit = true;
 

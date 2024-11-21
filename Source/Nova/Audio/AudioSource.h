@@ -70,8 +70,6 @@ public: // getter setter
 
 	std::string	GetName()const { return name_; }
 
-	const float GetBPM()const { return bpm_; }	//	BPM取得
-
 	bool IsPlay();
 
 	void SetVolume(FLOAT32 volume, BOOL useDb);
@@ -108,8 +106,6 @@ protected:
 	std::string name_ = "";
 
 	static constexpr int OutputMatrixMax_ = 8;	//	出力マトリックス最大数
-
-	float bpm_ = 120.0f;	//	デフォルトのBPMは120
 
 	// 前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
 	FLOAT32 lastVolume_ = {};

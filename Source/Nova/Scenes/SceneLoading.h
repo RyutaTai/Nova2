@@ -24,9 +24,9 @@ public:
 private:
 	enum class SPRITE_LOADING
 	{
-		BACK,				//	背景画像
-		LOADING,			//	ローディング　テキスト
-		TITLE_TEXT,
+		Back,				//	背景画像
+		Loading,			//	ローディング　テキスト
+		TitleText,
 		Max,				//	スプライトの上限数
 	};
 	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_LOADING::Max)];

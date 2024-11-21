@@ -10,9 +10,10 @@
 void SceneLoading::Initialize()
 {
 	//	スプライト初期化
-	sprite_[static_cast<int>(SPRITE_LOADING::LOADING)] = std::make_unique<Sprite>( L"./Resources/Image/Loading.png");
-	sprite_[static_cast<int>(SPRITE_LOADING::BACK)] = std::make_unique<Sprite>(L"./Resources/Image/Back.png");
-	sprite_[static_cast<int>(SPRITE_LOADING::TITLE_TEXT)] = std::make_unique<Sprite>( L"./Resources/Image/Groove.png");
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)] = std::make_unique<Sprite>( L"./Resources/Image/Loading.png");
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetPosition(900, 855);
+	sprite_[static_cast<int>(SPRITE_LOADING::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
+	sprite_[static_cast<int>(SPRITE_LOADING::TitleText)] = std::make_unique<Sprite>( L"./Resources/Image/Groove2.png");
 	//sprite_ = std::make_unique<Sprite>( L"./Resources/Image/NowLoading.png");
 
 	//	スレッド開始
@@ -50,14 +51,10 @@ void SceneLoading::Update(const float& elapsedTime)
 		nextScene_ = nullptr;
 	}
 
-	//	描画位置設定
-	DirectX::XMFLOAT2 pos = {590,430};
-	sprite_[static_cast<int>(SPRITE_LOADING::LOADING)]->GetTransform()->SetPosition(pos);
-
 	//	角度更新
 	static float angle = 0.0f;
 	angle += 90.0f * elapsedTime;
-	sprite_[static_cast<int>(SPRITE_LOADING::LOADING)]->GetTransform()->SetAngle(angle);
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetAngle(angle);
 
 }
 
@@ -92,9 +89,9 @@ void SceneLoading::Render()
 		sprite_->Render();
 #endif
 
-		sprite_[static_cast<int>(SPRITE_LOADING::BACK)]->Render();
-		sprite_[static_cast<int>(SPRITE_LOADING::TITLE_TEXT)]->Render();
-		sprite_[static_cast<int>(SPRITE_LOADING::LOADING)]->Render();
+		sprite_[static_cast<int>(SPRITE_LOADING::Back)]->Render();
+		sprite_[static_cast<int>(SPRITE_LOADING::TitleText)]->Render();
+		sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->Render();
 	}
 }
 

@@ -18,7 +18,7 @@ namespace TitleState
 		GamePad& gamePad = Input::Instance().GetGamePad();
 		if (gamePad.GetButtonDown() & GamePad::BTN_A)   //  コントローラAキー
 		{
-			owner_->PlaySE(SceneTitle::AUDIO_SE_TITLE::DECISION);
+			owner_->PlaySE(SceneTitle::AUDIO_SE_TITLE::Decision);
 			owner_->ChangeState(SceneTitle::SceneTitleState::Fade);
 
 			//SceneManager::Instance().ChangeScene(new SceneGame);

@@ -14,17 +14,16 @@ void SceneTitle::Initialize()
 {
 	//	Audioより後にSpriteを呼ぶ
 #if 1
-	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
-	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->SetVolume(0.3f, false);
+	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
+	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->SetVolume(0.3f, false);
 
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav");
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.2f, false);
+	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav");
+	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->SetVolume(0.2f, false);
 #endif
-
-	sprite_[static_cast<int>(SPRITE_TITLE::BACK)] = std::make_unique<Sprite>(L"./Resources/Image/Back.png");
-	sprite_[static_cast<int>(SPRITE_TITLE::GROOVE)] = std::make_unique<Sprite>(L"./Resources/Image/Groove.png");
-	sprite_[static_cast<int>(SPRITE_TITLE::KEY_TEXT)] = std::make_unique<Sprite>(L"./Resources/Image/KeyText2.png");
-
+	sprite_[static_cast<int>(SPRITE_TITLE::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
+	sprite_[static_cast<int>(SPRITE_TITLE::Groove)] = std::make_unique<Sprite>(L"./Resources/Image/Groove2.png");
+	sprite_[static_cast<int>(SPRITE_TITLE::KeyText)] = std::make_unique<Sprite>(L"./Resources/Image/KeyText2.png");
+	sprite_[static_cast<int>(SPRITE_TITLE::KeyText)]->GetTransform()->SetPosition(640, 855);
 	//  UI
 #if 0
 	ui_ = new UI("./Resources/Image/KeyText2.png");
@@ -97,7 +96,7 @@ void SceneTitle::Update(const float& elapsedTime)
 	//	//SceneManager::Instance().ChangeScene(new SceneGame);
 
 	//}
-	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->Update(elapsedTime);		//	プレイタイマー更新用
+	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->Update(elapsedTime);		//	プレイタイマー更新用
 
 	// 終了処理
 	//if( GetAsyncKeyState(VK_ESCAPE) & 0x8000 ) exit(0);
@@ -106,7 +105,7 @@ void SceneTitle::Update(const float& elapsedTime)
 	//bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->Play();
 
 #if 1
-	bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->Play(true);
+	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->Play(true);
 #endif
 }
 
@@ -137,12 +136,12 @@ void SceneTitle::Render()
 	Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);
 
 	//  背景
-	sprite_[static_cast<int>(SPRITE_TITLE::BACK)]->Render();
+	sprite_[static_cast<int>(SPRITE_TITLE::Back)]->Render();
 
 	//  タイトル文字
 	static float grooveAlpha = 0.0f;
 	grooveAlpha += 0.01f;
-	Sprite* groove = sprite_[static_cast<int>(SPRITE_TITLE::GROOVE)].get();
+	Sprite* groove = sprite_[static_cast<int>(SPRITE_TITLE::Groove)].get();
 	DirectX::XMFLOAT2 texSize = groove->GetTransform()->GetSize();
 	groove->GetTransform()->SetColorA(grooveAlpha);
 
@@ -151,8 +150,7 @@ void SceneTitle::Render()
 	color = groove->GetTransform()->GetColor();
 	groove->Render();
 
-	sprite_[static_cast<int>(SPRITE_TITLE::KEY_TEXT)]->GetTransform()->SetPosition(355, 540);
-	sprite_[static_cast<int>(SPRITE_TITLE::KEY_TEXT)]->Render();
+	sprite_[static_cast<int>(SPRITE_TITLE::KeyText)]->Render();
 
 	//  UI描画
 #if 0
@@ -167,7 +165,12 @@ void SceneTitle::DrawDebug()
 	{
 		if (ImGui::TreeNode("Back"))	//	タイトル画面
 		{
-			sprite_[static_cast<int>(SPRITE_TITLE::BACK)]->DrawDebug();
+			sprite_[static_cast<int>(SPRITE_TITLE::Back)]->DrawDebug();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("KeyText"))
+		{
+			sprite_[static_cast<int>(SPRITE_TITLE::KeyText)]->DrawDebug();
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("UI"))
@@ -179,7 +182,7 @@ void SceneTitle::DrawDebug()
 	}
 	if (ImGui::TreeNode("Audio"))
 	{
-		se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->DrawDebug();
+		se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->DrawDebug();
 		ImGui::TreePop();
 	}
 }

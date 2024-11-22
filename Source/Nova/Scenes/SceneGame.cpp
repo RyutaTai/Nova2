@@ -21,8 +21,11 @@
 void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
+#if 0
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav");
-	//bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_44100Hz_16bit.wav");
+#else
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_44100Hz_16bit.wav");
+#endif
 	AudioManager::Instance().Register(bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]);
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
 	//	BGM再生
@@ -405,6 +408,9 @@ void SceneGame::Finalize()
 
 	//	エネミーマネージャー終了化
 	EnemyManager::Instance().Clear();
+
+	//	UIマネージャー終了化
+	UIManager::Instance().Finalize();
 
 }
 

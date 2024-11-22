@@ -98,8 +98,11 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
 
 	//	周波数データ更新
+#if 0
 	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
-	//frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
+#else
+	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
+#endif
 
 	//	frequencyData_更新(配列のデータをずらし、新しいデータを設定)
 	for (int i = FrequencyDataMax - 1; 0 < i; --i)
@@ -230,17 +233,17 @@ bool Stage::Collision(_In_ const DirectX::XMFLOAT3& rayStartPosition, _In_ const
 	//	空間分割
 	if (collisionMesh_->RaycastWithSpaceDivision(rayStartPosition, rayDirection, stageTransform, intersectionPosition, intersectionNormal, intersectionMesh, intersectionMaterial, rayLengthLimit, skipIf))
 	{
-		OutputDebugStringA("Position:");
-		OutputDebugStringA("Intersected : ");
-		OutputDebugStringA(intersectionMesh.c_str());
-		OutputDebugStringA(" : ");
-		OutputDebugStringA(intersectionMaterial.c_str());
-		OutputDebugStringA("\n");
+		//OutputDebugStringA("Position:");
+		//OutputDebugStringA("Intersected : ");
+		//OutputDebugStringA(intersectionMesh.c_str());
+		//OutputDebugStringA(" : ");
+		//OutputDebugStringA(intersectionMaterial.c_str());
+		//OutputDebugStringA("\n");
 		return true;
 	}
 	else
 	{
-		OutputDebugStringA("Unintersected...\n");
+		//OutputDebugStringA("Unintersected...\n");
 		return false;
 	}
 #endif

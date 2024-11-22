@@ -173,6 +173,11 @@ void SceneTitle::DrawDebug()
 			sprite_[static_cast<int>(SPRITE_TITLE::KeyText)]->DrawDebug();
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("TitleText"))
+		{
+			sprite_[static_cast<int>(SPRITE_TITLE::Groove)]->DrawDebug();
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("UI"))
 		{
 			UIManager::Instance().DrawDebug();

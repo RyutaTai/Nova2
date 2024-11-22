@@ -270,6 +270,7 @@ void Framework::DrawDebug()
 	// Œ»İ‚ÌFPS‚ğ”’l‚Æ‚µ‚Ä•\¦
 	ImGui::Text("Current FPS: %.2f", fps_);
 	
+	AudioManager::Instance().DrawDebug();
 	graphics_.DrawDebug();
 	input_.DrawDebug();
 

@@ -14,27 +14,47 @@ public:
 	void Render()override;
 	void DrawDebug()override;
 
+	void UpdateDrawFlag();
+	void UpdateCenterCircleAnimation();
 	void UpdatePosition(const float& elapsedTime);
 	void UpdateScale(const float& elapsedTime);
-	void UpdateDrawFlag();
+	void UpdateMoveFactor();
 
 	void SetBPM(const int& bpm) { bpm_ = bpm; }
 	int GetBPM() { return bpm_; }
 
 private:
+	//	半円の構造体
 	struct Semicircle
 	{
-		std::unique_ptr<Sprite> left_;
-		std::unique_ptr<Sprite> right_;
+		std::unique_ptr<Sprite> left_;		//	左側の半円
+		std::unique_ptr<Sprite> right_;		//	右側の半円
+		float range_ = 0.0f;				//	中心円からの距離
 	};
 	
-	std::unique_ptr<Sprite> center_;			//	テンポガイドの中心
-	//std::unique_ptr<Sprite> leftSemicircle_[4];	//	左半円
-	//std::unique_ptr<Sprite> rightSemicircle_[4];	//	右半円
+	enum class Side
+	{
+		Left = 0,
+		Right,
+		Max
+	};
 
-	std::unique_ptr<Semicircle> semicircles_[4];	//	半円の組
+	static constexpr int	SemicircleMax = 4;					//	半円の数
+	 float	RangeMax = 576.0f;					//	中心円からの距離の最大値
+	 float	RangeMin = -0.5f;					//	rangeの最小値。これを下回ったら位置リセット
+	 float	SemicircleScaleMax = 1.5f;			//	半円のスケール最大値
+	 float	SemicircleScaleMin = 1.0f;			//	半円のスケール最小値
 
-	int bpm_ = 120.0f;	//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
+	std::unique_ptr<Sprite>		center_;						//	テンポガイドの中心
+	std::unique_ptr<Semicircle> semicircles_[SemicircleMax];	//	半円の組
+
+	float	moveSpeed_ = 290.0f;					//	移動する速さ
+	float	moveFactor_ = 1.0f;						//	BPM120を基準とする移動する速さの倍率
+	int		bpm_ = 120.0f;							//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
+	bool	centerCircleAnimFlag_ = false;			//	中心円のアニメーション更新フラグ
+	 int	AnimChangeThreshold = 9;				//	何フレームでアニメーションを遷移するか
+	 int		centerAnimTime_ = 0;				//	中心円のアニメーション時間カウント
+
 
 };
 

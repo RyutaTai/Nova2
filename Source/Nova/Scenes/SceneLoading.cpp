@@ -12,6 +12,8 @@ void SceneLoading::Initialize()
 	//	スプライト初期化
 	sprite_[static_cast<int>(SPRITE_LOADING::Loading)] = std::make_unique<Sprite>( L"./Resources/Image/Loading.png");
 	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetPosition(900, 855);
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->AddPosition(50, 50);
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetPivot(0.5f, 0.5f);
 	sprite_[static_cast<int>(SPRITE_LOADING::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
 	sprite_[static_cast<int>(SPRITE_LOADING::TitleText)] = std::make_unique<Sprite>( L"./Resources/Image/Groove2.png");
 	//sprite_ = std::make_unique<Sprite>( L"./Resources/Image/NowLoading.png");

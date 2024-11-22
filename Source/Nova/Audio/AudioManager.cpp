@@ -1,6 +1,7 @@
 #include "AudioManager.h"
 
 #include "../Others/Misc.h"
+#include "../../imgui/imgui.h"
 
 void AudioManager::Initialize()
 {
@@ -112,7 +113,13 @@ void AudioManager::Clear()
 	audioResources_.clear();
 }
 
+//	デバッグ描画
 void AudioManager::DrawDebug()
 {
-
+	if (ImGui::TreeNode("AudioManager"))
+	{
+		int size = audioResources_.size();
+		ImGui::DragInt("AudioCount", &size);	//	オーディオの数
+		ImGui::TreePop();
+	}
 }

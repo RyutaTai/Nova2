@@ -18,7 +18,8 @@ namespace TitleState
 		GamePad& gamePad = Input::Instance().GetGamePad();
 		if (gamePad.GetButtonDown() & GamePad::BTN_A)   //  コントローラAキー
 		{
-			owner_->PlaySE(SceneTitle::AUDIO_SE_TITLE::Decision);
+			//owner_->PlaySE(SceneTitle::AUDIO_SE_TITLE::Decision);
+			owner_->PlaySE("Decision.wav");
 			owner_->ChangeState(SceneTitle::SceneTitleState::Fade);
 
 			//SceneManager::Instance().ChangeScene(new SceneGame);
@@ -82,7 +83,7 @@ namespace TitleState
 	void FadeState::Update(const float& elapsedTime)
 	{
 		fadeTimer_ += elapsedTime;
-		if (FADE_TIME < fadeTimer_)	//	フェード完了したら
+		//if (FADE_TIME < fadeTimer_)	//	フェード完了したら
 		{
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 		}

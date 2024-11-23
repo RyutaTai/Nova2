@@ -1,14 +1,16 @@
 #include "SceneManager.h"
 
+#include "../Audio/AudioManager.h"
+
 //	デストラクタ
 SceneManager::~SceneManager()
 {
-	if (currentScene_) //	現在のシーン終了化
+	if (currentScene_)	//	現在のシーン終了化
 	{
 		delete currentScene_;
 		currentScene_ = nullptr;
 	}
-	if (nextScene_)	//次のシーン終了化
+	if (nextScene_)	//	次のシーン終了化
 	{
 		delete nextScene_;
 		nextScene_ = nullptr;
@@ -76,5 +78,6 @@ void SceneManager::Clear()
 //	シーン切り替え
 void SceneManager::ChangeScene(Scene* scene)
 {
+	AudioManager::Instance().Clear();
 	nextScene_ = scene;
 }

@@ -9,11 +9,21 @@
 
 #include "WaveRead.h"
 
-// オーディオソース
+//	オーディオソース
 class AudioSource
 {
 public:
-	AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource);
+	enum class AudioType
+	{
+		BGMNormal,
+		SENormal,
+		BGM3D,
+		SE3D,
+		Max
+	};
+
+public:
+	AudioSource(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType = {}, const std::string& sceneName = {});
 	~AudioSource();
 
 public:
@@ -44,73 +54,69 @@ public:
 
 public: // getter setter
 
-	IXAudio2SourceVoice* GetSourceVoice() { return sourceVoice_; }
-
-	UINT32 GetPlayLength() const { return length_; }
-	FLOAT32 GetPlayLengthFloat() const { return lengthFloat_; }
-
-	FLOAT32 GetPlayTimer() const { return timer_; }
 	void ResetPlayTimer() { timer_ = 0.0f; }
 
-	FLOAT32 GetTotalPlayTimer()const { return totalPlayTimer_; }
+	IXAudio2SourceVoice*	GetSourceVoice()			{ return sourceVoice_; }
+	UINT32					GetPlayLength()		const	{ return length_; }
+	FLOAT32					GetPlayLengthFloat()const	{ return lengthFloat_; }
+	FLOAT32					GetPlayTimer()		const	{ return timer_; }
+	FLOAT32					GetTotalPlayTimer()	const	{ return totalPlayTimer_; }
+	XAUDIO2_VOICE_SENDS*	GetSfxSendList()			{ return &SFXSendList_; }
+	FLOAT32					GetVolume()			const	{ return lastVolume_; }
+	const WAVEFORMATEX&		GetWaveFormat()		const	{ return wfx_; }				//	WAVEフォーマット取得
+	XAUDIO2_VOICE_STATE		GetState()			const	{ return state_; }
+	const BYTE*				GetAudioData()		const	{ return buffer_.pAudioData; }
+	size_t					GetAudioBytes()		const	{ return buffer_.AudioBytes; }	//	バッファーのサイズ取得
+	size_t					GetCurrentSample()	const;									//	現在の再生位置をサンプル単位で取得
+	std::string				GetName()			const	{ return name_; }
 
-	XAUDIO2_VOICE_SENDS* GetSfxSendList() { return &SFXSendList_; }
+	bool					IsPlay();
 
-	FLOAT32 GetVolume() const { return lastVolume_; }
+	void			SetVolume(FLOAT32 volume, BOOL useDb);
+	virtual void	SetPitch(FLOAT32 pitch);
+	virtual void	SetPan(FLOAT32 pan);
 
-	const WAVEFORMATEX& GetWaveFormat() const { return wfx_; }	//	WAVEフォーマット取得
+	void			SetAudioType(const AudioType& type) { audioType_ = type; }
+	AudioType		GetMyAudioType() { return audioType_; }
+	bool			IsBGM();	//	BGMかどうか
+	bool			IsSE();		//	SEかどうか
 
-	XAUDIO2_VOICE_STATE GetState() const { return state_; }
-
-	const BYTE* GetAudioData() const{ return buffer_.pAudioData; }
-
-	size_t GetAudioBytes() const { return buffer_.AudioBytes; }	//	バッファーのサイズ取得
-
-	size_t GetCurrentSample()const;		//	現在の再生位置をサンプル単位で取得
-
-	std::string	GetName()const { return name_; }
-
-	bool IsPlay();
-
-	void SetVolume(FLOAT32 volume, BOOL useDb);
-
-	virtual void SetPitch(FLOAT32 pitch);
-
-	virtual void SetPan(FLOAT32 pan);
+	void			SetSceneName(const std::string& sceneName) { sceneName_ = sceneName; }
+	std::string		GetSceneName() { return sceneName_; }
 
 protected:
 
-	// 基本のサンプリングレート
+	//	基本のサンプリングレート
 	static constexpr FLOAT32 DEFAULT_SAMPLERATE = 44100.0f;
 
-	// ソース
+	//	ソース
 	IXAudio2SourceVoice* sourceVoice_ = nullptr;
 
-	// WAVEフォーマット情報
+	//	WAVEフォーマット情報
 	WAVEFORMATEX wfx_;
 
-	// 現在の再生時間(音データのどこまで再生したか)
+	//	現在の再生時間(音データのどこまで再生したか)
 	FLOAT32 timer_ = 0.0f;
 
 	//	今までの再生時間(ループしてもリセットしない)
 	FLOAT32 totalPlayTimer_ = 0.0f;
 
-	// 音源の長さ
+	//	音源の長さ
 	UINT32 length_ = {};
 	FLOAT32 lengthFloat_ = {};
 
-	// バッファー
+	//	バッファー
 	XAUDIO2_BUFFER buffer_ = { 0 };
 
 	//	音源の名前
-	std::string name_ = "";
+	std::string name_ = {};
 
 	static constexpr int OutputMatrixMax_ = 8;	//	出力マトリックス最大数
 
-	// 前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
+	//	前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
 	FLOAT32 lastVolume_ = {};
 
-	// フィルターの種類
+	//	フィルターの種類
 	XAUDIO2_FILTER_PARAMETERS filterParameters_;
 
 	XAUDIO2_SEND_DESCRIPTOR SFXSend_;
@@ -118,5 +124,8 @@ protected:
 	XAUDIO2_VOICE_STATE state_;
 
 	bool isPlaying_ = false;	//	再生中かどうかのフラグ
+
+	AudioType	audioType_ = {};	//	オーディオタイプ
+	std::string	sceneName_ = {};	//	使用シーンを設定(Title,Gameなど)
 
 };

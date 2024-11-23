@@ -16,7 +16,7 @@
 #include "../Others/Misc.h"
 #include "../../Game/Player.h"
 
-AudioSource3D::AudioSource3D(IXAudio2* xaudio, std::shared_ptr<WaveReader>& resource, SoundEmitter* emitter) : AudioSource(xaudio, resource)
+AudioSource3D::AudioSource3D(IXAudio2* xaudio, WaveReader* resource, SoundEmitter* emitter) : AudioSource(xaudio, resource)
 {
 	if (emitter != nullptr)
 	{

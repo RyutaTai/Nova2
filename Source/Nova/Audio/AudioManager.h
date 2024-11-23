@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xaudio2.h>
+#include <set>
 
 #include "AudioSource3D.h"
 #include "AudioSource.h"
@@ -23,28 +24,33 @@ public:
 	void Update(const float& elapsedTime);	//	更新処理
 
 	//	オーディオソース読み込み
-	std::shared_ptr<AudioSource>	LoadAudioSource(const char* filename);
-	std::shared_ptr<AudioSource3D>	LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
+	AudioSource*	LoadAudioSource(const char* filename);
+	AudioSource3D*	LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
 
-	void Register(std::shared_ptr<AudioSource> audio);		//	オーディオ登録
-	void Clear();											//	オーディオ全削除
-	void Remove(AudioSource* audio);						//	オーディオ削除
+	void Clear();							//	全削除
+	void Register(AudioSource* audio);		//	オーディオ登録
+	void Finalize();						//	オーディオ終了化
 
-	void DrawDebug();										//	デバッグ描画
 
-	IXAudio2*									GetXAudio()					{ return xaudio_; }
-	IXAudio2MasteringVoice*						GetMasteringVoice()			{ return masteringVoice_; }
-	DWORD										GetCannelmask() const		{ return channelMask_; }
-	std::shared_ptr<AudioSource>				GetAudioResource(int index)	{ return audioResources_.at(index); }
-	std::shared_ptr<AudioSource>				GetAudioResource(const std::string& name);
-	std::vector<std::shared_ptr<AudioSource>>	GetAudioResources()			{ return audioResources_; }
+	void DrawDebug();						//	デバッグ描画
+
+	IXAudio2*									GetXAudio()							{ return xaudio_; }
+	IXAudio2MasteringVoice*						GetMasteringVoice()					{ return masteringVoice_; }
+	DWORD										GetCannelmask() const				{ return channelMask_; }
+	AudioSource*								GetAudioResource(const int& index)	{ return audioResources_.at(index); }
+	AudioSource*								GetAudioResource(const std::string& name);
+	std::vector<AudioSource*>					GetAudioResources()					{ return audioResources_; }
+	void Remove(AudioSource* audio);			//	オーディオ削除
+	void RemoveByScene(const std::string& sceneName);
 
 private:
 	DWORD					channelMask_ = {};
-	IXAudio2*				xaudio_ = nullptr;
+	IXAudio2*				xaudio_			= nullptr;
 	IXAudio2MasteringVoice* masteringVoice_ = nullptr;
 
-	std::vector<std::shared_ptr<AudioSource>> audioResources_ = {};
+	std::vector<AudioSource*>	audioResources_ = {};
+	std::set<AudioSource*>		audioRemoves_ = {};
+
 
 };
 

@@ -29,7 +29,7 @@ public:
 	void DrawDebug();
 	void DrawDebugPrimitive();
 
-	Enemy*				GetEnemy(const int& index)		{ return enemies_.at(index); }					//	エネミー取得
+	Enemy*				GetEnemy(const int& index)		{ return enemies_.at(index); }			//	エネミー取得
 	std::vector<Enemy*> GetEnemies()			{ return enemies_; }							//	エネミー取得
 	int					GetEnemyCount() const	{ return static_cast<int>(enemies_.size()); }	//	エネミー数取得
 

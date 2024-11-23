@@ -122,7 +122,7 @@ private:
 		Normal,		//	通常時BGM
 		Max,		//	BGM最大数
 	};
-	std::shared_ptr<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
+	AudioSource* bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_GAME::Max)];
 
 	//	デバッグ用

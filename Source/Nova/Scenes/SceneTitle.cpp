@@ -9,17 +9,34 @@
 #include "../Audio/AudioManager.h"
 #include "../../Game/TitleState.h"
 
+#define USE_OLD_MANAGER 0
+
 //	初期化
 void SceneTitle::Initialize()
 {
-	//	Audioより後にSpriteを呼ぶ
-#if 1
+#if USE_OLD_MANAGER
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->SetVolume(0.3f, false);
 
-	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/GameStart_015.wav");
+	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
 	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->SetVolume(0.2f, false);
+
+#else
+	AudioSource* titleBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
+	titleBGM->SetVolume(0.3f, false);
+	titleBGM->SetAudioType(AudioSource::AudioType::BGMNormal);
+	titleBGM->SetSceneName("Title");
+	AudioManager::Instance().Register(titleBGM);
+
+	AudioSource* decision = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
+	decision->SetVolume(0.2f, false);
+	decision->SetAudioType(AudioSource::AudioType::SENormal);
+	decision->SetSceneName("Title");
+	AudioManager::Instance().Register(decision);
+	AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 #endif
+
+	//	スプライト初期化
 	sprite_[static_cast<int>(SPRITE_TITLE::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
 	sprite_[static_cast<int>(SPRITE_TITLE::Groove)] = std::make_unique<Sprite>(L"./Resources/Image/Groove2.png");
 	sprite_[static_cast<int>(SPRITE_TITLE::KeyText)] = std::make_unique<Sprite>(L"./Resources/Image/KeyText2.png");
@@ -56,6 +73,7 @@ void SceneTitle::Initialize()
 //	終了化
 void SceneTitle::Finalize()
 {
+	//	スプライト終了化
 	for (int i = 0; i < static_cast<int>(SPRITE_TITLE::Max); i++)
 	{
 		if (sprite_[i] != nullptr)
@@ -66,6 +84,9 @@ void SceneTitle::Finalize()
 
 	//  UI終了化
 	UIManager::Instance().Finalize();
+
+	//	オーディオ終了化
+	AudioManager::Instance().RemoveByScene("Title");
 
 }
 
@@ -81,44 +102,29 @@ void SceneTitle::Update(const float& elapsedTime)
 	/* ----- ステートマシン更新 ----- */
 	stateMachine_->Update(elapsedTime);
 
-	//	Enterキーを押したらゲームシーンへ切り替え
-	// 	GamePad& gamePad = Input::Instance().GetGamePad();
-	//if (gamePad.GetButtonDown() & GamePad::BTN_START)
-	//{
-	//    SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-	//}
 
-	//if (gamePad.GetButtonDown() & GamePad::BTN_A)   //  コントローラAキー
-	//{
-	//	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->Play(false);
-	//	se_[static_cast<int>(AUDIO_SE_TITLE::DECISION)]->SetVolume(0.5f,false);
-	//	
-	//	//SceneManager::Instance().ChangeScene(new SceneGame);
+	//se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->Update(elapsedTime);		//	プレイタイマー更新用
 
-	//}
-	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->Update(elapsedTime);		//	プレイタイマー更新用
-
-	// 終了処理
-	//if( GetAsyncKeyState(VK_ESCAPE) & 0x8000 ) exit(0);
-
-	//	BGM再生
-	//bgm_[static_cast<int>(AUDIO_BGM_TITLE::TITLE)]->Play();
-
-#if 1
+#if USE_OLD_MANAGER
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->Play(true);
+#else
+	//AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 #endif
 }
 
 //	SEを再生(ステートマシン側で使用)
-void SceneTitle::PlaySE(AUDIO_SE_TITLE seTitle)
+void SceneTitle::PlaySE(const AUDIO_SE_TITLE& seTitle)
 {
+#if USE_OLD_MANAGER
 	se_[static_cast<int>(seTitle)]->Play(false);
+#else
+	
+#endif
 }
 
-//	BGMを再生(ステートマシン側で使用)
-void SceneTitle::PlayBGM(AUDIO_BGM_TITLE bgmTitle, bool loop)
+void SceneTitle::PlaySE(const std::string& seName)
 {
-	bgm_[static_cast<int>(bgmTitle)]->Play(loop);
+	AudioManager::Instance().GetAudioResource(seName)->Play(false);
 }
 
 //  Shadow描画
@@ -130,7 +136,7 @@ void SceneTitle::ShadowRender()
 //	描画処理
 void SceneTitle::Render()
 {
-	//  タイトルスプライト描画
+	//	タイトルスプライト描画
 	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 	Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
 	Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::CULL_NONE);

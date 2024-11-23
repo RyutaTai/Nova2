@@ -42,8 +42,8 @@ public:
 	void Finalize()							override;
 
 	void Update(const float& elapsedTime)	override;
-	void PlaySE(AUDIO_SE_TITLE seTitle);
-	void PlayBGM(AUDIO_BGM_TITLE bgmTitle, bool loop);
+	void PlaySE(const AUDIO_SE_TITLE& seTitle);
+	void PlaySE(const std::string& seName);
 
 	void ShadowRender() 					override;
 	void Render()							override;
@@ -73,8 +73,8 @@ private:
 	//std::unique_ptr	<Audio> bgm_[static_cast<int>(AUDIO_BGM_TITLE::Max)];
 	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_TITLE::Max)];
 
-	std::shared_ptr<AudioSource> bgm_[static_cast<int>(AUDIO_BGM_TITLE::Max)];
-	std::shared_ptr	<AudioSource> se_[static_cast<int>(AUDIO_SE_TITLE::Max)];
+	AudioSource* bgm_[static_cast<int>(AUDIO_BGM_TITLE::Max)];
+	AudioSource* se_[static_cast<int>(AUDIO_SE_TITLE::Max)];
 
 
 };

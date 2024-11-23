@@ -6,7 +6,7 @@
 #include "../Graphics/Graphics.h"
 
 //	コンストラクタ
-AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource)
+AudioSource::AudioSource(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType, const std::string& sceneName)
 {
 	HRESULT hr = S_OK;
 
@@ -36,6 +36,8 @@ AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<WaveReader> resource)
 	SFXSendList_	= { 1, &SFXSend_ };
 
 	name_ = resource->GetName();
+	audioType_ = audioType;
+	sceneName_ = sceneName;
 
 }
 
@@ -259,6 +261,26 @@ bool AudioSource::IsPlay()
 	sourceVoice_->GetState(&state_);
 
 	return state_.BuffersQueued;
+}
+
+//	BGMかどうか
+bool AudioSource::IsBGM()
+{
+	if (audioType_ == AudioType::BGMNormal || audioType_ == AudioType::BGM3D)
+	{
+		return true;
+	}
+	return false;
+}
+
+//	SEかどうか
+bool AudioSource::IsSE()
+{
+	if (audioType_ == AudioType::SENormal || audioType_ == AudioType::SE3D)
+	{
+		return true;
+	}
+	return false;
 }
 
 void AudioSource::DrawDebug()

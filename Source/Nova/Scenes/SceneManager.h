@@ -15,7 +15,6 @@ public:
 		return instance;
 	}
 
-
 	void Update(const float& elapsedTime);
 
 	void ShadowRender();

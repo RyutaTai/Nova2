@@ -69,7 +69,7 @@ private:
 	
 	float	launchTimer_ = 1.3f;	//	次の球を発射するまでのタイマー
 	
-	std::shared_ptr<AudioSource3D>	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
+	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
 	SoundEmitter	emitter_[static_cast<int>(Audio3D::Max)] = {};				//	エミッター
 
 	std::unique_ptr<StateMachine<State<Drone>>>	stateMachine_ = nullptr;		//	ステートマシン

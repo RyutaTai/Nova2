@@ -78,6 +78,5 @@ void SceneManager::Clear()
 //	ƒV[ƒ“Ø‚è‘Ö‚¦
 void SceneManager::ChangeScene(Scene* scene)
 {
-	AudioManager::Instance().Clear();
 	nextScene_ = scene;
 }

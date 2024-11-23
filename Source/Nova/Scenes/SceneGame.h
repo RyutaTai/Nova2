@@ -62,7 +62,7 @@ public:
 	//	ゲーム用変数
 private:
 	/* ----- オブジェクト ----- */
-	std::unique_ptr	<Stage>		stage_[2];	
+	std::unique_ptr	<Stage>		stage_;
 	std::unique_ptr	<Player>	player_;
 	std::unique_ptr	<Dragonkin>	dragonkin_;
 	std::unique_ptr<StateMachine<State<SceneGame>>>		stateMachine_ = nullptr;		//	ステートマシン

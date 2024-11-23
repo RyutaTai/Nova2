@@ -31,6 +31,7 @@ void SceneGame::Initialize()
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
 	//	BGM再生
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->Play(true);
+
 	/* ----- スプライト初期化 ----- */
 	//sprite_[static_cast<int>(SPRITE_GAME::BACK)] = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Game.png");
 
@@ -44,7 +45,7 @@ void SceneGame::Initialize()
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
 	/* ----- ステージ初期化 ----- */
-	stage_[0] = std::make_unique<Stage>();							//	シティモデル
+	stage_ = std::make_unique<Stage>();							//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */
 	D3D11_BUFFER_DESC desc;
@@ -142,7 +143,7 @@ void SceneGame::Update(const float& elapsedTime)
 	stateMachine_->Update(elapsedTime);
 
 	/* ----- ステージ更新処理 ----- */
-	stage_[0]->Update(elapsedTime);
+	stage_->Update(elapsedTime);
 
 	/* ----- プレイヤー更新処理 ----- */
 	player_->Update(elapsedTime);
@@ -191,7 +192,7 @@ void SceneGame::LoadWaveSprite(const wchar_t* filename)
 //	Shadow描画
 void SceneGame::ShadowRender()
 {
-	stage_[0]->ShadowRender();	//	シティモデル
+	stage_->ShadowRender();	//	シティモデル
 }
 
 //	描画処理
@@ -291,7 +292,7 @@ void SceneGame::Render()
 		//Graphics::Instance().GetShader()->SetRasterizerState(Shader::RASTERIZER_STATE::WIREFRAME);
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 		Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
-		stage_[0]->Render();
+		stage_->Render();
 
 		/* ----- プレイヤー ----- */
 		//	ステート設定
@@ -413,6 +414,9 @@ void SceneGame::Finalize()
 	//	UIマネージャー終了化
 	UIManager::Instance().Finalize();
 
+	//	オーディオ終了化
+	AudioManager::Instance().RemoveByScene("Game");
+
 }
 
 //	デバッグ描画
@@ -436,7 +440,7 @@ void SceneGame::DrawDebug()
 	
 	player_->DrawDebug();				//	Player
 
-	stage_[0]->DrawDebug();				//	Stage
+	stage_->DrawDebug();				//	Stage
 
 	EnemyManager::Instance().DrawDebug();
 	//enemy_->DrawDebug();				//	Enemy

@@ -39,6 +39,7 @@ AudioSource::AudioSource(IXAudio2* xaudio, WaveReader* resource, const AudioType
 	audioType_ = audioType;
 	sceneName_ = sceneName;
 
+	delete resource;	//	メモリリーク防止
 }
 
 //	デストラクタ

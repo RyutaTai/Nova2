@@ -23,15 +23,15 @@ void SceneTitle::Initialize()
 
 #else
 	AudioSource* titleBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
-	titleBGM->SetVolume(0.3f, false);
 	titleBGM->SetAudioType(AudioSource::AudioType::BGMNormal);
 	titleBGM->SetSceneName("Title");
+	titleBGM->SetVolume(0.3f, false);
 	AudioManager::Instance().Register(titleBGM);
 
 	AudioSource* decision = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
-	decision->SetVolume(0.2f, false);
 	decision->SetAudioType(AudioSource::AudioType::SENormal);
 	decision->SetSceneName("Title");
+	decision->SetVolume(0.2f, false);
 	AudioManager::Instance().Register(decision);
 	AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 #endif

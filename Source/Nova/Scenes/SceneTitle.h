@@ -66,16 +66,5 @@ private:	//	スプライト
 	};
 	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_TITLE::Max)];
 
-	UI*	ui_;		//	UI
-
-private:	
-	//	オーディオ
-	//std::unique_ptr	<Audio> bgm_[static_cast<int>(AUDIO_BGM_TITLE::Max)];
-	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_TITLE::Max)];
-
-	AudioSource* bgm_[static_cast<int>(AUDIO_BGM_TITLE::Max)];
-	AudioSource* se_[static_cast<int>(AUDIO_SE_TITLE::Max)];
-
-
 };
 

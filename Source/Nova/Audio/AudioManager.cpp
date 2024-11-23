@@ -75,7 +75,8 @@ void AudioManager::Update(const float& elapsedTime)
 	//	破棄処理
 	for (AudioSource* audio : audioRemoves_)
 	{
-		if (audio->IsSE() && audio->GetState().BuffersQueued != 0)continue;	//	SEかつオーディオ再生が終了していなかったら破棄しない
+		//	種類がSEかつオーディオ再生が終了していなかったら破棄しない。BGMは無条件に破棄
+		if (audio->IsSE() && audio->GetState().BuffersQueued != 0)continue;
 
 		std::vector<AudioSource*>::iterator it =
 			std::find(audioResources_.begin(), audioResources_.end(), audio);

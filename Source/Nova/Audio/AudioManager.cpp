@@ -109,7 +109,7 @@ AudioSource* AudioManager::GetAudioResource(const std::string& name)
 {
 	for (int i = 0; i < audioResources_.size(); ++i)
 	{
-		if (strcmp(audioResources_.at(i)->GetName().c_str(), name.c_str()) == 0)	//	入力文字列と等しいデータがあれば
+		if (strcmp(audioResources_.at(i)->GetAudioName().c_str(), name.c_str()) == 0)	//	入力文字列と等しいデータがあれば
 		{
 			return audioResources_.at(i);
 		}

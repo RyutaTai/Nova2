@@ -6,15 +6,14 @@
 #include "../Scenes/SceneLoading.h"
 #include "../Scenes/SceneGame.h"
 #include "../../Game/UIManager.h"
-#include "../Audio/AudioManager.h"
 #include "../../Game/TitleState.h"
-
-#define USE_OLD_MANAGER 0
+#include "../Audio/AudioManager.h"
 
 //	初期化
 void SceneTitle::Initialize()
 {
-#if USE_OLD_MANAGER
+	//	オーディオ初期化
+#if UseOldAudioManager
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->SetVolume(0.3f, false);
 
@@ -24,16 +23,16 @@ void SceneTitle::Initialize()
 #else
 	AudioSource* titleBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
 	titleBGM->SetAudioType(AudioSource::AudioType::BGMNormal);
-	titleBGM->SetSceneName("Title");
+	titleBGM->SetSceneName("TitleScene");
 	titleBGM->SetVolume(0.3f, false);
 	AudioManager::Instance().Register(titleBGM);
+	AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 
 	AudioSource* decision = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
 	decision->SetAudioType(AudioSource::AudioType::SENormal);
-	decision->SetSceneName("Title");
+	decision->SetSceneName("TitleScene");
 	decision->SetVolume(0.2f, false);
 	AudioManager::Instance().Register(decision);
-	AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 #endif
 
 	//	スプライト初期化
@@ -86,7 +85,7 @@ void SceneTitle::Finalize()
 	UIManager::Instance().Finalize();
 
 	//	オーディオ終了化
-	AudioManager::Instance().RemoveByScene("Title");
+	AudioManager::Instance().RemoveByScene("TitleScene");
 
 }
 
@@ -105,7 +104,7 @@ void SceneTitle::Update(const float& elapsedTime)
 
 	//se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->Update(elapsedTime);		//	プレイタイマー更新用
 
-#if USE_OLD_MANAGER
+#if UseOldAudioManager
 	bgm_[static_cast<int>(AUDIO_BGM_TITLE::Title)]->Play(true);
 #else
 	//AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
@@ -115,7 +114,7 @@ void SceneTitle::Update(const float& elapsedTime)
 //	SEを再生(ステートマシン側で使用)
 void SceneTitle::PlaySE(const AUDIO_SE_TITLE& seTitle)
 {
-#if USE_OLD_MANAGER
+#if UseOldAudioManager
 	se_[static_cast<int>(seTitle)]->Play(false);
 #else
 	
@@ -193,7 +192,7 @@ void SceneTitle::DrawDebug()
 	}
 	if (ImGui::TreeNode("Audio"))
 	{
-		se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->DrawDebug();
+		//se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->DrawDebug();
 		ImGui::TreePop();
 	}
 }

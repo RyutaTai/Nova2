@@ -83,6 +83,15 @@ void Drone::Initialize()
 	//sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
 #endif
 
+	//	テスト用
+#if 0
+	AudioSource* testSe = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
+	testSe->SetAudioType(AudioSource::AudioType::SENormal);
+	testSe->SetSceneName("GameScene");
+	testSe->SetVolume(0.2f, false);
+	AudioManager::Instance().Register(testSe);
+#endif
+
 	//	発射音再生
 #if 0
 	if (sources_[static_cast<int>(Audio3D::Shot)])
@@ -195,10 +204,14 @@ void Drone::LaunchBullet()
 			launchTimer_ = 3.0f;
 
 			//	発射音再生
+#if 1
 			if (sources_[static_cast<int>(Audio3D::Shot)])
 			{
 				sources_[static_cast<int>(Audio3D::Shot)]->Play(false);
 			}
+#else
+			AudioManager::Instance().GetAudioResource("Decision.wav")->Play(false);
+#endif
 
 		}
 	}

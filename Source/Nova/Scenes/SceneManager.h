@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+#define UseOldAudioManager 0
+
 class SceneManager
 {
 private:

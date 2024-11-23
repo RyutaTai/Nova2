@@ -24,7 +24,7 @@ void SceneGame::Initialize()
 #if 0
 	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav");
 #else
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_44100Hz_16bit.wav");
+	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav");
 #endif
 
 	AudioManager::Instance().Register(bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]);

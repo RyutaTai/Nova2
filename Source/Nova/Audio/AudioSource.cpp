@@ -22,7 +22,7 @@ AudioSource::AudioSource(IXAudio2* xaudio, WaveReader* resource, const AudioType
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	//	サンプリングレートに合わせてピッチを変更(誤差が出た時に使える、マジでいらない)
-	// sourceVoice->SetFrequencyRatio(DEFAULT_SAMPLERATE / static_cast<FLOAT32>(resource->GetWaveFormat().nSamplesPerSec));
+	// sourceVoice->SetFrequencyRatio(DefaultSamplingRate / static_cast<FLOAT32>(resource->GetWaveFormat().nSamplesPerSec));
 	length_ = resource->GetPlayLength();
 	lengthFloat_ = resource->GetPlayLengthFLOAT();
 	//	ソースボイスにデータを送信
@@ -35,7 +35,7 @@ AudioSource::AudioSource(IXAudio2* xaudio, WaveReader* resource, const AudioType
 	SFXSend_		= { 0, sourceVoice_ };
 	SFXSendList_	= { 1, &SFXSend_ };
 
-	name_ = resource->GetName();
+	audioName_ = resource->GetName();
 	audioType_ = audioType;
 	sceneName_ = sceneName;
 

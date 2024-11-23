@@ -101,7 +101,7 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 #if 0
 	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
 #else
-	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_44100Hz_16bit.wav"));
+	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav"));
 #endif
 
 	//	frequencyData_更新(配列のデータをずらし、新しいデータを設定)

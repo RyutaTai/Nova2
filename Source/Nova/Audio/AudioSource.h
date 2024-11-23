@@ -68,7 +68,6 @@ public: // getter setter
 	const BYTE*				GetAudioData()		const	{ return buffer_.pAudioData; }
 	size_t					GetAudioBytes()		const	{ return buffer_.AudioBytes; }	//	バッファーのサイズ取得
 	size_t					GetCurrentSample()	const;									//	現在の再生位置をサンプル単位で取得
-	std::string				GetName()			const	{ return name_; }
 
 	bool					IsPlay();
 
@@ -77,17 +76,19 @@ public: // getter setter
 	virtual void	SetPan(FLOAT32 pan);
 
 	void			SetAudioType(const AudioType& type) { audioType_ = type; }
-	AudioType		GetMyAudioType() { return audioType_; }
+	AudioType		GetAudioType() { return audioType_; }
 	bool			IsBGM();	//	BGMかどうか
 	bool			IsSE();		//	SEかどうか
 
+	void			SetAudioName(const std::string& audioName) { audioName_ = audioName; }
+	std::string		GetAudioName()	const{ return audioName_; }
 	void			SetSceneName(const std::string& sceneName) { sceneName_ = sceneName; }
-	std::string		GetSceneName() { return sceneName_; }
+	std::string		GetSceneName()	{ return sceneName_; }
 
 protected:
 
 	//	基本のサンプリングレート
-	static constexpr FLOAT32 DEFAULT_SAMPLERATE = 44100.0f;
+	static constexpr FLOAT32 DefaultSamplingRate = 44100.0f;
 
 	//	ソース
 	IXAudio2SourceVoice* sourceVoice_ = nullptr;
@@ -108,9 +109,6 @@ protected:
 	//	バッファー
 	XAUDIO2_BUFFER buffer_ = { 0 };
 
-	//	音源の名前
-	std::string name_ = {};
-
 	static constexpr int OutputMatrixMax_ = 8;	//	出力マトリックス最大数
 
 	//	前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
@@ -126,6 +124,7 @@ protected:
 	bool isPlaying_ = false;	//	再生中かどうかのフラグ
 
 	AudioType	audioType_ = {};	//	オーディオタイプ
+	std::string audioName_ = {};	//	音源の名前
 	std::string	sceneName_ = {};	//	使用シーンを設定(Title,Gameなど)
 
 };

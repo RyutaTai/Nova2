@@ -256,6 +256,7 @@
     <ClCompile Include="Source\Nova\AI\BehaviorData.cpp" />
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
     <ClCompile Include="Source\Game\Rhythm.cpp" />
+    <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -484,6 +485,7 @@
     <ClInclude Include="Source\Nova\AI\NodeBase.h" />
     <ClInclude Include="Source\Game\AudioResourceTable.h" />
     <ClInclude Include="Source\Game\Rhythm.h" />
+    <ClInclude Include="Source\Nova\Audio\Audio.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

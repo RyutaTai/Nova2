@@ -24,23 +24,22 @@ public:
 	void Update(const float& elapsedTime);	//	更新処理
 
 	//	オーディオソース読み込み
-	AudioSource*	LoadAudioSource(const char* filename);
-	AudioSource3D*	LoadAudioSource3D(const char* filename, SoundEmitter* emitter);
+	AudioSource*	LoadAudioSource(const char* filename, const Audio::AudioType& audioType , const std::string& sceneName );
+	AudioSource3D* LoadAudioSource3D(const char* filename, const Audio::AudioType& audioType, const std::string& sceneName, SoundEmitter* emitter);
 
 	void Clear();							//	全削除
-	void Register(AudioSource* audio);		//	オーディオ登録
+	void Register(Audio* audio);		//	オーディオ登録
 	void Finalize();						//	オーディオ終了化
-
 
 	void DrawDebug();						//	デバッグ描画
 
 	IXAudio2*									GetXAudio()							{ return xaudio_; }
 	IXAudio2MasteringVoice*						GetMasteringVoice()					{ return masteringVoice_; }
 	DWORD										GetCannelmask() const				{ return channelMask_; }
-	AudioSource*								GetAudioResource(const int& index)	{ return audioResources_.at(index); }
-	AudioSource*								GetAudioResource(const std::string& name);
-	std::vector<AudioSource*>					GetAudioResources()					{ return audioResources_; }
-	void Remove(AudioSource* audio);			//	オーディオ削除
+	Audio*								GetAudioResource(const int& index)	{ return audioResources_.at(index); }
+	Audio*								GetAudioResource(const std::string& name);
+	std::vector<Audio*>					GetAudioResources()					{ return audioResources_; }
+	void Remove(Audio* audio);			//	オーディオ削除
 	void RemoveByScene(const std::string& sceneName);
 
 private:
@@ -48,8 +47,8 @@ private:
 	IXAudio2*				xaudio_			= nullptr;
 	IXAudio2MasteringVoice* masteringVoice_ = nullptr;
 
-	std::vector<AudioSource*>	audioResources_ = {};
-	std::set<AudioSource*>		audioRemoves_ = {};
+	std::vector<Audio*>	audioResources_ = {};
+	std::set<Audio*>		audioRemoves_ = {};
 
 
 };

@@ -6,7 +6,7 @@
 #include <complex>
 #include <vector>
 
-#include "AudioSource.h"
+#include "Audio.h"
 
 using Complex = std::complex<double>;
 
@@ -18,7 +18,7 @@ public:
 	~Frequency() {}
 
 	void Initialize();
-	void Update(const float& elapsedTime, AudioSource* audioSource);
+	void Update(const float& elapsedTime, Audio* audioSource);
 	void DrawDebug();
 
 	void FFT(std::vector<Complex>& x);				//	フーリエ変換
@@ -39,7 +39,7 @@ public:
 
 private:
 	static constexpr float AUDIO_PI			= 3.14159265358979323846f;
-	static constexpr float AUDIO_PI_LONG	= 3.14159265358979323846264338328L;
+	static constexpr double AUDIO_PI_LONG	= 3.14159265358979323846264338328L;
 
 	//static constexpr int blockCount_ = 1024;		//	ハミング窓サンプル数(何分割するか)
 

@@ -26,7 +26,7 @@ public:
 	std::vector<Spot> spots_;
 	int spotsIndex_ = 0;	//	ImGuiでデバッグする際に使用
 	int spotsIndexMax_ = 0;
-	static constexpr int SpotsDataMax_ = 60.0f;
+	static constexpr int SpotsDataMax_ = 60;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	decalTexture_;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		decalDepthStencilState_;

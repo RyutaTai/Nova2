@@ -14,7 +14,7 @@ void Frequency::Initialize()
 
 }
 
-void Frequency::Update(const float& elapsedTime, AudioSource* audioSource)
+void Frequency::Update(const float& elapsedTime, Audio* audioSource)
 {
 #if 1   //自分で変えた
     size_t          SPsize      = audioSource->GetAudioBytes();     //  オーディオのバッファサイズ取得

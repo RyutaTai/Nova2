@@ -21,17 +21,15 @@ void SceneTitle::Initialize()
 	se_[static_cast<int>(AUDIO_SE_TITLE::Decision)]->SetVolume(0.2f, false);
 
 #else
-	AudioSource* titleBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav");
-	titleBGM->SetAudioType(AudioSource::AudioType::BGMNormal);
-	titleBGM->SetSceneName("TitleScene");
+	AudioSource* titleBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Title.wav", Audio::AudioType::BGMNormal, "TitleScene");
 	titleBGM->SetVolume(0.3f, false);
+	titleBGM->SetAudioName("TitleBGM");
 	AudioManager::Instance().Register(titleBGM);
-	AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
+	AudioManager::Instance().GetAudioResource("TitleBGM")->Play(true);
 
-	AudioSource* decision = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav");
-	decision->SetAudioType(AudioSource::AudioType::SENormal);
-	decision->SetSceneName("TitleScene");
+	AudioSource* decision = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Decision.wav", Audio::AudioType::SENormal, "TitleScene");
 	decision->SetVolume(0.2f, false);
+	decision->SetAudioName("Decision");
 	AudioManager::Instance().Register(decision);
 #endif
 
@@ -109,21 +107,6 @@ void SceneTitle::Update(const float& elapsedTime)
 #else
 	//AudioManager::Instance().GetAudioResource("Title.wav")->Play(true);
 #endif
-}
-
-//	SEを再生(ステートマシン側で使用)
-void SceneTitle::PlaySE(const AUDIO_SE_TITLE& seTitle)
-{
-#if UseOldAudioManager
-	se_[static_cast<int>(seTitle)]->Play(false);
-#else
-	
-#endif
-}
-
-void SceneTitle::PlaySE(const std::string& seName)
-{
-	AudioManager::Instance().GetAudioResource(seName)->Play(false);
 }
 
 //  Shadow描画

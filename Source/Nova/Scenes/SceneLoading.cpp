@@ -21,6 +21,9 @@ void SceneLoading::Initialize()
 	//	スレッド開始
 	thread_ = new std::thread(LoadingThread, this);	//	LoadingThread関数にthisを渡す
 
+	//	ロード画像の角度初期化
+	loadSpriteangle_ = 0.0f;
+
 }
 
 //	終了化
@@ -54,9 +57,12 @@ void SceneLoading::Update(const float& elapsedTime)
 	}
 
 	//	角度更新
-	static float angle = 0.0f;
-	angle += 90.0f * elapsedTime;
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetAngle(angle);
+	loadSpriteangle_ += 90.0f * elapsedTime;
+	if (loadSpriteangle_ > 360.0f)
+	{
+		loadSpriteangle_ = 0.0f;
+	}
+	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetAngle(loadSpriteangle_);
 
 }
 

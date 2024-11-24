@@ -155,7 +155,7 @@ namespace PlayerState
 
 	private:
 		static constexpr int AnimJudgeCount = 3;	//	アニメーション判定区間の数
-		struct JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
+		JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
 		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間

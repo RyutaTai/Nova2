@@ -21,19 +21,19 @@
 void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
-#if 0
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav");
+#if 1
+	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav", Audio::AudioType::BGMNormal, "GameScene");
 #else
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav");
+	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav", Audio::AudioType::BGMNormal, "GameScene");
 #endif
+	gameBGM->SetVolume(0.3f, false);
+	gameBGM->SetAudioName("GameBGM");
+	AudioManager::Instance().Register(gameBGM);
+	AudioManager::Instance().GetAudioResource("GameBGM")->Play(true);
 
-	AudioManager::Instance().Register(bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]);
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->SetVolume(0.3f, false);
-	//	BGM再生
-	bgm_[static_cast<int>(AUDIO_BGM_GAME::Normal)]->Play(true);
 
 	/* ----- スプライト初期化 ----- */
-	//sprite_[static_cast<int>(SPRITE_GAME::BACK)] = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Game.png");
+	//sprite_[static_cast<int>z(SPRITE_GAME::BACK)] = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Game.png");
 
 	sprite_[static_cast<int>(SPRITE_GAME::Clear)]	 = std::make_unique<Sprite>(L"./Resources/Image/Clear.png");
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
@@ -415,7 +415,7 @@ void SceneGame::Finalize()
 	UIManager::Instance().Finalize();
 
 	//	オーディオ終了化
-	AudioManager::Instance().RemoveByScene("Game");
+	AudioManager::Instance().RemoveByScene("GameScene");
 
 }
 

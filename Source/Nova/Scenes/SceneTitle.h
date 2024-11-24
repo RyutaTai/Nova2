@@ -21,19 +21,6 @@ public:
 		Max,
 	};
 
-	//	オーディオ
-	enum class AUDIO_SE_TITLE
-	{
-		Choice,		//	選択音
-		Decision,	//	決定音
-		Max,		//	SE最大数
-	};
-	enum class AUDIO_BGM_TITLE
-	{
-		Title,		//	タイトルBGM
-		Max,		//	BGM最大数
-	};
-
 public:
 	SceneTitle(){}
 	~SceneTitle()override{}
@@ -42,8 +29,6 @@ public:
 	void Finalize()							override;
 
 	void Update(const float& elapsedTime)	override;
-	void PlaySE(const AUDIO_SE_TITLE& seTitle);
-	void PlaySE(const std::string& seName);
 
 	void ShadowRender() 					override;
 	void Render()							override;

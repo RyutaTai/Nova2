@@ -20,8 +20,8 @@ public:
 	void UpdateScale(const float& elapsedTime);
 	void UpdateMoveFactor();
 
-	void SetBPM(const int& bpm) { bpm_ = bpm; }
-	int GetBPM() { return bpm_; }
+	void SetBPM(const float& bpm) { bpm_ = bpm; }
+	float GetBPM() { return bpm_; }
 
 private:
 	//	半円の構造体
@@ -50,7 +50,7 @@ private:
 
 	float	moveSpeed_ = 290.0f;					//	移動する速さ
 	float	moveFactor_ = 1.0f;						//	BPM120を基準とする移動する速さの倍率
-	int		bpm_ = 120.0f;							//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
+	float	bpm_ = 120.0f;							//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
 	bool	centerCircleAnimFlag_ = false;			//	中心円のアニメーション更新フラグ
 	 int	AnimChangeThreshold = 9;				//	何フレームでアニメーションを遷移するか
 	 int		centerAnimTime_ = 0;				//	中心円のアニメーション時間カウント

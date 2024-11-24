@@ -16,7 +16,9 @@
 #include "../Others/Misc.h"
 #include "../../Game/Player.h"
 
-AudioSource3D::AudioSource3D(IXAudio2* xaudio, WaveReader* resource, SoundEmitter* emitter) : AudioSource(xaudio, resource)
+//	コンストラクタ
+AudioSource3D::AudioSource3D(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType, const std::string& sceneName, SoundEmitter* emitter)
+	: Audio(xaudio, resource, audioType, sceneName)
 {
 	if (emitter != nullptr)
 	{
@@ -25,6 +27,7 @@ AudioSource3D::AudioSource3D(IXAudio2* xaudio, WaveReader* resource, SoundEmitte
 		dspSetting_.dstChannelCount_ = 2;
 		dspSetting_.outputMatrix_ = new FLOAT32[dspSetting_.srcChannelCount_ * dspSetting_.dstChannelCount_];
 	}
+	delete resource;	//	メモリリーク防止
 }
 
 AudioSource3D::~AudioSource3D()
@@ -33,7 +36,8 @@ AudioSource3D::~AudioSource3D()
 	if (dspSetting_.outputMatrix_ != nullptr) delete dspSetting_.outputMatrix_;
 }
 
-void AudioSource3D::Update(FLOAT32 elapsedTime)
+//	更新処理
+void AudioSource3D::Update(const float& elapsedTime)
 {
 	sourceVoice_->GetState(&state_, XAUDIO2_VOICE_NOSAMPLESPLAYED);
 
@@ -55,7 +59,7 @@ void AudioSource3D::Update(FLOAT32 elapsedTime)
 	{
 		SetVolume(emitter_->volume_, false);
 		
-		SetPan();
+		Set3DPan();
 
 		Filter(LowPassOnePoleFilter);
 	}
@@ -79,7 +83,8 @@ void AudioSource3D::Update(FLOAT32 elapsedTime)
 #endif
 }
 
-void AudioSource3D::SetPan()
+//	3Dパンニング
+void AudioSource3D::Set3DPan()
 {
 	HRESULT hr = S_OK;
 	
@@ -119,7 +124,8 @@ void AudioSource3D::SetPan()
 
 }
 
-void AudioSource3D::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 overq)
+//	フィルター処理
+void AudioSource3D::Filter(const XAUDIO2_FILTER_TYPE& type, const float& overq)
 {
 	filterParameters_.Type = type; //使うフィルターの種類
 
@@ -131,6 +137,7 @@ void AudioSource3D::Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 overq)
 	sourceVoice_->SetFilterParameters(&filterParameters_);
 }
 
+//	デバッグ描画
 void AudioSource3D::DrawDebug()
 {
 #ifdef _DEBUG

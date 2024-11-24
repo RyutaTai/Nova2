@@ -38,7 +38,7 @@ private:
 
 public:
 	Drone();
-	~Drone()override {}
+	~Drone()override;
 
 	void Initialize()	override;
 	void Update(const float& elapsedTime)		override;
@@ -70,7 +70,7 @@ private:
 	float	launchTimer_ = 1.3f;	//	次の球を発射するまでのタイマー
 	
 	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
-	SoundEmitter	emitter_[static_cast<int>(Audio3D::Max)] = {};				//	エミッター
+	SoundEmitter	emitter_ = {};				//	エミッター
 
 	std::unique_ptr<StateMachine<State<Drone>>>	stateMachine_ = nullptr;		//	ステートマシン
 

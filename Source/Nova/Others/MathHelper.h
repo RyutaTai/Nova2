@@ -18,7 +18,7 @@ public:
 		float randomNum = 0;
 		std::random_device rnd;     //	非決定的な乱数生成器を生成
 		std::mt19937 mt(rnd());     //	メルセンヌ・ツイスタの32ビット版、引数は初期シード値
-		std::uniform_int_distribution<> calcRandNum(min, max);
+		std::uniform_real_distribution<float> calcRandNum(min, max);
 		randomNum = calcRandNum(mt);
 
 		return randomNum;
@@ -29,7 +29,7 @@ public:
 		int randomNum = 0;
 		std::random_device rnd;     //	非決定的な乱数生成器を生成
 		std::mt19937 mt(rnd());     //	メルセンヌ・ツイスタの32ビット版、引数は初期シード値
-		std::uniform_int_distribution<> calcRandNum(min, max);
+		std::uniform_int_distribution<int> calcRandNum(min, max);
 		randomNum = calcRandNum(mt);
 
 		return randomNum;

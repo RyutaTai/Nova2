@@ -147,7 +147,7 @@ NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* list)
 {
 	int selectNo = 0;
 	//	listのサイズで乱数を取得してselectNoに格納
-	selectNo = Mathf::RandomRange(0, list->size() - 1);
+	selectNo = Mathf::RandomRange(0, static_cast<int>(list->size()) - 1);
 	
 	//	listのselectNo番目の実態をリターン
 	return (*list).at(selectNo);

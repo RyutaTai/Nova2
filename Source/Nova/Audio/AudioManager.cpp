@@ -57,28 +57,29 @@ AudioManager::~AudioManager()
 }
 
 //	オーディオソース読み込み
-AudioSource* AudioManager::LoadAudioSource(const char* filename)
+AudioSource* AudioManager::LoadAudioSource(const char* filename, const Audio::AudioType& audioType, const std::string& sceneName)
 {
 	WaveReader* resource = new WaveReader(filename);
-	return new AudioSource(xaudio_, resource);
+	return new AudioSource(xaudio_, resource, audioType, sceneName);
 }
 
-AudioSource3D* AudioManager::LoadAudioSource3D(const char* filename, SoundEmitter* emitter)
+AudioSource3D* AudioManager::LoadAudioSource3D(const char* filename, const Audio::AudioType& audioType, const std::string& sceneName, SoundEmitter* emitter)
 {
-	auto resource = new WaveReader(filename);
-	return new AudioSource3D(xaudio_, resource, emitter);
+	WaveReader* resource = new WaveReader(filename);
+	return new AudioSource3D(xaudio_, resource, audioType, sceneName, emitter);
 }
 
 //	更新処理
 void AudioManager::Update(const float& elapsedTime)
 {
+#if 0
 	//	破棄処理
-	for (AudioSource* audio : audioRemoves_)
+	for (Audio* audio : audioRemoves_)
 	{
 		//	種類がSEかつオーディオ再生が終了していなかったら破棄しない。BGMは無条件に破棄
 		if (audio->IsSE() && audio->GetState().BuffersQueued != 0)continue;
 
-		std::vector<AudioSource*>::iterator it =
+		std::vector<Audio*>::iterator it =
 			std::find(audioResources_.begin(), audioResources_.end(), audio);
 
 		if (it != audioResources_.end())
@@ -92,20 +93,52 @@ void AudioManager::Update(const float& elapsedTime)
 	//	破棄リストをクリア
 	audioRemoves_.clear();
 
-	for (AudioSource* audio : audioResources_)
+	for (Audio* audio : audioResources_)
 	{
 		audio->Update(elapsedTime);
 	}
+#else
+	//	破棄処理
+	for (auto it = audioRemoves_.begin(); it != audioRemoves_.end();)
+	{
+		Audio* audio = *it;
+
+		//	SEの場合、再生が終了していないなら破棄しない
+		if (audio->IsSE() && audio->GetState().BuffersQueued != 0)
+		{
+			++it;  // 再生中なら破棄せず、次のオーディオへ
+			continue;
+		}
+
+		//	BGMや再生終了したSEは破棄
+		//	audioがaudioResources_内に存在するか確認
+		auto audioIt = std::find(audioResources_.begin(), audioResources_.end(), audio);
+		if (audioIt != audioResources_.end())
+		{
+			audioResources_.erase(audioIt);
+			delete audio;
+		}
+
+		//	破棄したオーディオをリストから削除
+		it = audioRemoves_.erase(it);
+	}
+
+	//	残りのオーディオを更新
+	for (Audio* audio : audioResources_)
+	{
+		audio->Update(elapsedTime);
+	}
+#endif
 }
 
 //	オーディオ登録
-void AudioManager::Register(AudioSource* audio)
+void AudioManager::Register(Audio* audio)
 {	
 	audioResources_.emplace_back(audio);
 }
 
-//	オーディオを名前から取得(例: Title.wavなど)
-AudioSource* AudioManager::GetAudioResource(const std::string& name)
+//	オーディオを名前から取得(例: デフォルトならTitle.wavなど.wavまで含めた名前、SetAudioName()で設定した場合はその名前。)
+Audio* AudioManager::GetAudioResource(const std::string& name)
 {
 	for (int i = 0; i < audioResources_.size(); ++i)
 	{
@@ -119,7 +152,7 @@ AudioSource* AudioManager::GetAudioResource(const std::string& name)
 }
 
 //	オーディオ削除
-void AudioManager::Remove(AudioSource* audio)
+void AudioManager::Remove(Audio* audio)
 {
 	audioRemoves_.insert(audio);
 }
@@ -127,7 +160,7 @@ void AudioManager::Remove(AudioSource* audio)
 //	シーンを指定してオーディオ削除
 void AudioManager::RemoveByScene(const std::string& sceneName)
 {
-	for (AudioSource* audio : audioResources_)
+	for (Audio* audio : audioResources_)
 	{
 		if (strcmp(audio->GetSceneName().c_str(), sceneName.c_str()) == 0)	//	オーディオデータのシーンと一致したら
 		{
@@ -139,7 +172,7 @@ void AudioManager::RemoveByScene(const std::string& sceneName)
 //	オーディオ全削除
 void AudioManager::Clear()
 {
-	for (AudioSource*& audio : audioResources_)
+	for (Audio*& audio : audioResources_)
 	{
 		delete audio;
 	}

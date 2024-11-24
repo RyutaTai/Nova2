@@ -38,7 +38,7 @@ private:
 	Scene*						nextScene_	= nullptr;
 	std::thread*				thread_		= nullptr;
 	//std::unique_ptr	<Sprite>	sprite_		= nullptr;
-	float angle_ = 0.0f;
+	float loadSpriteangle_ = 0.0f;
 
 	int animationNumber_		= 0;		//	現在のアニメーション数(何枚目のアニメーションか)
 	int animationMAX_			= 5;		//	画像のアニメーション枚数

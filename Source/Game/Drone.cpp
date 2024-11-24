@@ -30,6 +30,15 @@ Drone::Drone()
 
 }
 
+//	デストラクタ
+Drone::~Drone()
+{
+	for (int index = 0; index < static_cast<int>(Audio3D::Max); ++index)
+	{
+		delete sources_[index];
+	}
+}
+
 //	初期化
 void Drone::Initialize()
 {
@@ -73,14 +82,17 @@ void Drone::Initialize()
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
 	float playerHeight = Player::Instance().GetHeight();
 	float posOffsetY = -10.0f;
-	emitter_[static_cast<int>(Audio3D::Shot)].position_ = GetTransform()->GetPosition();
+
+	emitter_.position_ = GetTransform()->GetPosition();
 	//emitter_[static_cast<int>(Audio3D::Shot)].position.y = playerPos.y + playerHeight / 2.0f + posOffsetY;
-	emitter_[static_cast<int>(Audio3D::Shot)].velocity_ = { 1.0f, 2.0f, 1.0f };
-	emitter_[static_cast<int>(Audio3D::Shot)].minDistance_ = 7.0f;
-	emitter_[static_cast<int>(Audio3D::Shot)].maxDistance_ = 12.0f;
-	emitter_[static_cast<int>(Audio3D::Shot)].volume_ = 2.0f;
-	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
-	//sources_[static_cast<int>(Audio3D::Shot)] = Audio::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", &emitter_[static_cast<int>(Audio3D::Shot)]);
+	emitter_.velocity_ = { 1.0f, 2.0f, 1.0f };
+	emitter_.minDistance_ = 7.0f;
+	emitter_.maxDistance_ = 12.0f;
+	emitter_.volume_ = 2.0f;
+	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	sources_[static_cast<int>(Audio3D::Shot)]->SetAudioName("LaunchBullet");
+	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Shot)]);
+	
 #endif
 
 	//	テスト用
@@ -146,7 +158,7 @@ void Drone::Update(const float& elapsedTime)
 //	エミッター更新
 void Drone::UpdateEmitter()
 {
-	emitter_[static_cast<int>(Audio3D::Shot)].position_ = GetTransform()->GetPosition();
+	emitter_.position_ = GetTransform()->GetPosition();
 	//emitter_[static_cast<int>(Audio_3d::Shot)].velocity = {1,2,1};
 
 }
@@ -157,7 +169,6 @@ void Drone::UpdateAudioSource(const float& elapsedTime)
 	if (sources_[static_cast<int>(Audio3D::Shot)])
 	{
 		sources_[static_cast<int>(Audio3D::Shot)]->SetDSPSetting(Player::Instance().GetListener());
-		sources_[static_cast<int>(Audio3D::Shot)]->Update(elapsedTime);
 	}
 
 }

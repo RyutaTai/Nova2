@@ -1,18 +1,18 @@
 #pragma once
 
-#include "AudioSource.h"
+#include "Audio.h"
 #include "Audio3DSystem.h"
 
-class AudioSource3D : public AudioSource
+class AudioSource3D : public Audio
 {
 public:
-	AudioSource3D(IXAudio2* xaudio, WaveReader* resource, SoundEmitter* emitter);
-	~AudioSource3D();
+	AudioSource3D(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType, const std::string& sceneName, SoundEmitter* emitter);
+	~AudioSource3D()override;
 
 public:
-	void Update(FLOAT32 elapsedtime);
+	void Update(const float& elapsedTime)override;
 		
-	void DrawDebug();
+	void DrawDebug()override;
 
 public:
 	void SetDSPSetting(SoundListener& listner)
@@ -22,20 +22,20 @@ public:
 
 	void SetEmitter(SoundEmitter emitter) { this->emitter_ = &emitter; }
 
-	void SetPosition(DirectX::XMFLOAT3 position) { emitter_->position_ = position; }
+	void SetPosition(const DirectX::XMFLOAT3& position) { emitter_->position_ = position; }
 
-	void SetVelocity(DirectX::XMFLOAT3 velocity) { emitter_->velocity_ = velocity; }
+	void SetVelocity(const DirectX::XMFLOAT3& velocity) { emitter_->velocity_ = velocity; }
 
-	void SetCurveDistanceScaler(FLOAT32 scaler) { emitter_->maxDistance_ = scaler; }
+	void SetCurveDistanceScaler(const float& scaler) { emitter_->maxDistance_ = scaler; }
 
 	// ドップラー効果を適用
-	void SetPitch(FLOAT32 pitch) override { sourceVoice_->SetFrequencyRatio(dspSetting_.dopplerScale_ * pitch); }
+	void SetPitch(const float& pitch) override { sourceVoice_->SetFrequencyRatio(dspSetting_.dopplerScale_ * pitch); }
 
-	void SetPan();
+	void Set3DPan();	//	3Dパンニング
 
-	void SetReflectionRate(FLOAT32 reflectionRate) { this->reflectionRate_ = reflectionRate; }
+	void SetReflectionRate(const float& reflectionRate) { this->reflectionRate_ = reflectionRate; }
 
-	void SetAbsortRate(FLOAT32 absorptionRate) { this->absorptionRate_ = absorptionRate; }
+	void SetAbsortRate(const float& absorptionRate) { this->absorptionRate_ = absorptionRate; }
 
 	/*void SetVolumeCurve(X3DAUDIO_DISTANCE_CURVE_POINT vol_curvepoint[], UINT32 array_size)
 	{
@@ -65,7 +65,7 @@ public:
 		}
 	}*/
 
-	void Filter(XAUDIO2_FILTER_TYPE type, FLOAT32 overq = 1.0f);
+	void Filter(const XAUDIO2_FILTER_TYPE& type, const float& overq = 1.0f);
 
 	SoundDSPSetting GetDSPSetting() const { return dspSetting_; }
 

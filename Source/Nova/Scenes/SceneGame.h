@@ -39,8 +39,6 @@ public:
 	void Render()							override;
 	void DrawDebug()						override;
 
-	void DecalInitialize();
-
 	void ChangeState(SceneGameState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 
 	void LoadWaveSprite(const wchar_t* filename);
@@ -109,21 +107,6 @@ private:
 	bool	isGameClear_		= false;
 	float	changeTitleTimer_	= 3.0f;
 	bool	isResult_			= false;	//	リザルト画面かどうか(クリア、ゲームオーバー)
-
-	/* ----- オーディオ ----- */
-	enum class AUDIO_SE_GAME
-	{
-		CHOICE,		//	選択音
-		DECISION,	//	決定音
-		Max,		//	SE最大数
-	};
-	enum class AUDIO_BGM_GAME
-	{
-		Normal,		//	通常時BGM
-		Max,		//	BGM最大数
-	};
-	AudioSource* bgm_[static_cast<int>(AUDIO_BGM_GAME::Max)];
-	//std::unique_ptr	<Audio> se_[static_cast<int>(AUDIO_SE_GAME::Max)];
 
 	//	デバッグ用
 private:

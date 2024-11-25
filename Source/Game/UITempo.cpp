@@ -23,7 +23,7 @@ UITempo::UITempo()
 		semicircles_[index] = std::make_unique<Semicircle>();
 
 		//	range_設定
-		 float RangePerOne = RangeMax / SemicircleMax;	//	一つ当たりのrange_
+		float RangePerOne = SemicircleRangeMax / SemicircleMax;	//	一つ当たりのrange_
 		float range = RangePerOne * index;
 		semicircles_[index]->range_ = range;
 
@@ -87,13 +87,16 @@ void UITempo::UpdatePosition(const float& elapsedTime)
 {
 	float centerPosX = center_->GetTransform()->GetPositionX();	//	中心円のX座標
 	
+	//	bpmに合わせた速度の設定
+	moveFactor_ = (bpm_ / 120.0f);
+
 	for (int index = 0; index < SemicircleMax; ++index)
 	{
 		//	range更新
 		semicircles_[index]->range_ -= moveSpeed_ * moveFactor_ * elapsedTime;
-		if (semicircles_[index]->range_ <= RangeMin)	//	中心円と重なったら最大距離にリセット
+		if (semicircles_[index]->range_ <= SemicircleRangeMin)	//	中心円と重なったら最大距離にリセット
 		{
-			semicircles_[index]->range_ = RangeMax;
+			semicircles_[index]->range_ = SemicircleRangeMax;
 			centerCircleAnimFlag_ = true;
 		}
 
@@ -111,8 +114,9 @@ void UITempo::UpdateScale(const float& elapsedTime)
 {
 	for (int index = 0; index < SemicircleMax; ++index)
 	{
+		//	半円更新
 		float range = semicircles_[index]->range_;
-		float normalizeRange = (range - RangeMin) / (RangeMax - RangeMin);										//	rangeを正規化
+		float normalizeRange = (range - SemicircleRangeMin) / (SemicircleRangeMax - SemicircleRangeMin);										//	rangeを正規化
 		float scaleFactor = SemicircleScaleMin + normalizeRange * (SemicircleScaleMax - SemicircleScaleMin);	//	スケール算出
 		semicircles_[index]->left_->GetTransform()->SetScaleFactor(scaleFactor);
 		semicircles_[index]->right_->GetTransform()->SetScaleFactor(scaleFactor);
@@ -157,10 +161,12 @@ void UITempo::DrawDebug()
 {
 	if (ImGui::TreeNode("Tempo"))
 	{
+		ImGui::DragFloat("BPM", &bpm_, 0.1f);
+
 		ImGui::Text("Center");								//	中心の円
 		ImGui::DragInt("AnimChangeThreshold", &AnimChangeThreshold);
-		ImGui::DragFloat("RangeMax", &RangeMax);
-		ImGui::DragFloat("RangeMin", &RangeMin);
+		ImGui::DragFloat("RangeMax", &SemicircleRangeMax);
+		ImGui::DragFloat("RangeMin", &SemicircleRangeMin);
 		ImGui::DragFloat("RangeMin", &SemicircleScaleMax);
 		ImGui::DragFloat("RangeMin", &SemicircleScaleMin);
 		center_->DrawDebug();

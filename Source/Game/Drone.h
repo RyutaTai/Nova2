@@ -32,6 +32,7 @@ private:
 	enum class Audio3D		//	3Dオーディオで鳴らしたい音
 	{
 		Shot,				//	発射音
+		Move,				//	移動
 		Destroy,			//	破壊音
 		Max,
 	};
@@ -67,8 +68,9 @@ private:
 	std::shared_ptr <Effect>		effectResource_;							//	エフェクト
 	float	effectScale_ = 1.0f;
 	
-	float	launchTimer_ = 1.3f;	//	次の球を発射するまでのタイマー
+	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
 	
+	AudioSource* debugSource_ = nullptr;
 	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
 	SoundEmitter	emitter_ = {};				//	エミッター
 

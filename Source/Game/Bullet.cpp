@@ -4,6 +4,7 @@
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Collision/Collision.h"
 #include "../Nova/Audio/AudioManager.h"
+#include "Player.h"
 
 //	コンストラクタ
 Bullet::Bullet(const std::string& filename)
@@ -15,16 +16,22 @@ Bullet::Bullet(const std::string& filename)
 	BulletManager::Instance().Register(this);
 
 	//	弾丸半径(当たり判定用)
-	radius_ = 1.0f;
+	radius_ = 0.5f;
 
-	//	SE読み込み
-	emitter_ = std::make_unique<SoundEmitter>();
-	emitter_->position_ = GetTransform()->GetPosition();
-	emitter_->velocity_ = velocity_;
-	emitter_->minDistance_ = 7.0f;
-	emitter_->maxDistance_ = 12.0f;
-	emitter_->volume_ = 1.0f;
-	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
+	//	スケール
+	GetTransform()->SetScaleFactor(0.4f);
+
+	//	オーディオ初期設定
+	emitter_.position_ = GetTransform()->GetPosition();
+	emitter_.velocity_ = velocity_;
+	emitter_.minDistance_ = 7.0f;
+	emitter_.maxDistance_ = 12.0f;
+	emitter_.volume_ = 1.0f;
+	//se_[static_cast<int>(AudioSE3D::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
+	se_[static_cast<int>(AudioSE3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	se_[static_cast<int>(AudioSE3D::Move)]->SetVolume(0.3f, false);
+	se_[static_cast<int>(AudioSE3D::Move)]->SetAudioName("BulletMove");
+	AudioManager::Instance().Register(se_[static_cast<int>(AudioSE3D::Move)]);
 
 }
 
@@ -37,7 +44,16 @@ void Bullet::Initialize()
 //	更新処理
 void Bullet::Update(const float& elapsedTime)
 {
+	UpdateAudioSource(elapsedTime);
+}
 
+//	オーディオソース更新
+void Bullet::UpdateAudioSource(const float& elapsedTime)
+{
+	if (se_[static_cast<int>(AudioSE3D::Move)])
+	{
+		se_[static_cast<int>(AudioSE3D::Move)]->SetDSPSetting(Player::Instance().GetListener());
+	}
 }
 
 //	カバーモデル更新処理
@@ -55,7 +71,7 @@ void Bullet::Destroy(const float& elapsedTime)
 	if (isInvincible_)return;
 
 	//	爆発音再生
-	//se_[static_cast<int>(AUDIO_SE_BULLET::Explosion)]->Play(false);
+	//se_[static_cast<int>(AudioSE3D::Explosion)]->Play(false);
 
 	//	マネージャーから自分を削除する
 	BulletManager::Instance().Remove(this);

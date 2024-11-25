@@ -24,7 +24,7 @@ public:
 
 public:
 	virtual void Update(const float& elapsedTime) = 0;
-	virtual void DrawDebug() = 0;
+	virtual void DrawDebug();
 	
 	virtual void SetPitch(const float& pitch) = 0;
 

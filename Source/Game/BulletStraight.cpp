@@ -17,6 +17,8 @@ BulletStraight::~BulletStraight()
 //	XVˆ—
 void BulletStraight::Update(const float& elapsedTime)
 {
+	Bullet::Update(elapsedTime);
+
 	//	õ–½ˆ—
 	lifeTimer_ -=elapsedTime;
 	if (lifeTimer_ <= 0.0f)

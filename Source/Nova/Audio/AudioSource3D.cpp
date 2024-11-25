@@ -67,7 +67,6 @@ void AudioSource3D::Update(const float& elapsedTime)
 	{
 		SetVolume(emitter_->volume_, false);
 	}
-	DrawDebug();
 
 	//	ピッチ変更テスト
 #if 0	
@@ -141,31 +140,38 @@ void AudioSource3D::Filter(const XAUDIO2_FILTER_TYPE& type, const float& overq)
 void AudioSource3D::DrawDebug()
 {
 #ifdef _DEBUG
-	ImGui::Begin("3DEmitter");
-	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
-	ImGui::DragFloat3("EmitterVelocity", &emitter_->velocity_.x, -5.0f, 5.0f);
-	ImGui::DragFloat3("EmitterPosition", &emitter_->position_.x);
-	ImGui::DragFloat("EmitterMinDistance", &emitter_->minDistance_);
-	ImGui::DragFloat("EmitterMaxDistance", &emitter_->maxDistance_);
-	ImGui::SliderFloat("Volume", &emitter_->volume_, 0.0f, 1.0f);
+	Audio::DrawDebug();
 
-	//	デバッグ
-	ImGui::DragFloat("Pitch", &pitch_, 0.01f, XAUDIO2_MIN_FREQ_RATIO, XAUDIO2_MAX_FREQ_RATIO);	//	ピッチ変更テスト
+	if (ImGui::TreeNode("3DEmitter"))
+	{
+		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
+		ImGui::DragFloat3("EmitterVelocity", &emitter_->velocity_.x, -5.0f, 5.0f);
+		ImGui::DragFloat3("EmitterPosition", &emitter_->position_.x);
+		ImGui::DragFloat("EmitterMinDistance", &emitter_->minDistance_);
+		ImGui::DragFloat("EmitterMaxDistance", &emitter_->maxDistance_);
+		ImGui::SliderFloat("Volume", &emitter_->volume_, 0.0f, 1.0f);
 
-	//	再生時間表示
-	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);
-	ImGui::DragFloat("PlayTimer", &timer_);
+		//	デバッグ
+		ImGui::DragFloat("Pitch", &pitch_, 0.01f, XAUDIO2_MIN_FREQ_RATIO, XAUDIO2_MAX_FREQ_RATIO);	//	ピッチ変更テスト
 
-	ImGui::End();
+		//	再生時間表示
+		ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);
+		ImGui::DragFloat("PlayTimer", &timer_);
+
+		ImGui::TreePop();
+	}
 	Graphics::Instance().GetDebugRenderer()->DrawSphere(emitter_->position_, emitter_->minDistance_, { 0.0f, 0.0f, 1.0f, 1.0f });
 	Graphics::Instance().GetDebugRenderer()->DrawSphere(emitter_->position_, emitter_->maxDistance_, { 1.0f, 0.0f, 0.0f, 1.0f });
 
-	ImGui::Begin("DSPSetting");
-	ImGui::DragFloat("angle", &dspSetting_.radianListenerToEmitter_);
-	ImGui::DragFloat("DopplerFactor", &dspSetting_.dopplerScale_);
-	ImGui::DragFloat("Distance", &dspSetting_.distanceListnerToEmitter_);
-	ImGui::DragFloat("FilterParam", &dspSetting_.filterParam_);
-	ImGui::End();
+	if (ImGui::TreeNode("DSPSetting"))
+	{
+		ImGui::DragFloat("angle", &dspSetting_.radianListenerToEmitter_);
+		ImGui::DragFloat("DopplerFactor", &dspSetting_.dopplerScale_);
+		ImGui::DragFloat("Distance", &dspSetting_.distanceListnerToEmitter_);
+		ImGui::DragFloat("FilterParam", &dspSetting_.filterParam_);
+
+		ImGui::TreePop();
+	}
 #endif
 }

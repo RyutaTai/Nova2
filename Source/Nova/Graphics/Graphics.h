@@ -103,19 +103,19 @@ public:
 private:
 	static Graphics*								instance_;
 	std::unique_ptr<Shader>							shader_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11Device>			device_;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		deviceContext_;
-	Microsoft::WRL::ComPtr<IDXGISwapChain1>			swapChain_;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	renderTargetView_;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView_;
+	Microsoft::WRL::ComPtr<ID3D11Device>			device_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		deviceContext_ = nullptr;
+	Microsoft::WRL::ComPtr<IDXGISwapChain1>			swapChain_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	renderTargetView_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView_ = nullptr;
 
 	//	SceneConstant
-	SceneConstants	sceneConstant_;
+	SceneConstants	sceneConstant_ = {};
 
 	//	ConstantBuffer
-	Microsoft::WRL::ComPtr<ID3D11Buffer>	constantBuffer_;
-	std::unique_ptr<FrameBuffer>			frameBuffers_[8];	//	使われていない
-	std::unique_ptr<FullScreenQuad>			bitBlockTransfer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>	constantBuffer_ = nullptr;
+	std::unique_ptr<FrameBuffer>			frameBuffers_[8] = {nullptr};	//	使われていない
+	std::unique_ptr<FullScreenQuad>			bitBlockTransfer_ = nullptr;
 
 	// PROJECTION_MAPPING
 	DirectX::XMFLOAT4X4 projectionMappingTransform_;
@@ -144,7 +144,7 @@ private:
 
 private:
 	//	デバッグプリミティブ
-	std::unique_ptr<DebugRenderer>	debugRenderer_;	//	デバッグプリミティブ描画用
+	std::unique_ptr<DebugRenderer>	debugRenderer_ = nullptr;	//	デバッグプリミティブ描画用
 	std::mutex						mutex_;
 
 };

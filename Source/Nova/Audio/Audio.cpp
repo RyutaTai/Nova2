@@ -1,5 +1,6 @@
 #include "Audio.h"
 
+#include "../../imgui/imgui.h"
 #include "../Others/Misc.h"
 
 //	コンストラクタ
@@ -145,4 +146,15 @@ void Audio::SetVolume(const float& volume, const bool& useDb)
 		lastVolume_ = setVolume;
 	}
 
+}
+
+//	デバッグ描画
+void Audio::DrawDebug()
+{
+#ifdef USE_IMGUI
+	bool isPlay = IsPlay();
+	ImGui::Checkbox("IsPlay", &isPlay);						//	再生中かどうか
+	ImGui::DragFloat("PlayTimer", &timer_);					//	再生時間
+	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);	//	合計再生時間
+#endif
 }

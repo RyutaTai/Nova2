@@ -159,10 +159,5 @@ void AudioSource::Filter(const XAUDIO2_FILTER_TYPE& type, const float& cutoff, c
 //	デバッグ描画
 void AudioSource::DrawDebug()
 {
-#ifdef USE_IMGUI
-	bool isPlay = IsPlay();
-	ImGui::Checkbox("IsPlay", &isPlay);						//	再生中かどうか
-	ImGui::DragFloat("PlayTimer", &timer_);				//	再生時間
-	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);	//	合計再生時間
-#endif
+	Audio::DrawDebug();
 }

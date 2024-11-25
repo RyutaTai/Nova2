@@ -73,7 +73,7 @@ void Dragonkin::Initialize()
 
 	//	スケール
 	//GetTransform()->SetScaleFactor(0.04f);
-	GetTransform()->SetScaleFactor(0.025f);
+	GetTransform()->SetScaleFactor(0.020f);
 
 	//	初期アニメーション再生速度設定
 	SetAnimationSpeed(1.0f);

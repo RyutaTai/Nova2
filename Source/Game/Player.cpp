@@ -59,11 +59,12 @@ void Player::Initialize()
 	effectResource_ = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/HitEff.efk");
 
 	//	エフェクトスケール設定
-	effectScale_ = 1.0f;
+	effectScale_ = 0.4f;
 
 	//	位置設定
 	//GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
-	GetTransform()->SetPosition({ 14.0f, 5.0f, -20.0f });
+	//GetTransform()->SetPosition({ 14.0f, 5.0f, -20.0f });
+	GetTransform()->SetPosition({ 14.0f, 0.01f, -20.0f });
 
 	//	スケール設定
 	//GetTransform()->SetScaleFactor(3.0f);
@@ -74,7 +75,7 @@ void Player::Initialize()
 
 	//	当たり判定用半径、高さ設定
 	radius_ = 0.7f;
-	height_ = 4.4f;
+	height_ = 3.4f;
 
 	moveSpeed_ = 2.0f;
 	//moveSpeed_ = 25.0f;

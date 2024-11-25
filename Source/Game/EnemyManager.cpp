@@ -154,7 +154,7 @@ void EnemyManager::DroneSpawn(const int& spawn)
 		//	¶¬ˆÊ’uİ’è
 		DirectX::XMFLOAT3 pos =
 		{
-			37.42f, 5.08f, -10.2f
+			37.42f, 2.5f, -10.2f
 		};
 		drone->GetTransform()->SetPosition(pos);
 		drone->Initialize();	//	ƒhƒ[ƒ“‰Šú‰»

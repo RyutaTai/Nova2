@@ -192,6 +192,16 @@ void AudioManager::DrawDebug()
 	{
 		int size = audioResources_.size();
 		ImGui::DragInt("AudioCount", &size);	//	オーディオの数
+
+		for (Audio* audio : audioResources_)	//	各オーディオのImGui
+		{
+			std::string name = audio->GetAudioName();
+			if (ImGui::TreeNode(name.c_str()))
+			{
+				audio->DrawDebug();
+				ImGui::TreePop();
+			}
+		}
 		ImGui::TreePop();
 	}
 }

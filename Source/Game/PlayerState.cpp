@@ -63,7 +63,7 @@ namespace PlayerState
 		owner_->PlayAnimation(Player::AnimationType::Run, true, 0.25f);
 		owner_->SetAnimationSpeed(1.2f);
 
-		owner_->SetMoveSpeed(4.0f);
+		owner_->SetMoveSpeed(3.0f);
 
 	}
 

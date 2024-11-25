@@ -17,6 +17,8 @@ BulletHorming::BulletHorming(const std::string& filename)
 	DirectX::XMFLOAT4 coverModelColor = { 1.0f,0.0f,0.0f,1.0f };
 	coverModel_ = std::make_unique<GltfModelStaticBatching>("./Resources/Model/Cube/source/Cube2.gltf", true, coverModelColor);
 	
+	coverModel_->GetTransform()->SetScaleFactor(0.4f);
+
 	//	“§–¾ˆ—
 #if 1
 	//coverModel_->GetTransform()->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
@@ -37,6 +39,8 @@ BulletHorming::~BulletHorming()
 //	XVˆ—
 void BulletHorming::Update(const float& elapsedTime)
 {
+	Bullet::Update(elapsedTime);
+
 	//	ˆÚ“®ˆ—
 	Move(elapsedTime);
 

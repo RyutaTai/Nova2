@@ -24,6 +24,13 @@ void SceneLoading::Initialize()
 	//	ロード画像の角度初期化
 	loadSpriteangle_ = 0.0f;
 
+	//	オーディオ初期化
+	AudioSource* loadBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Load.wav", Audio::AudioType::BGMNormal, "LoadingScene");
+	loadBGM->SetVolume(0.2f, false);
+	loadBGM->SetAudioName("LoadBGM");
+	AudioManager::Instance().Register(loadBGM);
+	AudioManager::Instance().GetAudioResource("LoadBGM")->Play(true);
+
 }
 
 //	終了化
@@ -45,6 +52,10 @@ void SceneLoading::Finalize()
 			sprite_[i] = nullptr;
 		}
 	}
+
+	//	オーディオ終了化
+	AudioManager::Instance().RemoveByScene("LoadingScene");
+
 }
 
 //	更新処理

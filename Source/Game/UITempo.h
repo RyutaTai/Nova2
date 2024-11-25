@@ -39,9 +39,11 @@ private:
 		Max
 	};
 
-	static constexpr int	SemicircleMax = 4;					//	半円の数
-	 float	RangeMax = 576.0f;					//	中心円からの距離の最大値
-	 float	RangeMin = -0.5f;					//	rangeの最小値。これを下回ったら位置リセット
+	static constexpr int	SemicircleMax = 4;	//	半円の数
+	 float	SemicircleRangeMax = 576.0f;		//	中心円からの距離の最大値
+	 float	SemicircleRangeMin = -0.5f;			//	rangeの最小値。これを下回ったら位置リセット
+	 float	CenterScaleMax = 1.0f;				//	真ん中の円のスケール最大値
+	 float	CenterScaleMin = 0.75f;				//	真ん中の円のスケール最小値
 	 float	SemicircleScaleMax = 1.5f;			//	半円のスケール最大値
 	 float	SemicircleScaleMin = 1.0f;			//	半円のスケール最小値
 
@@ -50,10 +52,10 @@ private:
 
 	float	moveSpeed_ = 290.0f;					//	移動する速さ
 	float	moveFactor_ = 1.0f;						//	BPM120を基準とする移動する速さの倍率
-	float	bpm_ = 120.0f;							//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
+	float	bpm_ = 140.0f;							//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
 	bool	centerCircleAnimFlag_ = false;			//	中心円のアニメーション更新フラグ
 	 int	AnimChangeThreshold = 9;				//	何フレームでアニメーションを遷移するか
-	 int		centerAnimTime_ = 0;				//	中心円のアニメーション時間カウント
+	 int	centerAnimTime_ = 0;				//	中心円のアニメーション時間カウント
 
 
 };

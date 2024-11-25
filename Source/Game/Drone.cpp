@@ -54,7 +54,7 @@ void Drone::Initialize()
 	GetTransform()->SetRotationY(angleY);
 
 	//	スケール
-	float scale = 1.0f;
+	float scale = 0.6f;
 	//float scale = 10.0f;
 	GetTransform()->SetScaleFactor(scale);
 
@@ -88,11 +88,29 @@ void Drone::Initialize()
 	emitter_.velocity_ = { 1.0f, 2.0f, 1.0f };
 	emitter_.minDistance_ = 7.0f;
 	emitter_.maxDistance_ = 12.0f;
-	emitter_.volume_ = 2.0f;
-	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/shot.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	emitter_.volume_ = 1.0f;
+	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/launchSE.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	sources_[static_cast<int>(Audio3D::Shot)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(Audio3D::Shot)]->SetAudioName("LaunchBullet");
 	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Shot)]);
 	
+#if 1	//	3dで生成
+	sources_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	sources_[static_cast<int>(Audio3D::Move)]->SetVolume(0.3f, false);
+	sources_[static_cast<int>(Audio3D::Move)]->SetAudioName("BulletMove");
+	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Move)]);
+#else
+	debugSource_ = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene");
+	debugSource_->SetVolume(0.3f, false);
+	debugSource_->SetAudioName("BulletMove");
+	AudioManager::Instance().Register(debugSource_);
+#endif
+	
+	sources_[static_cast<int>(Audio3D::Destroy)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	sources_[static_cast<int>(Audio3D::Destroy)]->SetVolume(0.3f, false);
+	sources_[static_cast<int>(Audio3D::Destroy)]->SetAudioName("BulletDestroy");
+	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Destroy)]);
+
 #endif
 
 	//	テスト用
@@ -170,7 +188,6 @@ void Drone::UpdateAudioSource(const float& elapsedTime)
 	{
 		sources_[static_cast<int>(Audio3D::Shot)]->SetDSPSetting(Player::Instance().GetListener());
 	}
-
 }
 
 //	弾丸処理
@@ -212,16 +229,17 @@ void Drone::LaunchBullet()
 			bullet->SetOwnerPosition(this->GetTransform()->GetPosition());
 
 			//	発射タイマーリセット
-			launchTimer_ = 3.0f;
+			launchTimer_ = 3.5f;
 
 			//	発射音再生
-#if 1
+#if 0
 			if (sources_[static_cast<int>(Audio3D::Shot)])
 			{
 				sources_[static_cast<int>(Audio3D::Shot)]->Play(false);
 			}
 #else
-			AudioManager::Instance().GetAudioResource("Decision.wav")->Play(false);
+			AudioManager::Instance().GetAudioResource("LaunchBullet")->Play(false);
+			AudioManager::Instance().GetAudioResource("BulletMove")->Play(false);
 #endif
 
 		}

@@ -22,14 +22,14 @@ void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
 #if 1
-	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav", Audio::AudioType::BGMNormal, "GameScene");
+	//AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav", Audio::AudioType::BGMNormal, "GameScene");
+	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/452_BPM140_2.wav", Audio::AudioType::BGMNormal, "GameScene");
 #else
 	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav", Audio::AudioType::BGMNormal, "GameScene");
 #endif
 	gameBGM->SetVolume(0.3f, false);
 	gameBGM->SetAudioName("GameBGM");
 	AudioManager::Instance().Register(gameBGM);
-	AudioManager::Instance().GetAudioResource("GameBGM")->Play(true);
 
 
 	/* ----- スプライト初期化 ----- */
@@ -379,12 +379,14 @@ void SceneGame::Render()
 		//	ゲームクリア
 		if (isGameClear_)
 		{
+			sprite_[static_cast<int>(SPRITE_GAME::Clear)]->GetTransform()->SetPosition(320, 180);
 			sprite_[static_cast<int>(SPRITE_GAME::Clear)]->Render();
 		}
 
 		//	ゲームオーバー
 		if (isGameOver_)
 		{
+			sprite_[static_cast<int>(SPRITE_GAME::GameOver)]->GetTransform()->SetPosition(320, 180);
 			sprite_[static_cast<int>(SPRITE_GAME::GameOver)]->Render();
 		}
 	}

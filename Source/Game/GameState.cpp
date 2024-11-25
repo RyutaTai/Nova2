@@ -11,6 +11,9 @@ namespace GameState
 		EnemyManager::Instance().DroneSpawn(1);
 		owner_->LoadWaveSprite(L"./Resources/Image/Wave1.png");
 		owner_->SetWaveStartTimer(2.0f);
+
+		//	オーディオ再生
+		AudioManager::Instance().GetAudioResource("GameBGM")->Play(true);
 	}
 
 	void Wave1State::Update(const float& elapsedTime)

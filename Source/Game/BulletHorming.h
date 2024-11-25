@@ -34,9 +34,9 @@ private:
 	};
 
 private:
-	float							speed_ = 200.0f;						//	弾の速さ
+	float							speed_ = 1.0f;						//	弾の速さ
 	//float							speed_		= 1.0f;						//	弾の速さ
-	float							lifeTimer_ = 3.0f;						//	弾の生存時間
+	float							lifeTimer_ = 2.5f;						//	弾の生存時間
 	DirectX::XMFLOAT3				target_ = { 0,0,0 };					//	ターゲット位置
 	std::shared_ptr <Effect>		effectResource_[EFFECT::Max];			//	エフェクト		
 	float							effectScale_[EFFECT::Max] = { 1.0f };	//	エフェクトスケール

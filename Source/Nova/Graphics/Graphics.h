@@ -73,8 +73,6 @@ public:
 	void SetLightViewProjection(const DirectX::XMFLOAT4X4& lightViewProjection) { sceneConstant_.lightViewProjection_ = lightViewProjection; }
 	void SetInvViewProjection(const DirectX::XMFLOAT4X4& invViewProjection)		{ sceneConstant_.invViewProjection_ = invViewProjection; }
 	void SetInvViewProjection(const DirectX::XMMATRIX& invViewProjection)		{ DirectX::XMStoreFloat4x4(&sceneConstant_.invViewProjection_, invViewProjection); }
-	void SetProjectionMappingTransform(const DirectX::XMMATRIX& projectionMappingTransform)		{ DirectX::XMStoreFloat4x4(&sceneConstant_.projectionMappingTransform_, projectionMappingTransform); }
-	void SetProjectionMappingRotation(const float& projectionMappingRotation) { projectionMappingRotation_ = projectionMappingRotation; }
 	void SetIsVSync(bool isVSync);
 
 	//	ゲッター
@@ -92,11 +90,6 @@ public:
 	const DirectX::XMFLOAT4		GetCameraPosition()			const	{ return sceneConstant_.cameraPosition_; }
 	const DirectX::XMFLOAT4X4	GetLightViewProjection()	const	{ return sceneConstant_.lightViewProjection_; }
 	const DirectX::XMFLOAT4X4	GetInvViewProjection()		const	{ return sceneConstant_.invViewProjection_; }
-	const DirectX::XMFLOAT4X4	GetProjectionMappingTransform()	const	{ return sceneConstant_.projectionMappingTransform_; }
-	const float					GetProjectionMappingRotation()		{ return projectionMappingRotation_; }
-	const DirectX::XMFLOAT3		GetProjectionMappingEye()	const	{ return projectionMappingEye_; }
-	const DirectX::XMFLOAT3		GetProjectionMappingFocus() const	{ return projectionMappingFocus_; }
-	const float					GetProjectionMappingFovy()	const	{ return projectionMappingFovy_; }
 	DebugRenderer*				GetDebugRenderer()					{ return debugRenderer_.get(); }
 	std::mutex&					GetMutex()							{ return mutex_; }			//ミューテックス取得
 
@@ -116,13 +109,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	constantBuffer_ = nullptr;
 	std::unique_ptr<FrameBuffer>			frameBuffers_[8] = {nullptr};	//	使われていない
 	std::unique_ptr<FullScreenQuad>			bitBlockTransfer_ = nullptr;
-
-	// PROJECTION_MAPPING
-	DirectX::XMFLOAT4X4 projectionMappingTransform_;
-	DirectX::XMFLOAT3 projectionMappingEye_ = { 0, 50, 0 };
-	DirectX::XMFLOAT3 projectionMappingFocus_ = { 0, 0, 0 };
-	float projectionMappingRotation_ = 0.0f;
-	float projectionMappingFovy_ = 10.0f;
 
 	//	垂直同期
 	bool	isVSync_ = true;			//	垂直同期フラグ

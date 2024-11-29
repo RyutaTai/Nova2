@@ -71,12 +71,6 @@ Graphics::Graphics(HWND hwnd, bool fullscreen)
 	//	デバッグプリミティブ
 	debugRenderer_ = std::make_unique<DebugRenderer>(device_.Get());
 
-	//	プロジェクションマッピング初期設定
-	projectionMappingEye_ = { 72.0f,7.0f,8.8f };
-	projectionMappingFocus_ = { 33.0f,10.0f,-1.0f };
-	projectionMappingRotation_ = -104.2f;
-	projectionMappingFovy_ = 10.0f;
-
 }
 
 void Graphics::AcquireHighPerformanceAdapter(IDXGIFactory6* dxgiFactory6, IDXGIAdapter3** dxgiAdapter3)

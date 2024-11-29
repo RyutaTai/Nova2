@@ -550,6 +550,7 @@
     <None Include="Source\Nova\Shaders\GltfModel.hlsli" />
     <None Include="Source\Nova\Shaders\ImageBasedLighting.hlsli" />
     <None Include="Source\Nova\Shaders\Model.hlsli" />
+    <None Include="Source\Nova\Shaders\ProjectionMapping.hlsli" />
     <None Include="Source\Nova\Shaders\Sprite.hlsli" />
     <None Include="Source\Nova\Shaders\StaticMesh.hlsli" />
   </ItemGroup>

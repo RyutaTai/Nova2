@@ -622,5 +622,8 @@
     <None Include="Source\Nova\Shaders\Decal.hlsli">
       <Filter>Nova\Shaders</Filter>
     </None>
+    <None Include="Source\Nova\Shaders\ProjectionMapping.hlsli">
+      <Filter>Nova\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

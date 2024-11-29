@@ -6,6 +6,8 @@
 #include "../Nova/Audio/AudioManager.h"
 #include "../Nova/Resources/Texture.h"
 
+#include "Player.h"
+
 Stage* Stage::instance_ = nullptr;
 
 Stage::Stage()
@@ -35,7 +37,7 @@ Stage::Stage()
 	//GetTransform()->SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	//	エミッシブ定数バッファ生成
-	D3D11_BUFFER_DESC bufferDesc{};
+	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.ByteWidth = sizeof(EmissiveConstant);
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -58,17 +60,41 @@ Stage::Stage()
 	frequency_ = std::make_unique<Frequency>();
 	frequency_->Initialize();
 
+	//	オーディオスペクトラム関連初期化
+	//	フレームバッファ
+	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(Graphics::Instance().GetDevice());
+	spectrumFramebuffer_ = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
+	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumPS.cso", spectrumWaveformPS_.GetAddressOf());
+#if SPECTRUM_CIRCLE
+	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumCirclePS.cso", spectrumCirclePS_.GetAddressOf());
+#endif
+
+	//	プロジェクションマッピング初期設定
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].eye_		= { 72.0f,7.0f,8.8f};
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].focus_	= { 33.0f,10.0f,-1.0f };
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].rotation_ = -104.2f;
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].fovy_		=	10.0f;
+	bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(ProjectionMappingConstant);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, projectionMappingBuffer_[static_cast<int>(ProjectionMappingType::Waveform)].ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].eye_		= { 0.0f,32.0f,0.0f };
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].focus_		= { 0.0f,0.0f,0.0f };
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].rotation_	= 0.0f;
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].fovy_		=	10.0f;
+	bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(ProjectionMappingConstant);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, projectionMappingBuffer_[static_cast<int>(ProjectionMappingType::Circle)].ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
 #if MAGIC_CIRCLE
 	D3D11_TEXTURE2D_DESC texture2dDesc;
 	LoadTextureFromFile(Graphics::Instance().GetDevice(), L"./Resources/Image/magic circle.png", projectionMappingTexture_.GetAddressOf(), &texture2dDesc);
-#endif
-
-	//	スペクトラム用フレームバッファ
-	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(Graphics::Instance().GetDevice());
-	spectrumFramebuffer_ = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
-	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumPS.cso", spectrumPS_.GetAddressOf());
-#if SPECTRUM_CIRCLE
-	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumCirclePS.cso", spectrumCirclePS_.GetAddressOf());
 #endif
 
 }
@@ -90,6 +116,9 @@ void Stage::Update(const float& elapsedTime)
 
 	//	FFT定数バッファ更新
 	UpdateFFTConstantBuffer();
+
+	//	オーディオスペクトラム更新
+	UpdateAudioSpectrum();
 
 }
 
@@ -171,6 +200,30 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 		emissiveIntencityMin_, emissiveIntencityMax_);*/
 
 #endif
+}
+
+//	オーディオスペクトラムk更新
+void Stage::UpdateAudioSpectrum()
+{
+	UpdateWaveformAudioSpectrum();
+	UpdateCircleAudioSpectrum();
+}
+
+//	波形オーディオスペクトラム更新
+void Stage::UpdateWaveformAudioSpectrum()
+{
+	
+}
+
+//	円形オーディオスペクトラム更新
+void Stage::UpdateCircleAudioSpectrum()
+{
+	//	座標更新
+	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].focus_ = playerPos;
+	playerPos.y += eyeHeight_;
+	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].eye_ = playerPos;
+
 }
 
 //	振幅最小値更新処理
@@ -282,9 +335,9 @@ void Stage::Render()
 	spectrumFramebuffer_->Clear(deviceContext, 0, 0, 0, 1);
 	spectrumFramebuffer_->Activate(deviceContext);
 #if SPECTRUM_CIRCLE
-	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 1, 0, spectrumCirclePS_.Get());
+	bitBlockTransfer_->Blit(deviceContext, projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].texture_.GetAddressOf(), 1, 0, spectrumCirclePS_.Get());
 #else
-	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 1, 0, spectrumPS_.Get());
+	bitBlockTransfer_->Blit(deviceContext, projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].texture_.GetAddressOf(), 1, 0, spectrumWaveformPS_.Get());
 #endif
 	spectrumFramebuffer_->Deactivate(deviceContext);
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf());
@@ -381,6 +434,8 @@ void Stage::DrawDebug()
 			ImGui::DragFloat("EmissiveFactor", &emissiveFactor_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMin", &emissiveIntencityMin_, 1.0f, 0.0f);
 			ImGui::DragFloat("EmissiveIntencityMax", &emissiveIntencityMax_, 1.0f, 0.0f);
+			ImGui::DragFloat("EyeHeight", &eyeHeight_, 1.0f, 0.0f);
+
 			ImGui::TreePop();
 		}
 

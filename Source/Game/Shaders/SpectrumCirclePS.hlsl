@@ -11,6 +11,9 @@
 #define M_PI 3.14159265359
 #define FFT_BLOCK_COUNT 2048
 
+#define SCREEN_WIDTH  1980
+#define SCREEN_HEIGHT 1080
+
 // PROJECTION_MAPPING
 SamplerState samplerStates[8] : register(s0);
 
@@ -28,9 +31,7 @@ float4 rays(float4 color, float4 background, float2 position, float radius, floa
 float4 main(VS_OUT pin):SV_TARGET
 {
     //Prepare UV and background
-    float aspect = 1920 / 1080;
-    //float aspect = pin.texcoord.x / pin.texcoord.y;
-    //float aspect = pin.position.x / pin.position.y;
+    float aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
     float2 texcoord = pin.texcoord;
     texcoord.x *= aspect;
     float4 color = lerp(float4(0.0, 1.0, 0.8, 1.0), float4(0.0, 0.3, 0.25, 1.0), distance(float2(aspect / 2.0, 0.5), texcoord));

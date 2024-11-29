@@ -213,8 +213,20 @@ void Stage::UpdateAudioSpectrum()
 //	波形オーディオスペクトラム更新
 void Stage::UpdateWaveformAudioSpectrum()
 {
-	//	定数バッファをGPUに送る
 	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Waveform);
+	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
+	DirectX::XMFLOAT3 projectionMappingEye = projectionMapping_[projectionMappingIndex].eye_;
+	DirectX::XMFLOAT3 projectionMappingFocus = projectionMapping_[projectionMappingIndex].focus_;
+	float projectionMappingFovy = projectionMapping_[projectionMappingIndex].fovy_;
+	DirectX::XMMATRIX ProjectionMappingTransform =
+		DirectX::XMMatrixLookAtLH(
+			DirectX::XMLoadFloat3(&projectionMappingEye),
+			DirectX::XMLoadFloat3(&projectionMappingFocus),
+			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMappingRotation), 0))) *
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMappingFovy), 1.0f, 1.0f, 500.0f);
+	DirectX::XMStoreFloat4x4(&projectionMappingConstants_[projectionMappingIndex].transform_, ProjectionMappingTransform);
+
+	//	定数バッファをGPUに送る
 	Graphics::Instance().GetDeviceContext()->UpdateSubresource(projectionMappingBuffer_[projectionMappingIndex].Get(), 0, 0, &projectionMappingConstants_[projectionMappingIndex], 0, 0);
 	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(5, 1, projectionMappingBuffer_[projectionMappingIndex].GetAddressOf());
 

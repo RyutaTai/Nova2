@@ -33,6 +33,13 @@
 //
 // }
 //
+// cbuffer CircleSpectrumConstant
+// {
+//
+//   row_major float4x4 circleSpectrumTransform;// Offset:    0 Size:    64
+//
+// }
+//
 // cbuffer WaveformSpectrumConstant
 // {
 //
@@ -120,6 +127,7 @@
 // materialTextures[2]               texture  float4          2d             t3      1 
 // materialTextures[3]               texture  float4          2d             t4      1 
 // materialTextures[4]               texture  float4          2d             t5      1 
+// circleSpectrumTexture             texture  float4          2d            t15      1 
 // waveformSpectrumTexture           texture  float4          2d            t16      1 
 // diffuseIem                        texture  float4        cube            t33      1 
 // specularPmrem                     texture  float4        cube            t34      1 
@@ -127,6 +135,7 @@
 // PRIMITIVE_CONSTANT_BUFFER         cbuffer      NA          NA            cb0      1 
 // SCENE_CONSTANT_BUFFER             cbuffer      NA          NA            cb1      1 
 // EMISSIVE_CONSTANTS                cbuffer      NA          NA            cb3      1 
+// CircleSpectrumConstant            cbuffer      NA          NA            cb4      1 
 // WaveformSpectrumConstant          cbuffer      NA          NA            cb5      1 
 //
 //
@@ -153,6 +162,7 @@ dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB0[5], immediateIndexed
 dcl_constantbuffer CB1[6], immediateIndexed
 dcl_constantbuffer CB3[1], immediateIndexed
+dcl_constantbuffer CB4[4], immediateIndexed
 dcl_constantbuffer CB5[4], immediateIndexed
 dcl_sampler s1, mode_default
 dcl_sampler s2, mode_default
@@ -163,6 +173,7 @@ dcl_resource_texture2d (float,float,float,float) t2
 dcl_resource_texture2d (float,float,float,float) t3
 dcl_resource_texture2d (float,float,float,float) t4
 dcl_resource_texture2d (float,float,float,float) t5
+dcl_resource_texture2d (float,float,float,float) t15
 dcl_resource_texture2d (float,float,float,float) t16
 dcl_resource_texturecube (float,float,float,float) t33
 dcl_resource_texturecube (float,float,float,float) t34
@@ -823,6 +834,43 @@ if_nz r0.w
 #line 171
 endif 
 
+#line 173
+mul r4.xyzw, v1.xxxx, cb4[0].xyzw
+mul r5.xyzw, v1.yyyy, cb4[1].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw
+mul r5.xyzw, v1.zzzz, cb4[2].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw
+mul r5.xyzw, v1.wwww, cb4[3].xyzw
+add r4.xyzw, r4.xyzw, r5.xyzw  // r4.x <- projectionTexturePosition.x; r4.y <- projectionTexturePosition.y; r4.z <- projectionTexturePosition.z; r4.w <- projectionTexturePosition.w
+
+#line 174
+div r4.xyz, r4.xyzx, r4.wwww
+
+#line 175
+mul r0.w, r4.x, l(0.500000)
+add r5.x, r0.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
+
+#line 176
+mov r0.w, -r4.y
+mul r0.w, r0.w, l(0.500000)
+add r5.y, r0.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
+
+#line 177
+max r0.w, r4.z, l(0.000000)
+min r0.w, r0.w, l(1.000000)
+eq r0.w, r4.z, r0.w
+if_nz r0.w
+
+#line 179
+  sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
+
+#line 180
+  mul r4.xyz, r4.wwww, r4.xyzx
+  add r3.xyz, r3.xyzx, r4.xyzx
+
+#line 181
+endif 
+
 #line 183
 add r0.xyz, r0.xyzx, r2.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
@@ -832,4 +880,4 @@ add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 385 instruction slots used
+// Approximately 406 instruction slots used

@@ -10,7 +10,8 @@
 
 Texture2D<float4> materialTextures[5] : register(t1);
 // PROJECTION_MAPPING
-Texture2D projectionMappingTexture : register(t15);
+Texture2D circleSpectrumTexture : register(t15);
+Texture2D waveformSpectrumTexture : register(t16);
 
 struct TextureInfo
 {
@@ -156,18 +157,27 @@ float4 main(VS_OUT pin) : SV_TARGET
     diffuse = lerp(diffuse, diffuse * occlusionFactor, occlusionStrength);
     specular = lerp(specular, specular * occlusionFactor, occlusionStrength);
     
-    // PROJECTION_MAPPING
+    //  プロジェクションマッピング
     const float projectionMappingColorIntensity = 10;
     float3 projectionMappingColor = 0;
-    float4 projectionTexturePosition = mul(pin.wPosition, transform);
+    float4 projectionTexturePosition = mul(pin.wPosition, waveformSpectrumTransform);
     projectionTexturePosition /= projectionTexturePosition.w;
     projectionTexturePosition.x = projectionTexturePosition.x * 0.5 + 0.5;
     projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
-        float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
-        //float4 projectionTextureColor = projectionMappingTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        float4 projectionTextureColor = waveformSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
         projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
+    }
+    
+    projectionTexturePosition = mul(pin.wPosition, circleSpectrumTransform);
+    projectionTexturePosition /= projectionTexturePosition.w;
+    projectionTexturePosition.x = projectionTexturePosition.x * 0.5 + 0.5;
+    projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;
+    if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
+    {
+        float4 projectionTextureColor = circleSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+        projectionMappingColor += projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
     }
     
     float3 Lo = diffuse + specular + emissive + projectionMappingColor /*PROJECTION_MAPPING*/;

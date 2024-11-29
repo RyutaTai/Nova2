@@ -103,7 +103,7 @@ private:
 	std::unique_ptr<FullScreenQuad>				bitBlockTransfer_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumWaveformPS_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumCirclePS_;
-	std::unique_ptr<FrameBuffer>				spectrumFramebuffer_;
+	std::unique_ptr<FrameBuffer>				spectrumFramebuffer_[static_cast<int>(ProjectionMappingType::Max)];
 #if MAGIC_CIRCLE
 	const int SPECTRUM_WIDTH = 512;
 	const int SPECTRUM_HEIGHT = 512;
@@ -111,9 +111,6 @@ private:
 	const int SPECTRUM_WIDTH = 2048;
 	const int SPECTRUM_HEIGHT = 2048;
 #endif
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fftSRV_;	// projectionMapping
-
 	struct ProjectionMapping
 	{
 		DirectX::XMFLOAT3	eye_		= { 0, 50, 0 };

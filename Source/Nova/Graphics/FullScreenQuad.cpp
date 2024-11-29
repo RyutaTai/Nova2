@@ -13,7 +13,7 @@ FullScreenQuad::FullScreenQuad(ID3D11Device* device)
 }
 
 void FullScreenQuad::Blit(ID3D11DeviceContext* deviceContext,
-	ID3D11ShaderResourceView** shaderResourceView_, uint32_t startSlot, uint32_t numViews,
+	ID3D11ShaderResourceView** shaderResourceView, uint32_t startSlot, uint32_t numViews,
 	ID3D11PixelShader* replacedPixelShader)
 {
 	deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -24,7 +24,7 @@ void FullScreenQuad::Blit(ID3D11DeviceContext* deviceContext,
 	replacedPixelShader ? deviceContext->PSSetShader(replacedPixelShader, 0, 0) :
 		deviceContext->PSSetShader(embeddedPixelShader_.Get(), 0, 0);
 
-	deviceContext->PSSetShaderResources(startSlot, numViews, shaderResourceView_);
+	deviceContext->PSSetShaderResources(startSlot, numViews, shaderResourceView);
 
 	deviceContext->Draw(4, 0);
 }

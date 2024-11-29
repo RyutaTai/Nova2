@@ -117,6 +117,6 @@ endif
 
 #line 56
 mov o0.xyz, r0.yzwy
-mov o0.w, l(0.500000)
+mov o0.w, l(1.000000)
 ret 
 // Approximately 42 instruction slots used

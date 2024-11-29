@@ -53,7 +53,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     }
     
-    return float4(fft_color, 0.5);
+    return float4(fft_color, 1.0);
+    //return float4(fft_color, 0.5);
     
     
     

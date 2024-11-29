@@ -63,11 +63,12 @@ Stage::Stage()
 	//	オーディオスペクトラム関連初期化
 	//	フレームバッファ
 	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(Graphics::Instance().GetDevice());
-	spectrumFramebuffer_ = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
+	spectrumFramebuffer_[static_cast<int>(ProjectionMappingType::Circle)] = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
+	spectrumFramebuffer_[static_cast<int>(ProjectionMappingType::Waveform)] = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumPS.cso", spectrumWaveformPS_.GetAddressOf());
 #if SPECTRUM_CIRCLE
 	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumCirclePS.cso", spectrumCirclePS_.GetAddressOf());
-#endif
+#endif	
 
 	//	プロジェクションマッピング初期設定
 	projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].eye_		= { 72.0f,7.0f,8.8f};
@@ -206,13 +207,13 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 void Stage::UpdateAudioSpectrum()
 {
 	UpdateCircleAudioSpectrum();
-	//UpdateWaveformAudioSpectrum();
+	UpdateWaveformAudioSpectrum();
 }
 
 //	波形オーディオスペクトラム更新
 void Stage::UpdateWaveformAudioSpectrum()
 {
-	//	FFT定数バッファをGPUに送る
+	//	定数バッファをGPUに送る
 	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Waveform);
 	Graphics::Instance().GetDeviceContext()->UpdateSubresource(projectionMappingBuffer_[projectionMappingIndex].Get(), 0, 0, &projectionMappingConstants_[projectionMappingIndex], 0, 0);
 	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(5, 1, projectionMappingBuffer_[projectionMappingIndex].GetAddressOf());
@@ -224,20 +225,19 @@ void Stage::UpdateCircleAudioSpectrum()
 {
 	//	座標更新
 	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
-	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
-	projectionMapping_[projectionMappingIndex].focus_ = playerPos;
-	playerPos.y += eyeHeight_;
-	projectionMapping_[projectionMappingIndex].eye_ = playerPos;
-
+	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
+	DirectX::XMFLOAT3 projectionMappingEye = projectionMapping_[projectionMappingIndex].eye_;
+	DirectX::XMFLOAT3 projectionMappingFocus = projectionMapping_[projectionMappingIndex].focus_;
+	float projectionMappingFovy = projectionMapping_[projectionMappingIndex].fovy_;
 	DirectX::XMMATRIX ProjectionMappingTransform =
-		DirectX::XMMatrixLookAtLH(
-			DirectX::XMLoadFloat3(&projectionMapping_[projectionMappingIndex].eye_),
-			DirectX::XMLoadFloat3(&projectionMapping_[projectionMappingIndex].focus_),
-			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMapping_[projectionMappingIndex].rotation_), 0))) *
-		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMapping_[projectionMappingIndex].fovy_), 1.0f, 1.0f, 500.0f);
+		DirectX::XMMatrixLookAtLH(	
+			DirectX::XMLoadFloat3(&projectionMappingEye),
+			DirectX::XMLoadFloat3(&projectionMappingFocus),
+			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMappingRotation), 0))) *
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMappingFovy), 1.0f, 1.0f, 500.0f);
 	DirectX::XMStoreFloat4x4(&projectionMappingConstants_[projectionMappingIndex].transform_, ProjectionMappingTransform);
 
-	//	FFT定数バッファをGPUに送る
+	//	定数バッファをGPUに送る
 	Graphics::Instance().GetDeviceContext()->UpdateSubresource(projectionMappingBuffer_[projectionMappingIndex].Get(), 0, 0, &projectionMappingConstants_[projectionMappingIndex], 0, 0);
 	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(4, 1, projectionMappingBuffer_[projectionMappingIndex].GetAddressOf());
 	
@@ -349,15 +349,23 @@ void Stage::Render()
 #if MAGIC_CIRCLE
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, projectionMappingTexture_.GetAddressOf());
 #else
-	spectrumFramebuffer_->Clear(deviceContext, 0, 0, 0, 1);
-	spectrumFramebuffer_->Activate(deviceContext);
-#if SPECTRUM_CIRCLE
+	//	円形のオーディオスペクトラム
+	int spectrumIndex = static_cast<int>(ProjectionMappingType::Circle);
+	spectrumFramebuffer_[spectrumIndex]->Clear(deviceContext, 0, 0, 0, 1);
+	spectrumFramebuffer_[spectrumIndex]->Activate(deviceContext);
 	bitBlockTransfer_->Blit(deviceContext, projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].texture_.GetAddressOf(), 1, 0, spectrumCirclePS_.Get());
-#else
+	spectrumFramebuffer_[spectrumIndex]->Deactivate(deviceContext);
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_[spectrumIndex]->shaderResourceViews_[0].GetAddressOf());
+	
+	//	波形のオーディオスペクトラム
+	spectrumIndex = static_cast<int>(ProjectionMappingType::Waveform);
+	spectrumFramebuffer_[spectrumIndex]->Clear(deviceContext, 0, 0, 0, 1);
+	spectrumFramebuffer_[spectrumIndex]->Activate(deviceContext);
 	bitBlockTransfer_->Blit(deviceContext, projectionMapping_[static_cast<int>(ProjectionMappingType::Waveform)].texture_.GetAddressOf(), 1, 0, spectrumWaveformPS_.Get());
-#endif
-	spectrumFramebuffer_->Deactivate(deviceContext);
-	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf());
+	spectrumFramebuffer_[spectrumIndex]->Deactivate(deviceContext);
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, spectrumFramebuffer_[spectrumIndex]->shaderResourceViews_[0].GetAddressOf());
+
+
 #endif
 
 	//	エミッシブ定数バッファをGPUに送る
@@ -417,21 +425,22 @@ void Stage::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
-		//	FFTデータから生成したテクスチャ
-		ImGui::Text(u8"SpectrumSRV_Slot15");
+		//	円形のオーディオスペクトラムテクスチャ
+		ImGui::Text(u8"CircleSpectrumSRV_Slot15");
 		{
 			D3D11_VIEWPORT viewport;
 			UINT numViewports{ 1 };
 			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
-			auto srv = spectrumFramebuffer_->shaderResourceViews_[0].Get();
+			auto srv = spectrumFramebuffer_[static_cast<int>(ProjectionMappingType::Circle)]->shaderResourceViews_[0].Get();
 			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
 		}
+		//	波形のオーディオスペクトラムテクスチャ
 		ImGui::Text(u8"fftSRV_Slot16");
 		{
 			D3D11_VIEWPORT viewport;
 			UINT numViewports{ 1 };
 			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
-			auto srv = fftSRV_.Get();
+			auto srv = spectrumFramebuffer_[static_cast<int>(ProjectionMappingType::Waveform)]->shaderResourceViews_[0].Get();
 			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
 		}
 

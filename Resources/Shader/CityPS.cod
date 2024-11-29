@@ -829,7 +829,8 @@ if_nz r0.w
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t16.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
 #line 170
-  mul r3.xyz, r4.wwww, r4.xyzx
+  mul r4.xyz, r4.wwww, r4.xyzx
+  add r3.xyz, r3.xyzx, r4.xyzx
 
 #line 171
 endif 
@@ -865,7 +866,9 @@ if_nz r0.w
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
 #line 180
-  mul r4.xyz, r4.wwww, r4.xyzx
+  mov r5.xyz, -r3.xyzx
+  add r4.xyz, r4.xyzx, r5.xyzx
+  mul r4.xyz, r4.xyzx, r4.wwww
   add r3.xyz, r3.xyzx, r4.xyzx
 
 #line 181
@@ -880,4 +883,4 @@ add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 406 instruction slots used
+// Approximately 409 instruction slots used

@@ -167,7 +167,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
         float4 projectionTextureColor = waveformSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
-        projectionMappingColor = projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
+        projectionMappingColor += projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
     }
     
     projectionTexturePosition = mul(pin.wPosition, circleSpectrumTransform);
@@ -177,10 +177,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
         float4 projectionTextureColor = circleSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
-        projectionMappingColor += projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
+        projectionMappingColor = lerp(projectionMappingColor, projectionTextureColor.rgb, projectionTextureColor.a) /** projectionMappingColorIntensity*/;
     }
     
-    float3 Lo = diffuse + specular + emissive + projectionMappingColor /*PROJECTION_MAPPING*/;
+    float3 Lo = (diffuse + specular + emissive) + projectionMappingColor /*PROJECTION_MAPPING*/;
     return float4(Lo, baseColorFactor.a);
 
     

@@ -30,12 +30,24 @@ float4 rays(float4 color, float4 background, float2 position, float radius, floa
 
 float4 main(VS_OUT pin):SV_TARGET
 {
+    if (pin.texcoord.x > 0.9)
+        return 0;
+    if (pin.texcoord.x < 0.1)
+        return 0;
+    if (pin.texcoord.y > 0.9)
+        return 0;
+    if (pin.texcoord.y < 0.1)
+        return 0;
     //Prepare UV and background
-    float aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+    float aspect = 1.0;
     float2 texcoord = pin.texcoord;
     texcoord.x *= aspect;
+#if 0
     float4 color = lerp(float4(0.0, 1.0, 0.8, 1.0), float4(0.0, 0.3, 0.25, 1.0), distance(float2(aspect / 2.0, 0.5), texcoord));
-    
+#else
+    float4 color = float4(0, 0, 0, 1);  //  四角を映さない
+#endif
+
     //VISUALIZER PARAMETERS
     const float RAYS = 96.0;    //  number of rays //Please, decrease this value if shader is working too slow
     float RADIUS = 0.4;         //  max circle radius
@@ -47,15 +59,18 @@ float4 main(VS_OUT pin):SV_TARGET
     float offset = texcoord.x * FFT_BLOCK_COUNT;
     float fft = amp[(int) offset % 4];
     
-    color = rays(float4(1, 1, 1, 1), color, float2(aspect / 2.0, 1.0 / 2.0), RADIUS, RAYS, RAY_LENGTH, fft, texcoord);
+    float4 spectrumColor = float4(0.0, 0.5, 0.3, 1.0);  //  オーディオスペクトラムの色
+    color = rays(spectrumColor, color, float2(aspect / 2.0, 1.0 / 2.0), RADIUS, RAYS, RAY_LENGTH, fft, texcoord);
 
-    return float4(color.xyz, 1.0);
+    return float4(color.xyz, color.a * 0.5);
 }
 
 float4 rays(float4 color, float4 background, float2 position, float radius, float rays, float ray_length, float fft, float2 uv)
 {
     float inside = (1.0 - ray_length) * radius; //  empty part of circle
+    inside = max(0, inside);
     float outside = radius - inside;            //  rest of circle
+    outside = max(0, outside);
     float circle = 2.0 * M_PI * inside;         //  circle lenght
     for (int i = 1; float(i) <= rays; i++)
     {
@@ -85,22 +100,14 @@ float2 rotatePoint(float2 pointA, float2 center, float angle) //rotating point a
     float s = sin(radians(angle));
     float c = cos(radians(angle));
     
-    pointA.
-    x -= center.x;
-    pointA.
-    y -= center.y;
+    pointA.x -= center.x;
+    pointA.y -= center.y;
     
-    float x = pointA.
-    x * c - pointA.
-    y * s;
-    float y = pointA.
-    x * s + pointA.
-    y * c;
+    float x = pointA.x * c - pointA.y * s;
+    float y = pointA.x * s + pointA.y * c;
     
-    pointA.
-    x = x + center.x;
-    pointA.
-    y = y + center.y;
+    pointA.x = x + center.x;
+    pointA.y = y + center.y;
     
     return pointA;
 }

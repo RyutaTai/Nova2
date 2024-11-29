@@ -39,7 +39,7 @@ public:	//	ç\ë¢ëÃ
 		DirectX::XMFLOAT4   cameraPosition_;
 		DirectX::XMFLOAT4X4 lightViewProjection_;	//	Shadow
 		DirectX::XMFLOAT4X4 invViewProjection_;		//	Skymap
-		DirectX::XMFLOAT4X4 projectionMappingTransform_;
+		//DirectX::XMFLOAT4X4 projectionMappingTransform_;
 	};
 
 public:

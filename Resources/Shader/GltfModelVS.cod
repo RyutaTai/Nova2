@@ -23,7 +23,6 @@
 //   float4 cameraPosition;             // Offset:   80 Size:    16 [unused]
 //   row_major float4x4 lightViewProjection;// Offset:   96 Size:    64 [unused]
 //   row_major float4x4 invViewProjection;// Offset:  160 Size:    64 [unused]
-//   row_major float4x4 projectionMappingTransform;// Offset:  224 Size:    64 [unused]
 //
 // }
 //

@@ -205,25 +205,42 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 //	オーディオスペクトラムk更新
 void Stage::UpdateAudioSpectrum()
 {
-	UpdateWaveformAudioSpectrum();
 	UpdateCircleAudioSpectrum();
+	//UpdateWaveformAudioSpectrum();
 }
 
 //	波形オーディオスペクトラム更新
 void Stage::UpdateWaveformAudioSpectrum()
 {
-	
+	//	FFT定数バッファをGPUに送る
+	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Waveform);
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(projectionMappingBuffer_[projectionMappingIndex].Get(), 0, 0, &projectionMappingConstants_[projectionMappingIndex], 0, 0);
+	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(5, 1, projectionMappingBuffer_[projectionMappingIndex].GetAddressOf());
+
 }
 
 //	円形オーディオスペクトラム更新
 void Stage::UpdateCircleAudioSpectrum()
 {
 	//	座標更新
+	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
-	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].focus_ = playerPos;
+	projectionMapping_[projectionMappingIndex].focus_ = playerPos;
 	playerPos.y += eyeHeight_;
-	projectionMapping_[static_cast<int>(ProjectionMappingType::Circle)].eye_ = playerPos;
+	projectionMapping_[projectionMappingIndex].eye_ = playerPos;
 
+	DirectX::XMMATRIX ProjectionMappingTransform =
+		DirectX::XMMatrixLookAtLH(
+			DirectX::XMLoadFloat3(&projectionMapping_[projectionMappingIndex].eye_),
+			DirectX::XMLoadFloat3(&projectionMapping_[projectionMappingIndex].focus_),
+			DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(0, DirectX::XMConvertToRadians(projectionMapping_[projectionMappingIndex].rotation_), 0))) *
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(projectionMapping_[projectionMappingIndex].fovy_), 1.0f, 1.0f, 500.0f);
+	DirectX::XMStoreFloat4x4(&projectionMappingConstants_[projectionMappingIndex].transform_, ProjectionMappingTransform);
+
+	//	FFT定数バッファをGPUに送る
+	Graphics::Instance().GetDeviceContext()->UpdateSubresource(projectionMappingBuffer_[projectionMappingIndex].Get(), 0, 0, &projectionMappingConstants_[projectionMappingIndex], 0, 0);
+	Graphics::Instance().GetDeviceContext()->PSSetConstantBuffers(4, 1, projectionMappingBuffer_[projectionMappingIndex].GetAddressOf());
+	
 }
 
 //	振幅最小値更新処理
@@ -416,6 +433,37 @@ void Stage::DrawDebug()
 			Graphics::Instance().GetDeviceContext()->RSGetViewports(&numViewports, &viewport);
 			auto srv = fftSRV_.Get();
 			ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
+		}
+
+		//	プロジェクションマッピング
+		if (ImGui::TreeNode("ProjectionMapping"))
+		{
+			int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Waveform);
+			if (ImGui::TreeNode("Waveform"))
+			{
+				ImGui::PushID(projectionMappingIndex);
+				ImGui::DragFloat3("Eye", &projectionMapping_[projectionMappingIndex].eye_.x);
+				ImGui::DragFloat3("Focus", &projectionMapping_[projectionMappingIndex].focus_.x);
+				ImGui::DragFloat("Rotation", &projectionMapping_[projectionMappingIndex].rotation_);
+				ImGui::SliderFloat("Fovy", &projectionMapping_[projectionMappingIndex].fovy_, 10.0f, 180.0f);
+				ImGui::PopID();
+				ImGui::TreePop();
+			}
+
+
+			if (ImGui::TreeNode("Circle"))
+			{
+				projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
+				ImGui::PushID(projectionMappingIndex);
+				ImGui::DragFloat3("Eye", &projectionMapping_[projectionMappingIndex].eye_.x);
+				ImGui::DragFloat3("Focus", &projectionMapping_[projectionMappingIndex].focus_.x);
+				ImGui::DragFloat("Rotation", &projectionMapping_[projectionMappingIndex].rotation_);
+				ImGui::SliderFloat("Fovy", &projectionMapping_[projectionMappingIndex].fovy_, 10.0f, 180.0f);
+				ImGui::PopID();
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
 		}
 
 		//	周波数データのデバッグ描画

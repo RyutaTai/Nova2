@@ -1,5 +1,6 @@
 #include "../../Nova/Shaders/GltfModel.hlsli"
 #include "../../Nova/Shaders/BidirectionalReflectanceDistributionFunction.hlsli"
+#include "../../Nova/Shaders/ProjectionMapping.hlsli"
 
 #define BASECOLOR_TEXTURE 0
 #define METALLIC_ROUGHNESS_TEXTURE 1
@@ -10,8 +11,6 @@
 Texture2D<float4> materialTextures[5] : register(t1);
 // PROJECTION_MAPPING
 Texture2D projectionMappingTexture : register(t15);
-
-
 
 struct TextureInfo
 {
@@ -160,7 +159,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     // PROJECTION_MAPPING
     const float projectionMappingColorIntensity = 10;
     float3 projectionMappingColor = 0;
-    float4 projectionTexturePosition = mul(pin.wPosition, projectionMappingTransform);
+    float4 projectionTexturePosition = mul(pin.wPosition, transform);
     projectionTexturePosition /= projectionTexturePosition.w;
     projectionTexturePosition.x = projectionTexturePosition.x * 0.5 + 0.5;
     projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;

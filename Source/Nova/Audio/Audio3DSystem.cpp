@@ -98,8 +98,11 @@ void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitt
     case 4:
         FLOAT32 angle = (Angle(emitter.position_, listener.position_, listener.rightVec_) < M_PI * 0.5f) ?
             dspSetting.radianListenerToEmitter_ : -Angle(emitter.position_, listener.position_, listener.frontVec_);
-        //angle = (dsp_setting.radian_listener_to_emitter + 90) * 0.5f;
+#if 1
+        angle = (dspSetting.radianListenerToEmitter_ + 90) * 0.5f;
+#else
         angle = (dspSetting.radianListenerToEmitter_ + M_PI_2) * 0.5f;
+#endif
 
         FLOAT32 L = cosf(angle);
         FLOAT32 R = sinf(angle);
@@ -109,12 +112,14 @@ void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitt
             R *= scaler;
         }
 
-        //dsp_setting.output_matrix[0] = dsp_setting.output_matrix[1] = L;    //  元のコード
-        //dsp_setting.output_matrix[2] = dsp_setting.output_matrix[3] = R;
-
+#if 0    //  元のコード
+        dspSetting.outputMatrix_[0] = dspSetting.outputMatrix_[1] = L;   
+        dspSetting.outputMatrix_[2] = dspSetting.outputMatrix_[3] = R;
+#else
         //  変更したら直った。
         dspSetting.outputMatrix_[0] = dspSetting.outputMatrix_[2] = L;    //  左を0、2に変更
         dspSetting.outputMatrix_[1] = dspSetting.outputMatrix_[3] = R;    //  右を1、3に変更
+#endif
 
 #if 0   //  dsp_setting.output_matrixの値が生きているか確認
         float pan = -90.0f;	//	真左
@@ -125,13 +130,11 @@ void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitt
         dspSetting.output_matrix[3] = sinf(rad);				    //  右ボリューム
 
 #endif
-
-
         break;
     }
 
 
-    // リスナーと音源の角度からローパスに適用する値を計算
+    //  リスナーと音源の角度からローパスに適用する値を計算
     dspSetting.filterParam_ = (std::abs(dspSetting.radianListenerToEmitter_) > listener.innerRadius_) ?
         listener.filterParam_ * min(1.0f, (std::abs(dspSetting.radianListenerToEmitter_) - listener.innerRadius_) / (listener.outerRadius_ - listener.innerRadius_)) :
         dspSetting.filterParam_ = 0.0f;

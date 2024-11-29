@@ -67,6 +67,9 @@ Stage::Stage()
 	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(Graphics::Instance().GetDevice());
 	spectrumFramebuffer_ = std::make_unique<FrameBuffer>(Graphics::Instance().GetDevice(), SPECTRUM_WIDTH, SPECTRUM_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumPS.cso", spectrumPS_.GetAddressOf());
+#if SPECTRUM_CIRCLE
+	Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/SpectrumCirclePS.cso", spectrumCirclePS_.GetAddressOf());
+#endif
 
 }
 
@@ -278,9 +281,12 @@ void Stage::Render()
 #else
 	spectrumFramebuffer_->Clear(deviceContext, 0, 0, 0, 1);
 	spectrumFramebuffer_->Activate(deviceContext);
+#if SPECTRUM_CIRCLE
+	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 1, 0, spectrumCirclePS_.Get());
+#else
 	bitBlockTransfer_->Blit(deviceContext, projectionMappingTexture_.GetAddressOf(), 1, 0, spectrumPS_.Get());
+#endif
 	spectrumFramebuffer_->Deactivate(deviceContext);
-	//spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf()
 	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(15, 1, spectrumFramebuffer_->shaderResourceViews_[0].GetAddressOf());
 #endif
 

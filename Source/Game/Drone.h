@@ -54,7 +54,7 @@ public:
 	void Destroy()override;					//	破棄処理
 
 	void UpdateEmitter();	//	エミッター更新
-	void UpdateAudioSource(const float& elapsedTime);	//	オーディオソース更新
+	void UpdateAudioSource();	//	オーディオソース更新
 
 	const int GetMaxHp()const { return MAX_HP; }		//	最大HP取得
 
@@ -70,9 +70,9 @@ private:
 	
 	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
 	
-	AudioSource* debugSource_ = nullptr;
-	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
 	SoundEmitter	emitter_ = {};				//	エミッター
+	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
+	AudioSource* debugSource_ = nullptr;
 
 	std::unique_ptr<StateMachine<State<Drone>>>	stateMachine_ = nullptr;		//	ステートマシン
 

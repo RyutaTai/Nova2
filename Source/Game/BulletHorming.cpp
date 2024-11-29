@@ -55,6 +55,8 @@ void BulletHorming::Update(const float& elapsedTime)
 //	”­ŽË
 void BulletHorming::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
 {
+	Bullet::Launch();
+
 	this->direction_ = direction;
 	this->GetTransform()->SetPosition(position);
 

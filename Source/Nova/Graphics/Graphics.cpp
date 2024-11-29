@@ -346,7 +346,7 @@ void Graphics::StylizeWindow(bool fullscreen)
 #ifdef _DEBUG
 			NULL,
 #else
-			HWND_TOPMOST,
+			NULL/*HWND_TOPMOST*/,
 #endif
 			fullscreenWindowRect.left,
 			fullscreenWindowRect.top,

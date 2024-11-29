@@ -18,10 +18,10 @@ public:
 	void Render()override;
 	void RnederCoverModel()override;
 
-	void Move(const float& elpasedTime);													//	移動処理
-	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position);		//	発射
-	void Destroy(const float& elapsedTime)override;											//	破棄処理
-	void SetTarget(const DirectX::XMFLOAT3& target) { target_ = target; }					//	ターゲット設定
+	void Move(const float& elpasedTime);														//	移動処理
+	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)override;	//	発射
+	void Destroy(const float& elapsedTime)override;												//	破棄処理
+	void SetTarget(const DirectX::XMFLOAT3& target) { target_ = target; }						//	ターゲット設定
 
 	void DrawDebug();	//	デバッグ描画
 

@@ -93,7 +93,7 @@ public:
 	const DirectX::XMFLOAT4X4	GetLightViewProjection()	const	{ return sceneConstant_.lightViewProjection_; }
 	const DirectX::XMFLOAT4X4	GetInvViewProjection()		const	{ return sceneConstant_.invViewProjection_; }
 	const DirectX::XMFLOAT4X4	GetProjectionMappingTransform()	const	{ return sceneConstant_.projectionMappingTransform_; }
-	const float					GetProjectionMappingRotation()		{return projectionMappingRotation_; }
+	const float					GetProjectionMappingRotation()		{ return projectionMappingRotation_; }
 	const DirectX::XMFLOAT3		GetProjectionMappingEye()	const	{ return projectionMappingEye_; }
 	const DirectX::XMFLOAT3		GetProjectionMappingFocus() const	{ return projectionMappingFocus_; }
 	const float					GetProjectionMappingFovy()	const	{ return projectionMappingFovy_; }

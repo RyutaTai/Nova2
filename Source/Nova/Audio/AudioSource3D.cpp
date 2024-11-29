@@ -107,11 +107,12 @@ void AudioSource3D::Set3DPan()
 	volumes[3] = sinf(rad);										//  右ボリューム
 
 
-	hr = source_voice->SetOutputMatrix(Audio::Instance().GetMasteringVoice(), voice_details.InputChannels, master_details.InputChannels, volumes);
+	hr = sourceVoice_->SetOutputMatrix(AudioManager::Instance().GetMasteringVoice(), voiceDetails.InputChannels, masterDetails.InputChannels, volumes);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 #else
 	// リスナーと音源の位置関係から出力先配列を適用
 	float   volumes[] = { 1.0f, 0.0f,1.0f,0.0f };
+	int count = dspSetting_.srcChannelCount_ * dspSetting_.dstChannelCount_;
 	for (int i = 0; i < 4; i++)
 	{
 		volumes[i] = dspSetting_.outputMatrix_[i];

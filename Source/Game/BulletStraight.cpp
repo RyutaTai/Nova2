@@ -46,6 +46,8 @@ void BulletStraight::Render()
 //	”­ŽË
 void BulletStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
 {
+	Bullet::Launch();
+
 	this->direction_ = direction;
 	this->GetTransform()->SetPosition(position);
 }

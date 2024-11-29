@@ -19,7 +19,7 @@ public:
 	void RnederCoverModel()override {}
 
 	//	”­ŽË
-	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position);
+	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)override;
 
 private:
 	float				speed_ = 300.0f;		//	‹…‚Ì‘¬‚³

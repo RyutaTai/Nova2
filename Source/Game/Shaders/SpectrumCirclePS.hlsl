@@ -8,6 +8,7 @@
 
 #define LINEAR 1
 
+#define M_PI 3.14159265359
 #define FFT_BLOCK_COUNT 2048
 
 // PROJECTION_MAPPING
@@ -19,6 +20,92 @@ cbuffer fftConstant : register(b10)
     float4 data[FFT_BLOCK_COUNT / 4];
 }
 
+float4 capsule(float4 color, float4 background, float4 region, float2 uv);
+float2 rotatePoint(float2 pointA, float2 center, float angle);
+float4 bar(float4 color, float4 background, float2 position, float2 diemensions, float2 uv);
+float4 rays(float4 color, float4 background, float2 position, float radius, float rays, float ray_length, float fft, float2 uv);
+
+float4 main(VS_OUT pin):SV_TARGET
+{
+    //Prepare UV and background
+    float aspect = 1920 / 1080;
+    //float aspect = pin.texcoord.x / pin.texcoord.y;
+    //float aspect = pin.position.x / pin.position.y;
+    float2 texcoord = pin.texcoord;
+    texcoord.x *= aspect;
+    float4 color = lerp(float4(0.0, 1.0, 0.8, 1.0), float4(0.0, 0.3, 0.25, 1.0), distance(float2(aspect / 2.0, 0.5), texcoord));
+    
+    //VISUALIZER PARAMETERS
+    const float RAYS = 96.0;    //  number of rays //Please, decrease this value if shader is working too slow
+    float RADIUS = 0.4;         //  max circle radius
+    float RAY_LENGTH = 0.3;     //  ray's max length //increased by 0.1
+    
+    //  fft
+    uint t = texcoord.x * FFT_BLOCK_COUNT / 4;
+    float4 amp = data[t];
+    float offset = texcoord.x * FFT_BLOCK_COUNT;
+    float fft = amp[(int) offset % 4];
+    
+    color = rays(float4(1, 1, 1, 1), color, float2(aspect / 2.0, 1.0 / 2.0), RADIUS, RAYS, RAY_LENGTH, fft, texcoord);
+
+    return float4(color.xyz, 1.0);
+}
+
+float4 rays(float4 color, float4 background, float2 position, float radius, float rays, float ray_length, float fft, float2 uv)
+{
+    float inside = (1.0 - ray_length) * radius; //  empty part of circle
+    float outside = radius - inside;            //  rest of circle
+    float circle = 2.0 * M_PI * inside;         //  circle lenght
+    for (int i = 1; float(i) <= rays; i++)
+    {
+        float len = outside * fft; //    length of actual ray
+        background = bar(color, background, float2(position.x, position.y + inside), float2(circle / (rays * 2.0), len), rotatePoint(uv, position, 360.0 / rays * float(i))); //Added capsules
+    }
+    return background; //output
+}
+
+float4 bar(float4 color, float4 background, float2 position, float2 diemensions, float2 uv)
+{
+    return capsule(color, background, float4(position.x, position.y + diemensions.y / 2.0, diemensions.x / 2.0, diemensions.y / 2.0), uv); //Just transform rectangle a little
+}
+
+float4 capsule(float4 color, float4 background, float4 region, float2 uv) //    capsule
+{
+    if (uv.x > (region.x - region.z) && uv.x < (region.x + region.z) &&
+       uv.y > (region.y - region.w) && uv.y < (region.y + region.w) ||
+       distance(uv, region.xy - float2(0.0, region.w)) < region.z ||
+       distance(uv, region.xy + float2(0.0, region.w)) < region.z)
+        return color;
+    return background;
+}
+
+float2 rotatePoint(float2 pointA, float2 center, float angle) //rotating point around the center
+{
+    float s = sin(radians(angle));
+    float c = cos(radians(angle));
+    
+    pointA.
+    x -= center.x;
+    pointA.
+    y -= center.y;
+    
+    float x = pointA.
+    x * c - pointA.
+    y * s;
+    float y = pointA.
+    x * s + pointA.
+    y * c;
+    
+    pointA.
+    x = x + center.x;
+    pointA.
+    y = y + center.y;
+    
+    return pointA;
+}
+
+
+#if 0
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float2 texcoord = float2(pin.texcoord.x, pin.texcoord.y);
@@ -122,3 +209,4 @@ float4 main(VS_OUT pin) : SV_TARGET
     //return fftTextureColor;
 
 }
+#endif

@@ -89,16 +89,16 @@ void Drone::Initialize()
 	emitter_.minDistance_ = 7.0f;
 	emitter_.maxDistance_ = 12.0f;
 	emitter_.volume_ = 1.0f;
-	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/launchSE.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
 	sources_[static_cast<int>(Audio3D::Shot)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(Audio3D::Shot)]->SetAudioName("LaunchBullet");
 	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Shot)]);
 	
 #if 1	//	3dで生成
-	sources_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
+	/*sources_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
 	sources_[static_cast<int>(Audio3D::Move)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(Audio3D::Move)]->SetAudioName("BulletMove");
-	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Move)]);
+	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Move)]);*/
 #else
 	debugSource_ = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/bulletMove.wav", Audio::AudioType::SE3D, "GameScene");
 	debugSource_->SetVolume(0.3f, false);
@@ -167,9 +167,9 @@ void Drone::Update(const float& elapsedTime)
 		Destroy();
 	}
 
-	//	エミッター更新
+	//	オーディオ更新
 	UpdateEmitter();
-	UpdateAudioSource(elapsedTime);
+	UpdateAudioSource();
 	
 }
 
@@ -182,7 +182,7 @@ void Drone::UpdateEmitter()
 }
 
 //	オーディオソース更新
-void Drone::UpdateAudioSource(const float& elapsedTime)
+void Drone::UpdateAudioSource()
 {
 	if (sources_[static_cast<int>(Audio3D::Shot)])
 	{
@@ -239,7 +239,6 @@ void Drone::LaunchBullet()
 			}
 #else
 			AudioManager::Instance().GetAudioResource("LaunchBullet")->Play(false);
-			AudioManager::Instance().GetAudioResource("BulletMove")->Play(false);
 #endif
 
 		}

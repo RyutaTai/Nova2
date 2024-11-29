@@ -10,6 +10,7 @@
 #include "../Nova/Graphics/FullScreenQuad.h"
 
 #define MAGIC_CIRCLE 0
+#define SPECTRUM_CIRCLE 1
 
 class Stage
 {
@@ -68,6 +69,7 @@ private:
 	//	FFT
 	std::unique_ptr<FullScreenQuad>				bitBlockTransfer_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumPS_;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumCirclePS_;
 	std::unique_ptr<FrameBuffer>				spectrumFramebuffer_;
 #if MAGIC_CIRCLE
 	const int SPECTRUM_WIDTH = 512;

@@ -8,7 +8,7 @@
 void Frequency::Initialize()
 {
     //  Hamming窓の生成
-    hamming_ = HammingWindow(BlockCount);
+    window_ = HammingWindow(BlockCount);
 
     oldAmplitudeSpectrum_.resize(BlockCount, 0.0f);
 
@@ -20,9 +20,9 @@ void Frequency::Update(const float& elapsedTime, Audio* audioSource)
     size_t          SPsize      = audioSource->GetAudioBytes();     //  オーディオのバッファサイズ取得
     const BYTE*     SPdata      = audioSource->GetAudioData();
     //std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);
-    const uint8_t* audioVector  = audioSource->GetAudioData();
+    const uint8_t*  audioVector = audioSource->GetAudioData();
     int             SPNowData   = audioSource->GetCurrentSample();  //  現在のサンプル
-    int             SPNowBlock  = SPNowData / BlockCount;          //  現在のブロック計算
+    int             SPNowBlock  = SPNowData / BlockCount;           //  現在のブロック計算
 
     //  FFT変換
     std::vector<Complex> windowedData;
@@ -33,7 +33,7 @@ void Frequency::Update(const float& elapsedTime, Audio* audioSource)
         int index = i + spNowBlock;
         if (index < SPsize)  // 範囲内かチェック
         {
-            windowedData.emplace_back(hamming_[i] * audioVector[index]);
+            windowedData.emplace_back(window_[i] * audioVector[index]);
         }
         else
         {
@@ -62,6 +62,10 @@ void Frequency::Update(const float& elapsedTime, Audio* audioSource)
             oldAmplitudeSpectrum_[i] = amplitudeSpectrum_[i];
         }
     }
+
+    // oldAmplitudeSpectrumのサイズを更新する
+    //oldAmplitudeSpectrum_ = amplitudeSpectrum_;
+
 #else
     UINT32 SPsize = audioSource->GetAudioBytes();
     //auto& SPdata = audioSource->GetAudioData();
@@ -139,18 +143,34 @@ std::vector<float> Frequency::HammingWindow(const int& count)
     {
         float h;
         h = 0.54f - (0.46f * cosf((2 * AUDIO_PI * i) / (count - 1)));   //  ハミング窓
-		//h = 0.42 - 0.5 * cosf(2 * AUDIO_PI * i / (count - 1)) + 0.08 * cosf(4 * AUDIO_PI * i / (count - 1));   //  ブラックマン窓
         hm.emplace_back(h);
     }
     return hm;
 }
-
 float Frequency::HammingWindow(const int& index, const int& count)
 {
 	float h;
 	h = 0.54f - (0.46f * cosf((2 * AUDIO_PI * index) / (count - 1)));   //  ハミング窓
-	//h = 0.42 - 0.5 * cosf(2 * AUDIO_PI * index / (count - 1)) + 0.08 * cosf(4 * AUDIO_PI * index / (count - 1));   //  ブラックマン窓
 	return h;
+}
+
+//  ブラックマン窓
+std::vector<float> Frequency::BlackmanWindow(const int& count)
+{
+    std::vector<float> hm;
+    for (int i = 0; i < count; ++i)
+    {
+        float h;
+        h = 0.42f - 0.5f * cosf(2 * AUDIO_PI * i / (count - 1)) + 0.08f * cosf(4 * AUDIO_PI * i / (count - 1));   //  ブラックマン窓
+        hm.emplace_back(h);
+    }
+    return hm;
+}
+float Frequency::BlackmanWindow(const int& index, const int& count)
+{
+    float h;
+    h = 0.42f - 0.5f * cosf(2 * AUDIO_PI * index / (count - 1)) + 0.08f * cosf(4 * AUDIO_PI * index / (count - 1));   //  ブラックマン窓
+    return h;
 }
 
 //  フーリエ変換
@@ -303,8 +323,10 @@ void Frequency::DrawDebug()
 {  
     // Plot imageData using ImGui
     ImGui::DragFloat("BPM", &bpm_);
-    ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
-    ImGui::PlotLines("Old Amplitude Spectrum", oldAmplitudeSpectrum_.data(), static_cast<int>(oldAmplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+    ImGui::DragFloat2("GraphSize", &spectrumGraphSize_.x, 0.1f);   //  グラフのサイズ
+	ImVec2 graphSize = { spectrumGraphSize_.x, spectrumGraphSize_.y };
+	ImGui::PlotLines("Amplitude Spectrum", amplitudeSpectrum_.data(), static_cast<int>(amplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, graphSize);
+	ImGui::PlotLines("Old Amplitude Spectrum", oldAmplitudeSpectrum_.data(), static_cast<int>(oldAmplitudeSpectrum_.size()), 0, nullptr, FLT_MAX, FLT_MAX, graphSize);
     std::vector<float> squaredValue;
     for (int i = 0; i < amplitudeSpectrum_.size(); ++i)
     {
@@ -312,7 +334,7 @@ void Frequency::DrawDebug()
         squaredValue.emplace_back(value);
     }
     ImGui::PlotLines("Squared Amplitude Spectrum", squaredValue.data(), static_cast<int>(squaredValue.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
-    ImGui::PlotLines("Hamming", hamming_.data(), static_cast<int>(hamming_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
+    ImGui::PlotLines("Hamming", window_.data(), static_cast<int>(window_.size()), 0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 80));
     ImGui::DragFloat("PlayTime", &audioTimer_);
    
 }

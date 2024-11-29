@@ -4,6 +4,7 @@
 #include "../Nova/Resources/Effect.h"
 #include "../Game/BulletManager.h"
 #include "../Nova/Audio/AudioSource3D.h"
+#include "../Nova/Audio/AudioSource.h"
 
 //	前方宣言
 //	相互インクルードしないように前方宣言する
@@ -18,10 +19,12 @@ public:
 
 	virtual void			Initialize();
 	virtual void			Update(const float& elapsedTime);
+	virtual void			Launch(const DirectX::XMFLOAT3& direction = {}, const DirectX::XMFLOAT3& position = {});
 	virtual void			Render()			= 0;
 	virtual void			RnederCoverModel()	= 0;
 
-	void					UpdateAudioSource(const float& elapsedTime);	//	オーディオソース更新処理
+	void					UpdateEmitter();
+	void					UpdateAudioSource();	//	オーディオソース更新処理
 	virtual void			CoverModelUpdate(const float& elapsedTime);									//	カバーモデル更新処理
 	virtual void			Destroy(const float& elapsedTime);											//	破棄処理
 	
@@ -38,7 +41,7 @@ public:
 	float					GetRadius()										{ return radius_; }			//	半径取得
 	
 private:
-	enum class AudioSE3D	//	3Dで鳴らすSE
+	enum class Audio3D	//	3Dで鳴らすSE
 	{
 		Explosion = 0,			//	爆発音
 		Move,
@@ -57,7 +60,8 @@ protected:
 	DirectX::XMFLOAT3							ownerPosition_ = {};			//	弾丸所有者の位置
 
 	SoundEmitter emitter_ = {};							//	エミッターを自分の位置で持つ
-	AudioSource3D* se_[static_cast<int>(AudioSE3D::Max)];	//	弾丸のSE(3Dで鳴らす)
+	AudioSource3D* se_[static_cast<int>(Audio3D::Max)] = { nullptr };	//	弾丸のSE(3Dで鳴らす)
+	AudioSource* debugSE_ = nullptr;
 
 	bool isInvincible_ = false;	//	無敵
 

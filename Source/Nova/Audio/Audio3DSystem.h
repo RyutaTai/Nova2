@@ -35,9 +35,9 @@ struct SoundDSPSetting
 {
 	UINT32   srcChannelCount_;				//	音源のチャンネル数
 	UINT32   dstChannelCount_;				//	アウトプットチャンネル数
-	FLOAT32  distanceListnerToEmitter_;	//	リスナーとエミッターの距離
+	FLOAT32  distanceListnerToEmitter_;		//	リスナーとエミッターの距離
 	FLOAT32  dopplerScale_;					//	ドップラー効果
-	FLOAT32  radianListenerToEmitter_;	//	リスナーからエミッターまでの角度
+	FLOAT32  radianListenerToEmitter_;		//	リスナーからエミッターまでの角度
 	FLOAT32* outputMatrix_;					//	SetOutputMatrix()に渡す
 	FLOAT32  filterParam_;					//	ローパスに適用する値
 };

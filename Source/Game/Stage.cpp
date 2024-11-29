@@ -238,8 +238,15 @@ void Stage::UpdateCircleAudioSpectrum()
 	//	座標更新
 	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
 	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
-	DirectX::XMFLOAT3 projectionMappingEye = projectionMapping_[projectionMappingIndex].eye_;
-	DirectX::XMFLOAT3 projectionMappingFocus = projectionMapping_[projectionMappingIndex].focus_;
+	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();					//	プレイヤーの位置
+	DirectX::XMFLOAT3 projectionMappingFocus = Player::Instance().GetTransform()->GetPosition();	//	注視点
+	projectionMapping_[projectionMappingIndex].focus_ = projectionMappingFocus;
+
+	playerPos.y += eyeHeight_;								//	視点をプレイヤーの真上から投影するように設定
+	DirectX::XMFLOAT3 projectionMappingEye = playerPos;		//	視点
+	projectionMapping_[projectionMappingIndex].eye_ = projectionMappingEye;
+
+
 	float projectionMappingFovy = projectionMapping_[projectionMappingIndex].fovy_;
 	DirectX::XMMATRIX ProjectionMappingTransform =
 		DirectX::XMMatrixLookAtLH(	

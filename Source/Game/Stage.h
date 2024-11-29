@@ -140,5 +140,5 @@ private:
 
 	float threshold_ = 2100.0f;
 	float defaultEmissiveIntensity_ = 10.0f;
-	float eyeHeight_ = 31.0f;	//	focus‚©‚çeye‚Ü‚Å‚Ì‚‚³
+	float eyeHeight_ = 30.0f;	//	focus‚©‚çeye‚Ü‚Å‚Ì‚‚³
 };

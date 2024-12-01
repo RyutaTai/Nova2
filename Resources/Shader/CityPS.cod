@@ -863,24 +863,33 @@ eq r0.w, r4.z, r0.w
 if_nz r0.w
 
 #line 179
-  sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
-
-#line 180
-  mov r5.xyz, -r3.xyzx
-  add r4.xyz, r4.xyzx, r5.xyzx
-  mul r4.xyz, r4.xyzx, r4.wwww
-  add r3.xyz, r3.xyzx, r4.xyzx
+  mov r0.w, -v2.y
+  max r0.w, r0.w, v2.y
+  lt r0.w, l(0.900000), r0.w
+  if_nz r0.w
 
 #line 181
-endif 
+    sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
+
+#line 182
+    mov r5.xyz, -r3.xyzx
+    add r4.xyz, r4.xyzx, r5.xyzx
+    mul r4.xyz, r4.xyzx, r4.wwww
+    add r3.xyz, r3.xyzx, r4.xyzx
 
 #line 183
+  endif 
+
+#line 184
+endif 
+
+#line 186
 add r0.xyz, r0.xyzx, r2.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 
-#line 184
+#line 187
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 409 instruction slots used
+// Approximately 414 instruction slots used

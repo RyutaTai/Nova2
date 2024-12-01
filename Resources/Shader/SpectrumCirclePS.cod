@@ -43,7 +43,7 @@ dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
 dcl_constantbuffer CB10[512], dynamicIndexed
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
-dcl_temps 11
+dcl_temps 12
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
@@ -132,7 +132,7 @@ movc r2.w, r3.y, r3.x, r2.w
 dp4 r2.z, cb10[r2.z + 0].xyzw, icb[r2.w + 0].xyzw  // r2.z <- fft
 
 #line 62
-mov r3.xyzw, l(0,0.500000,0.300000,1.000000)  // r3.x <- spectrumColor.x; r3.y <- spectrumColor.y; r3.z <- spectrumColor.z; r3.w <- spectrumColor.w
+mov r3.xyzw, l(0.100000,0.200000,0.300000,1.000000)  // r3.x <- spectrumColor.x; r3.y <- spectrumColor.y; r3.z <- spectrumColor.z; r3.w <- spectrumColor.w
 
 #line 63
 nop 
@@ -167,7 +167,7 @@ max r2.x, r2.x, r2.y
 #line 74
 mul r2.y, r0.x, l(6.283185)  // r2.y <- circle
 
-#line 75
+#line 78
 mov r2.w, l(1)  // r2.w <- i
 mov r5.xyzw, r1.xyzw  // r5.x <- background.x; r5.y <- background.y; r5.z <- background.z; r5.w <- background.w
 mov r4.z, r2.w  // r4.z <- i
@@ -176,10 +176,10 @@ loop
   ge r4.w, r0.w, r4.w
   breakc_z r4.w
 
-#line 77
+#line 80
   mul r4.w, r2.z, r2.x  // r4.w <- len
 
-#line 78
+#line 81
   nop 
   mov r6.xyzw, r3.xyzw
   mov r7.xyzw, r5.xyzw
@@ -195,109 +195,117 @@ loop
   itof r10.y, r4.z
   mul r10.x, r10.y, r10.x
 
-#line 100
+#line 106
   mul r10.y, r10.x, l(0.017453)
   sincos r10.y, null, r10.y  // r10.y <- s
 
-#line 101
+#line 107
   mul r10.x, r10.x, l(0.017453)
   sincos null, r10.x, r10.x  // r10.x <- c
 
-#line 103
+#line 109
   mov r10.z, -r9.z
   add r8.z, r8.z, r10.z
 
-#line 104
+#line 110
   mov r10.z, -r9.w
   add r8.w, r8.w, r10.z
 
-#line 106
+#line 112
   mul r10.z, r10.x, r8.z
   mul r10.w, r10.y, r8.w
   mov r10.w, -r10.w
   add r10.z, r10.w, r10.z  // r10.z <- x
 
-#line 107
+#line 113
   mul r8.z, r10.y, r8.z
   mul r8.w, r10.x, r8.w
   add r8.z, r8.w, r8.z  // r8.z <- y
 
-#line 109
+#line 115
   add r10.x, r9.z, r10.z  // r10.x <- pointA.x
 
-#line 110
+#line 116
   add r10.y, r9.w, r8.z  // r10.y <- pointA.y
 
-#line 112
+#line 118
   mov r10.x, r10.x  // r10.x <- <rotatePoint return value>.x
   mov r10.y, r10.y  // r10.y <- <rotatePoint return value>.y
 
-#line 78
+#line 81
   mov r10.xy, r10.xyxx
 
-#line 85
+#line 88
   nop 
-  mov r5.xyzw, r6.xyzw
+  mov r6.xyzw, r6.xyzw
   mov r7.xyzw, r7.xyzw
-  div r6.x, r4.w, l(2.000000)
-  add r9.y, r6.x, r8.x
-  div r6.x, r8.y, l(2.000000)
-  div r8.y, r4.w, l(2.000000)
+  div r8.z, r4.w, l(2.000000)
+  add r9.y, r8.z, r8.x
+  div r8.x, r8.y, l(2.000000)
+  div r11.y, r4.w, l(2.000000)
   mov r9.x, r9.x
   mov r10.xy, r10.xyxx
 
-#line 90
-  mov r4.w, -r6.x
-  add r4.w, r4.w, r9.x
-  lt r4.w, r4.w, r10.x
-  add r6.y, r6.x, r9.x
-  lt r6.y, r10.x, r6.y
-  and r4.w, r4.w, r6.y
-  mov r6.y, -r8.y
-  add r6.y, r6.y, r9.y
-  lt r6.y, r6.y, r10.y
-  and r4.w, r4.w, r6.y
-  add r6.y, r8.y, r9.y
-  lt r6.y, r10.y, r6.y
-  and r4.w, r4.w, r6.y
-  mov r8.x, l(0)
-  mov r6.yz, -r8.xxyx
-  add r6.yz, r6.yyzy, r9.xxyx
-  mov r6.yz, -r6.yyzy
-  add r6.yz, r6.yyzy, r10.xxyx
-  dp2 r6.y, r6.yzyy, r6.yzyy
-  sqrt r6.y, r6.y
-  lt r6.y, r6.y, r6.x
-  or r4.w, r4.w, r6.y
-  add r6.yz, r8.xxyx, r9.xxyx
-  mov r6.yz, -r6.yyzy
-  add r6.yz, r6.yyzy, r10.xxyx
-  dp2 r6.y, r6.yzyy, r6.yzyy
-  sqrt r6.y, r6.y
-  lt r6.x, r6.y, r6.x
-  or r4.w, r4.w, r6.x
+#line 93
+  mov r11.x, l(0)
+  mov r8.yz, -r11.xxyx
+  add r8.yz, r8.yyzy, r9.xxyx
+  mov r8.yz, -r8.yyzy
+  add r8.yz, r8.yyzy, r10.xxyx
+  dp2 r4.w, r8.yzyy, r8.yzyy
+  sqrt r4.w, r4.w
+  lt r4.w, r4.w, r8.x
+  add r8.yz, r9.xxyx, r11.xxyx
+  mov r8.yz, -r8.yyzy
+  add r8.yz, r8.yyzy, r10.xxyx
+  dp2 r8.y, r8.yzyy, r8.yzyy
+  sqrt r8.y, r8.y
+  lt r8.y, r8.y, r8.x
+  or r4.w, r4.w, r8.y
   if_nz r4.w
 
-#line 94
-    mov r5.xyzw, r5.xyzw
+#line 95
+    mov r5.xyzw, r6.xyzw
   endif   // r5.x <- <capsule return value>.x; r5.y <- <capsule return value>.y; r5.z <- <capsule return value>.z; r5.w <- <capsule return value>.w
 
-#line 95
+#line 97
   if_z r4.w
-    mov r5.xyzw, r7.xyzw
+    mov r4.w, -r8.x
+    add r4.w, r4.w, r9.x
+    lt r4.w, r4.w, r10.x
+    add r8.x, r8.x, r9.x
+    lt r8.x, r10.x, r8.x
+    and r4.w, r4.w, r8.x
+    mov r8.x, -r11.y
+    add r8.x, r8.x, r9.y
+    lt r8.x, r8.x, r10.y
+    and r4.w, r4.w, r8.x
+    add r8.x, r9.y, r11.y
+    lt r8.x, r10.y, r8.x
+    and r4.w, r4.w, r8.x
+    if_nz r4.w
+
+#line 99
+      mov r5.xyzw, r6.xyzw
+    endif 
+
+#line 101
+    if_z r4.w
+      mov r5.xyzw, r7.xyzw
+    endif 
   endif 
 
-#line 85
+#line 88
   mov r5.xyzw, r5.xyzw  // r5.x <- <bar return value>.x; r5.y <- <bar return value>.y; r5.z <- <bar return value>.z; r5.w <- <bar return value>.w
 
-#line 78
+#line 81
   mov r5.xyzw, r5.xyzw  // r5.x <- background.x; r5.y <- background.y; r5.z <- background.z; r5.w <- background.w
 
-#line 79
+#line 82
   iadd r4.z, r4.z, l(1)
 endloop 
 
-#line 80
+#line 83
 mov r5.xyzw, r5.xyzw  // r5.x <- <rays return value>.x; r5.y <- <rays return value>.y; r5.z <- <rays return value>.z; r5.w <- <rays return value>.w
 
 #line 63
@@ -307,4 +315,4 @@ mov r5.xyzw, r5.xyzw  // r5.x <- color.x; r5.y <- color.y; r5.z <- color.z; r5.w
 mul o0.w, r5.w, l(0.500000)  // o0.w <- <main return value>.w
 mov o0.xyz, r5.xyzx  // o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z
 ret 
-// Approximately 162 instruction slots used
+// Approximately 166 instruction slots used

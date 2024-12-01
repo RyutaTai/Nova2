@@ -59,7 +59,7 @@ float4 main(VS_OUT pin):SV_TARGET
     float offset = texcoord.x * FFT_BLOCK_COUNT;
     float fft = amp[(int) offset % 4];
     
-    float4 spectrumColor = float4(0.0, 0.5, 0.3, 1.0);  //  オーディオスペクトラムの色
+    float4 spectrumColor = float4(0.1, 0.2, 0.3, 1.0);  //  オーディオスペクトラムの色
     color = rays(spectrumColor, color, float2(aspect / 2.0, 1.0 / 2.0), RADIUS, RAYS, RAY_LENGTH, fft, texcoord);
 
     return float4(color.xyz, color.a * 0.5);
@@ -72,6 +72,9 @@ float4 rays(float4 color, float4 background, float2 position, float radius, floa
     float outside = radius - inside;            //  rest of circle
     outside = max(0, outside);
     float circle = 2.0 * M_PI * inside;         //  circle lenght
+ 
+    float angleStep = 360.0 / rays; // 各光線の角度間隔
+    
     for (int i = 1; float(i) <= rays; i++)
     {
         float len = outside * fft; //    length of actual ray
@@ -87,11 +90,14 @@ float4 bar(float4 color, float4 background, float2 position, float2 diemensions,
 
 float4 capsule(float4 color, float4 background, float4 region, float2 uv) //    capsule
 {
+    if (distance(uv, region.xy - float2(0.0, region.w)) < region.z ||
+        distance(uv, region.xy + float2(0.0, region.w)) < region.z)
+            return color;
+
     if (uv.x > (region.x - region.z) && uv.x < (region.x + region.z) &&
-       uv.y > (region.y - region.w) && uv.y < (region.y + region.w) ||
-       distance(uv, region.xy - float2(0.0, region.w)) < region.z ||
-       distance(uv, region.xy + float2(0.0, region.w)) < region.z)
-        return color;
+        uv.y > (region.y - region.w) && uv.y < (region.y + region.w))
+            return color;
+
     return background;
 }
 

@@ -119,7 +119,7 @@ void Stage::Update(const float& elapsedTime)
 	UpdateFFTConstantBuffer();
 
 	//	オーディオスペクトラム更新
-	UpdateAudioSpectrum();
+	UpdateAudioSpectrum(elapsedTime);
 
 }
 
@@ -204,9 +204,9 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 }
 
 //	オーディオスペクトラムk更新
-void Stage::UpdateAudioSpectrum()
+void Stage::UpdateAudioSpectrum(const float& elapsedTime)
 {
-	UpdateCircleAudioSpectrum();
+	UpdateCircleAudioSpectrum(elapsedTime);
 	UpdateWaveformAudioSpectrum();
 }
 
@@ -233,11 +233,10 @@ void Stage::UpdateWaveformAudioSpectrum()
 }
 
 //	円形オーディオスペクトラム更新
-void Stage::UpdateCircleAudioSpectrum()
+void Stage::UpdateCircleAudioSpectrum(const float& elapsedTime)
 {
 	//	座標更新
 	int projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
-	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();					//	プレイヤーの位置
 	DirectX::XMFLOAT3 projectionMappingFocus = Player::Instance().GetTransform()->GetPosition();	//	注視点
 	projectionMapping_[projectionMappingIndex].focus_ = projectionMappingFocus;
@@ -246,6 +245,14 @@ void Stage::UpdateCircleAudioSpectrum()
 	DirectX::XMFLOAT3 projectionMappingEye = playerPos;		//	視点
 	projectionMapping_[projectionMappingIndex].eye_ = projectionMappingEye;
 
+	//	回転値更新
+	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
+	projectionMappingRotation += 90.0f * elapsedTime;
+	if (projectionMappingRotation > 360.0f)
+	{
+		projectionMappingRotation = 0.0f;
+	}
+	projectionMapping_[projectionMappingIndex].rotation_ = projectionMappingRotation;
 
 	float projectionMappingFovy = projectionMapping_[projectionMappingIndex].fovy_;
 	DirectX::XMMATRIX ProjectionMappingTransform =

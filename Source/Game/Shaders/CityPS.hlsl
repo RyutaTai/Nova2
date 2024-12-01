@@ -158,6 +158,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     specular = lerp(specular, specular * occlusionFactor, occlusionStrength);
     
     //  プロジェクションマッピング
+    //  波形のオーディオスペクトラム
     const float projectionMappingColorIntensity = 10;
     float3 projectionMappingColor = 0;
     float4 projectionTexturePosition = mul(pin.wPosition, waveformSpectrumTransform);
@@ -170,14 +171,18 @@ float4 main(VS_OUT pin) : SV_TARGET
         projectionMappingColor += projectionTextureColor.rgb * projectionTextureColor.a /** projectionMappingColorIntensity*/;
     }
     
+    //  円形のオーディオスペクトラム
     projectionTexturePosition = mul(pin.wPosition, circleSpectrumTransform);
     projectionTexturePosition /= projectionTexturePosition.w;
     projectionTexturePosition.x = projectionTexturePosition.x * 0.5 + 0.5;
     projectionTexturePosition.y = -projectionTexturePosition.y * 0.5 + 0.5;
     if (saturate(projectionTexturePosition.z) == projectionTexturePosition.z)
     {
-        float4 projectionTextureColor = circleSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
-        projectionMappingColor = lerp(projectionMappingColor, projectionTextureColor.rgb, projectionTextureColor.a) /** projectionMappingColorIntensity*/;
+        if (abs(pin.wNormal.y) > 0.9f)  //  壁じゃなかったら
+        {
+            float4 projectionTextureColor = circleSpectrumTexture.Sample(samplerStates[LINEAR_BORDER_BLACK], projectionTexturePosition.xy);
+            projectionMappingColor = lerp(projectionMappingColor, projectionTextureColor.rgb, projectionTextureColor.a) /** projectionMappingColorIntensity*/;
+        }
     }
     
     float3 Lo = (diffuse + specular + emissive) + projectionMappingColor /*PROJECTION_MAPPING*/;

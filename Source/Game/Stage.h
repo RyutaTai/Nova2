@@ -31,8 +31,8 @@ public:
 	void UpdateFrequencyMax();
 	float CalculateAutocorrelation(const float data[], const int& lag);
 
-	void UpdateAudioSpectrum();			//	オーディオスペクトラム更新
-	void UpdateCircleAudioSpectrum();	//	円形オーディオスペクトラム更新
+	void UpdateAudioSpectrum(const float& elapsedTime);			//	オーディオスペクトラム更新
+	void UpdateCircleAudioSpectrum(const float& elapsedTime);	//	円形オーディオスペクトラム更新
 	void UpdateWaveformAudioSpectrum();	//	波形オーディオスペクトラム更新
 
 	bool Collision(_In_ const DirectX::XMFLOAT3& rayPosition, _In_ const DirectX::XMFLOAT3& rayDirection, _In_ const DirectX::XMFLOAT4X4& stageTransform, _Out_ DirectX::XMFLOAT3& intersectionPosition, _Out_ DirectX::XMFLOAT3& intersectionNormal,
@@ -108,8 +108,8 @@ private:
 	const int SPECTRUM_WIDTH = 512;
 	const int SPECTRUM_HEIGHT = 512;
 #else
-	const int SPECTRUM_WIDTH = 2048;
-	const int SPECTRUM_HEIGHT = 2048;
+	const int SPECTRUM_WIDTH = 256;
+	const int SPECTRUM_HEIGHT = 256;
 #endif
 	struct ProjectionMapping
 	{

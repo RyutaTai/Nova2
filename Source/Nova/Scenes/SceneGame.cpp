@@ -115,6 +115,7 @@ void SceneGame::Initialize()
 	stateMachine_->RegisterState(new GameState::Wave3State(this));		//	Wave3
 	stateMachine_->RegisterState(new GameState::GameClearState(this));	//	ゲームクリア
 	stateMachine_->RegisterState(new GameState::GameOverState(this));	//	ゲームオーバー
+	stateMachine_->RegisterState(new GameState::ContinueState(this));	//	コンティニュー
 	//	初期ステート設定
 	stateMachine_->SetState(static_cast<int>(SceneGameState::Wave1));	//	初期ステートセット
 

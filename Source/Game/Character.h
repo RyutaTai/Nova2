@@ -40,8 +40,8 @@ public:
 	void SetAcceleration(const DirectX::XMFLOAT3& acceleration) { acceleration_ = acceleration; }
 	void SetMoveSpeed(const float& moveSpeed)					{ moveSpeed_ = moveSpeed; }
 	void SetPixelShader(const char* csoName);		//	ピクセルシェーダー設定
-	void SetHp(int hp)		{ hp_ = hp; }
-	void SubtractHp(int hp);
+	void SetHp(const int& hp)		{ hp_ = hp; }
+	void SubtractHp(const int& hp);
 	void SetIsInvincible(const bool& isInvincible) { isInvincible_ = isInvincible; }
 	void SetInvincibleTimer(const float& invincibleTimer) { invincibleTimer_ = invincibleTimer; }
 

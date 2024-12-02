@@ -80,9 +80,9 @@ void BulletHorming::Destroy(const float& elapsedTime)
 
 	//	生存時間がなくなるか、プレイヤーに当たるか、プレイヤーに攻撃されたら
 #if 1
-	if (lifeTimer_ <= 0.0f || isHitPlayer || damaged_)
+	if (lifeTimer_ <= 0.0f || isHitPlayer || isDamaged_)
 #else
-	if(damaged_)
+	if(isDamaged_)
 #endif
 	{
 		DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
@@ -98,7 +98,7 @@ void BulletHorming::Destroy(const float& elapsedTime)
 
 	if (isHitPlayer)
 	{
-		Player::Instance().SubtractHp(10);
+		Player::Instance().SubtractHp(amountOfDamage_);
 	}
 
 }
@@ -153,8 +153,7 @@ void BulletHorming::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Bullet 弾丸"))
 	{
-		GetTransform()->DrawDebug();
-		ImGui::DragFloat("Radius", &radius_, 1.0f, -FLT_MAX, FLT_MAX);				//	半径
+		Bullet::DrawDebug();
 		ImGui::DragFloat3("Target", &target_.x, 1.0f, -FLT_MAX, FLT_MAX);			//	ターゲット
 		ImGui::DragFloat3("OwnerPos", &ownerPosition_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	所有者の位置
 		ImGui::DragFloat("Speed", &speed_, 0.5f, -FLT_MAX, FLT_MAX);				//	弾の速さ

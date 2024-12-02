@@ -116,13 +116,10 @@ void Bullet::DrawDebug()
 {
 	float scale = GetTransform()->GetScaleFactor();
 
-	if (ImGui::TreeNode(u8"Bullet 弾丸"))
-	{
-		GetTransform()->DrawDebug();
-		ImGui::DragFloat("Radius", &radius_, 1.0f, -FLT_MAX, FLT_MAX);	//	半径
-		ImGui::DragFloat("Scale", &scale, 0.1f, 1.0f, FLT_MAX);			//	スケール
-		ImGui::TreePop();
-	}
+	GetTransform()->DrawDebug();
+	ImGui::DragFloat("Radius", &radius_, 1.0f, -FLT_MAX, FLT_MAX);				//	半径
+	ImGui::DragFloat("Scale", &scale, 0.1f, 1.0f, FLT_MAX);						//	スケール
+	ImGui::DragFloat("AmountOfDamage", &amountOfDamage_, 0.1f, 1.0f, FLT_MAX);	//	ダメージ量
 
 	GetTransform()->SetScaleFactor(scale);
 

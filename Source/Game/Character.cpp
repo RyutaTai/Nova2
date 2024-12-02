@@ -191,7 +191,7 @@ DirectX::XMFLOAT3 Character::GetJointPosition(size_t nodeIndex, const DirectX::X
 }
 
 //	HPå∏è≠
-void Character::SubtractHp(int hp)
+void Character::SubtractHp(const int& hp)
 {
 	if (isInvincible_ == false)	//	ñ≥ìGÇ∂Ç·Ç»Ç©Ç¡ÇΩÇÁHPå∏è≠
 	{

@@ -71,23 +71,6 @@ namespace GameState
 	};
 }
 
-//	コンティニュー
-namespace GameState
-{
-	class ContinueState :State <SceneGame>
-	{
-	public:
-		ContinueState(SceneGame* owner) :State(owner) {}
-		~ContinueState() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-		void DrawDebug()override;
-
-	}
-}
-
 //	ゲームクリア
 namespace GameState
 {
@@ -124,6 +107,23 @@ namespace GameState
 
 	private:
 		float changeTitleTimer_ = 4.0f;
+
+	};
+}
+
+//	コンティニュー
+namespace GameState
+{
+	class ContinueState : public State <SceneGame>
+	{
+	public:
+		ContinueState(SceneGame* owner) :State(owner) {}
+		~ContinueState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
 
 	};
 }

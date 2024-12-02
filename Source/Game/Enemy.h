@@ -53,7 +53,7 @@ public:
 	//virtual bool OnMessage(const Telegram& msg);															//	メッセージ受信関数
 	virtual void				Destroy();
 
-	void						SetDamaged(const bool& damaged)		{ damaged_ = damaged; }					//	ダメージフラグ設定
+	void						SetDamaged(const bool& damaged)		{ isDamaged_ = damaged; }					//	ダメージフラグ設定
 	void						SetMyType(const EnemyType& myType)	{ myType_ = myType; }					//	自分の種類設定
 	virtual void				SetRandomTargetPosition();													//	ターゲット位置をランダム設定
 	void						SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }	//	ターゲットポジション設定
@@ -70,7 +70,7 @@ protected:
 	float						territoryRange_		=	10.0f;							//	索敵範囲
 	float						searchRange_		=	50.0f;							//	索敵距離
 	float						runTimer_			=	0.0f;							//
-	bool						damaged_			=	false;							//	攻撃を受けたかどうか
+	bool						isDamaged_			=	false;							//	攻撃を受けたかどうか
 
 	bool						useOffsetY_			= true;	//	当たり判定でY方向のオフセット値を使うか
 };

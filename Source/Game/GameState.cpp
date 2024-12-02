@@ -3,6 +3,8 @@
 #include "../Nova/Scenes/SceneGame.h"
 #include "EnemyManager.h"
 
+#define USE_CONTINUE 0
+
 //	ウェーブ1（敵1体）
 namespace GameState
 {
@@ -147,6 +149,86 @@ namespace GameState
 
 }
 
+//	ゲームクリア
+namespace GameState
+{
+	void GameClearState::Initialize()
+	{
+		owner_->SetGameClear(true);
+		owner_->SetIsResult(true);
+	}
+
+	void GameClearState::Update(const float& elapsedTime)
+	{
+		changeTitleTimer_ -= elapsedTime;
+		if (changeTitleTimer_ <= 0.0f)
+		{
+#if USE_CONTINUE
+			owner_->ChangeState(SceneGame::SceneGameState::Continue);
+#else
+			owner_->ChangeToTitle(true);
+#endif
+			changeTitleTimer_ = 3.0f;
+		}
+	}
+
+	void GameClearState::Finalize()
+	{
+		owner_->SetGameClear(false);
+		owner_->SetIsResult(false);
+	}
+
+	void GameClearState::DrawDebug()
+	{
+		if (ImGui::TreeNode("GameClearState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
+}
+
+//	ゲームオーバー
+namespace GameState
+{
+	void GameOverState::Initialize()
+	{
+		owner_->SetGameOver(true);
+		owner_->SetIsResult(true);
+	}
+
+	void GameOverState::Update(const float& elapsedTime)
+	{
+		changeTitleTimer_ -= elapsedTime;
+		if (changeTitleTimer_ <= 0.0f)
+		{
+#if USE_CONTINUE
+			owner_->ChangeState(SceneGame::SceneGameState::Continue);
+#else
+			owner_->ChangeToTitle(true);
+#endif
+			changeTitleTimer_ = 3.0f;
+		}
+	}
+
+	void GameOverState::Finalize()
+	{
+		owner_->SetGameOver(false);
+		owner_->SetIsResult(false);
+	}
+
+	void GameOverState::DrawDebug()
+	{
+		if (ImGui::TreeNode("GameOverState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
+}
+
 //	コンティニュー
 namespace GameState
 {
@@ -176,74 +258,3 @@ namespace GameState
 	}
 
 }
-
-//	ゲームクリア
-namespace GameState
-{
-	void GameClearState::Initialize()
-	{
-		owner_->SetGameClear(true);
-		owner_->SetIsResult(true);
-	}
-
-	void GameClearState::Update(const float& elapsedTime)
-	{
-		changeTitleTimer_ -= elapsedTime;
-		if (changeTitleTimer_ <= 0.0f)
-		{
-			owner_->ChangeToTitle(true);
-			changeTitleTimer_ = 3.0f;
-		}
-	}
-
-	void GameClearState::Finalize()
-	{
-
-	}
-
-	void GameClearState::DrawDebug()
-	{
-		if (ImGui::TreeNode("GameClearState"))
-		{
-
-			ImGui::TreePop();
-		}
-	}
-
-}
-
-//	ゲームオーバー
-namespace GameState
-{
-	void GameOverState::Initialize()
-	{
-		owner_->SetGameOver(true);
-		owner_->SetIsResult(true);
-	}
-
-	void GameOverState::Update(const float& elapsedTime)
-	{
-		changeTitleTimer_ -= elapsedTime;
-		if (changeTitleTimer_ <= 0.0f)
-		{
-			owner_->ChangeToTitle(true);
-			changeTitleTimer_ = 3.0f;
-		}
-	}
-
-	void GameOverState::Finalize()
-	{
-		
-	}
-
-	void GameOverState::DrawDebug()
-	{
-		if (ImGui::TreeNode("GameOverState"))
-		{
-
-			ImGui::TreePop();
-		}
-	}
-
-}
-

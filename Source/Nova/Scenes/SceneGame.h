@@ -24,6 +24,7 @@ public:
 		Wave3,
 		Clear,
 		GameOver,
+		Continue,
 		Max,
 	};
 

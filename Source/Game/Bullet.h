@@ -29,7 +29,7 @@ public:
 	virtual void			Destroy(const float& elapsedTime);											//	破棄処理
 	
 	void					SetInvincible(const bool& isInvincible)			{ isInvincible_ = isInvincible; }
-	void					SetDamaged(bool damaged)						{ damaged_ = damaged; }		//	ダメージフラグ設定
+	void					SetDamaged(bool damaged)						{ isDamaged_ = damaged; }		//	ダメージフラグ設定
 	void					SetOwnerPosition(const DirectX::XMFLOAT3& pos)	{ ownerPosition_ = pos; }	//	弾丸所有者の位置設定
 	
 	virtual void			DrawDebug();																//	デバッグ描画
@@ -55,7 +55,9 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	coverPixelShader_;				//	弾丸のキューブのピクセルシェーダー
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<GltfModelStaticBatching>	coverModel_ = {};				//	弾の周りを覆うモデル
-	bool										damaged_ = false;				//	攻撃を受けたかどうか
+	bool										isDamaged_ = false;				//	攻撃を受けたかどうか
+
+	float										amountOfDamage_ = 5.0f;			//	与えるダメージ量
 
 	DirectX::XMFLOAT3							ownerPosition_ = {};			//	弾丸所有者の位置
 

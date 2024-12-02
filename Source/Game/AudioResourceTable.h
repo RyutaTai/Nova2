@@ -2,6 +2,7 @@
 
 #include <string>
 
+//	BGMのデータテーブル
 struct AudioData
 {
 	std::string filePath_	= {};		//	リソースのファイルパス

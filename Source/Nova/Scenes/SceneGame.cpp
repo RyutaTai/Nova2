@@ -179,8 +179,6 @@ void SceneGame::Update(const float& elapsedTime)
 void SceneGame::IsPose(bool isPose)
 {
 	player_->SetIsPose(isPose);
-
-
 }
 
 //	ウェーブ画像読み込み

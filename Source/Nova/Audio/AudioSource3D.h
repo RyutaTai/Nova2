@@ -66,6 +66,7 @@ public:
 	}*/
 
 	void Filter(const XAUDIO2_FILTER_TYPE& type, const float& overq = 1.0f);
+	void ApplyHighPassFilter(const float& overq = 1.0f);	//	ハイパスフィルター
 
 	SoundDSPSetting GetDSPSetting() const { return dspSetting_; }
 

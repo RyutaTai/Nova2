@@ -35,6 +35,13 @@ namespace PlayerState
 		void Finalize()override;
 		void DrawDebug()override;
 
+	private:
+		void PlayFootsteps(const float& elapsedTime);	//	足音再生
+
+	private:
+		float playFootstepsInterval_ = 1.5f;	//	足音SE再生間隔
+		float footStepsTimer_ = 0.0f;			//	足音SE再生間隔用タイマー
+
 	};
 }
 
@@ -96,7 +103,6 @@ namespace PlayerState
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	アニメーション速度変化区間
 		JudgeTime	cancellationTime_ = {};			//	キャンセル可能時間
 		float		acceptInputFrame_ = 0.0f;		//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
-		float		stateElapsedTime_ = 0.0f;		//	ステートに入ってからの経過時間
 		bool		isCorrectInput_ = false;		//	正しい入力が取れていたらtrue
 	};
 }
@@ -127,7 +133,6 @@ namespace PlayerState
 		JudgeTime			animSpeedChangeInterval_[4] = {};		//	判定を取るアニメーション区間
 		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
 		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
-		float				stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 		bool				isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		bool				isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
 
@@ -158,7 +163,6 @@ namespace PlayerState
 		JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		bool		isHit_ = false;
 
@@ -189,7 +193,6 @@ namespace PlayerState
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
 		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
-		float		stateElapsedTime_ = 0.0f;	//	ステートに入ってからの経過時間
 		bool		isHit_ = false;
 
 	};

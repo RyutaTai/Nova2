@@ -137,7 +137,7 @@ void Character::Turn(const float& elapsedTime, float vx, float vz, float speed)
 	//	内積値は-1.0～1.0で表現されている。
 	//	２つの単位ベクトルの角度が小さいほど
 	//	1.0に近づくという性質を利用して回転速度を調整する
-	float rot = 1.0 - dot;
+	float rot = 1.0f - dot;
 	if (rot > speed)rot = speed;
 
 	//	2Dの外積値が正の場合か負の場合によって左右判定が行える

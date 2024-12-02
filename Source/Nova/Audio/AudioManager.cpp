@@ -190,7 +190,7 @@ void AudioManager::DrawDebug()
 {
 	if (ImGui::TreeNode("AudioManager"))
 	{
-		int size = audioResources_.size();
+		int size = static_cast<int>(audioResources_.size());
 		ImGui::DragInt("AudioCount", &size);	//	オーディオの数
 
 		for (Audio* audio : audioResources_)	//	各オーディオのImGui

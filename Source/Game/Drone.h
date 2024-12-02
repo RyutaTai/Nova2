@@ -34,6 +34,7 @@ private:
 		Shot,				//	”­ŽË‰¹
 		Move,				//	ˆÚ“®
 		Destroy,			//	”j‰ó‰¹
+		Bgm,				//	BGM
 		Max,
 	};
 

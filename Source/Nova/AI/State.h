@@ -14,6 +14,11 @@ public:
 	virtual void Finalize() = 0;
 	virtual void DrawDebug() = 0;
 
+	void UpdateStateElapsedTime(const float& elapsedTime) { stateElapsedTime_ += elapsedTime; }
+
 protected:
 	T* owner_;
+
+	float		stateElapsedTime_ = 0.0f;		//	ステートに入ってからの経過時間
+
 };

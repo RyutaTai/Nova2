@@ -21,6 +21,7 @@
 WaveReader::WaveReader(const char* filename) : strFilename_(filename)
 {
     HRESULT hr = FileCreate();
+    _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
    
     //check the file type, should be fourccWAVE or 'XWMA'
     hr = FindChunk(hFile_, fourccRIFF, dwChunkSize_, dwChunkPosition_);

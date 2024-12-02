@@ -10,6 +10,7 @@
 #include "EnemyManager.h"
 #include "../Nova/Input/GamePad.h"
 #include "../Nova/Input/Input.h"
+#include "../Nova/Audio/AudioManager.h"
 
 //	待機ステート
 namespace PlayerState
@@ -50,6 +51,7 @@ namespace PlayerState
 		if (ImGui::TreeNode("Idle"))
 		{
 
+			ImGui::TreePop();
 		}
 	}
 }
@@ -65,10 +67,22 @@ namespace PlayerState
 
 		owner_->SetMoveSpeed(3.0f);
 
+		//	足音SE再生
+		AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
+
+		//	足音タイマーリセット
+		footStepsTimer_ = 0.0f;
+
 	}
 
 	void MoveState::Update(const float& elapsedTime)
 	{
+		//	ステート経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+		
+		//	足音再生
+		PlayFootsteps(elapsedTime);
+
 		//	移動入力がなくなったら待機ステートへ遷移
 		if (!owner_->InputMove(elapsedTime))
 		{
@@ -79,17 +93,50 @@ namespace PlayerState
 		
 	}
 
+	//	足音SE再生
+	void MoveState::PlayFootsteps(const float& elapsedTime)
+	{
+		//	足音再生間隔更新
+		footStepsTimer_ += elapsedTime;
+
+		//	ピッチを0.4～0.6の間でランダムに決める
+		float pitch = Mathf::RandomRange(0.4f, 0.6f);
+
+		//	再生間隔に達していて、SEの再生も終わっていたら再生する
+		bool isPlaying = AudioManager::Instance().GetAudioResource("PlayerFootsteps")->IsPlaying();
+		if (footStepsTimer_ > playFootstepsInterval_ && isPlaying == false)
+		{
+			footStepsTimer_ = 0.0f;
+			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->SetPitch(pitch);
+			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
+		}
+
+	}
+
 	void MoveState::Finalize()
 	{
 		owner_->SetMoveSpeed(2.0f);
 		owner_->SetAnimationSpeed(1.0f);
+
+		//	足音停止
+		AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Stop();
+
+		//	足音タイマーリセット
+		footStepsTimer_ = 0.0f;
+
 	}
 
 	void MoveState::DrawDebug()
 	{
 		if (ImGui::TreeNode("Move"))
 		{
+			ImGui::DragFloat("PlayFootstepsInterval", &playFootstepsInterval_, 0.01f);	//	足音SE再生間隔
+			ImGui::DragFloat("FootstepsTimer", &footStepsTimer_, 0.01f);				//	足音SE再生間隔タイマー
 
+			bool isPlaying = AudioManager::Instance().GetAudioResource("PlayerFootsteps")->IsPlaying();
+			ImGui::Checkbox("IsPlaying", &isPlaying);
+
+			ImGui::TreePop();
 		}
 	}
 }
@@ -232,6 +279,7 @@ namespace PlayerState
 		if (ImGui::TreeNode("Attack"))
 		{
 
+			ImGui::TreePop();
 		}
 	}
 
@@ -366,6 +414,7 @@ namespace PlayerState
 			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
 			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
 
+			ImGui::TreePop();
 		}
 	}
 
@@ -498,6 +547,7 @@ namespace PlayerState
 			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
 			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
 
+			ImGui::TreePop();
 		}
 	}
 
@@ -609,6 +659,7 @@ namespace PlayerState
 			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
 			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
 
+			ImGui::TreePop();
 		}
 	}
 
@@ -711,6 +762,7 @@ namespace PlayerState
 			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
 			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
 
+			ImGui::TreePop();
 		}
 	}
 }
@@ -739,6 +791,7 @@ namespace PlayerState
 		if (ImGui::TreeNode("Dodge"))
 		{
 
+			ImGui::TreePop();
 		}
 	}
 }

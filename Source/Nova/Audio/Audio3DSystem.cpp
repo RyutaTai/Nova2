@@ -2,12 +2,12 @@
 
 #include <corecrt_math_defines.h>
 
-inline FLOAT32 VECTOR3Length(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b)
+inline FLOAT32 VECTOR3Length(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
 {
     return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 
-inline FLOAT32 Dot(DirectX::XMFLOAT3 a)
+inline FLOAT32 Dot(const DirectX::XMFLOAT3& a)
 {
     return sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z));
 }

@@ -278,7 +278,7 @@ void Decal::DrawDebug()
 {
 	if (ImGui::TreeNode("Decal"))
 	{
-		spotsIndexMax_ = spots_.size() - 1;
+		spotsIndexMax_ = static_cast<int>(spots_.size()) - 1;
 		if (spots_.empty() == false)
 		{
 			ImGui::InputInt("SpotsIndex", &spotsIndex_);

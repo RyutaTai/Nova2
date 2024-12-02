@@ -13,7 +13,7 @@ public:
 		return a * (1.0f - t) + (b * t);
 	}
 	//	指定範囲のランダム値を計算する
-	static float RandomRange(float min, float max)
+	static float RandomRange(const float& min, const float& max)
 	{
 		float randomNum = 0;
 		std::random_device rnd;     //	非決定的な乱数生成器を生成
@@ -24,7 +24,7 @@ public:
 		return randomNum;
 	}
 
-	static int RandomRange(int min, int max)
+	static int RandomRange(const int& min, const int& max)
 	{
 		int randomNum = 0;
 		std::random_device rnd;     //	非決定的な乱数生成器を生成

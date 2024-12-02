@@ -795,10 +795,10 @@ add r3.xyz, r3.xyzx, r4.xyzx
 mul r3.xyz, r3.xyzx, r3.wwww
 add r0.xyz, r0.xywx, r3.xyzx  // r0.z <- specular.z
 
-#line 162
+#line 163
 itof r3.xyz, l(0, 0, 0, 0)  // r3.x <- projectionMappingColor.x; r3.y <- projectionMappingColor.y; r3.z <- projectionMappingColor.z
 
-#line 163
+#line 164
 mul r4.xyzw, v1.xxxx, cb5[0].xyzw
 mul r5.xyzw, v1.yyyy, cb5[1].xyzw
 add r4.xyzw, r4.xyzw, r5.xyzw
@@ -807,35 +807,35 @@ add r4.xyzw, r4.xyzw, r5.xyzw
 mul r5.xyzw, v1.wwww, cb5[3].xyzw
 add r4.xyzw, r4.xyzw, r5.xyzw  // r4.x <- projectionTexturePosition.x; r4.y <- projectionTexturePosition.y; r4.z <- projectionTexturePosition.z; r4.w <- projectionTexturePosition.w
 
-#line 164
+#line 165
 div r4.xyz, r4.xyzx, r4.wwww
 
-#line 165
+#line 166
 mul r0.w, r4.x, l(0.500000)
 add r5.x, r0.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
 
-#line 166
+#line 167
 mov r0.w, -r4.y
 mul r0.w, r0.w, l(0.500000)
 add r5.y, r0.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
 
-#line 167
+#line 168
 max r0.w, r4.z, l(0.000000)
 min r0.w, r0.w, l(1.000000)
 eq r0.w, r4.z, r0.w
 if_nz r0.w
 
-#line 169
+#line 170
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t16.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
-#line 170
+#line 171
   mul r4.xyz, r4.wwww, r4.xyzx
   add r3.xyz, r3.xyzx, r4.xyzx
 
-#line 171
+#line 172
 endif 
 
-#line 173
+#line 175
 mul r4.xyzw, v1.xxxx, cb4[0].xyzw
 mul r5.xyzw, v1.yyyy, cb4[1].xyzw
 add r4.xyzw, r4.xyzw, r5.xyzw
@@ -844,51 +844,51 @@ add r4.xyzw, r4.xyzw, r5.xyzw
 mul r5.xyzw, v1.wwww, cb4[3].xyzw
 add r4.xyzw, r4.xyzw, r5.xyzw  // r4.x <- projectionTexturePosition.x; r4.y <- projectionTexturePosition.y; r4.z <- projectionTexturePosition.z; r4.w <- projectionTexturePosition.w
 
-#line 174
+#line 176
 div r4.xyz, r4.xyzx, r4.wwww
 
-#line 175
+#line 177
 mul r0.w, r4.x, l(0.500000)
 add r5.x, r0.w, l(0.500000)  // r5.x <- projectionTexturePosition.x
 
-#line 176
+#line 178
 mov r0.w, -r4.y
 mul r0.w, r0.w, l(0.500000)
 add r5.y, r0.w, l(0.500000)  // r5.y <- projectionTexturePosition.y
 
-#line 177
+#line 179
 max r0.w, r4.z, l(0.000000)
 min r0.w, r0.w, l(1.000000)
 eq r0.w, r4.z, r0.w
 if_nz r0.w
 
-#line 179
+#line 181
   mov r0.w, -v2.y
   max r0.w, r0.w, v2.y
   lt r0.w, l(0.900000), r0.w
   if_nz r0.w
 
-#line 181
+#line 183
     sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r5.xyxx, t15.xyzw, s3  // r4.x <- projectionTextureColor.x; r4.y <- projectionTextureColor.y; r4.z <- projectionTextureColor.z; r4.w <- projectionTextureColor.w
 
-#line 182
+#line 184
     mov r5.xyz, -r3.xyzx
     add r4.xyz, r4.xyzx, r5.xyzx
     mul r4.xyz, r4.xyzx, r4.wwww
     add r3.xyz, r3.xyzx, r4.xyzx
 
-#line 183
+#line 185
   endif 
 
-#line 184
+#line 186
 endif 
 
-#line 186
+#line 188
 add r0.xyz, r0.xyzx, r2.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 add r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- Lo.x; r0.y <- Lo.y; r0.z <- Lo.z
 
-#line 187
+#line 189
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 

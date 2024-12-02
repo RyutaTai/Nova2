@@ -23,6 +23,7 @@ Audio::Audio(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType,
 	// sourceVoice->SetFrequencyRatio(DefaultSamplingRate / static_cast<FLOAT32>(resource->GetWaveFormat().nSamplesPerSec));
 	length_ = resource->GetPlayLength();
 	lengthFloat_ = resource->GetPlayLengthFLOAT();
+
 	//	ソースボイスにデータを送信
 	buffer_.pAudioData = resource->GetAudioData();
 	buffer_.AudioBytes = resource->GetAudioBytes();
@@ -53,6 +54,9 @@ Audio::~Audio()
 //	再生
 void Audio::Play(const bool& loop)
 {
+	//	再生可能でないなら処理しない
+	if (isPlayable_ == false)return;
+
 	buffer_.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	sourceVoice_->SubmitSourceBuffer(&buffer_);
 	HRESULT hr = sourceVoice_->Start();
@@ -64,6 +68,9 @@ void Audio::Play(const bool& loop)
 //	再生再開
 void Audio::Restart()
 {
+	//	再生可能でないなら処理しない
+	if (isPlayable_ == false)return;
+
 	sourceVoice_->Start();
 	isPlaying_ = true;
 	//_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
@@ -99,7 +106,7 @@ size_t Audio::GetCurrentSample()const
 }
 
 //	再生中かどうか
-bool Audio::IsPlay()
+bool Audio::IsPlaying()
 {
 	//	再生中かどうか lengthfFloat_(音源の長さ)より再生時間(timer_)が小さかったら再生中
 	//return lengthFloat_ > timer_;
@@ -152,9 +159,22 @@ void Audio::SetVolume(const float& volume, const bool& useDb)
 void Audio::DrawDebug()
 {
 #ifdef USE_IMGUI
-	bool isPlay = IsPlay();
-	ImGui::Checkbox("IsPlay", &isPlay);						//	再生中かどうか
-	ImGui::DragFloat("PlayTimer", &timer_);					//	再生時間
+	bool isPlay = IsPlaying();
+	if (ImGui::Checkbox("IsPlayable", &isPlayable_))		//	フラグが切り替わったらif文に入る		
+	{
+		//	false→trueになった場合リスタート
+		if (IsPlayable())
+		{
+			Restart();
+		}
+		//	true→falseになった場合一時停止
+		else
+		{
+			Pause();
+		}
+	}
+	ImGui::Checkbox("IsPlaying", &isPlay);					//	再生中かどうか
+	ImGui::DragFloat("PlayTimer", &timer_);					//	現在のループの再生時間
 	ImGui::DragFloat("TotalPlayTimer", &totalPlayTimer_);	//	合計再生時間
 #endif
 }

@@ -41,15 +41,20 @@ Player::Player()
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
 	PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
 
-	//	リスナー情報セット
-	listener_.innerRadius_ = 0.7f;
-	listener_.outerRadius_ = 1.67f;
-	listener_.filterParam_ = 0.8f;
-
 	//	モデルのルート設定
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
 
+	//	オーディオ初期設定
+	//	リスナー情報セット
+	listener_.innerRadius_ = 0.7f;
+	listener_.outerRadius_ = 1.67f;
+	listener_.filterParam_ = 0.8f;
+	//	足音SE
+	sources_[static_cast<int>(AudioStereo::Footsteps)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/FootstepsOne.wav", Audio::AudioType::SENormal, "GameScene");
+	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.3f, false);
+	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetAudioName("PlayerFootsteps");
+	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::Footsteps)]);
 }
 
 //	初期化

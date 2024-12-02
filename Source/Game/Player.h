@@ -6,6 +6,7 @@
 #include "../Nova/Resources/Effect.h"
 #include "../Nova/AI/StateMachine.h"
 #include "../Nova/Audio/Audio3DSystem.h"
+#include "../Nova/Audio/AudioSource.h"
 #include "../Nova/Input/Input.h"
 
 class Player :public Character
@@ -54,6 +55,13 @@ public:
 		ComboOne4,		//	コンボ0_4
 		Dodge,		//	回避
 		Max,			//	ステート最大数
+	};
+
+	//	オーディオの種類
+	enum class AudioStereo
+	{
+		Footsteps,	//	足音
+		Max
 	};
 
 public:
@@ -115,29 +123,35 @@ public:
 private:
 	static Player* instance_;
 
+	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;			//	ステートマシン
+
+	//	エフェクト
 	std::shared_ptr <Effect>	effectResource_;										//	エフェクト
-	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;				//	ステートマシン
 	float						effectScale_ = 5.0f;									//	エフェクトスケール
 	DirectX::XMFLOAT3			effectPos_ = {};										//	エフェクト再生位置
 	bool						playEffectFlag_ = false;								//	エフェクト再生フラグ
 	bool						drawEffectFlag_ = true;									//	エフェクト描画フラグ(falseなら描画しない)
 	//AnimationType				currentAnimNum_;										//	現在のアニメーション番号
+	
+	//	プレイヤーのパラメータ
 	float						turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
 	static constexpr int		MAX_HP = 100;											//	最大HP
 
-	bool						isPose_ = false;										//	ポーズ中プレイヤーの操作を受け付けない
-	bool						isHitEnemy_ = false;									//	エネミーと当たっているか(押し出し用)
+	bool						isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない
+	bool						isHitEnemy_ = false;	//	エネミーと当たっているか(押し出し用)
+	bool						isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
 
 	//	ターゲット
 	bool						isTraget_	= false;	//	ターゲットがいるか
 	float						serchRange_ = 10.0f;	//	ターゲットを見つける範囲
 	DirectX::XMFLOAT3			targetPos	= {};		//	ターゲット位置
 
-	bool						isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
 
 	//	オーディオ
 	SoundListener listener_ = {};	//	リスナー
+	AudioSource* sources_[static_cast<int>(AudioStereo::Max)] = { nullptr };
 
+private:	//	デバッグ用
 	//	ImGui用
 	bool				isCollisionStage_	= true;
 	bool				isHitStage_			= false;

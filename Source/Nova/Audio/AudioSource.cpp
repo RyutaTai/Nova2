@@ -26,7 +26,10 @@ void AudioSource::Update(const float& elapsedTime)
 	//if (state.BuffersQueued == 1)
 
 	//	再生中でないなら処理しない
-	if (!isPlaying_)return;
+	if (isPlaying_ == false)return;
+
+	//	再生可能でないなら処理しない
+	if (IsPlayable() == false)return;
 
 	//	音源データの長さを超えたら再生時間リセット
 	float length = GetPlayLengthFloat();

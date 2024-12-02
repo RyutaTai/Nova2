@@ -29,10 +29,10 @@ public:
 	virtual void SetPitch(const float& pitch) = 0;
 
 public:
-	void Play(const bool& loop);
-	void Stop();
-	void Restart();
-	void Pause();
+	void Play(const bool& loop);	//	再生
+	void Restart();					//	再開
+	void Stop();					//	停止
+	void Pause();					//	一時停止
 
 	//	タイマー加算
 	void AddPlayTimer(const float& elapsedTime) { timer_ += elapsedTime; }
@@ -60,7 +60,7 @@ public:
 	void			SetAudioType(const AudioType& type) { audioType_ = type; }
 	AudioType		GetAudioType() { return audioType_; }
 	
-	bool			IsPlay();
+	bool			IsPlaying();	//	手動で切り替えているisPlaying_フラグより精度がいいが、毎フレームGetStateを呼びたくないため分けている
 	bool			IsBGM();	//	BGMかどうか
 	bool			IsSE();		//	SEかどうか
 
@@ -69,6 +69,8 @@ public:
 	void			SetSceneName(const std::string& sceneName) { sceneName_ = sceneName; }
 	std::string		GetSceneName() { return sceneName_; }
 
+	void			SetPlayable(const bool& playable) { isPlayable_ = playable; }
+	bool			IsPlayable() { return isPlayable_; }
 
 protected:
 	static constexpr float		DefaultSamplingRate = 44100.0f;		//	基本のサンプリングレート
@@ -90,11 +92,13 @@ protected:
 
 	float	lastVolume_		= {};		//	前フレーム時点でのボリューム : SetVolumeを使う前にこの値と比べる
 
-	bool	isPlaying_		= false;	//	再生中かどうかのフラグ
-
+	bool	isPlaying_		= false;	//	再生中かどうかのフラグ(playしたらtrue,stopしたらfalseにしている)
 	AudioType	audioType_ = {};	//	オーディオタイプ
 	std::string audioName_ = {};	//	音源の名前
 	std::string	sceneName_ = {};	//	使用シーンを設定(Title,Gameなど)
+
+private:	//	デバッグ用
+	bool isPlayable_ = true;	//	再生可能かどうか(ImGuiで再生する音を絞るときに使う)
 
 };
 

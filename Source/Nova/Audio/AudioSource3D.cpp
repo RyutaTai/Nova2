@@ -44,6 +44,9 @@ void AudioSource3D::Update(const float& elapsedTime)
 	//	再生中でないなら処理しない
 	if (isPlaying_ == false)return;
 
+	//	再生可能でないなら処理しない
+	if (IsPlayable() == false)return;
+
 	//	再生時間更新
 	AddPlayTimer(elapsedTime);
 	AddTotalPlayTimer(elapsedTime);
@@ -129,8 +132,21 @@ void AudioSource3D::Filter(const XAUDIO2_FILTER_TYPE& type, const float& overq)
 {
 	filterParameters_.Type = type; //使うフィルターの種類
 
-	filterParameters_.Frequency										//カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
-		= 2.0f * sinf(X3DAUDIO_PI / 6.0f * (1.0f - dspSetting_.filterParam_)); // リスナーと音源の位置関係からとったフィルター係数を適用
+	filterParameters_.Frequency													//	カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
+		= 2.0f * sinf(X3DAUDIO_PI / 6.0f * (1.0f - dspSetting_.filterParam_));	//	リスナーと音源の位置関係からとったフィルター係数を適用
+
+	filterParameters_.OneOverQ = overq; //実際にどのくらいの音量がカットされているかを指定する
+
+	sourceVoice_->SetFilterParameters(&filterParameters_);
+}
+
+//	ハイパスフィルター適応
+void AudioSource3D::ApplyHighPassFilter(const float& overq)
+{
+	filterParameters_.Type = HighPassOnePoleFilter; //使うフィルターの種類
+
+	filterParameters_.Frequency											//	カットする周波数の基準(0Hz(0.0f) ~ 7350Hz(1.0f))
+		= 2.0f * sinf(X3DAUDIO_PI / 6.0f * dspSetting_.filterParam_);	//	リスナーと音源の位置関係からとったフィルター係数を適用
 
 	filterParameters_.OneOverQ = overq; //実際にどのくらいの音量がカットされているかを指定する
 
@@ -152,6 +168,8 @@ void AudioSource3D::DrawDebug()
 		ImGui::DragFloat("EmitterMinDistance", &emitter_->minDistance_);
 		ImGui::DragFloat("EmitterMaxDistance", &emitter_->maxDistance_);
 		ImGui::SliderFloat("Volume", &emitter_->volume_, 0.0f, 1.0f);
+		//	確認用
+		ImGui::DragFloat4("Volumes", &dspSetting_.outputMatrix_[0]);
 
 		//	デバッグ
 		ImGui::DragFloat("Pitch", &pitch_, 0.01f, XAUDIO2_MIN_FREQ_RATIO, XAUDIO2_MAX_FREQ_RATIO);	//	ピッチ変更テスト

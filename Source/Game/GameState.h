@@ -60,8 +60,8 @@ namespace GameState
 	class BossState : public State<SceneGame>
 	{
 	public:
-		BossState(SceneGame* owner) : State(owner){}
-		~BossState(){}
+		BossState(SceneGame* owner) : State(owner) {}
+		~BossState() {}
 
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
@@ -69,6 +69,23 @@ namespace GameState
 		void DrawDebug()override;
 
 	};
+}
+
+//	コンティニュー
+namespace GameState
+{
+	class ContinueState :State <SceneGame>
+	{
+	public:
+		ContinueState(SceneGame* owner) :State(owner) {}
+		~ContinueState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	}
 }
 
 //	ゲームクリア

@@ -147,6 +147,36 @@ namespace GameState
 
 }
 
+//	コンティニュー
+namespace GameState
+{
+	void ContinueState::Initialize()
+	{
+		owner_->Finalize();
+		owner_->Initialize();	//	Initialize()内でChangeState()で初期ステートを設定しているため、このステートでやらない
+	}
+
+	void ContinueState::Update(const float& elapsedTime)
+	{
+
+	}
+
+	void ContinueState::Finalize()
+	{
+
+	}
+
+	void ContinueState::DrawDebug()
+	{
+		if (ImGui::TreeNode("ContinueState"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
+}
+
 //	ゲームクリア
 namespace GameState
 {

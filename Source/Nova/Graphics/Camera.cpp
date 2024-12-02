@@ -233,6 +233,11 @@ void Camera::NormalCamera(const float& elapsedTime)
 		{
 			angle_.y -= DirectX::XM_2PI;
 		}
+
+		//	range_を線形補間
+		float t = (angle_.x - MinAngleX) / (MaxAngleX - MinAngleX);		//	補間係数tを計算
+		range_ = MinRange + (MaxRange - MinRange) * t;					//	rangeを補完
+
 	}
 
 	//	カメラ回転値を回転行列に変換
@@ -439,6 +444,11 @@ void Camera::DrawDebug()
 		ImGui::DragFloat3	("Right",		&right.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	右方向
 		ImGui::DragFloat3	("Up",			&up_.x,			0.01f,	-FLT_MAX,	FLT_MAX);	//	上方向
 		ImGui::DragFloat3	("Forward",		&forward.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	前方向
+
+		float maxAngleX = MaxAngleX;
+		float minAngleX = MinAngleX;
+		ImGui::DragFloat	("MinAngleX", &minAngleX);	//	X軸の最小角度
+		ImGui::DragFloat	("MaxAngleX", &maxAngleX);	//	X軸の最大角度
 		ImGui::DragFloat3	("Angle",		&angle_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	回転値
 		ImGui::DragFloat3	("EyeOffset",	&eyeOffset_.x,	0.001f,	-FLT_MAX,	FLT_MAX);	//	カメラ視点補正値
 		ImGui::DragFloat	("Range",		&range_,		0.1f,	FLT_MIN,	FLT_MAX);	//	間隔

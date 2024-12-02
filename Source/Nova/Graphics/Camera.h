@@ -62,6 +62,8 @@ private:
 
 	static constexpr float MaxAngleX = DirectX::XMConvertToRadians(45);
 	static constexpr float MinAngleX = DirectX::XMConvertToRadians(-45);
+	static constexpr float MinRange = 2.0f;
+	static constexpr float MaxRange = 5.0f;
 
 	DirectX::XMMATRIX viewMatrix_;								//	ビュー行列
 	DirectX::XMMATRIX projectionMatrix_;						//	プロジェクション行列

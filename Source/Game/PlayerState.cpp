@@ -103,13 +103,13 @@ namespace PlayerState
 #else
 		float pitch = Mathf::RandomRange(0.4f, 0.6f);	//	重い
 #endif
-
 		//	再生間隔に達していて、SEの再生も終わっていたら再生する
 		if (footStepsTimer_ > playFootstepsInterval_)
 		{
 			footStepsTimer_ = 0.0f;
-			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->SetPitch(pitch);
-			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
+			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->SetPitch(pitch);	//	ピッチ設定
+			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);		//	再生
+
 		}
 
 		//	足音再生間隔更新
@@ -123,7 +123,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	足音停止
-		AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Stop();
+		//AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Stop();
 
 		//	足音タイマーリセット
 		footStepsTimer_ = 0.0f;

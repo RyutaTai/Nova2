@@ -68,7 +68,7 @@ namespace PlayerState
 		owner_->SetMoveSpeed(3.0f);
 
 		//	足音SE再生
-		AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
+		//AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
 
 		//	足音タイマーリセット
 		footStepsTimer_ = 0.0f;
@@ -96,20 +96,24 @@ namespace PlayerState
 	//	足音SE再生
 	void MoveState::PlayFootsteps(const float& elapsedTime)
 	{
-		//	足音再生間隔更新
-		footStepsTimer_ += elapsedTime;
-
 		//	ピッチを0.4～0.6の間でランダムに決める
-		float pitch = Mathf::RandomRange(0.4f, 0.6f);
+#if 1
+		srand(static_cast<unsigned int>(time(NULL)));
+		float pitch = (rand() % 20 + 40) / 100.0f;
+#else
+		float pitch = Mathf::RandomRange(0.4f, 0.6f);	//	重い
+#endif
 
 		//	再生間隔に達していて、SEの再生も終わっていたら再生する
-		bool isPlaying = AudioManager::Instance().GetAudioResource("PlayerFootsteps")->IsPlaying();
-		if (footStepsTimer_ > playFootstepsInterval_ && isPlaying == false)
+		if (footStepsTimer_ > playFootstepsInterval_)
 		{
 			footStepsTimer_ = 0.0f;
 			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->SetPitch(pitch);
 			AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
 		}
+
+		//	足音再生間隔更新
+		footStepsTimer_ += elapsedTime;
 
 	}
 

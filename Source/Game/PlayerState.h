@@ -39,8 +39,8 @@ namespace PlayerState
 		void PlayFootsteps(const float& elapsedTime);	//	足音再生
 
 	private:
-		float playFootstepsInterval_ = 1.5f;	//	足音SE再生間隔
-		float footStepsTimer_ = 0.0f;			//	足音SE再生間隔用タイマー
+		float playFootstepsInterval_	= 0.278f;		//	足音SE再生間隔
+		float footStepsTimer_			= 0.0f;			//	足音SE再生間隔用タイマー
 
 	};
 }

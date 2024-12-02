@@ -51,8 +51,8 @@ Player::Player()
 	listener_.outerRadius_ = 1.67f;
 	listener_.filterParam_ = 0.8f;
 	//	‘«‰¹SE
-	sources_[static_cast<int>(AudioStereo::Footsteps)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/FootstepsOne.wav", Audio::AudioType::SENormal, "GameScene");
-	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.3f, false);
+	sources_[static_cast<int>(AudioStereo::Footsteps)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/FootstepsOne2.wav", Audio::AudioType::SENormal, "GameScene");
+	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.5f, false);
 	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetAudioName("PlayerFootsteps");
 	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::Footsteps)]);
 }

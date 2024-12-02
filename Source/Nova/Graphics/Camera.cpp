@@ -213,6 +213,26 @@ void Camera::NormalCamera(const float& elapsedTime)
 		//	スティックの入力値に合わせてX軸とY軸を回転
 		angle_.x -= ay * speed;
 		angle_.y += ax * speed;
+
+		//	X軸のカメラ回転を制限
+		if (angle_.x < MinAngleX)
+		{
+			angle_.x = MinAngleX;
+		}
+		if (angle_.x > MaxAngleX)
+		{
+			angle_.x = MaxAngleX;
+		}
+
+		//	Y軸の回転値を-3.14～3.14に収まるようにする
+		if (angle_.y < -DirectX::XM_PI)
+		{
+			angle_.y += DirectX::XM_2PI;
+		}
+		if (angle_.y > DirectX::XM_PI)
+		{
+			angle_.y -= DirectX::XM_2PI;
+		}
 	}
 
 	//	カメラ回転値を回転行列に変換

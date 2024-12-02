@@ -80,10 +80,15 @@ void Audio::Restart()
 //	’âŽ~
 void Audio::Stop()
 {
-	sourceVoice_->Stop();
-	sourceVoice_->FlushSourceBuffers();
-	sourceVoice_->SubmitSourceBuffer(&buffer_);
-	state_.SamplesPlayed = 0;
+	HRESULT hr = S_OK;
+	hr = sourceVoice_->Stop();
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	hr = sourceVoice_->FlushSourceBuffers();
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	state_.SamplesPlayed = 0;	//	•K—v?
+
 	isPlaying_ = false;
 }
 

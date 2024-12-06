@@ -12,7 +12,7 @@ XAPO_REGISTRATION_PROPERTIES FadeXAPO::xapoRegProp_ =
 };
 
 //	コンストラクタ
-FadeXAPO::FadeXAPO() :CXAPOBase(&xapoRegProp_)
+FadeXAPO::FadeXAPO() :CXAPOParametersBase(&xapoRegProp_, (BYTE*)FadeParam_, sizeof(FadeParam), FALSE/*受信可能*/)
 {
 
 }
@@ -32,12 +32,75 @@ HRESULT FadeXAPO::LockForProcess(
 void FadeXAPO::Process(UINT32 InputProcessParameterCount, const XAPO_PROCESS_BUFFER_PARAMETERS* pInputProcessParameters, 
 	UINT32 OutputProcessParameterCount, XAPO_PROCESS_BUFFER_PARAMETERS* pOutputProcessParameters, BOOL IsEnabled)
 {
-	const XAPO_PROCESS_BUFFER_PARAMETERS& inputParam = pInputProcessParameters[0];
-	XAPO_PROCESS_BUFFER_PARAMETERS& outputParam = pOutputProcessParameters[0];
+	//const XAPO_PROCESS_BUFFER_PARAMETERS& inputParam = pInputProcessParameters[0];
+	//XAPO_PROCESS_BUFFER_PARAMETERS& outputParam = pOutputProcessParameters[0];
+	//
+	//memcpy(outputParam.pBuffer, inputParam.pBuffer, outputFmt_.nBlockAlign * inputParam.ValidFrameCount);
+	//
+	//outputParam.ValidFrameCount = inputParam.ValidFrameCount;
+	//outputParam.BufferFlags = inputParam.BufferFlags;
 
-	memcpy(outputParam.pBuffer, inputParam.pBuffer, outputFmt_.nBlockAlign * inputParam.ValidFrameCount);
+	float* in = (float*)pInputProcessParameters[0].pBuffer;
+	float* out = (float*)pOutputProcessParameters[0].pBuffer;
+	FadeParam* param = (FadeParam*)BeginProcess();
+	for (int i = 0; i < pInputProcessParameters[0].ValidFrameCount; i++)
+	{
+		float volume = *in;
 
-	outputParam.ValidFrameCount = inputParam.ValidFrameCount;
-	outputParam.BufferFlags = inputParam.BufferFlags;
+		//	現在のボリュームを乗算した後、volumeにはslope分足す
+		volume *= currentVolume_;
+		currentVolume_ += slopeVolume_;
 
+		//	目標まで到達したら終了(浮動小数点の誤差のため正確にやる)
+		if (slopeVolume_ < 0.0f)
+		{
+			if (currentVolume_ <= param->targetVolume_)
+			{
+				currentVolume_ = param->targetVolume_;
+				slopeVolume_ = 0.0f;
+			}
+		}
+		else if (slopeVolume_ > 0.0f)
+		{
+			if (currentVolume_ >= param->targetVolume_)
+			{
+				currentVolume_ = param->targetVolume_;
+				slopeVolume_ = 0.0f;
+			}
+		}
+		*out = volume;
+		in++;
+		out++;
+	}
+	EndProcess();
+}
+
+//	SetParameters関数(渡されたパラメータの正当性をチェックする。OnSetParameters()とは違うので注意。)
+void FadeXAPO::SetParameters(const void* pParameters, UINT32 ParameterByteSize)
+{
+	//if (ParameterByteSize == sizeof(float))	//	サイズが同じならOK
+	//{
+	//	CXAPOParametersBase::SetParameters(pParameters, ParameterByteSize);
+	//}
+
+	FadeParam* param = (FadeParam*)pParameters;
+
+	if (param->targetTime_ == 0)	//	0なら即実行
+	{
+		currentVolume_ = param->targetVolume_;
+		slopeVolume_ = 0.0f;
+	}
+	else
+	{
+		slopeVolume_ = param->targetVolume_ - currentVolume_;
+		slopeVolume_ /= inputFmt_.nSamplesPerSec * param->targetTime_;
+	}
+	CXAPOParametersBase::SetParameters(pParameters, ParameterByteSize);
+
+}
+
+//	GetParameters関数
+void FadeXAPO::GetParameters(void* pParameters, UINT32 ParameterByteSize)
+{
+	*(float*)pParameters = 1.0f;	//	今は1.0fを返している
 }

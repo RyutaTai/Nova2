@@ -257,6 +257,7 @@
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
     <ClCompile Include="Source\Game\Rhythm.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
+    <ClCompile Include="Source\Nova\Audio\FadeXAPO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -486,6 +487,7 @@
     <ClInclude Include="Source\Game\AudioResourceTable.h" />
     <ClInclude Include="Source\Game\Rhythm.h" />
     <ClInclude Include="Source\Nova\Audio\Audio.h" />
+    <ClInclude Include="Source\Nova\Audio\FadeXAPO.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

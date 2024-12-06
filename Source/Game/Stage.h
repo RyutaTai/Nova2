@@ -78,9 +78,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emissiveConstantBuffer_;
 
 	//	FFTデータ
+	static constexpr int KindOfColor = 2;
 	struct FFTConstant
 	{
 		float fftData_[Frequency::BlockCount];	//	FFTのデータを分割数分GPUに渡す
+		DirectX::XMFLOAT4 color_[KindOfColor];	//	オーディオスペクトラムの数だけcolorを設定
 	};
 	FFTConstant fftConstant_;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> fftConstantBuffer_;

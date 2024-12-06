@@ -8,6 +8,7 @@
 // {
 //
 //   float4 data[512];                  // Offset:    0 Size:  8192
+//   float4 color[2];                   // Offset: 8192 Size:    32 [unused]
 //
 // }
 //
@@ -50,21 +51,21 @@ dcl_temps 2
 //   v1.x <- pin.texcoord.x; v1.y <- pin.texcoord.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 24 "E:\Program\Nova2\Source\Game\Shaders\SpectrumPS.hlsl"
+#line 27 "E:\Program\Nova2\Source\Game\Shaders\SpectrumPS.hlsl"
 mov r0.x, v1.x  // r0.x <- texcoord.x
 
-#line 33
+#line 36
 itof r0.y, l(2048)
 mul r0.y, r0.y, r0.x
 itof r0.z, l(4)
 div r0.y, r0.y, r0.z
 ftou r0.y, r0.y  // r0.y <- t
 
-#line 35
+#line 38
 itof r0.z, l(2048)
 mul r0.x, r0.z, r0.x  // r0.x <- offset
 
-#line 36
+#line 39
 ftoi r0.x, r0.x
 ineg r0.z, r0.x
 ineg r0.w, l(4)
@@ -77,45 +78,45 @@ ine r0.w, l(0, 0, 0, 0), r1.x
 movc r0.x, r0.w, r0.z, r0.x
 dp4 r0.x, cb10[r0.y + 0].xyzw, icb[r0.x + 0].xyzw  // r0.x <- fft
 
-#line 39
+#line 42
 mov r0.yzw, l(0,1.000000,0,0)  // r0.y <- fft_color.x; r0.z <- fft_color.y; r0.w <- fft_color.z
 
-#line 41
+#line 44
 lt r1.x, l(0.500000), v1.y
 if_nz r1.x
 
-#line 43
+#line 46
   mov r1.x, l(-0.500000)
   add r1.x, r1.x, v1.y
   mul r1.x, r1.x, l(2.000000)  // r1.x <- y
 
-#line 45
+#line 48
   ge r1.x, r0.x, r1.x
   movc r1.x, r1.x, l(1.000000), l(0)
   mul r0.yzw, r0.yyzw, r1.xxxx
 
-#line 47
+#line 50
 else 
 
-#line 48
+#line 51
   lt r1.x, v1.y, l(0.500000)
   if_nz r1.x
 
-#line 50
+#line 53
     mov r1.x, -v1.y
     add r1.x, r1.x, l(0.500000)
     mul r1.x, r1.x, l(2.000000)  // r1.x <- y
 
-#line 52
+#line 55
     ge r0.x, r0.x, r1.x
     movc r0.x, r0.x, l(1.000000), l(0)
     mul r0.yzw, r0.xxxx, r0.yyzw
 
-#line 54
+#line 57
   endif 
 endif 
 
-#line 56
+#line 59
 mov o0.xyz, r0.yzwy
 mov o0.w, l(1.000000)
 ret 

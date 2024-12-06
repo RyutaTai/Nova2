@@ -19,8 +19,6 @@ Audio::Audio(IXAudio2* xaudio, WaveReader* resource, const AudioType& audioType,
 	);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-	//	サンプリングレートに合わせてピッチを変更(誤差が出た時に使える、マジでいらない)
-	// sourceVoice->SetFrequencyRatio(DefaultSamplingRate / static_cast<FLOAT32>(resource->GetWaveFormat().nSamplesPerSec));
 	length_ = resource->GetPlayLength();
 	lengthFloat_ = resource->GetPlayLengthFLOAT();
 

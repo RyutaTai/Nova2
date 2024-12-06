@@ -61,8 +61,8 @@ public:
 	AudioType		GetAudioType() { return audioType_; }
 	
 	bool			IsPlaying();	//	手動で切り替えているisPlaying_フラグより精度がいいが、毎フレームGetStateを呼びたくないため分けている
-	bool			IsBGM();	//	BGMかどうか
-	bool			IsSE();		//	SEかどうか
+	bool			IsBGM();		//	BGMかどうか
+	bool			IsSE();			//	SEかどうか
 
 	void			SetAudioName(const std::string& audioName) { audioName_ = audioName; }
 	std::string		GetAudioName()	const { return audioName_; }

@@ -57,10 +57,12 @@ public:
 		Max,			//	ステート最大数
 	};
 
+private:
 	//	オーディオの種類
 	enum class AudioStereo
 	{
 		Footsteps,	//	足音
+		HitAttack,	//	攻撃ヒット音
 		Max
 	};
 

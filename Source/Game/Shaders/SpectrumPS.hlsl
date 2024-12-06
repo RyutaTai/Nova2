@@ -13,10 +13,13 @@
 // PROJECTION_MAPPING
 SamplerState samplerStates[8] : register(s0);
 
+#define KIND_OF_COLOR 2 //  オーディオスペクトラムの数だけcolorを作る
+#define MY_COLOR_INDEX 0
+
 cbuffer fftConstant : register(b10)
 {
-    //float data[2048];
     float4 data[FFT_BLOCK_COUNT / 4];
+    float4 color[KIND_OF_COLOR];
 }
 
 float4 main(VS_OUT pin) : SV_TARGET

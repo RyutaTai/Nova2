@@ -16,7 +16,7 @@ void Frequency::Initialize()
 
 void Frequency::Update(const float& elapsedTime, Audio* audioSource)
 {
-#if 1   //自分で変えた
+#if 1   //変更
     size_t          SPsize      = audioSource->GetAudioBytes();     //  オーディオのバッファサイズ取得
     const BYTE*     SPdata      = audioSource->GetAudioData();
     //std::vector<uint8_t> audioVector = ConvertToVector(SPdata, SPsize);

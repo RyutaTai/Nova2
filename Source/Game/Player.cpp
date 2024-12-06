@@ -52,9 +52,16 @@ Player::Player()
 	listener_.filterParam_ = 0.8f;
 	//	足音SE
 	sources_[static_cast<int>(AudioStereo::Footsteps)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/FootstepsOne2.wav", Audio::AudioType::SENormal, "GameScene");
-	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.5f, false);
+	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetAudioName("PlayerFootsteps");
 	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::Footsteps)]);
+
+	//	攻撃ヒット音
+	sources_[static_cast<int>(AudioStereo::HitAttack)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/HitAttack.wav", Audio::AudioType::SENormal, "GameScene");
+	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetVolume(1.0f, false);
+	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetAudioName("PlayerHitAttack");
+	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::HitAttack)]);
+
 }
 
 //	初期化
@@ -171,7 +178,8 @@ bool Player::PlayerVsEnemies(const float& elapsedTime)
 	for (Enemy* enemy : enemyManager.GetEnemies())
 	{
 		DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
-		float eRadius = enemy->GetRadius() - 5.0f;
+		//float eRadius = enemy->GetRadius() - 5.0f;
+		float eRadius = enemy->GetRadius();
 		float eHeight = enemy->GetHeight();
 		DirectX::XMFLOAT3 ePosOffset = { 0.0f,-eHeight / 2.0f,0.0f };
 
@@ -240,6 +248,10 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 			isHitEnemy = true;
 			SetPlayEffectFlag(true);
 			SetEffectPos(jointPos);
+
+			//	攻撃ヒット音再生
+			//AudioManager::Instance().GetAudioResource("PlayerHitAttack")->Play(false);
+
 		}
 	}
 	return isHitEnemy;
@@ -653,6 +665,7 @@ void Player::PlayEffect()
 
 	//	エフェクト描画フラグリセット
 	playEffectFlag_ = false;
+
 }
 
 bool Player::DummyRay(const float& elapsedTime)

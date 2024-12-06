@@ -53,6 +53,10 @@ Stage::Stage()
 	hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr, fftConstantBuffer_.ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
+	//	オーディオスペクトラムカラー初期化
+	fftConstant_.color_[1] = { 0.0f, 0.325f, 1.0f, 1.0f };
+	//fftConstant_.color_[1] = { 0.1f, 0.2f, 0.3f, 1.0f };
+
 	//	midi生成
 	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor.mid", 8.0f);
 
@@ -247,7 +251,7 @@ void Stage::UpdateCircleAudioSpectrum(const float& elapsedTime)
 
 	//	回転値更新
 	float projectionMappingRotation = projectionMapping_[projectionMappingIndex].rotation_;
-	projectionMappingRotation += 90.0f * elapsedTime;
+	//projectionMappingRotation += 90.0f * elapsedTime;
 	if (projectionMappingRotation > 360.0f)
 	{
 		projectionMappingRotation = 0.0f;
@@ -477,6 +481,7 @@ void Stage::DrawDebug()
 			if (ImGui::TreeNode("Waveform"))
 			{
 				ImGui::PushID(projectionMappingIndex);
+				ImGui::ColorEdit4("Color", &fftConstant_.color_[0].x);
 				ImGui::DragFloat3("Eye", &projectionMapping_[projectionMappingIndex].eye_.x);
 				ImGui::DragFloat3("Focus", &projectionMapping_[projectionMappingIndex].focus_.x);
 				ImGui::DragFloat("Rotation", &projectionMapping_[projectionMappingIndex].rotation_);
@@ -489,6 +494,7 @@ void Stage::DrawDebug()
 			if (ImGui::TreeNode("Circle"))
 			{
 				projectionMappingIndex = static_cast<int>(ProjectionMappingType::Circle);
+				ImGui::ColorEdit4("Color", &fftConstant_.color_[1].x);
 				ImGui::PushID(projectionMappingIndex);
 				ImGui::DragFloat3("Eye", &projectionMapping_[projectionMappingIndex].eye_.x);
 				ImGui::DragFloat3("Focus", &projectionMapping_[projectionMappingIndex].focus_.x);

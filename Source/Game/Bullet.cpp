@@ -30,7 +30,7 @@ Bullet::Bullet(const std::string& filename)
 	emitter_.volume_ = 1.0f;
 	//se_[static_cast<int>(AudioSE3D::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
 	se_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/Bullet/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
-	se_[static_cast<int>(Audio3D::Move)]->SetVolume(0.3f, false);
+	se_[static_cast<int>(Audio3D::Move)]->SetVolume(1.0f, false);
 	se_[static_cast<int>(Audio3D::Move)]->SetAudioName("BulletMove");
 	se_[static_cast<int>(Audio3D::Move)]->SetDSPSetting(Player::Instance().GetListener());
 	AudioManager::Instance().Register(se_[static_cast<int>(Audio3D::Move)]);

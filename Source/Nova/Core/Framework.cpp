@@ -263,8 +263,9 @@ bool Framework::Uninitialize()
 void Framework::DrawDebug()
 {
 	//	デバッグウィンドウを作成
-	ImGui::Begin("Framework");
+	ImGui::Begin("Debug");
 
+	ImGui::Text("Framework");
 	//	fpsのグラフを描画
 	ImGui::PlotLines("FPS Graph", fpsBuffer_.data(), static_cast<int>(fpsBuffer_.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0, 80));
 	// 現在のFPSを数値として表示
@@ -274,8 +275,8 @@ void Framework::DrawDebug()
 	graphics_.DrawDebug();
 	input_.DrawDebug();
 
-	ImGui::End();
 
 	SceneManager::Instance().DrawDebug();	//	シーンごとのDrawDebug()
+	ImGui::End();
 
 }

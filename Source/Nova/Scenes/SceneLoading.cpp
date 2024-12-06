@@ -134,12 +134,16 @@ void SceneLoading::LoadingThread(SceneLoading* scene)
 //	デバッグ描画
 void SceneLoading::DrawDebug()
 {
-	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
+	if (ImGui::TreeNode("Loading Sprite"))
 	{
-		if (sprite_[i] != nullptr)
+		//	スプライト終了化
+		for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
 		{
-			sprite_[i]->DrawDebug();
+			if (sprite_[i] != nullptr)
+			{
+				sprite_[i]->DrawDebug();
+			}
 		}
+		ImGui::TreePop();
 	}
 }

@@ -11,6 +11,9 @@
 #define M_PI 3.14159265359
 #define FFT_BLOCK_COUNT 2048
 
+#define KIND_OF_COLOR 2 //  オーディオスペクトラムの数だけcolorを作る
+#define MY_COLOR_INDEX 1
+
 #define SCREEN_WIDTH  1980
 #define SCREEN_HEIGHT 1080
 
@@ -19,8 +22,9 @@ SamplerState samplerStates[8] : register(s0);
 
 cbuffer fftConstant : register(b10)
 {
-    //float data[2048];
     float4 data[FFT_BLOCK_COUNT / 4];
+    float4 fftColor[KIND_OF_COLOR];
+
 }
 
 float4 capsule(float4 color, float4 background, float4 region, float2 uv);
@@ -45,7 +49,8 @@ float4 main(VS_OUT pin):SV_TARGET
 #if 0
     float4 color = lerp(float4(0.0, 1.0, 0.8, 1.0), float4(0.0, 0.3, 0.25, 1.0), distance(float2(aspect / 2.0, 0.5), texcoord));
 #else
-    float4 color = float4(0, 0, 0, 1);  //  四角を映さない
+    float4 color = float4(0, 0, 0, 1); //  四角を映さない 
+    //float4 color = float4(0.1, 0.2, 0.3, 1.0);  //  ステージと同系色
 #endif
 
     //VISUALIZER PARAMETERS
@@ -59,10 +64,12 @@ float4 main(VS_OUT pin):SV_TARGET
     float offset = texcoord.x * FFT_BLOCK_COUNT;
     float fft = amp[(int) offset % 4];
     
-    float4 spectrumColor = float4(0.1, 0.2, 0.3, 1.0);  //  オーディオスペクトラムの色
+    float4 spectrumColor = float4(fftColor[MY_COLOR_INDEX]); //  オーディオスペクトラムの色
+    //float4 spectrumColor = float4(0.1, 0.2, 0.3, 1.0);  //  オーディオスペクトラムの色
     color = rays(spectrumColor, color, float2(aspect / 2.0, 1.0 / 2.0), RADIUS, RAYS, RAY_LENGTH, fft, texcoord);
 
-    return float4(color.xyz, color.a * 0.5);
+    //return float4(color.xyz, color.a * 0.5);
+    return float4(color.xyz, color.a );
 }
 
 float4 rays(float4 color, float4 background, float2 position, float radius, float rays, float ray_length, float fft, float2 uv)

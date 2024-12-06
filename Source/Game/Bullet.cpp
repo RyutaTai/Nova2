@@ -30,7 +30,7 @@ Bullet::Bullet(const std::string& filename)
 	emitter_.volume_ = 1.0f;
 	//se_[static_cast<int>(AudioSE3D::Explosion)] = std::unique_ptr<AudioSource3D>(Audio::Instance().LoadAudioSource3D("./Resources/Audio/SE/GameStart_015.wav", emitter_.get()));
 	se_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/Bullet/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
-	se_[static_cast<int>(Audio3D::Move)]->SetVolume(1.0f, false);
+	se_[static_cast<int>(Audio3D::Move)]->SetVolume(0.5f, false);
 	se_[static_cast<int>(Audio3D::Move)]->SetAudioName("BulletMove");
 	se_[static_cast<int>(Audio3D::Move)]->SetDSPSetting(Player::Instance().GetListener());
 	AudioManager::Instance().Register(se_[static_cast<int>(Audio3D::Move)]);
@@ -63,7 +63,9 @@ void Bullet::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3&
 //	エミッター更新
 void Bullet::UpdateEmitter()
 {
+	//	位置更新
 	emitter_.position_ = GetTransform()->GetPosition();
+	se_[static_cast<int>(Audio3D::Move)]->SetPosition(emitter_.position_);	//	AudioSource3Dのemitter_のpositionに渡す
 	//emitter_.velocity_ = velocity_;
 }
 

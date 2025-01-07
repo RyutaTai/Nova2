@@ -12,7 +12,7 @@
 #include "../Others/MathHelper.h"
 #include "../../Game/EnemyManager.h"
 #include "../../Game/GameState.h"
-#include "../../Game/UIManager.h"
+#include "../../Game/UI/UIManager.h"
 
 //	‰Šú‰»
 void SceneDemo::Initialize()

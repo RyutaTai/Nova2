@@ -5,7 +5,7 @@
 #include "../Scenes/SceneManager.h"
 #include "../Scenes/SceneLoading.h"
 #include "../Scenes/SceneGame.h"
-#include "../../Game/UIManager.h"
+#include "../../Game/UI/UIManager.h"
 #include "../../Game/TitleState.h"
 #include "../Audio/AudioManager.h"
 

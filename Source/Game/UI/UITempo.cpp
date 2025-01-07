@@ -1,7 +1,7 @@
 #include "UITempo.h"
 
-#include "../../External/imgui/imgui.h"
-#include "../Nova/Input/Input.h"
+#include "../../../External/imgui/imgui.h"
+#include "../../Nova/Input/Input.h"
 
 UITempo::UITempo()
 	:UI()
@@ -23,7 +23,7 @@ UITempo::UITempo()
 		semicircles_[index] = std::make_unique<Semicircle>();
 
 		//	range_設定
-		float RangePerOne = SemicircleRangeMax / SemicircleMax;	//	一つ当たりのrange_
+		float RangePerOne = semicircleRangeMax_ / SemicircleMax;	//	一つ当たりのrange_
 		float range = RangePerOne * index;
 		semicircles_[index]->range_ = range;
 
@@ -94,9 +94,9 @@ void UITempo::UpdatePosition(const float& elapsedTime)
 	{
 		//	range更新
 		semicircles_[index]->range_ -= moveSpeed_ * moveFactor_ * elapsedTime;
-		if (semicircles_[index]->range_ <= SemicircleRangeMin)	//	中心円と重なったら最大距離にリセット
+		if (semicircles_[index]->range_ <= semicircleRangeMin_)	//	中心円と重なったら最大距離にリセット
 		{
-			semicircles_[index]->range_ = SemicircleRangeMax;
+			semicircles_[index]->range_ = semicircleRangeMax_;
 			centerCircleAnimFlag_ = true;
 		}
 
@@ -116,8 +116,8 @@ void UITempo::UpdateScale(const float& elapsedTime)
 	{
 		//	半円更新
 		float range = semicircles_[index]->range_;
-		float normalizeRange = (range - SemicircleRangeMin) / (SemicircleRangeMax - SemicircleRangeMin);										//	rangeを正規化
-		float scaleFactor = SemicircleScaleMin + normalizeRange * (SemicircleScaleMax - SemicircleScaleMin);	//	スケール算出
+		float normalizeRange = (range - semicircleRangeMin_) / (semicircleRangeMax_ - semicircleRangeMin_);										//	rangeを正規化
+		float scaleFactor = semicircleScaleMin_ + normalizeRange * (semicircleScaleMax_ - semicircleScaleMin_);	//	スケール算出
 		semicircles_[index]->left_->GetTransform()->SetScaleFactor(scaleFactor);
 		semicircles_[index]->right_->GetTransform()->SetScaleFactor(scaleFactor);
 	}
@@ -136,7 +136,7 @@ void UITempo::UpdateCenterCircleAnimation()
 	if (centerCircleAnimFlag_ == false)return;
 
 	center_->GetTransform()->SetTexPosX(100.0f);
-	if (centerAnimTime_ > AnimChangeThreshold)
+	if (centerAnimTime_ > animChangeThreshold_)
 	{
 		centerCircleAnimFlag_ = false;
 		center_->GetTransform()->SetTexPosX(0.0f);
@@ -164,11 +164,11 @@ void UITempo::DrawDebug()
 		ImGui::DragFloat("BPM", &bpm_, 0.1f);
 
 		ImGui::Text("Center");								//	中心の円
-		ImGui::DragInt("AnimChangeThreshold", &AnimChangeThreshold);
-		ImGui::DragFloat("RangeMax", &SemicircleRangeMax);
-		ImGui::DragFloat("RangeMin", &SemicircleRangeMin);
-		ImGui::DragFloat("RangeMin", &SemicircleScaleMax);
-		ImGui::DragFloat("RangeMin", &SemicircleScaleMin);
+		ImGui::DragInt("animChangeThreshold_", &animChangeThreshold_);
+		ImGui::DragFloat("RangeMax", &semicircleRangeMax_);
+		ImGui::DragFloat("RangeMin", &semicircleRangeMin_);
+		ImGui::DragFloat("RangeMin", &semicircleScaleMax_);
+		ImGui::DragFloat("RangeMin", &semicircleScaleMin_);
 		center_->DrawDebug();
 
 		ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.1f);	//	半円が移動する速さ

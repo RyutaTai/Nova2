@@ -12,10 +12,10 @@
 #include "../Others/MathHelper.h"
 #include "../../Game/EnemyManager.h"
 #include "../../Game/GameState.h"
-#include "../../Game/UIManager.h"
-#include "../../Game/UIHealth.h"
-#include "../../Game/UIInstructions.h"
-#include "../../Game/UITempo.h"
+#include "../../Game/UI/UIManager.h"
+#include "../../Game/UI/UIHealth.h"
+#include "../../Game/UI/UIInstructions.h"
+#include "../../Game/UI/UITempo.h"
 
 //	èâä˙âª
 void SceneGame::Initialize()

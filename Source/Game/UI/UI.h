@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Nova/Resources/Sprite.h"
+#include "../../Nova/Resources/Sprite.h"
 
 class UI
 {

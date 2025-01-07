@@ -197,7 +197,7 @@
     <ClCompile Include="Source\Game\Rhythm.cpp" />
     <ClCompile Include="Source\Game\DragonkinAction.cpp" />
     <ClCompile Include="Source\Game\DragonkinJudgment.cpp" />
-    <ClCompile Include="Source\Game\UIInstructions.cpp" />
+    <ClCompile Include="Source\Game\UI\UIInstructions.cpp" />
     <ClCompile Include="Source\Nova\AI\BehaviorData.cpp" />
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
@@ -205,7 +205,7 @@
     <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
-    <ClCompile Include="Source\Game\UIHealth.cpp" />
+    <ClCompile Include="Source\Game\UI\UIHealth.cpp" />
     <ClCompile Include="Source\Nova\Audio\AudioManager.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\ImGuiCtrl.cpp" />
@@ -237,7 +237,7 @@
     <ClCompile Include="Source\Game\Player.cpp" />
     <ClCompile Include="Source\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Game\Stage.cpp" />
-    <ClCompile Include="Source\Game\UI.cpp" />
+    <ClCompile Include="Source\Game\UI\UI.cpp" />
     <ClCompile Include="Source\Nova\AI\BehaviorTree.cpp" />
     <ClCompile Include="Source\Nova\AI\MetaAI.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio3DSystem.cpp" />
@@ -282,16 +282,17 @@
     <ClCompile Include="Source\Nova\Scenes\SceneLoading.cpp" />
     <ClCompile Include="Source\Nova\Scenes\SceneManager.cpp" />
     <ClCompile Include="Source\Nova\Scenes\SceneTitle.cpp" />
-    <ClCompile Include="Source\Game\UIManager.cpp" />
+    <ClCompile Include="Source\Game\UI\UIManager.cpp" />
     <ClCompile Include="Source\Game\TitleState.cpp" />
-    <ClCompile Include="Source\Game\UITempo.cpp" />
+    <ClCompile Include="Source\Game\UI\UITempo.cpp" />
+    <ClCompile Include="Source\Game\UI\UIRhythmJudgment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\Rhythm.h" />
     <ClInclude Include="Source\Game\AudioResourceTable.h" />
     <ClInclude Include="Source\Game\DragonkinAction.h" />
     <ClInclude Include="Source\Game\DragonkinJudgment.h" />
-    <ClInclude Include="Source\Game\UIInstructions.h" />
+    <ClInclude Include="Source\Game\UI\UIInstructions.h" />
     <ClInclude Include="Source\Nova\AI\ActionBase.h" />
     <ClInclude Include="Source\Nova\AI\BehaviorData.h" />
     <ClInclude Include="Source\Nova\AI\JudgmentBase.h" />
@@ -301,7 +302,7 @@
     <ClInclude Include="Source\Nova\Graphics\Decal.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />
-    <ClInclude Include="Source\Game\UIHealth.h" />
+    <ClInclude Include="Source\Game\UI\UIHealth.h" />
     <ClInclude Include="Source\Nova\Audio\AudioManager.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />
@@ -334,8 +335,8 @@
     <ClInclude Include="Source\Game\Player.h" />
     <ClInclude Include="Source\Game\PlayerState.h" />
     <ClInclude Include="Source\Game\Stage.h" />
-    <ClInclude Include="Source\Game\UI.h" />
-    <ClInclude Include="Source\Game\UIManager.h" />
+    <ClInclude Include="Source\Game\UI\UI.h" />
+    <ClInclude Include="Source\Game\UI\UIManager.h" />
     <ClInclude Include="Source\Nova\AI\BehaviorTree.h" />
     <ClInclude Include="Source\Nova\AI\MetaAI.h" />
     <ClInclude Include="Source\Nova\AI\State.h" />
@@ -390,7 +391,8 @@
     <ClInclude Include="Source\Nova\Scenes\SceneManager.h" />
     <ClInclude Include="Source\Nova\Scenes\SceneTitle.h" />
     <ClInclude Include="Source\Game\TitleState.h" />
-    <ClInclude Include="Source\Game\UITempo.h" />
+    <ClInclude Include="Source\Game\UI\UITempo.h" />
+    <ClInclude Include="Source\Game\UI\UIRhythmJudgment.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Game\Shaders\BulletCoverPS.hlsl">

@@ -4,7 +4,6 @@
 
 #include "../Nova/Resources/GltfModelStaticBatching.h"
 #include "../Nova/Collision/CollisionMesh.h"
-#include "../Nova/Resources/Midi.h"
 #include "../Nova/Audio/Frequency.h"
 #include "../Nova/Graphics/FrameBuffer.h"
 #include "../Nova/Graphics/FullScreenQuad.h"
@@ -137,8 +136,6 @@ private:
 	float				emissiveIntencityMax_	= 15.0f;
 
 	std::unique_ptr<Frequency> frequency_ = nullptr;	//	音の周波数データ(emissiveIntencityの計算に使う)
-	std::unique_ptr<Midi> midi_ = nullptr;				//	emissiveタイミング判定用midi
-
 
 	float threshold_ = 2100.0f;
 	float defaultEmissiveIntensity_ = 10.0f;

@@ -10,7 +10,7 @@
 #include "../../Game/Dragonkin.h"
 #include "../../Game/Drone.h"
 #include "../PostProcess/Bloom.h"
-#include "../../Game/UI.h"
+#include "../../Game/UI/UI.h"
 #include "../Graphics/Decal.h"
 
 class SceneGame : public Scene

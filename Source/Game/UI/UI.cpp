@@ -1,7 +1,7 @@
 #include "UI.h"
 
 #include "../../imgui/imgui.h"
-#include "../Nova/Resources/ResourceManager.h"
+#include "../../Nova/Resources/ResourceManager.h"
 #include "UIManager.h"
 
 UI::UI()

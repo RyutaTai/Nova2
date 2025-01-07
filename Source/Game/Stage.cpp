@@ -57,8 +57,6 @@ Stage::Stage()
 	fftConstant_.color_[1] = { 0.0f, 0.325f, 1.0f, 1.0f };
 	//fftConstant_.color_[1] = { 0.1f, 0.2f, 0.3f, 1.0f };
 
-	//	midi生成
-	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor.mid", 8.0f);
 
 	//	音の周波数データ生成、初期化
 	frequency_ = std::make_unique<Frequency>();
@@ -113,9 +111,6 @@ Stage& Stage::Instance()
 //	更新処理
 void Stage::Update(const float& elapsedTime)
 {
-	//	midi更新処理
-	midi_->Update(elapsedTime);
-
 	//	エミッシブ更新処理
 	UpdateEmissive(elapsedTime);
 

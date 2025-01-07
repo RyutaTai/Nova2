@@ -1,7 +1,7 @@
 #include "UIHealth.h"
 
-#include "Player.h"
-#include "../Nova/Others/MathHelper.h"
+#include "../Player.h"
+#include "../../Nova/Others/MathHelper.h"
 
 UIHealth::UIHealth()
 	:UI()

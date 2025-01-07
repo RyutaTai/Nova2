@@ -1,7 +1,7 @@
 #include "UIManager.h"
 
-#include "../../External/imgui/imgui.h"
-#include "../Nova/Graphics/Graphics.h" 
+#include "../../../External/imgui/imgui.h"
+#include "../../Nova/Graphics/Graphics.h" 
 
 void UIManager::Initialize()
 {

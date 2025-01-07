@@ -5,7 +5,7 @@
 
 #include "Scene.h"
 #include "../Resources/Sprite.h"
-#include "../../Game/UI.h"
+#include "../../Game/UI/UI.h"
 #include "../Audio/AudioSource.h"
 #include "../AI/StateMachine.h"
 

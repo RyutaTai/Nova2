@@ -11,6 +11,8 @@
 #include "../Nova/Input/GamePad.h"
 #include "../Nova/Input/Input.h"
 #include "../Nova/Audio/AudioManager.h"
+#include "../Nova/Scenes/SceneManager.h"
+#include "Rhythm.h"
 
 //	待機ステート
 namespace PlayerState
@@ -36,6 +38,9 @@ namespace PlayerState
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
+
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 
@@ -88,6 +93,16 @@ namespace PlayerState
 		{
 			//	待機ステートへ遷移
 			owner_->GetStateMachine()->ChangeState(static_cast<int>(Player::StateType::Idle));
+			return;
+		}
+
+		//	攻撃ステートへ遷移
+		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		{
+			owner_->ChangeState(Player::StateType::ComboOne1);
+
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		

@@ -1,8 +1,8 @@
 #include "UI.h"
 
+#include "UIManager.h"
 #include "../../imgui/imgui.h"
 #include "../../Nova/Resources/ResourceManager.h"
-#include "UIManager.h"
 
 UI::UI()
 {
@@ -29,5 +29,5 @@ void UI::Render()
 //	デバッグ描画
 void UI::DrawDebug()
 {
-	
+	ImGui::Checkbox("IsVisible", &isVisible_);
 }

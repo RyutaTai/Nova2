@@ -270,7 +270,7 @@
     <ClCompile Include="Source\Nova\Resources\GeometricPrimitive.cpp" />
     <ClCompile Include="Source\Nova\Resources\GltfModel.cpp" />
     <ClCompile Include="Source\Nova\Resources\GltfModelStaticBatching.cpp" />
-    <ClCompile Include="Source\Nova\Resources\Midi.cpp" />
+    <ClCompile Include="Source\Nova\Audio\Midi.cpp" />
     <ClCompile Include="Source\Nova\Resources\Model.cpp" />
     <ClCompile Include="Source\Nova\Resources\ResourceManager.cpp" />
     <ClCompile Include="Source\Nova\Resources\Sprite.cpp" />
@@ -377,7 +377,7 @@
     <ClInclude Include="Source\Nova\Resources\GeometricPrimitive.h" />
     <ClInclude Include="Source\Nova\Resources\GltfModel.h" />
     <ClInclude Include="Source\Nova\Resources\GltfModelStaticBatching.h" />
-    <ClInclude Include="Source\Nova\Resources\Midi.h" />
+    <ClInclude Include="Source\Nova\Audio\Midi.h" />
     <ClInclude Include="Source\Nova\Resources\Model.h" />
     <ClInclude Include="Source\Nova\Resources\ResourceManager.h" />
     <ClInclude Include="Source\Nova\Resources\Sprite.h" />

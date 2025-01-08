@@ -1,9 +1,19 @@
 #pragma once
 
-#include "../Nova/Resources/Midi.h"
+#include "../Nova/Audio/Midi.h"
 
 class Rhythm
 {
+public:
+	//	判定の種類
+	enum class JudgmentType
+	{
+		Perfect = 0,
+		Good,
+		Miss,
+		Max
+	};
+
 public:
 	Rhythm() {}
 	~Rhythm() {}
@@ -17,22 +27,18 @@ public:
 		static Rhythm rhythm;
 		return rhythm;
 	}
+	
+	const float GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
+
+	void GetJudgmentType(const float& inputTime, const float& elapsedTime);
 
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }
 
 private:
-	//	判定の種類
-	enum class JudgmentType
-	{
-		Perfect = 0,
-		Good,
-		Miss,
-		Max
-	};
-
-private:
-	float bpm_ = 120;
+	float bpm_ = 120.0f;	//	楽曲のbpm
+	const float PerfectRange_	= 0.025f;
+	const float GoodRange_		= 0.050f;
 
 	std::unique_ptr<Midi> midi_ = nullptr;	//	タイミング判定用midi(4つ打ち)
 

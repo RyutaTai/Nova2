@@ -184,7 +184,7 @@
     <ClCompile Include="Source\Nova\AI\BehaviorTree.cpp">
       <Filter>Nova\AI\BehaviorBaseAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Nova\Resources\Midi.cpp" />
+    <ClCompile Include="Source\Nova\Audio\Midi.cpp" />
     <ClCompile Include="External\MidiFile\Src\Binasc.cpp" />
     <ClCompile Include="External\MidiFile\Src\MidiEvent.cpp" />
     <ClCompile Include="External\MidiFile\Src\MidiEventList.cpp" />
@@ -411,7 +411,7 @@
     <ClInclude Include="Source\Nova\AI\BehaviorTree.h">
       <Filter>Nova\AI\BehaviorBaseAI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Nova\Resources\Midi.h" />
+    <ClInclude Include="Source\Nova\Audio\Midi.h" />
     <ClInclude Include="External\MidiFile\include\Binasc.h" />
     <ClInclude Include="External\MidiFile\include\MidiEvent.h" />
     <ClInclude Include="External\MidiFile\include\MidiEventList.h" />

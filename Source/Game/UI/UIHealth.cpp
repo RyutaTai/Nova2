@@ -81,6 +81,7 @@ void UIHealth::DrawDebug()
 {
 	if (ImGui::TreeNode("Health"))
 	{
+		UI::DrawDebug();
 		ImGui::DragFloat("GaugeLerpSpeed", &gaugeLerpSpeed_);	//	•âŠ®‚·‚é‘¬‚³
 		ImGui::TreePop();
 	}

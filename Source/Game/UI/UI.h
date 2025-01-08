@@ -13,11 +13,11 @@ public:
 	virtual void Render();
 	virtual void DrawDebug();
 
-	void SetDrawFlag(const bool& drawFlag) { drawFlag_ = drawFlag; }
-	bool GetDrawFlag() { return drawFlag_; }
+	void SetIsVisible(const bool& isVisible) { isVisible_ = isVisible; }
+	bool GetIsVisible() { return isVisible_; }
 
-private:
-	bool drawFlag_ = true;	//	描画フラグ
+protected:
+	bool isVisible_ = true;	//	UI表示フラグ
 
 };
 

@@ -16,6 +16,8 @@
 #include "../../Game/UI/UIHealth.h"
 #include "../../Game/UI/UIInstructions.h"
 #include "../../Game/UI/UITempo.h"
+#include "../../Game/UI/UIRhythmJudgment.h"
+#include "../../Game/Rhythm.h"
 
 //	初期化
 void SceneGame::Initialize()
@@ -39,13 +41,17 @@ void SceneGame::Initialize()
 	sprite_[static_cast<int>(SPRITE_GAME::GameOver)] = std::make_unique<Sprite>(L"./Resources/Image/GameOver.png");
 
 	/* ----- UI初期化(生成したらUIクラスでマネージャーに登録される) ----- */
-	UIHealth*		uiHealth		= new UIHealth();
+	UIHealth*			uiHealth		= new UIHealth();
 	//UIInstructions* uiInstructions	= new UIInstructions();
-	UITempo*		uiTempo			= new UITempo();
+	UITempo*			uiTempo			= new UITempo();
+	UIRhythmJudgment*	uiRhythm		= new UIRhythmJudgment();
 	UIManager::Instance().Initialize();					//	登録し終わってから初期化処理をする(今は何もしていない)
 
+	/* ----- Rhythmクラス初期化 ----- */
+	Rhythm::Instance().Initialize();
+
 	/* ----- ステージ初期化 ----- */
-	stage_ = std::make_unique<Stage>();							//	シティモデル
+	stage_ = std::make_unique<Stage>();					//	シティモデル
 
 	/* ----- シーン定数バッファ ----- */
 	D3D11_BUFFER_DESC desc;
@@ -158,6 +164,9 @@ void SceneGame::Update(const float& elapsedTime)
 
 	/* ----- UI更新処理 ----- */
 	UIManager::Instance().Update(elapsedTime);
+
+	/* ----- Rhythm更新処理 ----- */
+	Rhythm::Instance().Update(elapsedTime);
 
 	//	ゲームクリアへの遷移はWeve3 State内で行っている
 		
@@ -444,12 +453,9 @@ void SceneGame::DrawDebug()
 	stage_->DrawDebug();				//	Stage
 
 	EnemyManager::Instance().DrawDebug();
-	//enemy_->DrawDebug();				//	Enemy
-	//dragonkin_->DrawDebug();			//	Dragonkin
-	//drone_->DrawDebug();				//	Drone
+	
 	
 	UIManager::Instance().DrawDebug();	//	UIManagerとUI
-
-	//ImGui::Checkbox("DrawUI", &drawUI_);				//	UI描画切り替え
+	Rhythm::Instance().DrawDebug();
 
 }

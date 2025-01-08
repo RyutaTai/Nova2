@@ -17,20 +17,24 @@ public:
 
     struct MidiNote         //  MIDIノートを表す構造体
     {
-        EventType   eventType_;
-        int         noteNumber_;
-        float       time_;
+        EventType   eventType_ = {};
+        int         noteNumber_ = 0;
+        float       time_ = 0.0f;
+        bool        judged_ = false; // 判定済みフラグを追加
     };
 
 public:
-    Midi(const std::string& midiFilename,const float& midiFile);
+    Midi(const std::string& midiFilename);
     ~Midi() {}
 
-    //  ノートを追加するメソッド
+    //  ノートを追加する関数
     void AddNote(const EventType& eventType, const int& noteNumber, const float& time);
 
-    //  ノートを取得するメソッド
+    //  ノートを取得する関数
     std::vector<MidiNote> GetNotes() const { return notes_; }
+    const Midi::MidiNote* FindClosestNote(const float& inputTime);
+    Midi::MidiNote*       FindClosestNoteInLoop(const float& inputTime);
+    const Midi::MidiNote* GetNextNote(const float& currentTime);
 
     void	Initialize();								    //	初期化処理
     void	Update(const float& elapsedTime);				//	更新処理
@@ -39,14 +43,18 @@ public:
 
     void UpdateCurrentTimer(const float& elapsedTime);      //  タイマー更新処理
 
+    bool IsNoteOnAtTime(const float& time, const float& threshold = 0.17f);
     bool IsInputNoteOn(const float& inputTime);             //  入力時間がノートオンかどうか
     bool IsCurrentTimeNoteOn();                             //  現在の時間がノートオンかどうか
 
-    float	        GetNearMidiTime(const float& inputTime);//	入力されたタイミングから近いノートを判定	
+    void    BuildNoteOnList();
+    float	GetNearMidiTime(const float& inputTime);        //	入力されたタイミングから近いノートを判定	
 
     smf::MidiFile&  GetMidiFile()                   { return midiFile_; }	                //	midiファイル取得
     const float     GetMidiFileDurationSeconds()    { return midiFileDurationSeconds_; }    //  midiファイル全体の長さ取得
+    float           GetCurrentTimer() { return currentTimer_; }
 
+    void ResetJudgedNotes();    //  ノートの判定済みフラグをリセット
 
 private:
     float                   midiFileDurationSeconds_ = 0.0f;    //  midiファイル全体の長さ(時間[s])

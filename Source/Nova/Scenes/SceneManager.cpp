@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include "../Audio/AudioManager.h"
+#include "../../imgui/imgui.h"
 
 //	デストラクタ
 SceneManager::~SceneManager()
@@ -20,6 +21,7 @@ SceneManager::~SceneManager()
 //	更新処理
 void SceneManager::Update(const float& elapsedTime)
 {
+	//	シーン遷移
 	if (nextScene_ != nullptr)//	次のシーンが設定されていたらクリア
 	{
 		Clear();
@@ -32,9 +34,12 @@ void SceneManager::Update(const float& elapsedTime)
 		}
 	}
 
+	//	現在のシーンの更新処理
 	if (currentScene_ != nullptr)
 	{
 		currentScene_->Update(elapsedTime);
+		//	現在のシーンの経過時間更新
+		currentSceneTime_ += elapsedTime;
 	}
 }
 
@@ -60,6 +65,11 @@ void SceneManager::Render()
 void SceneManager::DrawDebug()
 {
 #ifdef USE_IMGUI
+	if (ImGui::TreeNode("SceneManager"))
+	{
+		ImGui::DragFloat("CurrentSceneTimer", &currentSceneTime_);
+		ImGui::TreePop();
+	}
 	currentScene_->DrawDebug();
 #endif// USE_IMGUI
 }
@@ -72,6 +82,7 @@ void SceneManager::Clear()
 		currentScene_->Finalize();
 		delete currentScene_;
 		currentScene_ = nullptr;
+		currentSceneTime_ = 0.0f;
 	}
 }
 

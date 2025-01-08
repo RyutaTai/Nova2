@@ -5,7 +5,7 @@
 
 void UIManager::Initialize()
 {
-	for (UI*& ui : userInterfaces_)
+	for (UI* ui : generates_)
 	{
 		ui->Initialize();
 	}
@@ -39,12 +39,18 @@ void UIManager::Finalize()
 	userInterfaces_.clear();
 }
 
-void UIManager::SetDrawFlag(const bool& drawFlag)
+void UIManager::SetIsVisible(const bool& isVisible)
 {
 	//for (UI*& ui : userInterfaces_)
 	//{
 	//	ui->SetRenderFlag(drawFlag);
 	//}
+}
+
+//	UITypeからUIを取得
+UI* UIManager::GetUIFromType(const UIType& type)
+{
+	return GetUIFromNum(static_cast<int>(type));
 }
 
 //	番号からUIを取得
@@ -68,8 +74,8 @@ UI* UIManager::GetUIFromNum(const int& num)
 
 void UIManager::Render()
 {
-	//	UI全体描画フラグがfalseなら処理しない
-	if (allDrawFlag_ == false)return;
+	//	UI全体表示フラグがfalseなら処理しない
+	if (allIsVisible_ == false)return;
 
 	//	ステート設定
 	Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
@@ -79,7 +85,7 @@ void UIManager::Render()
 	//	描画
 	for (UI*& ui : userInterfaces_)
 	{
-		if (ui->GetDrawFlag()) ui->Render();
+		if (ui->GetIsVisible()) ui->Render();
 	}
 }
 
@@ -87,13 +93,13 @@ void UIManager::DrawDebug()
 {
 	int size = userInterfaces_.size();
 
-	//	UImanagerデバッグ
+	//	UIManagerデバッグ
 	if (ImGui::TreeNode("UIManager"))
 	{
 		ImGui::DragInt("UI Count", &size);
-		if(ImGui::Checkbox("AllDrawFlag", &allDrawFlag_))
+		if(ImGui::Checkbox("AllIsVisible", &allIsVisible_))
 		{ 
-			SetDrawFlag(allDrawFlag_);
+			SetIsVisible(allIsVisible_);
 		}
 
 		//	UIデバッグ

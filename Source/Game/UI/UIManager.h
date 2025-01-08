@@ -8,6 +8,16 @@
 class UIManager
 {
 public:
+	//	UI‚ÌŽí—Þ
+	enum class UIType
+	{
+		Health,
+		Tempo,
+		RhythmJudgment,
+		Max
+	};
+
+public:
 	UIManager(){}
 	~UIManager(){}
 
@@ -25,15 +35,15 @@ public:
 
 	void	Register(UI* ui);
 
-	void	SetDrawFlag(const bool& drawFlag);
+	void	SetIsVisible(const bool& isVisible);
 
+	UI*		GetUIFromType(const UIType& type);
 	UI*		GetUIFromNum(const int& num);
-	UI*		GetUIFromName(const std::string& name);
 
 private:
 	std::vector<UI*> userInterfaces_;
 	std::set<UI*>	generates_;
-	bool allDrawFlag_ = true;
+	bool allIsVisible_ = true;
 
 };
 

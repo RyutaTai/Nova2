@@ -1,0 +1,264 @@
+#include "Midi.h"
+
+#include <algorithm>
+
+Midi::Midi(const std::string& midiFilename)
+{
+    //  midi読み込み
+    _ASSERT_EXPR(midiFile_.read(midiFilename), L"midiFile loading is failed.");
+
+    //  midiファイルの長さ設定
+    midiFileDurationSeconds_ = midiFile_.getFileDurationInSeconds();
+
+}
+
+//	初期化処理
+void Midi::Initialize()
+{
+
+}
+
+//	終了処理
+void Midi::Finalize()
+{
+
+}
+
+//	更新処理
+void Midi::Update(const float& elpasedTime)
+{
+    UpdateCurrentTimer(elpasedTime);    //  タイマー更新
+
+    BuildNoteOnList();
+
+}
+
+//  タイマー更新
+void Midi::UpdateCurrentTimer(const float& elapsedTime)
+{
+    //  再生時間を更新
+    currentTimer_ += elapsedTime;
+
+    //  再生時間が MIDI の総時間を超えた場合、ループ
+    if (currentTimer_ > midiFileDurationSeconds_) 
+    {
+        currentTimer_ -= midiFileDurationSeconds_;  // ループさせる
+        ResetJudgedNotes(); //  ループ時に判定フラグをリセット
+    }
+}
+
+// ノートオンリストを事前構築
+void Midi::BuildNoteOnList()
+{
+    for (int track = 0; track < midiFile_.getTrackCount(); ++track) 
+    {
+        for (size_t i = 0; i < midiFile_[track].size(); ++i) 
+        {
+            auto& midiEvent = midiFile_[track][i];
+            if (midiEvent.isNoteOn()) 
+            {
+                notes_.emplace_back(MidiNote{ EventType::NOTE_ON, midiEvent.getKeyNumber(), static_cast<float>(midiEvent.seconds) });
+            }
+        }
+    }
+    std::sort(notes_.begin(), notes_.end(), [](const MidiNote& a, const MidiNote& b) {
+        return a.time_ < b.time_;
+        });
+}
+
+const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
+{
+    //  ノートがない場合は nullptr を返す
+    if (notes_.empty())return nullptr; 
+
+    //  最も近いノートを探索
+    const MidiNote* closestNote = nullptr;
+    float minDelta = FLT_MAX; // 最小のズレ値（初期値を最大値に設定）
+
+    for(const auto& note : notes_) 
+    {
+        // 判定済みのノートは無視
+        if (note.judged_) continue;
+
+        float delta = std::abs(note.time_ - inputTime);
+        if (delta < minDelta)
+        {
+            minDelta = delta;
+            closestNote = &note;
+        }
+    }
+
+    return closestNote;
+}
+
+Midi::MidiNote* Midi::FindClosestNoteInLoop(const float& inputTime)
+{
+    MidiNote* closestNote = nullptr;
+    float minDelta = FLT_MAX;
+
+    for (auto& note : notes_) 
+    {
+        if (note.judged_) continue; // 判定済みノートは無視
+
+        //  ノート時間をループ補正
+        float noteTime = note.time_;
+        if (currentTimer_ < noteTime && currentTimer_ + midiFileDurationSeconds_ > noteTime)
+        {
+            noteTime -= midiFileDurationSeconds_; // 巻き戻し時の補正
+        }
+
+        float delta = std::abs(inputTime - noteTime);
+        if (delta < minDelta)
+        {
+            minDelta = delta;
+            closestNote = &note;
+        }
+    }
+
+    return closestNote;
+}
+
+const Midi::MidiNote* Midi::GetNextNote(const float& currentTime)
+{
+    for (const auto& note : notes_)
+    {
+        if (note.time_ > currentTime && !note.judged_) 
+        {
+            return &note; // 現在時刻より未来にある最初の未判定ノートを返す
+        }
+    }
+    return nullptr; // 見つからなければ nullptr を返す
+}
+
+// 入力時間に最も近いノートの開始時間を取得
+float Midi::GetNearMidiTime(const float& inputTime)
+{
+    if (notes_.empty()) return -1.0f;
+
+    auto it = std::lower_bound(notes_.begin(), notes_.end(), inputTime, [](const MidiNote& note, float time) {
+        return note.time_ < time;
+        });
+
+    if (it == notes_.end()) return notes_.back().time_;
+    if (it == notes_.begin()) return it->time_;
+
+    auto prev = std::prev(it);
+    return (std::abs(prev->time_ - inputTime) < std::abs(it->time_ - inputTime)) ? prev->time_ : it->time_;
+}
+
+#if 0
+//	入力されたタイミングから、最も近いノートの開始時間を返す	
+float Midi::GetNearMidiTime(const float& inputTime)
+{
+    float noteTime = 0.0f;
+    float lastTimeSubtract = FLT_MAX;   //  過去に一番短かった時間の差
+    float currentTimeSubtract = 0.0f;   //  Inputとnoteの時間の差(絶対値)
+
+    // 全トラックのMIDIイベントからノートオンだけ取り出す
+    for (int track = 0; track < GetMidiFile().getTrackCount(); ++track)
+    {
+        for (int event = 0; event < GetMidiFile()[track].size(); ++event)
+        {
+            if (GetMidiFile()[track][event].isNoteOn())     //  ノートオンだったら 
+            {
+                //  時間の差を求める
+                currentTimeSubtract = std::fabs(GetMidiFile()[track][event].seconds - inputTime);
+
+                //  一番短かった時間の差と比較
+                if (currentTimeSubtract < lastTimeSubtract)
+                {
+                    lastTimeSubtract = currentTimeSubtract;
+                    noteTime = GetMidiFile()[track][event].seconds;
+                }
+            }
+        }
+    }
+
+    return noteTime;
+}
+#endif
+
+//  引数で受け取った時間がノートオンかどうか
+#if 1
+bool Midi::IsNoteOnAtTime(const float& time, const float& threshold)
+{
+    for (const auto& note : notes_) 
+    {
+        if (std::abs(note.time_ - time) <= threshold)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Midi::IsInputNoteOn(const float& inputTime) 
+{
+    return IsNoteOnAtTime(inputTime);
+}
+
+//  現在の時間がノートオンかどうか
+bool Midi::IsCurrentTimeNoteOn()
+{
+    return IsNoteOnAtTime(currentTimer_);
+}
+#else
+bool Midi::IsInputNoteOn(const float& time)
+{
+    bool isNoteOn = false;
+    float lastTimeSubtract = FLT_MAX;   //  過去に一番短かった時間の差
+    float currentTimeSubtract = 0.0f;   //  Inputとnoteの時間の差(絶対値)
+
+    // 全トラックのMIDIイベントからノートオンだけ取り出す
+    for (int track = 0; track < GetMidiFile().getTrackCount(); ++track)
+    {
+        for (int event = 0; event < GetMidiFile()[track].size(); ++event)
+        {
+            if (GetMidiFile()[track][event].isNoteOn())     //  ノートオンだったら 
+            {
+                //  時間の差を求める
+                currentTimeSubtract = std::fabs(GetMidiFile()[track][event].seconds - time);
+
+                //  一番短かった時間の差がなければ
+                if (currentTimeSubtract < 0.17f)
+                {
+                    isNoteOn = true;
+                }
+                else
+                {
+                    isNoteOn = false;
+                }
+
+            }
+        }
+    }
+
+    return isNoteOn;
+}
+#endif
+
+//  ノートを追加するメソッド
+void Midi::AddNote(const EventType& eventType, const int& noteNumber, const float& time)
+{
+    MidiNote note;
+    note.eventType_     = eventType;
+    note.noteNumber_    = noteNumber;
+    note.time_          = time;
+    notes_.emplace_back(note);
+
+}
+
+//  ノートの判定済みフラグをリセット
+void Midi::ResetJudgedNotes()
+{
+    for (auto& note : notes_) 
+    {
+        note.judged_ = false;
+    }
+}
+
+//	デバッグ描画
+void Midi::DrawDebug()
+{
+
+}

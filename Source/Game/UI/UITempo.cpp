@@ -48,8 +48,8 @@ UITempo::UITempo()
 		semicircles_[index]->right_->GetTransform()->SetDefaultSize(100.0f, 100.0f);
 	}
 
-	//	描画フラグをfalseにしておく。ビューボタンを押したら描画する
-	SetDrawFlag(true);
+	//	表示フラグをtrueにしておく。ビューボタンで切り替えできる
+	SetIsVisible(true);
 	//SetDrawFlag(false);
 
 }
@@ -74,11 +74,11 @@ void UITempo::Update(const float& elapsedTime)
 //	描画フラグ切り替え処理
 void UITempo::UpdateDrawFlag()
 {
-	bool drawFlag = GetDrawFlag();
+	bool isVisible = GetIsVisible();
 	GamePad& gamePad = Input::Instance().GetGamePad();
-	if (gamePad.GetButtonDown() & GamePad::BTN_BACK)
+	if (gamePad.GetButtonDown() & GamePad::BTN_BACK)	//	ビューボタンを押したら表示フラグを反転
 	{
-		SetDrawFlag(!drawFlag);
+		SetIsVisible(!isVisible);
 	}
 }
 
@@ -161,6 +161,7 @@ void UITempo::DrawDebug()
 {
 	if (ImGui::TreeNode("Tempo"))
 	{
+		UI::DrawDebug();
 		ImGui::DragFloat("BPM", &bpm_, 0.1f);
 
 		ImGui::Text("Center");								//	中心の円

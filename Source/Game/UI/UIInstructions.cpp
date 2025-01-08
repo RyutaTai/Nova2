@@ -30,6 +30,7 @@ void UIInstructions::DrawDebug()
 {
 	if (ImGui::TreeNode("Instructions"))
 	{
+		UI::DrawDebug();
 		ImGui::TreePop();
 	}
 }

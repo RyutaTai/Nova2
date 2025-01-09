@@ -7,7 +7,7 @@
 class UIRhythmJudgment :public UI
 {
 public:
-	UIRhythmJudgment();
+	UIRhythmJudgment(const Rhythm::JudgmentType& judgmentType);
 	~UIRhythmJudgment() {}
 
 	void Initialize()override;
@@ -15,14 +15,14 @@ public:
 	void Render()override;
 	void DrawDebug()override;
 
-	void RenderSetting(const Rhythm::JudgmentType& type);
+	void TextSetting(const Rhythm::JudgmentType& type);
 
-	void SetIsVisible(const bool& isVisible);
+	void SetIsVisible(const bool& isVisible)override;
 
 private:
 	std::unique_ptr<Sprite> judgmentText_;	//	”»’è•¶Žš
 
-	float displayDuration_ = 0.5f;		//	”»’è•¶Žš‚ð•`‰æ‚·‚éŽžŠÔ						
+	float displayDuration_ = 1.5f;		//	”»’è•¶Žš‚ð•`‰æ‚·‚éŽžŠÔ						
 	float elapsedDisplayTime_ = 0.0f;	//	”»’è•¶Žš‚ð•\Ž¦‚µ‚ÄŒo‰ß‚µ‚½ŽžŠÔ
 
 	//Rhythm::JudgmentType currentJudgementType_ = {};

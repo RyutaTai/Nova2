@@ -47,7 +47,8 @@ public:
     bool IsInputNoteOn(const float& inputTime);             //  入力時間がノートオンかどうか
     bool IsCurrentTimeNoteOn();                             //  現在の時間がノートオンかどうか
 
-    void    BuildNoteOnList();
+    void    BuildNoteOnList();                              //  ノートオンリストを事前に構築
+    void    SortNoteOnList();                              //  ノートオンリストをソート
     float	GetNearMidiTime(const float& inputTime);        //	入力されたタイミングから近いノートを判定	
 
     smf::MidiFile&  GetMidiFile()                   { return midiFile_; }	                //	midiファイル取得

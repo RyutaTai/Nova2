@@ -47,12 +47,6 @@ void UIManager::SetIsVisible(const bool& isVisible)
 	//}
 }
 
-//	UIType‚©‚çUI‚ğæ“¾
-UI* UIManager::GetUIFromType(const UIType& type)
-{
-	return GetUIFromNum(static_cast<int>(type));
-}
-
 //	”Ô†‚©‚çUI‚ğæ“¾
 UI* UIManager::GetUIFromNum(const int& num)
 {

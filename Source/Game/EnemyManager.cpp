@@ -36,37 +36,6 @@ void EnemyManager::Update(const float& elapsedTime)
 
 }
 
-//	エネミー同士の衝突処理
-//	Unit5 球と球
-
-//void EnemyManager::CollisionEnemyVsEnemies()
-//{
-//	EnemyManager& enemyManager = EnemyManager::Instance();
-//
-//	//全ての敵との総当たりで衝突処理
-//	size_t enemyCount = enemies.size();
-//	for (int i = 0; i < enemyCount; i++)
-//	{
-//		Enemy* enemy = enemies.at(i);
-//		for (int n = i+1; n < enemyCount; n++)
-//		{
-//			Enemy* enemy2 = enemies(n);
-//			//衝突処理
-//			DirectX::XMFLOAT3 outPosition;
-//			if (Collision::IntersectSphereVsSphere(
-//				enemy->GetPosition(),
-//				enemy->GetRadius(),
-//				enemy2->GetPosition(),
-//				enemy2->GetRadius(),
-//				outPosition))
-//			{
-//				//押し出し後の位置設定
-//				enemy2->SetPosition(outPosition);
-//			}
-//		}
-//	}
-//}
-
 //	円柱と円柱
 void EnemyManager::CollisionEnemyVsEnemies()
 {

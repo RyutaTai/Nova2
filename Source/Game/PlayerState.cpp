@@ -350,6 +350,8 @@ namespace PlayerState
 		{
 			owner_->ChangeState(Player::StateType::ComboOne2);
 			isCorrectInput_ = false;
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		if (owner_->IsPlayAnimation() == false)
@@ -482,6 +484,8 @@ namespace PlayerState
 		if (isCorrectInput_)	//	入力判定がtrueならコンボを進める
 		{
 			owner_->ChangeState(Player::StateType::ComboOne3);
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		if (owner_->IsPlayAnimation() == false)	//	アニメーション再生が終わったら待機へ遷移
@@ -611,6 +615,8 @@ namespace PlayerState
 		if (isCorrectInput_)	//	入力判定がtrueなら
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		if (owner_->IsPlayAnimation() == false)
@@ -718,6 +724,8 @@ namespace PlayerState
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
+			//	リズム判定処理
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 

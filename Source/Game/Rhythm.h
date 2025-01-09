@@ -36,9 +36,13 @@ public:
 	float	GetBPM()				{ return bpm_; }
 
 private:
-	float bpm_ = 120.0f;	//	楽曲のbpm
-	const float PerfectRange_	= 0.025f;
-	const float GoodRange_		= 0.050f;
+	float bpm_ = 140.0f;	//	楽曲のbpm
+
+	//	後で定数にする
+	//const float PerfectRange_	= 0.025f;
+	//const float GoodRange_		= 0.050f;
+	float PerfectRange_ = 0.032f;	//	約2フレーム
+	float GoodRange_ = 0.096f;		//	約6フレーム
 
 	std::unique_ptr<Midi> midi_ = nullptr;	//	タイミング判定用midi(4つ打ち)
 

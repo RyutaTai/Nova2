@@ -13,7 +13,7 @@ public:
 	virtual void Render();
 	virtual void DrawDebug();
 
-	void SetIsVisible(const bool& isVisible) { isVisible_ = isVisible; }
+	virtual void SetIsVisible(const bool& isVisible) = 0;
 	bool GetIsVisible() { return isVisible_; }
 
 protected:

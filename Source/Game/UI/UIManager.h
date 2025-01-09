@@ -8,16 +8,6 @@
 class UIManager
 {
 public:
-	//	UI‚ÌŽí—Þ
-	enum class UIType
-	{
-		Health,
-		Tempo,
-		RhythmJudgment,
-		Max
-	};
-
-public:
 	UIManager(){}
 	~UIManager(){}
 
@@ -37,7 +27,6 @@ public:
 
 	void	SetIsVisible(const bool& isVisible);
 
-	UI*		GetUIFromType(const UIType& type);
 	UI*		GetUIFromNum(const int& num);
 
 private:

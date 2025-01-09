@@ -1,12 +1,15 @@
 #include "Rhythm.h"
 
 #include "UI/UIManager.h"
+#include "UI/UIRhythmJudgment.h"
 #include "../../imgui/imgui.h"
 
 void Rhythm::Initialize()
 {
-	//	midi¶¬
-	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor2.mid");
+	//	midi‚Ì¶¬‚Æ‰Šú‰»
+	//midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm.mid");
+	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm_Loop.mid");
+    midi_->Initialize();
 }
 
 void Rhythm::Update(const float& elapsedTime)
@@ -16,6 +19,7 @@ void Rhythm::Update(const float& elapsedTime)
 
 }
 
+//  “ü—Íƒ^ƒCƒ~ƒ“ƒO‚ªƒŠƒYƒ€‚É‚ ‚Á‚Ä‚¢‚é‚©”»’è‚·‚é
 void Rhythm::GetJudgmentType(const float& inputTime/*midi‚Ì”ÍˆÍ“à‚Å‚¢‚Â“ü—Í‚³‚ê‚½‚©*/, const float& elapsedTime)
 {
     //  ƒ‹[ƒvŒã‚ÌÄ¶ŠÔ‚ğl—¶‚µ‚Äƒm[ƒg‚ğ’Tõ
@@ -34,22 +38,25 @@ void Rhythm::GetJudgmentType(const float& inputTime/*midi‚Ì”ÍˆÍ“à‚Å‚¢‚Â“ü—Í‚³‚ê‚
     if (delta <= PerfectRange_)
     {
         closestNote->judged_ = true;
-        UI* uiRhythm = UIManager::Instance().GetUIFromType(UIManager::UIType::RhythmJudgment);
+        //  ”»’è•¶šUI‚ğ¶¬
+        UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Perfect);
+        uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
-        //return JudgmentType::Perfect;
     }
     else if (delta <= GoodRange_)
     {
         closestNote->judged_ = true;
-        UI* uiRhythm = UIManager::Instance().GetUIFromType(UIManager::UIType::RhythmJudgment);
+        //  ”»’è•¶šUI‚ğ¶¬
+        UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Good);
+        uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
-        //return JudgmentType::Good;
     }
     else
     {
-        UI* uiRhythm = UIManager::Instance().GetUIFromType(UIManager::UIType::RhythmJudgment);
+        //  ”»’è•¶šUI‚ğ¶¬
+        UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Miss);
+        uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
-        //return JudgmentType::Miss;
     }
 }
 
@@ -60,6 +67,8 @@ void Rhythm::DrawDebug()
         float currentMidiTimer = midi_->GetCurrentTimer();
         ImGui::DragFloat("CurrentMidiTimer", &currentMidiTimer);
         ImGui::DragFloat("ClosestNoteTime", &midi_->FindClosestNoteInLoop(currentMidiTimer)->time_);
+        ImGui::DragFloat("PerfectRange", &PerfectRange_);
+        ImGui::DragFloat("GoodRange", &GoodRange_);
         ImGui::TreePop();
     }
 }

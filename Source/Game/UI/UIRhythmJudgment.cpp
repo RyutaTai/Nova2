@@ -2,10 +2,13 @@
 
 #include "../../../External/imgui/imgui.h"
 
-UIRhythmJudgment::UIRhythmJudgment()
+UIRhythmJudgment::UIRhythmJudgment(const Rhythm::JudgmentType& judgmentType)
 	:UI()
 {
 	judgmentText_ = std::make_unique<Sprite>(L"./Resources/Image/RythmJudgment.png");
+
+	TextSetting(judgmentType);
+
 }
 
 void UIRhythmJudgment::Initialize()
@@ -32,7 +35,7 @@ void UIRhythmJudgment::Render()
 }
 
 //	îªíËåãâ Ç…âûÇ∂Çƒï`âÊÇÃê›íËÇÇ∑ÇÈ
-void UIRhythmJudgment::RenderSetting(const Rhythm::JudgmentType& type)
+void UIRhythmJudgment::TextSetting(const Rhythm::JudgmentType& type)
 {
 	SetIsVisible(true);
 	if (type == Rhythm::JudgmentType::Perfect)
@@ -65,7 +68,7 @@ void UIRhythmJudgment::RenderSetting(const Rhythm::JudgmentType& type)
 void UIRhythmJudgment::SetIsVisible(const bool& isVisible)
 {
 	isVisible_ = isVisible;
-	displayDuration_ = 0.0f;
+	elapsedDisplayTime_ = 0.0f;
 }
 
 void UIRhythmJudgment::DrawDebug()
@@ -73,6 +76,8 @@ void UIRhythmJudgment::DrawDebug()
 	if (ImGui::TreeNode("RhythmJudgment"))
 	{
 		UI::DrawDebug();
+		ImGui::DragFloat("DisplayDuration", &displayDuration_);
+		ImGui::DragFloat("ElapsedDIspayTime", &elapsedDisplayTime_);
 		ImGui::TreePop();
 	}
 }

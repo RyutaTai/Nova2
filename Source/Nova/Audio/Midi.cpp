@@ -15,7 +15,7 @@ Midi::Midi(const std::string& midiFilename)
 //	初期化処理
 void Midi::Initialize()
 {
-
+    BuildNoteOnList();
 }
 
 //	終了処理
@@ -29,7 +29,7 @@ void Midi::Update(const float& elpasedTime)
 {
     UpdateCurrentTimer(elpasedTime);    //  タイマー更新
 
-    BuildNoteOnList();
+    SortNoteOnList();   //  ノートオンリストをソート
 
 }
 
@@ -47,7 +47,7 @@ void Midi::UpdateCurrentTimer(const float& elapsedTime)
     }
 }
 
-// ノートオンリストを事前構築
+// ノートオンリストを事前構築(初期化時に呼ぶ)
 void Midi::BuildNoteOnList()
 {
     for (int track = 0; track < midiFile_.getTrackCount(); ++track) 
@@ -61,11 +61,18 @@ void Midi::BuildNoteOnList()
             }
         }
     }
+    SortNoteOnList();
+}
+
+//  ノートオンリストをソート(更新処理で呼ぶ)
+void Midi::SortNoteOnList()
+{
     std::sort(notes_.begin(), notes_.end(), [](const MidiNote& a, const MidiNote& b) {
         return a.time_ < b.time_;
         });
 }
 
+//  入力タイミングから最も近いノートを返す
 const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
 {
     //  ノートがない場合は nullptr を返す
@@ -77,7 +84,7 @@ const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
 
     for(const auto& note : notes_) 
     {
-        // 判定済みのノートは無視
+        //  判定済みのノートは無視
         if (note.judged_) continue;
 
         float delta = std::abs(note.time_ - inputTime);
@@ -91,6 +98,7 @@ const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
     return closestNote;
 }
 
+//  入力タイミングから最も近いノートを返す(midiのループに対応)
 Midi::MidiNote* Midi::FindClosestNoteInLoop(const float& inputTime)
 {
     MidiNote* closestNote = nullptr;
@@ -98,7 +106,8 @@ Midi::MidiNote* Midi::FindClosestNoteInLoop(const float& inputTime)
 
     for (auto& note : notes_) 
     {
-        if (note.judged_) continue; // 判定済みノートは無視
+        //  判定済みノートは無視
+        if (note.judged_) continue;
 
         //  ノート時間をループ補正
         float noteTime = note.time_;

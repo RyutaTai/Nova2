@@ -14,14 +14,13 @@ public:
 	void Render()override;
 	void DrawDebug()override;
 
+	void SetIsVisible(const bool& isVisible)override { isVisible_ = isVisible; }
+
 	void UpdateDrawFlag();
 	void UpdateCenterCircleAnimation();
 	void UpdatePosition(const float& elapsedTime);
 	void UpdateScale(const float& elapsedTime);
 	void UpdateMoveFactor();
-
-	void SetBPM(const float& bpm) { bpm_ = bpm; }
-	float GetBPM() { return bpm_; }
 
 private:
 	//	半円の構造体
@@ -54,7 +53,6 @@ private:
 
 	float	moveSpeed_ = 290.0f;				//	移動する速さ
 	float	moveFactor_ = 1.0f;					//	BPM120を基準とする移動する速さの倍率
-	float	bpm_ = 140.0f;						//	仮でここに書いてるけど、オーディオテーブルみたいなのを用意してそこから持ってくるようにする
 	bool	centerCircleAnimFlag_ = false;		//	中心円のアニメーション更新フラグ
 	int		animChangeThreshold_ = 9;			//	何フレームでアニメーションを遷移するか
 	int		centerAnimTime_ = 0;				//	中心円のアニメーション時間カウント

@@ -2,6 +2,7 @@
 
 #include "../../../External/imgui/imgui.h"
 #include "../../Nova/Input/Input.h"
+#include "../Rhythm.h"
 
 UITempo::UITempo()
 	:UI()
@@ -88,7 +89,7 @@ void UITempo::UpdatePosition(const float& elapsedTime)
 	float centerPosX = center_->GetTransform()->GetPositionX();	//	中心円のX座標
 	
 	//	bpmに合わせた速度の設定
-	moveFactor_ = (bpm_ / 120.0f);
+	moveFactor_ = (Rhythm::Instance().GetBPM() / 120.0f);
 
 	for (int index = 0; index < SemicircleMax; ++index)
 	{
@@ -162,7 +163,8 @@ void UITempo::DrawDebug()
 	if (ImGui::TreeNode("Tempo"))
 	{
 		UI::DrawDebug();
-		ImGui::DragFloat("BPM", &bpm_, 0.1f);
+		float bpm = Rhythm::Instance().GetBPM();
+		ImGui::DragFloat("BPM", &bpm, 0.1f);
 
 		ImGui::Text("Center");								//	中心の円
 		ImGui::DragInt("animChangeThreshold_", &animChangeThreshold_);

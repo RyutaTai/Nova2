@@ -16,7 +16,6 @@
 #include "../../Game/UI/UIHealth.h"
 #include "../../Game/UI/UIInstructions.h"
 #include "../../Game/UI/UITempo.h"
-#include "../../Game/UI/UIRhythmJudgment.h"
 #include "../../Game/Rhythm.h"
 
 //	‰Šú‰»
@@ -44,7 +43,6 @@ void SceneGame::Initialize()
 	UIHealth*			uiHealth		= new UIHealth();
 	//UIInstructions* uiInstructions	= new UIInstructions();
 	UITempo*			uiTempo			= new UITempo();
-	UIRhythmJudgment*	uiRhythm		= new UIRhythmJudgment();
 	UIManager::Instance().Initialize();					//	“o˜^‚µI‚í‚Á‚Ä‚©‚ç‰Šú‰»ˆ—‚ğ‚·‚é(¡‚Í‰½‚à‚µ‚Ä‚¢‚È‚¢)
 
 	/* ----- RhythmƒNƒ‰ƒX‰Šú‰» ----- */

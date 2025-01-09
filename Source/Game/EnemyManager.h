@@ -38,6 +38,6 @@ private:
 
 private:
 	std::vector	<Enemy*> enemies_ = {};		//	エネミーの配列
-	std::set	<Enemy*> removes_ = {};		//	破棄するエネミーの配列 ;
+	std::set	<Enemy*> removes_ = {};		//	破棄するエネミーの配列
 
 };

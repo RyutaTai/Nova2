@@ -2,25 +2,28 @@
 
 #include "UI/UIManager.h"
 #include "UI/UIRhythmJudgment.h"
+#include "../Nova/Core/Framework.h"
 #include "../../imgui/imgui.h"
+
+#include <algorithm>
 
 void Rhythm::Initialize()
 {
 	//	midiÇÃê∂ê¨Ç∆èâä˙âª
-	//midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm.mid");
-	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm_Loop.mid");
+	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm.mid");
+	//midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm_Loop.mid");
     midi_->Initialize();
 }
 
-void Rhythm::Update(const float& elapsedTime)
+void Rhythm::Update()
 {
 	//	midiçXêVèàóù
-	midi_->Update(elapsedTime);
+	midi_->Update(Framework::GetDoubleDeltaTime());
 
 }
 
 //  ì¸óÕÉ^ÉCÉ~ÉìÉOÇ™ÉäÉYÉÄÇ…Ç†Ç¡ÇƒÇ¢ÇÈÇ©îªíËÇ∑ÇÈ
-void Rhythm::GetJudgmentType(const float& inputTime/*midiÇÃîÕàÕì‡Ç≈Ç¢Ç¬ì¸óÕÇ≥ÇÍÇΩÇ©*/, const float& elapsedTime)
+void Rhythm::GetJudgmentType(const double& inputTime/*midiÇÃîÕàÕì‡Ç≈Ç¢Ç¬ì¸óÕÇ≥ÇÍÇΩÇ©*/, const double& elapsedTime)
 {
     //  ÉãÅ[Évå„ÇÃçƒê∂éûä‘Ççló∂ÇµÇƒÉmÅ[ÉgÇíTçı
     Midi::MidiNote* closestNote = midi_->FindClosestNoteInLoop(inputTime);
@@ -29,7 +32,10 @@ void Rhythm::GetJudgmentType(const float& inputTime/*midiÇÃîÕàÕì‡Ç≈Ç¢Ç¬ì¸óÕÇ≥ÇÍÇ
 	if (closestNote == false)return;
 
     //  ì¸óÕÉ^ÉCÉ~ÉìÉOÇ∆ÇÃÉYÉåÇåvéZ
-    float delta = std::abs(inputTime - closestNote->time_);
+    double delta = std::abs(inputTime - closestNote->time_);
+    debugDelta_ = delta;
+    debugClosestNoteTime_ = closestNote->time_;
+    debugInputTime_ = inputTime;
 
     //  îªíËçœÇ›ÉmÅ[ÉgÇÕñ≥éã
 	if (closestNote->judged_) return;
@@ -64,11 +70,16 @@ void Rhythm::DrawDebug()
 {
     if(ImGui::TreeNode("Rhythm"))
     {
-        float currentMidiTimer = midi_->GetCurrentTimer();
+		float currentMidiTimer = static_cast<float>(midi_->GetCurrentTimer());
         ImGui::DragFloat("CurrentMidiTimer", &currentMidiTimer);
-        ImGui::DragFloat("ClosestNoteTime", &midi_->FindClosestNoteInLoop(currentMidiTimer)->time_);
-        ImGui::DragFloat("PerfectRange", &PerfectRange_);
-        ImGui::DragFloat("GoodRange", &GoodRange_);
+        //ImGui::DragFloat("ClosestNoteTime", &midi_->FindClosestNoteInLoop(currentMidiTimer)->time_);
+		ImGui::DragFloat("PerfectRange", &PerfectRange_, 0.01f);
+		ImGui::DragFloat("GoodRange", &GoodRange_, 0.01f);
+		ImGui::DragFloat("Delta", &debugDelta_, 0.01f);
+		ImGui::DragFloat("ClosestNoteTime", &debugClosestNoteTime_, 0.01f);
+		ImGui::DragFloat("InputTime", &debugInputTime_, 0.01f);
+        /* float inputTime = debugInputTime_;
+		ImGui::DragFloat("InputTime", &inputTime, 0.01f);*/
         ImGui::TreePop();
     }
 }

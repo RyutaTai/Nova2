@@ -32,6 +32,7 @@ public:
 
 	LRESULT CALLBACK	HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	static float		GetDeltaTime() { return tictoc_.GetDeltaTime(); }
+	static double		GetDoubleDeltaTime() { return tictoc_.GetDoubleDeltaTime(); }
 
 private:
 	bool	Initialize();

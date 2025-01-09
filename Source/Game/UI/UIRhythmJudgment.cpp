@@ -1,5 +1,6 @@
 #include "UIRhythmJudgment.h"
 
+#include "UIManager.h"
 #include "../../../External/imgui/imgui.h"
 
 UIRhythmJudgment::UIRhythmJudgment(const Rhythm::JudgmentType& judgmentType)
@@ -25,6 +26,7 @@ void UIRhythmJudgment::Update(const float& elapsedTime)
 		if (elapsedDisplayTime_ >= displayDuration_) 
 		{
 			isVisible_ = false;  //	表示フラグをオフ
+			UIManager::Instance().Remove(this);
 		}
 	}
 }

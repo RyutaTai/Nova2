@@ -13,6 +13,21 @@ void UIManager::Initialize()
 
 void UIManager::Update(const float& elapsedTime)
 {
+	//	破棄処理
+	for (UI* ui : removes_)
+	{
+		std::vector<UI*>::iterator it =
+			std::find(userInterfaces_.begin(), userInterfaces_.end(), ui);
+
+		if (it != userInterfaces_.end())
+		{
+			userInterfaces_.erase(it);
+		}
+	}
+
+	//	破棄リストをクリア
+	removes_.clear();
+
 	for (UI* ui : generates_)
 	{
 		userInterfaces_.emplace_back(ui);
@@ -28,6 +43,13 @@ void UIManager::Update(const float& elapsedTime)
 void UIManager::Register(UI* ui)
 {
 	generates_.insert(ui);
+}
+
+//	エネミー削除
+void UIManager::Remove(UI* ui)
+{
+	//	破棄リストに追加
+	removes_.insert(ui);
 }
 
 void UIManager::Finalize()

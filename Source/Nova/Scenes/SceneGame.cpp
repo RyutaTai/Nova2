@@ -164,7 +164,7 @@ void SceneGame::Update(const float& elapsedTime)
 	UIManager::Instance().Update(elapsedTime);
 
 	/* ----- Rhythm更新処理 ----- */
-	Rhythm::Instance().Update(elapsedTime);
+	Rhythm::Instance().Update();
 
 	//	ゲームクリアへの遷移はWeve3 State内で行っている
 		

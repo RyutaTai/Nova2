@@ -24,6 +24,7 @@ public:
 	void	DrawDebug();
 
 	void	Register(UI* ui);
+	void	Remove(UI* ui);
 
 	void	SetIsVisible(const bool& isVisible);
 
@@ -32,6 +33,7 @@ public:
 private:
 	std::vector<UI*> userInterfaces_;
 	std::set<UI*>	generates_;
+	std::set<UI*>	removes_;
 	bool allIsVisible_ = true;
 
 };

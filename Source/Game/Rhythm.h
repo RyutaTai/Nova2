@@ -19,7 +19,7 @@ public:
 	~Rhythm() {}
 
 	void Initialize();
-	void Update(const float& elapsedTime);
+	void Update();
 	void DrawDebug();
 
 	static Rhythm& Instance()
@@ -28,9 +28,9 @@ public:
 		return rhythm;
 	}
 	
-	const float GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
+	const double GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
 
-	void GetJudgmentType(const float& inputTime, const float& elapsedTime);
+	void GetJudgmentType(const double& inputTime, const double& elapsedTime);
 
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }
@@ -41,6 +41,9 @@ private:
 	//	後で定数にする
 	//const float PerfectRange_	= 0.025f;
 	//const float GoodRange_		= 0.050f;
+	float debugDelta_ = 0.0f;
+	float debugClosestNoteTime_ = 0.0f;
+	float debugInputTime_ = 0.0f;
 	float PerfectRange_ = 0.032f;	//	約2フレーム
 	float GoodRange_ = 0.096f;		//	約6フレーム
 

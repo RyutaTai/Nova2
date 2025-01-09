@@ -25,7 +25,7 @@ void Midi::Finalize()
 }
 
 //	更新処理
-void Midi::Update(const float& elpasedTime)
+void Midi::Update(const double& elpasedTime)
 {
     UpdateCurrentTimer(elpasedTime);    //  タイマー更新
 
@@ -34,7 +34,7 @@ void Midi::Update(const float& elpasedTime)
 }
 
 //  タイマー更新
-void Midi::UpdateCurrentTimer(const float& elapsedTime)
+void Midi::UpdateCurrentTimer(const double& elapsedTime)
 {
     //  再生時間を更新
     currentTimer_ += elapsedTime;
@@ -73,7 +73,7 @@ void Midi::SortNoteOnList()
 }
 
 //  入力タイミングから最も近いノートを返す
-const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
+const Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 {
     //  ノートがない場合は nullptr を返す
     if (notes_.empty())return nullptr; 
@@ -99,7 +99,7 @@ const Midi::MidiNote* Midi::FindClosestNote(const float& inputTime)
 }
 
 //  入力タイミングから最も近いノートを返す(midiのループに対応)
-Midi::MidiNote* Midi::FindClosestNoteInLoop(const float& inputTime)
+Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& inputTime)
 {
     MidiNote* closestNote = nullptr;
     float minDelta = FLT_MAX;
@@ -140,7 +140,7 @@ const Midi::MidiNote* Midi::GetNextNote(const float& currentTime)
 }
 
 // 入力時間に最も近いノートの開始時間を取得
-float Midi::GetNearMidiTime(const float& inputTime)
+float Midi::GetNearMidiTime(const double& inputTime)
 {
     if (notes_.empty()) return -1.0f;
 
@@ -189,7 +189,7 @@ float Midi::GetNearMidiTime(const float& inputTime)
 
 //  引数で受け取った時間がノートオンかどうか
 #if 1
-bool Midi::IsNoteOnAtTime(const float& time, const float& threshold)
+bool Midi::IsNoteOnAtTime(const double& time, const float& threshold)
 {
     for (const auto& note : notes_) 
     {
@@ -201,7 +201,7 @@ bool Midi::IsNoteOnAtTime(const float& time, const float& threshold)
     return false;
 }
 
-bool Midi::IsInputNoteOn(const float& inputTime) 
+bool Midi::IsInputNoteOn(const double& inputTime) 
 {
     return IsNoteOnAtTime(inputTime);
 }

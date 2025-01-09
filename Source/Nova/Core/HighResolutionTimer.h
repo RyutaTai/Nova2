@@ -59,6 +59,11 @@ public:
 		return static_cast<float>(deltaTime_);
 	}
 
+	double GetDoubleDeltaTime()const
+	{
+		return deltaTime_;
+	}
+
 	void Reset() // Call before message loop.
 	{
 		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&thisTime_));

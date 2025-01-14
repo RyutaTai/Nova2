@@ -2,13 +2,19 @@
 
 #include <algorithm>
 
-Midi::Midi(const std::string& midiFilename)
+Midi::Midi(const std::string& midiFilename,const double& midiFileDurationSeconds)
 {
     //  midi読み込み
     _ASSERT_EXPR(midiFile_.read(midiFilename), L"midiFile loading is failed.");
 
-    //  midiファイルの長さ設定
+
+    //  midiファイルの長さ設定(ファイル全体の時間が取得できないため、ファイルの時間[s]を打ち込む)
+    midiFileDurationSeconds_ = midiFileDurationSeconds;
+
+#if 0
+    //  midiファイルの長さ設定(最後のノートの終了時間が取得できる)
     midiFileDurationSeconds_ = midiFile_.getFileDurationInSeconds();
+#endif
 
 }
 
@@ -42,7 +48,8 @@ void Midi::UpdateCurrentTimer(const double& elapsedTime)
     //  再生時間が MIDI の総時間を超えた場合、ループ
     if (currentTimer_ > midiFileDurationSeconds_) 
     {
-        currentTimer_ -= midiFileDurationSeconds_;  // ループさせる
+        currentTimer_ = 0.0;  // ループさせる
+        //currentTimer_ -= midiFileDurationSeconds_;  // ループさせる
         ResetJudgedNotes(); //  ループ時に判定フラグをリセット
     }
 }
@@ -73,16 +80,16 @@ void Midi::SortNoteOnList()
 }
 
 //  入力タイミングから最も近いノートを返す
-const Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
+Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 {
     //  ノートがない場合は nullptr を返す
     if (notes_.empty())return nullptr; 
 
     //  最も近いノートを探索
-    const MidiNote* closestNote = nullptr;
+    MidiNote* closestNote = nullptr;
     float minDelta = FLT_MAX; // 最小のズレ値（初期値を最大値に設定）
 
-    for(const auto& note : notes_) 
+    for(auto& note : notes_) 
     {
         //  判定済みのノートは無視
         if (note.judged_) continue;

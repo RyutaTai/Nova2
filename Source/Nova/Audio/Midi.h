@@ -25,7 +25,7 @@ public:
     };
 
 public:
-    Midi(const std::string& midiFilename);
+	Midi(const std::string& midiFilename, const double& midiFileDurationSeconds/*midiファイルの長さ[s]*/);
     ~Midi() {}
 
     //  ノートを追加する関数
@@ -33,7 +33,7 @@ public:
 
     //  ノートを取得する関数
     std::vector<MidiNote> GetNotes() const { return notes_; }
-    const Midi::MidiNote* FindClosestNote(const double& inputTime);
+    Midi::MidiNote*       FindClosestNote(const double& inputTime);
     Midi::MidiNote*       FindClosestNoteInLoop(const double& inputTime);
     const Midi::MidiNote* GetNextNote(const float& currentTime);
 
@@ -55,16 +55,16 @@ public:
     float	GetNearMidiTime(const double& inputTime);        //	入力されたタイミングから近いノートを判定	
 
     smf::MidiFile&  GetMidiFile()                   { return midiFile_; }	                //	midiファイル取得
-    const float     GetMidiFileDurationSeconds()    { return midiFileDurationSeconds_; }    //  midiファイル全体の長さ取得
+    const double     GetMidiFileDurationSeconds()    { return midiFileDurationSeconds_; }    //  midiファイル全体の長さ取得
     double           GetCurrentTimer() { return currentTimer_; }
     //float           GetCurrentTimer() { return currentTimer_; }
 
     void ResetJudgedNotes();    //  ノートの判定済みフラグをリセット
 
 private:
-    float                   midiFileDurationSeconds_ = 0.0f;    //  midiファイル全体の長さ(時間[s])
-    double                   currentTimer_ = 0.0f;               //  現在の時間
-    //float                   currentTimer_ = 0.0f;               //  現在の時間
+    double                   midiFileDurationSeconds_ = 0.0;    //  midiファイル全体の長さ(時間[s])
+    double                   currentTimer_ = 0.0;              //  現在の時間[s]
+    //float                   currentTimer_ = 0.0f;             //  現在の時間
     smf::MidiFile	        midiFile_ = {};                     //  midiファイル
     std::vector<MidiNote>   notes_;                             //  midiデータ内のノート
 

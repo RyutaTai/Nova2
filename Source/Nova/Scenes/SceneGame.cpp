@@ -22,11 +22,12 @@
 void SceneGame::Initialize()
 {
 	/* ----- オーディオ初期化 ----- */
-#if 1
+#if 0
 	//AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Game.wav", Audio::AudioType::BGMNormal, "GameScene");
 	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/452_BPM140_2.wav", Audio::AudioType::BGMNormal, "GameScene");
 #else
-	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav", Audio::AudioType::BGMNormal, "GameScene");
+	//AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_120BPM_44100Hz_16bit.wav", Audio::AudioType::BGMNormal, "GameScene");
+	AudioSource* gameBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/fourOnTheFloor_Basic_140BPM_44100Hz_16bit.wav", Audio::AudioType::BGMNormal, "GameScene");
 #endif
 	gameBGM->SetVolume(0.3f, false);
 	gameBGM->SetAudioName("GameBGM");

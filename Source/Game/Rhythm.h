@@ -41,6 +41,7 @@ private:
 	//	Œã‚Å’è”‚É‚·‚é
 	//const float PerfectRange_	= 0.025f;
 	//const float GoodRange_		= 0.050f;
+	double debugMaxMidiTimer_ = 0.0f;
 	float debugDelta_ = 0.0f;
 	float debugClosestNoteTime_ = 0.0f;
 	float debugInputTime_ = 0.0f;

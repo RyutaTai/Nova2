@@ -10,7 +10,7 @@
 void Rhythm::Initialize()
 {
 	//	midiの生成と初期化
-	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm.mid");
+	midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm.mid", 1.714);
 	//midi_ = std::make_unique<Midi>("./Resources/Audio/MIDI/fourOnTheFloor_140bpm_Loop.mid");
     midi_->Initialize();
 }
@@ -26,14 +26,16 @@ void Rhythm::Update()
 void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力されたか*/, const double& elapsedTime)
 {
     //  ループ後の再生時間を考慮してノートを探索
-    Midi::MidiNote* closestNote = midi_->FindClosestNoteInLoop(inputTime);
+    //Midi::MidiNote* closestNote = midi_->FindClosestNoteInLoop(inputTime);
+    Midi::MidiNote* closestNote = midi_->FindClosestNote(inputTime);
 
     //  ノートが見つからなければreturn
 	if (closestNote == false)return;
 
     //  入力タイミングとのズレを計算
-    double delta = std::abs(inputTime - closestNote->time_);
-    debugDelta_ = delta;
+    double deltaPlus = std::abs(inputTime - closestNote->time_);    //  過去の一番近いノーツからプラス方向の差分
+    double deltaMinus;  //  未来の一番近いノーツの中でマイナス方向の差分(未来のノートの位置 - delta)
+    debugDelta_ = deltaPlus;
     debugClosestNoteTime_ = closestNote->time_;
     debugInputTime_ = inputTime;
 
@@ -41,7 +43,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
 	if (closestNote->judged_) return;
 
     //  判定範囲による判定
-    if (delta <= PerfectRange_)
+    if (deltaPlus <= PerfectRange_)
     {
         closestNote->judged_ = true;
         //  判定文字UIを生成
@@ -49,7 +51,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
     }
-    else if (delta <= GoodRange_)
+    else if (deltaPlus <= GoodRange_)
     {
         closestNote->judged_ = true;
         //  判定文字UIを生成
@@ -71,8 +73,16 @@ void Rhythm::DrawDebug()
     if(ImGui::TreeNode("Rhythm"))
     {
 		float currentMidiTimer = static_cast<float>(midi_->GetCurrentTimer());
+		float maxMidiTimer = debugMaxMidiTimer_;
+		debugMaxMidiTimer_ = max(debugMaxMidiTimer_, midi_->GetCurrentTimer());
+
         ImGui::DragFloat("CurrentMidiTimer", &currentMidiTimer);
+        ImGui::DragFloat("MaxMidiTimer", &maxMidiTimer);
         //ImGui::DragFloat("ClosestNoteTime", &midi_->FindClosestNoteInLoop(currentMidiTimer)->time_);
+
+        float midiDuration = midi_->GetMidiFileDurationSeconds();
+        ImGui::DragFloat("MIdiDuration", &midiDuration);   //   midiファイルの長さ[s]
+
 		ImGui::DragFloat("PerfectRange", &PerfectRange_, 0.01f);
 		ImGui::DragFloat("GoodRange", &GoodRange_, 0.01f);
 		ImGui::DragFloat("Delta", &debugDelta_, 0.01f);

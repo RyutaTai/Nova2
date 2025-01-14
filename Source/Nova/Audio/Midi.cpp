@@ -6,7 +6,10 @@ Midi::Midi(const std::string& midiFilename,const double& midiFileDurationSeconds
 {
     //  midi読み込み
     _ASSERT_EXPR(midiFile_.read(midiFilename), L"midiFile loading is failed.");
-
+	if (midiFile_.read(midiFilename) == false)
+    {
+        _ASSERT_EXPR(false, "loading is failed.");
+    }
 
     //  midiファイルの長さ設定(ファイル全体の時間が取得できないため、ファイルの時間[s]を打ち込む)
     midiFileDurationSeconds_ = midiFileDurationSeconds;
@@ -21,6 +24,7 @@ Midi::Midi(const std::string& midiFilename,const double& midiFileDurationSeconds
 //	初期化処理
 void Midi::Initialize()
 {
+    midiFile_.doTimeAnalysis(); //   マスタートラックのテンポを元に、全MIDIイベントの時間(秒)を計算
     BuildNoteOnList();
 }
 
@@ -59,12 +63,12 @@ void Midi::BuildNoteOnList()
 {
     for (int track = 0; track < midiFile_.getTrackCount(); ++track) 
     {
-        for (size_t i = 0; i < midiFile_[track].size(); ++i) 
+        for (int event = 0; event < midiFile_[track].size(); ++event) 
         {
-            auto& midiEvent = midiFile_[track][i];
+            auto& midiEvent = midiFile_[track][event];
             if (midiEvent.isNoteOn()) 
             {
-                notes_.emplace_back(MidiNote{ EventType::NOTE_ON, midiEvent.getKeyNumber(), static_cast<float>(midiEvent.seconds) });
+				notes_.emplace_back(MidiNote{ EventType::NOTE_ON, midiEvent.getKeyNumber(), midiEvent.seconds,false });
             }
         }
     }
@@ -87,14 +91,14 @@ Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 
     //  最も近いノートを探索
     MidiNote* closestNote = nullptr;
-    float minDelta = FLT_MAX; // 最小のズレ値（初期値を最大値に設定）
+    double minDelta = DBL_MAX; // 最小のズレ値（初期値を最大値に設定）
 
     for(auto& note : notes_) 
     {
         //  判定済みのノートは無視
         if (note.judged_) continue;
 
-        float delta = std::abs(note.time_ - inputTime);
+        double delta = std::abs(note.time_ - inputTime);
         if (delta < minDelta)
         {
             minDelta = delta;
@@ -109,7 +113,7 @@ Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& inputTime)
 {
     MidiNote* closestNote = nullptr;
-    float minDelta = FLT_MAX;
+    double minDelta = DBL_MAX;
 
     for (auto& note : notes_) 
     {
@@ -123,7 +127,7 @@ Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& inputTime)
             noteTime -= midiFileDurationSeconds_; // 巻き戻し時の補正
         }
 
-        float delta = std::abs(inputTime - noteTime);
+        double delta = std::abs(inputTime - noteTime);
         if (delta < minDelta)
         {
             minDelta = delta;

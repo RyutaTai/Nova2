@@ -33,7 +33,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
 	if (closestNote == false)return;
 
     //  入力タイミングとのズレを計算
-    double deltaPlus = std::abs(inputTime - closestNote->time_);    //  過去の一番近いノーツからプラス方向の差分
+	double deltaPlus = std::abs(closestNote->time_ - inputTime);    //  過去の一番近いノーツからプラス方向の差分
     double deltaMinus;  //  未来の一番近いノーツの中でマイナス方向の差分(未来のノートの位置 - delta)
     debugDelta_ = deltaPlus;
     debugClosestNoteTime_ = closestNote->time_;

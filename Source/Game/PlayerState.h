@@ -94,7 +94,8 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
+		void JudgeInput(const JudgeTime& inputJudgeTime);
+		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);	//	経過時間更新
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
 
@@ -123,7 +124,8 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
+		void JudgeInput(const JudgeTime& cancellationTime);
+		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 		void UpdateAnimationSpeed();
 
@@ -155,7 +157,8 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
+		void JudgeInput(const JudgeTime& cancellationTime);
+		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
@@ -185,7 +188,8 @@ namespace PlayerState
 
 	private:
 		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime, const Command& command);
+		void JudgeInput(const JudgeTime& cancellationTime);
+		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:

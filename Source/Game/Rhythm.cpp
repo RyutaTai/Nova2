@@ -46,7 +46,9 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midi‚Ì”ÍˆÍ“à‚Å‚¢‚Â“ü—Í‚³‚ê
     if (deltaPlus <= PerfectRange_)
     {
         closestNote->judged_ = true;
+
         //  ”»’è•¶ŽšUI‚ð¶¬
+        UIManager::Instance().RemoveFromType(UIManager::UIType::Rhythm);
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Perfect);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
@@ -55,6 +57,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midi‚Ì”ÍˆÍ“à‚Å‚¢‚Â“ü—Í‚³‚ê
     {
         closestNote->judged_ = true;
         //  ”»’è•¶ŽšUI‚ð¶¬
+        UIManager::Instance().RemoveFromType(UIManager::UIType::Rhythm);
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Good);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
@@ -62,6 +65,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midi‚Ì”ÍˆÍ“à‚Å‚¢‚Â“ü—Í‚³‚ê
     else
     {
         //  ”»’è•¶ŽšUI‚ð¶¬
+        UIManager::Instance().RemoveFromType(UIManager::UIType::Rhythm);
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Miss);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
@@ -83,13 +87,18 @@ void Rhythm::DrawDebug()
         float midiDuration = midi_->GetMidiFileDurationSeconds();
         ImGui::DragFloat("MIdiDuration", &midiDuration);   //   midiƒtƒ@ƒCƒ‹‚Ì’·‚³[s]
 
-		ImGui::DragFloat("PerfectRange", &PerfectRange_, 0.01f);
-		ImGui::DragFloat("GoodRange", &GoodRange_, 0.01f);
-		ImGui::DragFloat("Delta", &debugDelta_, 0.01f);
+        //  ”»’è”ÍˆÍ
+        float perfectRange = PerfectRange_;
+        float goodRange = GoodRange_;
+		ImGui::DragFloat("PerfectRange", &perfectRange, 0.01f);
+		ImGui::DragFloat("GoodRange", &goodRange, 0.01f);
+        PerfectRange_ = perfectRange;
+        GoodRange_ = goodRange;
+		
+        ImGui::DragFloat("Delta", &debugDelta_, 0.01f);
 		ImGui::DragFloat("ClosestNoteTime", &debugClosestNoteTime_, 0.01f);
 		ImGui::DragFloat("InputTime", &debugInputTime_, 0.01f);
-        /* float inputTime = debugInputTime_;
-		ImGui::DragFloat("InputTime", &inputTime, 0.01f);*/
+        
         ImGui::TreePop();
     }
 }

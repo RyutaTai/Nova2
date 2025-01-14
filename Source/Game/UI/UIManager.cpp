@@ -1,7 +1,10 @@
 #include "UIManager.h"
 
-#include "../../../External/imgui/imgui.h"
+#include <algorithm>
+
+#include "UI.h"
 #include "../../Nova/Graphics/Graphics.h" 
+#include "../../../External/imgui/imgui.h"
 
 void UIManager::Initialize()
 {
@@ -45,11 +48,27 @@ void UIManager::Register(UI* ui)
 	generates_.insert(ui);
 }
 
-//	エネミー削除
+//	UI削除
 void UIManager::Remove(UI* ui)
 {
 	//	破棄リストに追加
 	removes_.insert(ui);
+}
+
+//	UI削除
+void UIManager::RemoveFromType(const UIType& type)
+{
+	for (auto& ui : userInterfaces_)
+	{
+		if (ui->GetUIType() == type)
+		{
+			removes_.insert(ui);
+		}
+	}
+
+	//	破棄リストに追加
+	//removes_.insert(userInterfaces_.at(static_cast<int>(type)));
+
 }
 
 void UIManager::Finalize()
@@ -77,6 +96,23 @@ UI* UIManager::GetUIFromNum(const int& num)
 
 	return userInterfaces_.at(num);
 }
+
+//	種類からUIを取得
+UI* UIManager::GetUIFromType(const UIType& type)
+{
+	_ASSERT_EXPR(static_cast<int>(type) < userInterfaces_.size(), L"UI num is too large.");
+
+	return userInterfaces_.at(static_cast<int>(type));
+}
+
+//	指定したUIが存在するか
+//bool UIManager::ExistUI(const UIType& type)
+//{
+//	bool found = false;
+//
+//
+//	return found;
+//}
 
 //	名前からUIを取得
 //UI* UIManager::GetUIFromName(const std::string& name)

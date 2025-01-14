@@ -45,8 +45,8 @@ private:
 	float debugDelta_ = 0.0f;
 	float debugClosestNoteTime_ = 0.0f;
 	float debugInputTime_ = 0.0f;
-	float PerfectRange_ = 0.032f;	//	約2フレーム
-	float GoodRange_ = 0.096f;		//	約6フレーム
+	double PerfectRange_ = 0.09;	//	Perfectの範囲
+	double GoodRange_ = 0.135;		//	Goodの範囲
 
 	std::unique_ptr<Midi> midi_ = nullptr;	//	タイミング判定用midi(4つ打ち)
 

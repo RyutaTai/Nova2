@@ -787,8 +787,10 @@ namespace PlayerState
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
+			
 			//	ƒŠƒYƒ€”»’èˆ—
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+			//Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+			
 			return;
 		}
 

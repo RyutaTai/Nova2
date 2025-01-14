@@ -3,7 +3,7 @@
 #include "../../../External/imgui/imgui.h"
 
 UIInstructions::UIInstructions()
-	:UI()
+	:UI(UIManager::UIType::Instruction)
 {
 	instruction_ = std::make_unique<Sprite>(L"./Resources/Image/Instructions.png");
 	instruction_->GetTransform()->SetPosition(24, 250);

@@ -43,7 +43,7 @@ public:
     void	Finalize();									    //	終了処理
     void	DrawDebug();								    //	デバッグ描画
 
-    void UpdateCurrentTimer(const double& elapsedTime);      //  タイマー更新処理
+    void    UpdateCurrentTimer(const double& elapsedTime);      //  タイマー更新処理
     //void UpdateCurrentTimer(const float& elapsedTime);      //  タイマー更新処理
 
     bool IsNoteOnAtTime(const double& time, const float& threshold = 0.17f);

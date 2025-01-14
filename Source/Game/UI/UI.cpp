@@ -4,8 +4,11 @@
 #include "../../imgui/imgui.h"
 #include "../../Nova/Resources/ResourceManager.h"
 
-UI::UI()
+UI::UI(const UIManager::UIType& type)
 {
+	//	UIの種類を指定
+	type_ = type;
+
 	//	生成時にマネージャーに登録
 	UIManager::Instance().Register(this);
 

@@ -1,11 +1,14 @@
 #pragma once
 
+#include "../../Game/UI/UIManager.h"
 #include "../../Nova/Resources/Sprite.h"
+
+//class UIManager;
 
 class UI
 {
 public:
-	UI();
+	UI(const UIManager::UIType& type);
 	~UI(){}
 
 	virtual void Initialize();
@@ -16,8 +19,12 @@ public:
 	virtual void SetIsVisible(const bool& isVisible) = 0;
 	bool GetIsVisible() { return isVisible_; }
 
+	const UIManager::UIType GetUIType() { return type_; }
+
 protected:
-	bool isVisible_ = true;	//	UI表示フラグ
+	bool isVisible_ = true;			//	UI表示フラグ
+
+	UIManager::UIType type_ = {};	//	UIの種類
 
 };
 

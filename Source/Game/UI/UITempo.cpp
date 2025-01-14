@@ -5,7 +5,7 @@
 #include "../Rhythm.h"
 
 UITempo::UITempo()
-	:UI()
+	:UI(UIManager::UIType::Tempo)
 {
 	//	ê^ÇÒíÜÇÃâ~
 	center_ = std::make_unique<Sprite>(L"./Resources/Image/TempoUI.png");

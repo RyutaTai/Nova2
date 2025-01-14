@@ -4,7 +4,7 @@
 #include "../../Nova/Others/MathHelper.h"
 
 UIHealth::UIHealth()
-	:UI()
+	:UI(UIManager::UIType::Health)
 {
 	hpGauge_ = std::make_unique<Sprite>(L"./Resources/Image/HpGauge.png");
 	hpGaugeBack_ = std::make_unique<Sprite>(L"./Resources/Image/HpGaugeBack.png");

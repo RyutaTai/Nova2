@@ -3,10 +3,20 @@
 #include <vector>
 #include <set>
 
-#include "UI.h"
-
+class UI;
 class UIManager
 {
+public:
+	//	UI‚Ìí—Ş
+	enum class UIType
+	{
+		Instruction,	//	à–¾
+		Health,			//	HP
+		Tempo,			//	ƒeƒ“ƒ|
+		Rhythm,			//	ƒŠƒYƒ€”»’è
+		Max
+	};
+
 public:
 	UIManager(){}
 	~UIManager(){}
@@ -25,10 +35,13 @@ public:
 
 	void	Register(UI* ui);
 	void	Remove(UI* ui);
+	void	RemoveFromType(const UIType& type);
 
 	void	SetIsVisible(const bool& isVisible);
 
 	UI*		GetUIFromNum(const int& num);
+	UI*		GetUIFromType(const UIType& type);
+	bool	ExistUI(const UIType& type);
 
 private:
 	std::vector<UI*> userInterfaces_;

@@ -142,7 +142,7 @@ const Midi::MidiNote* Midi::GetNextNote(const float& currentTime)
 {
     for (const auto& note : notes_)
     {
-        if (note.time_ > currentTime && !note.judged_) 
+		if (note.time_ > currentTime && note.judged_ == false)
         {
             return &note; // Œ»İ‚æ‚è–¢—ˆ‚É‚ ‚éÅ‰‚Ì–¢”»’èƒm[ƒg‚ğ•Ô‚·
         }

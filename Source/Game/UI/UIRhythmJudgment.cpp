@@ -4,7 +4,7 @@
 #include "../../../External/imgui/imgui.h"
 
 UIRhythmJudgment::UIRhythmJudgment(const Rhythm::JudgmentType& judgmentType)
-	:UI()
+	:UI(UIManager::UIType::Rhythm)
 {
 	judgmentText_ = std::make_unique<Sprite>(L"./Resources/Image/RythmJudgment.png");
 

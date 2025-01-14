@@ -53,7 +53,7 @@ public:
 		ComboOne2,		//	コンボ0_2
 		ComboOne3,		//	コンボ0_3
 		ComboOne4,		//	コンボ0_4
-		Dodge,		//	回避
+		Dodge,			//	回避
 		Max,			//	ステート最大数
 	};
 
@@ -95,8 +95,8 @@ public:
 	bool PlayerVsEnemies(const float& elapsedTime);				//	押し合い処理
 
 	bool JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& boneName, const float& jointRadius);
-	bool JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと敵の当たり判定
-	bool JointVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
+	bool JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float& jointRadius);	//	ジョイントと敵の当たり判定
+	bool JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか
 
 	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed=1.0f);

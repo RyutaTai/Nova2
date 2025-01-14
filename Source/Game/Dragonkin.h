@@ -90,6 +90,8 @@ public:
 
 	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 
+	void JointVsPlayer(const DirectX::XMFLOAT3& myJointPos, const float& myJointRadius);	//	プレイヤーとの当たり判定
+
 private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理
 

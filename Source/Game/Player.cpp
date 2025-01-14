@@ -210,19 +210,20 @@ bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string
 	//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
 
 	if (JointVsEnemies(elapsedTime, jointPos, jointRadius) == true)isHit = true;
-	if (JointVsBullet(elapsedTime, jointPos, jointRadius) == true)isHit = true;
+	if (JointVsBullet(jointPos, jointRadius) == true)isHit = true;
 
 	return isHit;
 }
 
 //	ƒWƒ‡ƒCƒ“ƒg‚Æ“G‚Ì“–‚½‚è”»’è
-bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius)
+bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float& jointRadius)
 {
 	DirectX::XMFLOAT3 outPosition = {};
 	bool isHitEnemy = false;
 
 	for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
 	{
+		//	“G‚ÌˆÊ’uA”¼ŒaA‚‚³
 		DirectX::XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
 		float eRadius = enemy->GetRadius() + 0.1f;
 		float eHeight = enemy->GetHeight() * 2;
@@ -233,7 +234,6 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 		}
 
 		//	‹…‚Æ‰~’Œ‚Å“–‚½‚è”»’è
-		//if (enemy->IsInvincible() == true)continue;	//	“G‚Ì–³“Gƒtƒ‰ƒO‚ªtrue‚È‚çˆ—‚µ‚È‚¢(“–‚½‚è”»’è‚à‚È‚­‚È‚é)
 		if (Collision::IntersectSphereVsCylinder(jointPos, jointRadius, ePos + ePosOffset, eRadius, eHeight, outPosition))
 		{
 			enemy->SubtractHp(1);
@@ -258,7 +258,7 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 }
 
 //	ƒWƒ‡ƒCƒ“ƒg‚Æ’eŠÛ‚Ì“–‚½‚è”»’è
-bool Player::JointVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float jointRadius)
+bool Player::JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float jointRadius)
 {
 	bool isHitBullet = false;
 	BulletManager& bulletManager = BulletManager::Instance();

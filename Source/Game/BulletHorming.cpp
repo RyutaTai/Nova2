@@ -74,7 +74,7 @@ void BulletHorming::Destroy(const float& elapsedTime)
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();		//	プレイヤーの位置
 	float playerRadius = Player::Instance().GetRadius();								//	プレイヤーの半径
 	float playerHeight = Player::Instance().GetHeight();								//	プレイヤーの高さ
-	playerPos.y += playerHeight / 2;
+	playerPos.y += playerHeight / 2.0f;
 	DirectX::XMFLOAT3 outPosition = {};
 	isHitPlayer = Collision::IntersectSphereVsCylinder(bulletPos, radius_, playerPos, playerRadius, playerHeight, outPosition);
 
@@ -108,7 +108,7 @@ void BulletHorming::Move(const float& elapsedTime)
 {
 	//	移動
 	DirectX::XMFLOAT3 myPos = GetTransform()->GetPosition();
-	DirectX::XMFLOAT3 dir;
+	DirectX::XMFLOAT3 dir = {};
 	target_ = Player::Instance().GetTransform()->GetPosition();
 	target_.y += Player::Instance().GetHeight() / 1.5f;			//	プレイヤーの拳に当たるようにするため
 	dir = target_ - myPos;

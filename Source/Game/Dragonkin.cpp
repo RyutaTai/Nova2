@@ -2,8 +2,10 @@
 
 #include "DragonkinAction.h"
 #include "DragonkinJudgment.h"
+#include "Player.h"
 #include "../Nova/AI/BehaviorData.h"
 #include "../Nova/Graphics/Graphics.h"
+#include "../Nova/Collision/Collision.h"
 
 //	コンストラクタ
 Dragonkin::Dragonkin()
@@ -129,6 +131,25 @@ bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
 void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
 {
 	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
+}
+
+//	ジョイントとプレイヤーの当たり判定
+void Dragonkin::JointVsPlayer(const DirectX::XMFLOAT3& myJointPos, const float& myJointRadius)
+{
+	//	プレイヤーの位置、半径、高さ
+	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
+	float playerRadius = Player::Instance().GetRadius();
+	float playerHeight = Player::Instance().GetHeight();
+
+	//	当たり判定の結果保存用
+	DirectX::XMFLOAT3 outPosition = {};
+
+	//	ジョイント(球)とプレイヤー(円柱)の当たり判定
+	if (Collision::IntersectSphereVsCylinder(myJointPos, myJointRadius, playerPos, playerRadius, playerHeight, outPosition))
+	{
+
+	}
+
 }
 
 //	破棄処理

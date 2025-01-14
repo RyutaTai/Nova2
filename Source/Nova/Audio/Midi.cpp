@@ -96,7 +96,7 @@ Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
     for(auto& note : notes_) 
     {
         //  ”»’èÏ‚İ‚Ìƒm[ƒg‚Í–³‹
-        if (note.judged_) continue;
+        //if (note.judged_) continue;
 
         double delta = std::abs(note.time_ - inputTime);
         if (delta < minDelta)

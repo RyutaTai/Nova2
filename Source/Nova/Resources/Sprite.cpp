@@ -410,6 +410,8 @@ void Sprite::SpriteTransform::DrawDebug()
 	ImGui::DragFloat2("Scale", &scale_.x, 0.01f);
 	ImGui::DragFloat("ScaleFactor", &scaleFactor_, 0.01f);
 
+	ImGui::ColorEdit4("Color", &color_.x);
+
 	ImGui::Checkbox("IsDebugSize", &isCut_);		//	‰æ‘œØ‚è”²‚«
 	if (isCut_)
 	{

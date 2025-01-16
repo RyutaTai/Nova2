@@ -202,6 +202,8 @@
     <ClCompile Include="Source\Nova\AI\NodeBase.cpp" />
     <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
     <ClCompile Include="Source\Nova\Audio\FadeXAPO.cpp" />
+    <ClCompile Include="Source\Nova\Collision\CollisionData.cpp" />
+    <ClCompile Include="Source\Nova\Collision\CollisionManager.cpp" />
     <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
     <ClCompile Include="Source\Game\Target.cpp" />
@@ -299,6 +301,8 @@
     <ClInclude Include="Source\Nova\AI\NodeBase.h" />
     <ClInclude Include="Source\Nova\Audio\Audio.h" />
     <ClInclude Include="Source\Nova\Audio\FadeXAPO.h" />
+    <ClInclude Include="Source\Nova\Collision\CollisionData.h" />
+    <ClInclude Include="Source\Nova\Collision\CollisionManager.h" />
     <ClInclude Include="Source\Nova\Graphics\Decal.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
     <ClInclude Include="Source\Game\Target.h" />

@@ -43,16 +43,16 @@ public:
     void	Finalize();									    //	終了処理
     void	DrawDebug();								    //	デバッグ描画
 
-    void    UpdateCurrentTimer(const double& elapsedTime);      //  タイマー更新処理
-    //void UpdateCurrentTimer(const float& elapsedTime);      //  タイマー更新処理
+    void    UpdateCurrentTimer(const double& elapsedTime);  //  タイマー更新処理
+    //void UpdateCurrentTimer(const float& elapsedTime);    //  タイマー更新処理
 
     bool IsNoteOnAtTime(const double& time, const float& threshold = 0.17f);
-    bool IsInputNoteOn(const double& inputTime);             //  入力時間がノートオンかどうか
+    bool IsInputNoteOn(const double& inputTime);            //  入力時間がノートオンかどうか
     bool IsCurrentTimeNoteOn();                             //  現在の時間がノートオンかどうか
 
-    void    BuildNoteOnList();                              //  ノートオンリストを事前に構築
-    void    SortNoteOnList();                              //  ノートオンリストをソート
-    float	GetNearMidiTime(const double& inputTime);        //	入力されたタイミングから近いノートを判定	
+    void    BuildNoteOnList();                              //   ノートオンリストを事前に構築
+    void    SortNoteOnList();                               //   ノートオンリストをソート
+    float	GetNearMidiTime(const double& inputTime);       //   入力されたタイミングから近いノートを判定	
 
     smf::MidiFile&  GetMidiFile()                   { return midiFile_; }	                //	midiファイル取得
     const double     GetMidiFileDurationSeconds()    { return midiFileDurationSeconds_; }    //  midiファイル全体の長さ取得

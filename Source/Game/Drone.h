@@ -7,6 +7,7 @@
 #include "BulletManager.h"
 #include "../Nova/AI/StateMachine.h"
 #include "../Nova/Audio/AudioManager.h"
+#include "../Nova/Others/JudgeTime.h"
 
 class Drone :public Enemy
 {
@@ -22,13 +23,6 @@ public:
 	};
 
 private:
-	//enum class AttackType	//	攻撃の種類
-	//{
-	//	Short = 0,
-	//	Long,
-	//	Max,
-	//};
-
 	enum class Audio3D		//	3Dオーディオで鳴らしたい音
 	{
 		Shot,				//	発射音
@@ -53,6 +47,9 @@ public:
 	void LaunchBullet();					//	弾丸生成処理
 	void Turn(const float& elpasedTime);	//	旋回処理
 	void Destroy()override;					//	破棄処理
+
+	//	攻撃が当たったか判定する
+	bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)override;
 
 	void UpdateEmitter();	//	エミッター更新
 	void UpdateAudioSource();	//	オーディオソース更新

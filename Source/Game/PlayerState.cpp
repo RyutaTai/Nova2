@@ -326,9 +326,6 @@ namespace PlayerState
 		animSpeedChangeInterval_[1].SetJudgeTime(0.32f, 0.67f);		//	パンチ
 		animSpeedChangeInterval_[2].SetJudgeTime(0.67f, 1.167f);	//	パンチ後
 
-		//	キー入力判定初期化
-		isCorrectInput_ = false;
-
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
@@ -342,14 +339,12 @@ namespace PlayerState
 		// TODO:アニメーションの長さ調整
 
 		Command command = { KeyK };	//	入力判定
-		JudgeInput(cancellationTime_);
+		JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
 
-		IsHit(elapsedTime, animJudgeTime_, "ik_hand_r");
-
-		if (isCorrectInput_)	//	入力判定がtrueなら
+		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
 			owner_->ChangeState(Player::StateType::ComboOne2);
-			isCorrectInput_ = false;
+			
 			//	リズム判定処理
 			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
@@ -362,14 +357,14 @@ namespace PlayerState
 	}
 
 	//	animJudgeTimeに収まっていて、攻撃がヒットしているか判断する
-	bool ComboOne1::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
+	bool ComboOne1::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
-		//	ノードと、敵または弾丸との当たり判定当たり判定
+		//	ノードと、敵または弾丸との当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
 			//owner_->ChangeState(Player::StateType::Idle);
@@ -379,45 +374,40 @@ namespace PlayerState
 		return true;
 	}
 
-	void ComboOne1::JudgeInput(const JudgeTime& cancellationTime)
+	bool ComboOne1::JudgeInput(const JudgeTime& cancellationTime)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		return;
-
+		return false;
 	}
 
-	void ComboOne1::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
+	bool ComboOne1::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 		
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		return;
+		return false;
 	}
 
 	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
@@ -486,9 +476,6 @@ namespace PlayerState
 		animSpeedChangeInterval_[2].SetJudgeTime(0.56f, 1.3f);		//	アッパーから構え
 		animSpeedChangeInterval_[3].SetJudgeTime(1.1f, 1.617f);		//	構えから待機に戻る
 
-		//	キー入力判定初期化
-		isCorrectInput_ = false;
-
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
@@ -498,11 +485,11 @@ namespace PlayerState
 	{
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
 		Command command = { KeyK };		//	入力判定
-		JudgeInput(cancellationTime_);
-		IsHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
-		IsHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
 
-		if (isCorrectInput_)	//	入力判定がtrueならコンボを進める
+		JudgeAttackHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
+		JudgeAttackHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
+
+		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
 		{
 			owner_->ChangeState(Player::StateType::ComboOne3);
 			//	リズム判定処理
@@ -517,14 +504,14 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne2::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
+	bool ComboOne2::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
-		//	ノードと、敵または弾丸との当たり判定当たり判定
+		//	ノードと、敵または弾丸との当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
 			//owner_->ChangeState(Player::StateType::Idle);
@@ -534,44 +521,40 @@ namespace PlayerState
 		return true;
 	}
 
-	void ComboOne2::JudgeInput(const JudgeTime& cancellationTime)
+	bool ComboOne2::JudgeInput(const JudgeTime& cancellationTime)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		return;
+		return false;
 
 	}
 
-	void ComboOne2::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
+	bool ComboOne2::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
-		return;
+		return false;
 	}
 
 	void ComboOne2::UpdateElapsedTime(const float& elapsedTime)
@@ -637,9 +620,6 @@ namespace PlayerState
 		acceptInputFrame_ = 10.0f;
 		cancellationTime_.SetJudgeTime(0.7f, 1.6f);
 
-		//	キー入力判定初期化
-		isCorrectInput_ = false;
-
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
@@ -649,12 +629,11 @@ namespace PlayerState
 	{
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
 		Command command = { KeyK };		//入力判定
-		JudgeInput(cancellationTime_);
-		IsHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
-		IsHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
-		IsHit(elapsedTime, animJudgeTime_[2], "ik_foot_l");
+		JudgeAttackHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
+		JudgeAttackHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
+		JudgeAttackHit(elapsedTime, animJudgeTime_[2], "ik_foot_l");
 
-		if (isCorrectInput_)	//	入力判定がtrueなら
+		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
 			owner_->ChangeState(Player::StateType::ComboOne4);
 			//	リズム判定処理
@@ -668,14 +647,14 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne3::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
+	bool ComboOne3::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
-		//	ノードと、敵または弾丸との当たり判定当たり判定
+		//	ノードと、敵または弾丸との当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
 			//owner_->ChangeState(Player::StateType::Idle);
@@ -685,42 +664,39 @@ namespace PlayerState
 		return true;
 	}
 
-	void ComboOne3::JudgeInput(const JudgeTime& cancellationTime)
+	bool ComboOne3::JudgeInput(const JudgeTime& cancellationTime)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		return;
+		return false;
 
 	}
 
-	void ComboOne3::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
+	bool ComboOne3::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
-			isCorrectInput_ = true;
+			return true;
 		}
 	}
 
@@ -769,9 +745,6 @@ namespace PlayerState
 		animJudgeTime_.SetJudgeTime(0.7f, 0.83f);
 		acceptInputFrame_ = 10.0f;
 
-		//	キー入力判定初期化
-		isCorrectInput_ = false;
-
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
@@ -781,8 +754,8 @@ namespace PlayerState
 	{
 		UpdateElapsedTime(elapsedTime);	//	経過時間更新
 		Command command = { KeyK };		//	入力判定
-		JudgeInput(cancellationTime_);
-		IsHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+		
+		JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
 		
 		if (owner_->IsPlayAnimation() == false)
 		{
@@ -796,14 +769,14 @@ namespace PlayerState
 
 	}
 
-	bool ComboOne4::IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
+	bool ComboOne4::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
 	{
 		//	時間での判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
 			return false;
 
-		//	ノードと、敵または弾丸との当たり判定当たり判定
+		//	ノードと、敵または弾丸との当たり判定
 		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
 		{
 			//owner_->ChangeState(Player::StateType::Idle);
@@ -813,43 +786,41 @@ namespace PlayerState
 		return true;
 	}
 
-	void ComboOne4::JudgeInput(const JudgeTime& cancellationTime)
+	bool ComboOne4::JudgeInput(const JudgeTime& cancellationTime)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		return;
-
+		return false;
 	}
 
-	void ComboOne4::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
+	bool ComboOne4::JudgeInputCommand(const JudgeTime& cancellationTime, const Command& command)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
 		if (owner_->IsAutoCombo())
 		{
-			isCorrectInput_ = true;
-			return;
+			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return;
+		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		//	判定時間内に指定したボタンが押されていたらisCorrectInput_をtrueにする
 		if (Input::Instance().CommandConfirm(command, acceptInputFrame_))
 		{
-			isCorrectInput_ = true;
+			return true;
 		}
+
+		return false;
 	}
 
 	void ComboOne4::UpdateElapsedTime(const float& elapsedTime)

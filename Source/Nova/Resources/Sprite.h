@@ -106,7 +106,7 @@ public:	// 構造体
 		DirectX::XMFLOAT2 texSize_ = {};		//	切り取りサイズ
 		DirectX::XMFLOAT2 scale_ = {1.0f,1.0f};	//	スケール
 		float scaleFactor_ = 1.0f;
-		DirectX::XMFLOAT4 color_ = {};			//	描画色 
+		DirectX::XMFLOAT4 color_ = { 0,0,0,1 };	//	描画色 
 		float angle_ = 0;						//	回転角度
 
 	private:

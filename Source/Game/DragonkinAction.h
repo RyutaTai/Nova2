@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../Nova/AI/ActionBase.h"
 #include "Dragonkin.h"
+#include "../Nova/AI/ActionBase.h"
+#include "../Nova/Others/JudgeTime.h"
 
 //	‘Ò‹@s“®
 namespace DragonkinAction
@@ -24,6 +25,10 @@ namespace DragonkinAction
 		AttackPunchAction(Dragonkin* owner):ActionBase(owner){}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
+
+	private:
+		JudgeTime	animJudgeTime_ = {};	//	”»’èŠÔ
+
 	};
 }
 
@@ -36,6 +41,10 @@ namespace DragonkinAction
 		AttackKickAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
+
+	private:
+		JudgeTime	animJudgeTime_ = {};	//	”»’èŠÔ
+
 	};
 }
 
@@ -48,6 +57,10 @@ namespace DragonkinAction
 		AttackWingAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
+
+	private:
+		JudgeTime	animJudgeTime_ = {};	//	”»’èŠÔ
+
 	};
 }
 
@@ -60,6 +73,10 @@ namespace DragonkinAction
 		SkillAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
+
+	private:
+		JudgeTime	animJudgeTime_ = {};	//	”»’èŠÔ
+
 	};
 }
 

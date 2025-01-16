@@ -1,6 +1,7 @@
 #include "UIHealth.h"
 
 #include "../Player.h"
+#include "../Rhythm.h"
 #include "../../Nova/Others/MathHelper.h"
 
 UIHealth::UIHealth()
@@ -83,6 +84,28 @@ void UIHealth::DrawDebug()
 	{
 		UI::DrawDebug();
 		ImGui::DragFloat("GaugeLerpSpeed", &gaugeLerpSpeed_);	//	•âŠ®‚·‚é‘¬‚³
+		
+		//	HP‚Ì˜g
+		if (ImGui::TreeNode("HpFrame"))
+		{
+			hpFrame_->DrawDebug();
+			ImGui::TreePop();
+		}
+
+		//	HPƒQ[ƒW
+		if (ImGui::TreeNode("Gauge"))
+		{
+			hpGauge_->DrawDebug();
+			ImGui::TreePop();
+		}
+
+		//	Œã‚ë‚ÌƒQ[ƒW
+		if (ImGui::TreeNode("GaugeBack"))
+		{
+			hpGaugeBack_->DrawDebug();
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
 }

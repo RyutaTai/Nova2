@@ -90,7 +90,7 @@ public:
 
 	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 
-	void JointVsPlayer(const DirectX::XMFLOAT3& myJointPos, const float& myJointRadius);	//	プレイヤーとの当たり判定
+	bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)override;	//	攻撃が当たったか判定する
 
 private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理

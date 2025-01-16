@@ -259,6 +259,8 @@
     <ClCompile Include="Source\Nova\Audio\Audio.cpp" />
     <ClCompile Include="Source\Nova\Audio\FadeXAPO.cpp" />
     <ClCompile Include="Source\Game\UI\UIRhythmJudgment.cpp" />
+    <ClCompile Include="Source\Nova\Collision\CollisionData.cpp" />
+    <ClCompile Include="Source\Nova\Collision\CollisionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -490,6 +492,8 @@
     <ClInclude Include="Source\Nova\Audio\Audio.h" />
     <ClInclude Include="Source\Nova\Audio\FadeXAPO.h" />
     <ClInclude Include="Source\Game\UI\UIRhythmJudgment.h" />
+    <ClInclude Include="Source\Nova\Collision\CollisionData.h" />
+    <ClInclude Include="Source\Nova\Collision\CollisionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Nova\Shaders\BlurPs.hlsl">

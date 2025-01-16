@@ -133,9 +133,15 @@ void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, c
 	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
 }
 
-//	ジョイントとプレイヤーの当たり判定
-void Dragonkin::JointVsPlayer(const DirectX::XMFLOAT3& myJointPos, const float& myJointRadius)
+//	攻撃が当たったか判定する
+bool Dragonkin::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)
 {
+	//	判定区間に入っているか判断する
+	float currentAnimationSeconds = GetCurrentAnimationSeconds();
+	if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
+		return false;
+
+	//	ノードとプレイヤーの当たり判定
 	//	プレイヤーの位置、半径、高さ
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
 	float playerRadius = Player::Instance().GetRadius();
@@ -145,11 +151,12 @@ void Dragonkin::JointVsPlayer(const DirectX::XMFLOAT3& myJointPos, const float& 
 	DirectX::XMFLOAT3 outPosition = {};
 
 	//	ジョイント(球)とプレイヤー(円柱)の当たり判定
-	if (Collision::IntersectSphereVsCylinder(myJointPos, myJointRadius, playerPos, playerRadius, playerHeight, outPosition))
+	if (Collision::IntersectSphereVsCylinder(attackPos, radius, playerPos, playerRadius, playerHeight, outPosition))
 	{
 
 	}
 
+	return false;
 }
 
 //	破棄処理

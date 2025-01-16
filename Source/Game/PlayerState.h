@@ -93,9 +93,9 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& inputJudgeTime);
-		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		bool JudgeInput(const JudgeTime& inputJudgeTime);	//	正しい入力が取れていたらtrue
+		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);	//	経過時間更新
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
 
@@ -104,7 +104,7 @@ namespace PlayerState
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	アニメーション速度変化区間
 		JudgeTime	cancellationTime_ = {};			//	キャンセル可能時間
 		float		acceptInputFrame_ = 0.0f;		//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
-		bool		isCorrectInput_ = false;		//	正しい入力が取れていたらtrue
+				
 	};
 }
 
@@ -123,9 +123,9 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& cancellationTime);
-		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		bool JudgeInput(const JudgeTime& cancellationTime);
+		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 		void UpdateAnimationSpeed();
 
@@ -135,7 +135,6 @@ namespace PlayerState
 		JudgeTime			animSpeedChangeInterval_[4] = {};		//	判定を取るアニメーション区間
 		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
 		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
-		bool				isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		bool				isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
 
 	};
@@ -156,9 +155,9 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& cancellationTime);
-		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
+		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
@@ -166,7 +165,6 @@ namespace PlayerState
 		JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		bool		isHit_ = false;
 
 	};
@@ -187,16 +185,15 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool IsHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
-		void JudgeInput(const JudgeTime& cancellationTime);
-		void JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
+		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
 		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
-		bool		isCorrectInput_ = false;	//	正しい入力が取れていたらtrue
 		bool		isHit_ = false;
 
 	};

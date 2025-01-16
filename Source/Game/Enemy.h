@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Character.h"
-//#include "../Nova/AI/StateMachine.h"
-//#include "../Nova/AI/Telegram.h"
+#include "../Nova/Others/JudgeTime.h"
 
 class Enemy :public Character
 {
@@ -44,18 +43,21 @@ public:
 	Enemy(const std::string& fileName, const std::string& rootNodeName = "root");
 	~Enemy()override {}
 
-	virtual void				Initialize()	override = 0;
-	virtual void				Update(const float& elapsedTime)		override = 0;
-	virtual void				Render()		override = 0;
-	virtual void				DrawDebug()		override = 0;
-	virtual void				DrawDebugPrimitive() = 0;
-	virtual bool				SearchPlayer();																//	プレイヤー索敵
-	//virtual bool OnMessage(const Telegram& msg);															//	メッセージ受信関数
+	virtual void	Initialize()	override = 0;
+	virtual void	Update(const float& elapsedTime)override = 0;
+	virtual void	Render()		override = 0;
+	virtual void	DrawDebug()		override = 0;
+	virtual void	DrawDebugPrimitive() = 0;
+	virtual bool	JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, 
+						const DirectX::XMFLOAT3& attackPos, const float& radius) = 0;	//	攻撃が当たったか判定する
+	
+	virtual bool				SearchPlayer();																	//	プレイヤー索敵
+	//virtual bool OnMessage(const Telegram& msg);																//	メッセージ受信関数
 	virtual void				Destroy();
 
 	void						SetDamaged(const bool& damaged)		{ isDamaged_ = damaged; }					//	ダメージフラグ設定
-	void						SetMyType(const EnemyType& myType)	{ myType_ = myType; }					//	自分の種類設定
-	virtual void				SetRandomTargetPosition();													//	ターゲット位置をランダム設定
+	void						SetMyType(const EnemyType& myType)	{ myType_ = myType; }						//	自分の種類設定
+	virtual void				SetRandomTargetPosition();														//	ターゲット位置をランダム設定
 	void						SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }	//	ターゲットポジション設定
 	void						SetRunTimer(const float& timer) { runTimer_ = timer; }			//	ステートタイマー設定
 

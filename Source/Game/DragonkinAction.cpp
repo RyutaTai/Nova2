@@ -1,6 +1,7 @@
 #include "DragonkinAction.h"
 
 #include "../Nova/Others/MathHelper.h"
+#include "Player.h"
 
 //	待機行動(IdleAction)
 namespace DragonkinAction
@@ -59,10 +60,27 @@ namespace DragonkinAction
 		switch (step_)
 		{
 		case 0:
+			//	アニメーション再生
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 0.2f);
+			//	判定を取る区間を設定
+			animJudgeTime_.SetJudgeTime(0.42f, 0.53f);
+
 			step_++;
 			break;
 		case 1:
+			//	自分の位置、ジョイントの位置
+			DirectX::XMFLOAT4X4 world;
+			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Hand_R", world);
+			float jointRadius = 5.0f;
+
+			//	プレイヤーとの当たり判定
+			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			{
+				Player::Instance().SubtractHp(5);
+			}
+
+			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
 			{
 				step_ = 0;
@@ -94,10 +112,27 @@ namespace DragonkinAction
 		switch (step_)
 		{
 		case 0:
+			//	アニメーション再生
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false, 0.2f);
+			//	判定を取る区間を設定
+			animJudgeTime_.SetJudgeTime(0.52f, 0.6f);
+			
 			step_++;
 			break;
 		case 1:
+			//	自分の位置、ジョイントの位置
+			DirectX::XMFLOAT4X4 world;
+			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L", world);
+			float jointRadius = 5.0f;
+
+			//	プレイヤーとの当たり判定
+			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			{
+				Player::Instance().SubtractHp(5);
+			}
+
+			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
 			{
 				step_ = 0;
@@ -129,10 +164,27 @@ namespace DragonkinAction
 		switch (step_)
 		{
 		case 0:
+			//	アニメーション再生
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false, 0.2f);
+			//	判定を取る区間を設定
+			animJudgeTime_.SetJudgeTime(0.34f, 0.41f);
+			
 			step_++;
 			break;
 		case 1:
+			//	自分の位置、ジョイントの位置
+			DirectX::XMFLOAT4X4 world;
+			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L", world);
+			float jointRadius = 5.0f;
+
+			//	プレイヤーとの当たり判定
+			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			{
+				Player::Instance().SubtractHp(5);
+			}
+
+			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
 			{
 				step_ = 0;

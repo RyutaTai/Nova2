@@ -72,6 +72,16 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
     }
 }
 
+//	midiを見てノートオンならtrueを返す(テンポに合わせた動きをさせるために使用する)
+bool Rhythm::GetRhythm()
+{
+    //  現在ノートオンならtrueを返す
+    if (midi_->IsInputNoteOn(GetCurrentMidiTime()))
+        return true;
+
+    return false;
+}
+
 void Rhythm::DrawDebug()
 {
     if(ImGui::TreeNode("Rhythm"))

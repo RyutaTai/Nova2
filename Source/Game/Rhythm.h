@@ -35,6 +35,9 @@ public:
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }
 
+	//	midiを見てノートオンならtrueを返す(テンポに合わせた動きをさせるために使用する)
+	bool	GetRhythm();
+
 private:
 	float bpm_ = 140.0f;	//	楽曲のbpm
 

@@ -15,7 +15,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float GAMMA = 1/2.2;
     color.rgb = pow(color.rgb, GAMMA);
 #endif
-    return color;
+    //return color;
     return float4(color.rgb, alpha) * pin.color;
     
     //return color_map.Sample(point_sampler_state, pin.texcoord) * pin.color; //  Unit8

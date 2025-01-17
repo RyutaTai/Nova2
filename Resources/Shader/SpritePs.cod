@@ -16,7 +16,7 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// COLOR                    0   xyzw        1     NONE   float       
+// COLOR                    0   xyzw        1     NONE   float   xyzw
 // TEXCOORD                 0   xy          2     NONE   float   xy  
 //
 //
@@ -30,6 +30,7 @@ ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
+dcl_input_ps linear v1.xyzw
 dcl_input_ps linear v2.xy
 dcl_output o0.xyzw
 dcl_temps 2
@@ -43,16 +44,18 @@ dcl_temps 2
 #line 11 "E:\Program\Nova2\Source\Nova\Shaders\SpritePs.hlsl"
 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0  // r0.x <- color.x; r0.y <- color.y; r0.z <- color.z; r0.w <- color.w
 
+#line 12
+mov r0.w, r0.w  // r0.w <- alpha
+
 #line 15
 mov r1.x, l(0.454545)  // r1.x <- GAMMA
 
 #line 16
-log r0.xyz, r0.xyzx
-mul r0.xyz, r0.xyzx, r1.xxxx
-exp r0.xyz, r0.xyzx  // r0.x <- color.x; r0.y <- color.y; r0.z <- color.z
+log r1.yzw, r0.xxyz
+mul r1.xyz, r1.yzwy, r1.xxxx
+exp r0.xyz, r1.xyzx
 
-#line 18
-mov o0.xyz, r0.xyzx
-mov o0.w, r0.w
+#line 19
+mul o0.xyzw, r0.xyzw, v1.xyzw
 ret 
 // Approximately 8 instruction slots used

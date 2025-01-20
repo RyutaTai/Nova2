@@ -663,7 +663,7 @@ void Model::UpdateAnimation(const float& elapsedTime)
 	const size_t frameIndex = static_cast<size_t>(frameIndexFloat);
 
 	//	外部から現在のフレームを取ってこれるようにする
-	currentKeyframeIndex_ = frameIndex;
+	currentKeyframeIndex_ = static_cast<int>(frameIndex);
 
 	//	最後のフレームを取得
 	const size_t frameEnd = (animation.sequence_.size() - 1);

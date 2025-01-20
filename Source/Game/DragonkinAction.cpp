@@ -69,9 +69,7 @@ namespace DragonkinAction
 			break;
 		case 1:
 			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT4X4 world;
-			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Hand_R", world);
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Hand_R");
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定
@@ -121,9 +119,7 @@ namespace DragonkinAction
 			break;
 		case 1:
 			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT4X4 world;
-			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L", world);
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L");
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定
@@ -173,9 +169,7 @@ namespace DragonkinAction
 			break;
 		case 1:
 			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT4X4 world;
-			DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L", world);
+			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L");
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定

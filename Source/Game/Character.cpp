@@ -179,21 +179,27 @@ void Character::SetPixelShader(const char* csoName)
 	gltfModelResource_->SetPixelShader(pixelShader_.Get());
 }
 
-//	ジョイントポジション取得
-DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
+//	名前からジョイントポジション取得
+DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT3& offsetPos)
 {
-	return gltfModelResource_->GetJointPosition(boneName, transform);
+	DirectX::XMFLOAT4X4 transform = {};
+	DirectX::XMStoreFloat4x4(&transform, gltfModelResource_->GetTransform()->CalcWorld());
+	return gltfModelResource_->GetJointPosition(boneName, transform, offsetPos);
 }
 
-DirectX::XMFLOAT3 Character::GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform)
+//	登録番号からジョイントポジション取得
+DirectX::XMFLOAT3 Character::GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT3& offsetPos)
 {
-	return gltfModelResource_->GetJointPosition(nodeIndex, transform);
+	DirectX::XMFLOAT4X4 transform = {};
+	DirectX::XMStoreFloat4x4(&transform, gltfModelResource_->GetTransform()->CalcWorld());
+	return gltfModelResource_->GetJointPosition(nodeIndex, transform, offsetPos);
 }
 
 //	HP減少
 void Character::SubtractHp(const int& hp)
 {
-	if (isInvincible_ == false)	//	無敵じゃなかったらHP減少
+	//	無敵でなければHP減少
+	if (isInvincible_ == false)	
 	{
 		hp_ -= hp;
 		if (hp_ <= 0)
@@ -208,6 +214,122 @@ void Character::AppendAnimation(const std::string& filename)
 {
 	gltfModelResource_->AppendAnimation(filename);
 }
+
+//	========== Collision ==========
+#pragma region //	========== Collision ========== 
+void Character::UpdateCollisions(const float& elapsedTime)
+{
+	//	攻撃判定更新
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+	}
+	//	くらい判定更新
+	for (DamageDetectionData& data : damageDetectionData_)
+	{
+		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+
+		data.Update(elapsedTime);
+	}
+	// 押し出し判定更新
+	for (CollisionDetectionData& data : collisionDetectionData_)
+	{
+		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+	}
+}
+
+#pragma region ----- 攻撃判定 ----- 
+//	攻撃判定用データ登録
+void Character::RegisterAttackDetectionData(const AttackDetectionData& data)
+{
+	attackDetectionData_.emplace_back(data);
+}
+
+//	名前からデータを取得
+AttackDetectionData& Character::GetAttackDetectionData(const std::string& name)
+{
+	//	名前でデータを探す
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		if (data.GetName() != name) continue;
+
+		return data;
+	}
+
+	//	見つからなかった
+	return AttackDetectionData();
+}
+
+//	登録番号からデータを取得
+AttackDetectionData& Character::GetAttackDetectionData(const int& index)
+{
+	return attackDetectionData_.at(index);
+}
+
+#pragma endregion ----- 攻撃判定 ----- 
+
+#pragma region ----- くらい判定 ----- 
+//	くらい判定用データ登録
+void Character::RegisterDamageDetectionData(const DamageDetectionData& data)
+{
+	damageDetectionData_.emplace_back(data);
+}
+//	名前からデータを取得
+DamageDetectionData& Character::GetDamageDetectionData(const std::string& name)
+{
+	//	名前でデータを探す
+	for (DamageDetectionData& data : damageDetectionData_)
+	{
+		if (data.GetName() != name) continue;
+
+		return data;
+	}
+
+	//	見つからなかった
+	return DamageDetectionData();
+}
+
+//	登録番号からデータを取得
+DamageDetectionData& Character::GetDamageDetectionData(const int& index)
+{
+	return damageDetectionData_.at(index);
+}
+
+#pragma endregion ----- くらい判定 ----- 
+
+#pragma region ----- 押し出し判定 ----- 
+//	押し出し判定用データ登録
+void Character::RegisterCollisionDetectionData(const CollisionDetectionData& data)
+{
+	collisionDetectionData_.emplace_back(data);
+}
+
+//	名前からデータを取得
+CollisionDetectionData& Character::GetCollisionDetectionData(const std::string& name)
+{
+	//	名前でデータを探す
+	for (CollisionDetectionData& data : collisionDetectionData_)
+	{
+		if (data.GetName() != name) continue;
+
+		return data;
+	}
+
+	//	見つからなかった
+	return CollisionDetectionData();
+}
+
+//	登録番号からデータを取得
+CollisionDetectionData& Character::GetCollisionDetectionData(const int& index)
+{
+	return collisionDetectionData_.at(index);
+}
+
+#pragma endregion ----- 押し出し判定 ----- 
+#pragma endregion //	========== Collision ========== 
 
 //	描画処理
 void Character::Render()

@@ -13,7 +13,7 @@ public:
 	~Effect() {};
 
 	//	çƒê∂
-	Effekseer::Handle Play(const DirectX::XMFLOAT3& position, float scale = 1.0f);
+	Effekseer::Handle Play(const DirectX::XMFLOAT3& position, const float& scale = 1.0f);
 
 	//	í‚é~
 	void Stop(Effekseer::Handle handle);
@@ -25,7 +25,7 @@ public:
 	void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
 
 	//	çƒê∂ÇÃÉXÉåÉbÉhâª
-	void PlayAsync(const DirectX::XMFLOAT3& position, float scale = 1.0f);
+	void PlayAsync(const DirectX::XMFLOAT3& position, const float& scale = 1.0f);
 
 private:
 	Effekseer::EffectRef	effekseerEffect_;

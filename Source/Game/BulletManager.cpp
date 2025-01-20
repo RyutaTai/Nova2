@@ -1,5 +1,6 @@
 #include "BulletManager.h"
 
+#include "Bullet.h"
 #include "../../External/imgui/imgui.h"
 
 //	コンストラクタ

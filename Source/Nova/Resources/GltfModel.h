@@ -383,8 +383,8 @@ public:
 	Transform*			GetTransform() { return &transform_; }
 	int					GetCurrentAnimNum();	//	現在再生中のアニメーション番号
 	float const			GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
-	DirectX::XMFLOAT3	GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform);		//	ジョイントポジション取得
-	DirectX::XMFLOAT3	GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform);
+	DirectX::XMFLOAT3	GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos = {});		//	ジョイントポジション取得
+	DirectX::XMFLOAT3	GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos = {});
 	const int			GetNodeIndex(const std::string& nodeName);
 	std::vector<Node>*	GetNodes() { return &nodes_; }
 

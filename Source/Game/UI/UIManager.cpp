@@ -143,7 +143,7 @@ void UIManager::Render()
 
 void UIManager::DrawDebug()
 {
-	int size = userInterfaces_.size();
+	int size = static_cast<int>(userInterfaces_.size());
 
 	//	UIManagerデバッグ
 	if (ImGui::TreeNode("UIManager"))

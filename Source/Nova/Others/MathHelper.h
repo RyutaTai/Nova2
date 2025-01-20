@@ -42,6 +42,20 @@ inline const float XMFloatLerp(const float& start, const float& end, const float
 	return start + timer * (end - start);	
 }
 
+inline float LengthV3(const DirectX::XMVECTOR& v)
+{
+	float ret = 0;
+	DirectX::XMStoreFloat(&ret, DirectX::XMVector3Length(v));
+	return ret;
+}
+
+inline float Length(const DirectX::XMFLOAT2& f)
+{
+	float ret = 0;
+	DirectX::XMStoreFloat(&ret, DirectX::XMVector2Length(DirectX::XMLoadFloat2(&f)));
+	return ret;
+}
+
 inline float Length(const DirectX::XMFLOAT3& f)
 {
 	float ret = 0;
@@ -49,10 +63,14 @@ inline float Length(const DirectX::XMFLOAT3& f)
 	return ret;
 }
 
-inline float LengthV3(const DirectX::XMVECTOR& v)
+inline float Length(const DirectX::XMFLOAT2& f1, const DirectX::XMFLOAT2& f2)
 {
 	float ret = 0;
-	DirectX::XMStoreFloat(&ret, DirectX::XMVector3Length(v));
+	DirectX::XMStoreFloat(
+		&ret,
+		DirectX::XMVector2Length(
+			DirectX::XMVectorSubtract(DirectX::XMLoadFloat2(&f1),
+				DirectX::XMLoadFloat2(&f2))));
 	return ret;
 }
 

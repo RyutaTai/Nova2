@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0DDBE550-8551-4506-9A5A-4DD100C00C48}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My3dgp</RootNamespace>
+    <RootNamespace>Nova</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Nova</ProjectName>
   </PropertyGroup>

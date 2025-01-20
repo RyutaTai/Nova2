@@ -73,7 +73,7 @@ FLOAT32 Angle(DirectX::XMFLOAT3 point_1, DirectX::XMFLOAT3 point_2, DirectX::XMF
 }
 #endif
 
-void DSP(SoundDSPSetting& dspSetting, SoundListener listener, SoundEmitter emitter)
+void DSP(SoundDSPSetting& dspSetting, const SoundListener& listener, const SoundEmitter& emitter)
 {
     //  ‹——£
     dspSetting.distanceListnerToEmitter_ = VECTOR3Length(emitter.position_, listener.position_);

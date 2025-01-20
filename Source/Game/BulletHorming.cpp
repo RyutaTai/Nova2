@@ -96,9 +96,10 @@ void BulletHorming::Destroy(const float& elapsedTime)
 
 	}
 
+	//	プレイヤーに当たっていたらダメージ処理
 	if (isHitPlayer)
 	{
-		Player::Instance().SubtractHp(amountOfDamage_);
+		Player::Instance().SubtractHp(attackPower_);
 	}
 
 }

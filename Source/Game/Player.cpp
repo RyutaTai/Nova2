@@ -9,6 +9,7 @@
 #include "Stage.h"
 #include "EnemyManager.h"
 #include "BulletManager.h"
+#include "Bullet.h"
 
 Player* Player::instance_ = nullptr;
 
@@ -119,8 +120,8 @@ void Player::Update(const float& elapsedTime)
 	//	敵との当たり判定
 	PlayerVsEnemies(elapsedTime);
 
-	
-	if (!isHitStage_ && isAddGravity_)
+	//	空中にいれば
+	if (isHitStage_ == false && isAddGravity_)
 	{
 		//	適当に重力処理
 		AddVelocityY(gravity_, elapsedTime);
@@ -131,7 +132,7 @@ void Player::Update(const float& elapsedTime)
 	if (isCollisionStage_)
 	{
 		//isHitStage_ = RayVsVertical(elapsedTime);	//	垂直方向(地面)
-		if (!RayVsVertical(elapsedTime))
+		if (RayVsVertical(elapsedTime) == false)
 		{
 			GetTransform()->AddPositionY(velocity_.y * elapsedTime);
 		}
@@ -165,7 +166,64 @@ void Player::UpdateListener()
 
 }
 
-//	プレイヤーと敵の当たり判定（押し合い処理）
+//	当たり判定登録
+void Player::RegisterCollisionData()
+{
+#pragma region ----- 押し出し判定登録 -----
+	//RegisterCollisionDetectionData();
+
+#pragma endregion ----- 押し出し判定登録 -----
+
+#pragma region ----- くらい判定登録 -----
+	//RegisterDamageDetectionData();
+#pragma endregion ----- くらい判定登録 -----
+
+#pragma region ----- 攻撃判定登録 -----
+	//RegisterAttackDetectionData();
+#pragma endregion ----- 攻撃判定登録 -----
+
+}
+
+//	当たり判定更新
+void Player::UpdateCollisionDetectionData(const float& elapsedTime)
+{
+	// くらい判定更新
+	for (DamageDetectionData& data : damageDetectionData_)
+	{
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+
+		data.Update(elapsedTime);
+	}
+	// 攻撃判定更新
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+	}
+
+	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
+	{
+		AttackDetectionData& data = GetAttackDetectionData(i);
+		DirectX::XMFLOAT3 pos = data.GetPosition();
+		pos.y = 1.0f;
+		data.SetJointPosition(pos);
+	}*/
+
+	// 押し出し判定更新
+	for (CollisionDetectionData& data : collisionDetectionData_)
+	{
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		DirectX::XMFLOAT3 pos = GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition());
+
+		if (data.GetFixedY())
+			pos.y = 0.0f;
+
+		data.SetJointPosition(pos);
+	}
+}
+
+//	プレイヤーと敵の当たり判定(押し合い処理）
 bool Player::PlayerVsEnemies(const float& elapsedTime)
 {
 	DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
@@ -173,7 +231,7 @@ bool Player::PlayerVsEnemies(const float& elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	DirectX::XMFLOAT3 outPosition = {};
 
-	isHitEnemy_ = false;
+	bool isHitEnemy = false;
 
 	for (Enemy* enemy : enemyManager.GetEnemies())
 	{
@@ -186,24 +244,22 @@ bool Player::PlayerVsEnemies(const float& elapsedTime)
 		//	円柱と円柱で当たり判定
 		if (Collision::IntersectCylinderVsCyliner(pos, radius_, height_, ePos + ePosOffset, eRadius, eHeight, outPosition, true))
 		{
-			isHitEnemy_ = true;
+			isHitEnemy = true;
 			GetTransform()->SetPositionX(outPosition.x);
 			GetTransform()->SetPositionZ(outPosition.z);
 		}
 
 	}
-	return isHitEnemy_;
+	return isHitEnemy;
 }
 
-//	ジョイントに敵または弾丸が当たっているか判定(どちらも当たっていてもtrue)
+//	ジョイントに敵または弾丸が一方でも当たっているか判定
 bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& boneName, const float& jointRadius)
 {
 	bool isHit = false;
 
 	//	ジョイントのワールド座標取得
-	DirectX::XMFLOAT4X4 world;
-	DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-	DirectX::XMFLOAT3 jointPos = GetJointPosition(boneName, world);
+	DirectX::XMFLOAT3 jointPos = GetJointPosition(boneName);
 	
 	//	衝突判定用のデバッグ球を描画
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
@@ -671,9 +727,7 @@ void Player::PlayEffect()
 bool Player::DummyRay(const float& elapsedTime)
 {
 	//	右手のワールド座標取得
-	DirectX::XMFLOAT4X4 world;
-	DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-	DirectX::XMFLOAT3 leftHandPos = GetJointPosition("mixamorig:RightHandMiddle1", world);
+	DirectX::XMFLOAT3 leftHandPos = GetJointPosition("mixamorig:RightHandMiddle1");
 
 	//	当たり判定用の半径セット
 	constexpr float leftHandRadius = 50.0f;
@@ -799,6 +853,28 @@ float const Player::GetCurrentAnimationSeconds()
 	return Character::GetCurrentAnimationSeconds();
 }
 
+//	ステート遷移
+void Player::ChangeState(const StateType& state)
+{
+	currentState_ = state;
+	stateMachine_->ChangeState(static_cast<int>(state));
+}
+
+//	現在のステート表示
+void Player::DrawStateStr()
+{
+	//	ステート文字列
+	std::string stateStr[static_cast<int>(StateType::Max)] =
+	{
+		"Idle","Move","Attack",
+		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
+		"Doege"
+	};
+
+	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
+
+}
+
 //	デバッグ描画
 void Player::DrawDebug()
 {
@@ -865,21 +941,6 @@ void Player::DrawDebug()
 	//	ImGuiでの変化を反映させる
 	//SetWeight(weight);
 	//SetBlendRate(blendRate);
-
-}
-
-//	現在のステート表示
-void Player::DrawStateStr()
-{
-	//	ステート文字列
-	std::string stateStr[static_cast<int>(StateType::Max)] =
-	{
-		"Idle","Move","Attack",
-		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
-		"Doege"
-	};
-
-	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
 
 }
 

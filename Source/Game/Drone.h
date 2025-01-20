@@ -36,9 +36,9 @@ public:
 	Drone();
 	~Drone()override;
 
-	void Initialize()	override;
-	void Update(const float& elapsedTime)		override;
-	void Render()		override;
+	void Initialize()override;
+	void Update(const float& elapsedTime)override;
+	void Render()override;
 
 	bool RayVsVertical(const float& elapsedTime)override;
 	bool RayVsHorizontal(const float& elapsedTime)override;
@@ -48,33 +48,42 @@ public:
 	void Turn(const float& elpasedTime);	//	旋回処理
 	void Destroy()override;					//	破棄処理
 
+	//	----- Collision -----
+	void RegisterCollisionData()override;
+	void UpdateCollisions(const float& elapsedTime)override;
+
 	//	攻撃が当たったか判定する
 	bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)override;
 
-	void UpdateEmitter();	//	エミッター更新
+	//	----- オーディオ -----
+	void UpdateEmitter();		//	エミッター更新
 	void UpdateAudioSource();	//	オーディオソース更新
 
 	const int GetMaxHp()const { return MAX_HP; }		//	最大HP取得
 
-	void ChangeState(StateType state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
+	//	----- ステート -----
+	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<Drone>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
 
 	void DrawDebugPrimitive()override;			//	デバッグプリミティブ描画
 	void DrawDebug()	override;				//	デバッグ描画
 
 private:
+	//	----- エフェクト -----
 	std::shared_ptr <Effect>		effectResource_;							//	エフェクト
 	float	effectScale_ = 1.0f;
 	
 	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
 	
+	//	----- オーディオ -----
 	SoundEmitter	emitter_ = {};				//	エミッター
 	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース
 	AudioSource* debugSource_ = nullptr;
 
+	//	----- ステート -----
 	std::unique_ptr<StateMachine<State<Drone>>>	stateMachine_ = nullptr;		//	ステートマシン
 
-private:	//	デバッグ用の変数
+private://	デバッグ用の変数
 	bool	bulletLaunch_	= true;		//	弾を発射するかどうか()
 	static const int MAX_HP = 40;		//	最大HP
 	//static const int MAX_HP = 60;		//	最大HP

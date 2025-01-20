@@ -83,12 +83,15 @@ void Drone::Initialize()
 	float playerHeight = Player::Instance().GetHeight();
 	float posOffsetY = -10.0f;
 
+	//	エミッターの設定
 	emitter_.position_ = GetTransform()->GetPosition();
 	//emitter_[static_cast<int>(Audio3D::Shot)].position.y = playerPos.y + playerHeight / 2.0f + posOffsetY;
 	emitter_.velocity_ = { 1.0f, 2.0f, 1.0f };
 	emitter_.minDistance_ = 7.0f;
 	emitter_.maxDistance_ = 12.0f;
 	emitter_.volume_ = 1.0f;
+	
+	//	発射音
 	sources_[static_cast<int>(Audio3D::Shot)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/Drone/launchSE.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
 	sources_[static_cast<int>(Audio3D::Shot)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(Audio3D::Shot)]->SetAudioName("LaunchBullet");
@@ -106,7 +109,7 @@ void Drone::Initialize()
 	debugSource_->SetAudioName("BulletMove");
 	AudioManager::Instance().Register(debugSource_);
 #endif
-	
+	//	破壊音
 	sources_[static_cast<int>(Audio3D::Destroy)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/Bullet/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
 	sources_[static_cast<int>(Audio3D::Destroy)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(Audio3D::Destroy)]->SetAudioName("BulletDestroy");
@@ -115,12 +118,13 @@ void Drone::Initialize()
 #endif
 
 	//	テスト用
-#if 1
-	sources_[static_cast<int>(Audio3D::Bgm)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", Audio::AudioType::BGM3D, "GameScene", &emitter_);
+#if 0
+	sources_[static_cast<int>(Audio3D::Bgm)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/BGM/452_BPM140_2.wav", Audio::AudioType::BGM3D, "GameScene", &emitter_);
+	//sources_[static_cast<int>(Audio3D::Bgm)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/BGM/Title.wav", Audio::AudioType::BGM3D, "GameScene", &emitter_);
 	sources_[static_cast<int>(Audio3D::Bgm)]->SetVolume(0.2f, false);
 	sources_[static_cast<int>(Audio3D::Bgm)]->SetAudioName("TestBGM");
 	sources_[static_cast<int>(Audio3D::Bgm)]->SetDSPSetting(Player::Instance().GetListener());
-	sources_[static_cast<int>(Audio3D::Bgm)]->SetPlayable(false);	//	デフォルトで再生しない設定にする
+	sources_[static_cast<int>(Audio3D::Bgm)]->SetPlayable(true);	//	再生するかのフラグ
 	sources_[static_cast<int>(Audio3D::Bgm)]->Play(true);
 	AudioManager::Instance().Register(sources_[static_cast<int>(Audio3D::Bgm)]);
 #endif
@@ -194,10 +198,12 @@ void Drone::UpdateEmitter()
 //	オーディオソース更新
 void Drone::UpdateAudioSource()
 {
+	//	発射音
 	if (sources_[static_cast<int>(Audio3D::Shot)])
 	{
 		sources_[static_cast<int>(Audio3D::Shot)]->SetDSPSetting(Player::Instance().GetListener());
 	}
+	//	BGM(デバッグ用)
 	if (sources_[static_cast<int>(Audio3D::Bgm)])
 	{
 		sources_[static_cast<int>(Audio3D::Bgm)]->SetDSPSetting(Player::Instance().GetListener());
@@ -207,11 +213,13 @@ void Drone::UpdateAudioSource()
 //	弾丸処理
 void Drone::LaunchBullet()
 {
-	if (bulletLaunch_)	//	弾丸発射フラグが立っていたら(デバッグ用)
+	//	弾丸発射フラグが立っていたら(デバッグ用)
+	if (bulletLaunch_)	
 	{
 
 #if 1
-		if (launchTimer_ <= 0.0f)	//	一定間隔で弾を発射
+		//	一定間隔で弾を発射
+		if (launchTimer_ <= 0.0f)
 #else
 		GamePad gamePad = Input::Instance().GetGamePad();
 		if (gamePad.GetButtonDown() & GamePad::BTN_START)	//	Enterキーで発射
@@ -329,6 +337,23 @@ void Drone::Destroy()
 	effectResource_->Play(effectPos, effectScale_);
 	
 	Enemy::Destroy();	//	自身を破棄
+}
+
+//	当たり判定登録
+void Drone::RegisterCollisionData()
+{
+#pragma region ----- 押し出し判定 -----
+	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
+	RegisterCollisionDetectionData({ "foot",0.7f,false });
+	
+#pragma endregion ----- 押し出し判定 -----
+}
+
+//	当たり判定更新
+void Drone::UpdateCollisions(const float& elapsedTime)
+{
+
 }
 
 //	描画処理

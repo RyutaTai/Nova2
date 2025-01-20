@@ -56,6 +56,12 @@ bool Enemy::SearchPlayer()
 	return false;
 }
 
+//	ƒ_ƒ[ƒWˆ—
+void Enemy::AddDamage(const float& damage)
+{
+	hp_ -= damage;
+}
+
 //	”jŠü
 void Enemy::Destroy()
 {

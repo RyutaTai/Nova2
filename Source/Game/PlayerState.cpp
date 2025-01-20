@@ -7,6 +7,7 @@
 #include "../Nova/Collision/Collision.h"
 #include "../Nova/Others/MathHelper.h"
 #include "BulletManager.h"
+#include "Bullet.h"
 #include "EnemyManager.h"
 #include "../Nova/Input/GamePad.h"
 #include "../Nova/Input/Input.h"
@@ -92,7 +93,7 @@ namespace PlayerState
 		if (!owner_->InputMove(elapsedTime))
 		{
 			//	待機ステートへ遷移
-			owner_->GetStateMachine()->ChangeState(static_cast<int>(Player::StateType::Idle));
+			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
 
@@ -180,7 +181,7 @@ namespace PlayerState
 		//	アニメーション再生が終わったら待機ステートへ遷移
 		if (owner_->IsPlayAnimation() == false /* && isMove_ == false*/)
 		{
-			owner_->GetStateMachine()->ChangeState(static_cast<int> (Player::StateType::Idle));
+			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
 #endif

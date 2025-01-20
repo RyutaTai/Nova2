@@ -133,7 +133,7 @@ void SceneTitle::Render()
 	DirectX::XMFLOAT2 texSize = groove->GetTransform()->GetSize();
 	groove->GetTransform()->SetColorA(grooveAlpha);
 
-	DirectX::XMFLOAT4 color = { 1,1,1,0.5f };
+	DirectX::XMFLOAT4 color = { 1,1,1,1 };
 	groove->GetTransform()->SetColor(color);
 	color = groove->GetTransform()->GetColor();
 	groove->Render();

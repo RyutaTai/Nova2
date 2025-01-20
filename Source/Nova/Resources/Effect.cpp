@@ -51,7 +51,7 @@ void Effect::SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale)
 }
 
 //	再生
-Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
+Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, const float& scale)
 {
 	_ASSERT_EXPR(effekseerEffect_.Get(), L"Failed to load effect.");
 
@@ -63,7 +63,7 @@ Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
 }
 
 //	プレイをスレッド化した実装
-void Effect::PlayAsync(const DirectX::XMFLOAT3& position, float scale)
+void Effect::PlayAsync(const DirectX::XMFLOAT3& position, const float& scale)
 {
 	_ASSERT_EXPR(effekseerEffect_.Get(), L"Failed to load effect.");
 

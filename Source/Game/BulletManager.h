@@ -3,8 +3,6 @@
 #include <vector>
 #include <set>
 
-#include "../Game/Bullet.h"
-
 class Bullet;
 
 class BulletManager
@@ -54,6 +52,7 @@ public:
 
 	//	’eŠÛ”æ“¾
 	int GetBulletCount()const { return static_cast<int>(bullets_.size()); }
+	
 	//	’eŠÛíœ
 	void Remove(Bullet* projectile);
 

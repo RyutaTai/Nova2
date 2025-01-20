@@ -51,19 +51,31 @@ public:
 	virtual bool	JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, 
 						const DirectX::XMFLOAT3& attackPos, const float& radius) = 0;	//	攻撃が当たったか判定する
 	
-	virtual bool				SearchPlayer();																	//	プレイヤー索敵
-	//virtual bool OnMessage(const Telegram& msg);																//	メッセージ受信関数
+	virtual bool				SearchPlayer();											//	プレイヤー索敵
+	//virtual bool OnMessage(const Telegram& msg);										//	メッセージ受信関数
 	virtual void				Destroy();
 
-	void						SetDamaged(const bool& damaged)		{ isDamaged_ = damaged; }					//	ダメージフラグ設定
-	void						SetMyType(const EnemyType& myType)	{ myType_ = myType; }						//	自分の種類設定
+	//	----- 敵の種類 -----
+	void						SetMyType(const EnemyType& myType) { myType_ = myType; }			//	自分の種類設定
+	EnemyType					GetMyType() { return myType_; }				//	敵の種類取得
+
+	//	----- Collision -----
+	virtual void RegisterCollisionData()override = 0;
+	virtual void UpdateCollisions(const float& elapsedTime) = 0;
+
+	//	----- ダメージ処理 -----
+	void		 SetDamaged(const bool& damaged){ isDamaged_ = damaged; }		//	ダメージフラグ設定
+	virtual void AddDamage(const float& damage);
+
+	//	----- ターゲット位置 -----
 	virtual void				SetRandomTargetPosition();														//	ターゲット位置をランダム設定
 	void						SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }	//	ターゲットポジション設定
-	void						SetRunTimer(const float& timer) { runTimer_ = timer; }			//	ステートタイマー設定
-
-	EnemyType					GetMyType()										{ return myType_; }				//	敵の種類取得
 	DirectX::XMFLOAT3			GetTargetPosition()								{ return targetPosition_; }		//	ターゲットポジション取得
+	
+	//	----- ステートタイマー -----
+	void						SetRunTimer(const float& timer) { runTimer_ = timer; }			//	ステートタイマー設定
 	float						GetRunTimer()									{ return runTimer_; }			//	ステートタイマー取得
+
 	bool						IsUseOffsetY() { return useOffsetY_; }
 
 protected:

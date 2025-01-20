@@ -896,9 +896,9 @@ int GltfModel::GetCurrentAnimNum()
 }
 
 //  ジョイントポジション取得
-DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform)
+DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos)
 {
-    DirectX::XMFLOAT3 position = {};/*world space*/
+    DirectX::XMFLOAT3 position = offsetPos;/*world space*/
   
     for (int index = 0; index < nodes_.size(); index++)
     {
@@ -916,9 +916,9 @@ DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& boneName, const
 }
 
 //  ジョイントポジション取得
-DirectX::XMFLOAT3 GltfModel::GetJointPosition(size_t nodeIndex, const DirectX::XMFLOAT4X4& transform)
+DirectX::XMFLOAT3 GltfModel::GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos)
 {
-    DirectX::XMFLOAT3 position = { 0, 0, 0 };
+    DirectX::XMFLOAT3 position = offsetPos;
 
     const Node& node = nodes_.at(nodeIndex);
     DirectX::XMMATRIX M = XMLoadFloat4x4(&node.globalTransform_) * DirectX::XMLoadFloat4x4(&transform);

@@ -121,7 +121,7 @@ void Bullet::DrawDebug()
 	GetTransform()->DrawDebug();
 	ImGui::DragFloat("Radius", &radius_, 1.0f, -FLT_MAX, FLT_MAX);				//	半径
 	ImGui::DragFloat("Scale", &scale, 0.1f, 1.0f, FLT_MAX);						//	スケール
-	ImGui::DragFloat("AmountOfDamage", &amountOfDamage_, 0.1f, 1.0f, FLT_MAX);	//	ダメージ量
+	ImGui::DragFloat("AmountOfDamage", &attackPower_, 0.1f, 1.0f, FLT_MAX);	//	ダメージ量
 
 	ImGui::DragFloat3("EmitterPosition", &emitter_.position_.x, 0.1f);	//	エミッターの位置
 	ImGui::DragFloat("EmitterVolume", &emitter_.volume_, 0.01f);		//	エミッターの音量

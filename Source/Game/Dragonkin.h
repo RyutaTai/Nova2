@@ -18,9 +18,9 @@ public:
 	//	アニメーション情報(Boss)
 	enum class AnimationType
 	{
-		AttackPunch = 0, 	//	
-		AttackKick,
-		AttackWing,
+		AttackPunch = 0, 	//	パンチ
+		AttackKick,			//	キック
+		AttackWing,			//	翼攻撃
 		ANIM_ATTACK04,
 		ANIM_INIT01,
 		ANIM_INIT02,
@@ -34,7 +34,7 @@ public:
 		ANIM_SKIL06,
 		ANIM_SKIL07,
 		ANIM_SKIL08,
-		Idle01,		//	待機
+		Idle01,				//	待機
 		ANIM_IDLE02,		//	待機2
 		ANIM_WALK,
 		ANIM_DMG_DIE01,
@@ -88,9 +88,14 @@ public:
 	void DrawDebug()override;
 	void DrawDebugPrimitive()override;
 
+	//	----- アニメーション -----
 	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
 
 	bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)override;	//	攻撃が当たったか判定する
+
+	//	----- Collision -----
+	void UpdateCollisions(const float& elapsedTime)override;
+	void RegisterCollisionData()override;
 
 private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理

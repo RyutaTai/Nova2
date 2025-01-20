@@ -3,7 +3,7 @@
 #include "../../imgui/imgui.h"
 
 //	球判定用ImGui
-void SphereData::DrawDebug()
+void CollisionSphereData::DrawDebug()
 {
 	if (ImGui::TreeNode(name_.c_str()))
 	{
@@ -17,7 +17,7 @@ void SphereData::DrawDebug()
 }
 
 //	円柱判定用ImGui
-void CylinderData::DrawDebug()
+void CollisionCylinderData::DrawDebug()
 {
 	if (ImGui::TreeNode(name_.c_str()))
 	{
@@ -28,4 +28,42 @@ void CylinderData::DrawDebug()
 
 		ImGui::TreePop();
 	}
+}
+
+//	攻撃判定用
+void AttackDetectionData::DrawDebug()
+{
+	collisionSphereData_.DrawDebug();
+}
+
+//	くらい判定更新処理
+void DamageDetectionData::Update(const float& elapsedTime)
+{
+	//	ヒットしたら色を変える
+	if (isHit_)
+	{
+		hitTimer_ -= elapsedTime;
+
+		if (hitTimer_ < 0.0f)
+		{
+			isHit_ = false;
+		}
+		SetColor(GetHitColor());
+	}
+	else
+	{
+		SetColor(GetDefaultColor());
+	}
+}
+
+//	くらい判定用
+void DamageDetectionData::DrawDebug()
+{
+	collisionSphereData_.DrawDebug();
+}
+
+//	押し出し判定用
+void CollisionDetectionData::DrawDebug()
+{
+	collisionSphereData_.DrawDebug();
 }

@@ -75,7 +75,7 @@ void Dragonkin::Initialize()
 
 	//	スケール
 	//GetTransform()->SetScaleFactor(0.04f);
-	GetTransform()->SetScaleFactor(0.020f);
+	GetTransform()->SetScaleFactor(0.02f);
 
 	//	初期アニメーション再生速度設定
 	SetAnimationSpeed(1.0f);
@@ -87,7 +87,8 @@ void Dragonkin::Update(const float& elapsedTime)
 	//	アニメーション更新処理
 	UpdateAnimation(elapsedTime);
 
-	UpdateBehaviorTree(elapsedTime);	//	ビヘイビアツリー更新
+	//	ビヘイビアツリー更新
+	UpdateBehaviorTree(elapsedTime);
 
 	//	HPがなくなったら
 	if (hp_ <= 0)
@@ -157,6 +158,53 @@ bool Dragonkin::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJu
 	}
 
 	return false;
+}
+
+//	当たり判定登録
+void Dragonkin::RegisterCollisionData()
+{
+
+}
+
+//	当たり判定更新
+void Dragonkin::UpdateCollisions(const float& elapsedTime)
+{
+	//	くらい判定更新
+	for (DamageDetectionData& data : damageDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+
+		data.Update(elapsedTime);
+	}
+
+	//	攻撃判定更新
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+	}
+
+	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
+	{
+		AttackDetectionData& data = GetAttackDetectionData(i);
+		DirectX::XMFLOAT3 pos = data.GetPosition();
+		pos.y = 1.0f;
+		data.SetJointPosition(pos);
+	}*/
+
+	//	押し出し判定更新
+	for (CollisionDetectionData& data : collisionDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		DirectX::XMFLOAT3 pos = GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition());
+
+		if (data.GetFixedY())
+			pos.y = 0.0f;
+
+		data.SetJointPosition(pos);
+	}
+
 }
 
 //	破棄処理

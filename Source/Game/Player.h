@@ -54,6 +54,9 @@ public:
 		ComboOne3,		//	コンボ0_3
 		ComboOne4,		//	コンボ0_4
 		Dodge,			//	回避
+		Damage,			//	ダメージを受けた
+		Flinch,			//	怯み
+		Death,			//	死亡
 		Max,			//	ステート最大数
 	};
 
@@ -79,17 +82,15 @@ public:
 	//	デバッグ
 	void DrawDebug()override;	//	ImGui描画
 	void DrawDebugPrimitive();	//	デバッグプリミティブ描画
-	void DrawStateStr();		//	現在のステート描画
 	void DrawDummyRay();
 
 	bool InputMove(const float& elapsedTime);		//	移動入力処理
-	void ChangeState(StateType state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	void PlayEffect();
 
 	//	指定したキーが押されているか
 	const bool GetButtonDown(const GamePadButton& gamePadButton) { return Input::Instance().GetGamePad().GetButtonDown()& gamePadButton; }
 
-	//	判定
+	//	判定処理
 	bool RayVsVertical(const float& elapsedTime)override;		//	ステージとの当たり判定(垂直方向)
 	bool RayVsHorizontal(const float& elapsedTime)override;		//	ステージとの当たり判定(水平方向)	
 	bool PlayerVsEnemies(const float& elapsedTime);				//	押し合い処理
@@ -99,61 +100,93 @@ public:
 	bool JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか
 
-	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed=1.0f);
-	
-	void UpdateListener();	//	リスナー情報更新
-
-	void SetIsPose(const bool& isPose)				{ isPose_ = isPose; }
-	void SetIsHitEnemy(const bool& isHitEnemy)		{ isHitEnemy_ = isHitEnemy; }
+	//	----- エフェクト -----
 	void SetEffectScale(const float& scale)			{ effectScale_ = scale; }
 	void SetPlayEffectFlag(const bool& playEffect)	{ playEffectFlag_ = playEffect; }
 	void SetEffectPos(const DirectX::XMFLOAT3& pos)	{ effectPos_ = pos; }
-	void SetAutoCombo(const bool& isAutoCombo)		{ isAutoCombo_ = isAutoCombo; }
+	const bool IsPlayEffect()	const	{ return playEffectFlag_; }
 	
+	//	----- HP -----
 	const int	GetMaxHp()		const	{ return MAX_HP; }
-	bool		GetPose()		const	{ return isPose_; }
-	bool		IsHItEnemy()	const	{ return isHitEnemy_; }
-	bool		IsPlayEffect()	const	{ return playEffectFlag_; }
-	bool		IsAutoCombo()	const	{ return isAutoCombo_; }
-	int									GetCurrentAnimNum();			//	現在再生中のアニメーション番号取得
-	AnimationType						GetCurrentAnimType();			//	現在再生中のアニメーションタイプ取得
-	float						const	GetCurrentAnimationSeconds();	//	現在のアニメーション再生時間取得
+
+	//	----- ダメージ処理 -----
+	void AddDamage(const float& damage) { hp_ -= damage; }
+
+	//	----- ポーズ -----
+	void		SetIsPose(const bool& isPose)	{ isPose_ = isPose; }
+	const bool	GetPose()const { return isPose_; }
+
+	//	----- コンボ -----
+	void		SetAutoCombo(const bool& isAutoCombo)	{ isAutoCombo_ = isAutoCombo; }
+	const bool	IsAutoCombo()const	{ return isAutoCombo_; }
+	//	----- 攻撃ヒットフラグ -----
+	void		SetAttackHit(const bool& isHit) { isAttackHit_ = isHit; }
+	const bool	IsAttackHit()const { return isAttackHit_; }
+
+	//	----- Collision ----
+	void RegisterCollisionData()override;
+	const bool IsUseCollisionDetection()const { return isUseCollisionDetection_; }
+	void UpdateCollisionDetectionData(const float& elapsedTime);
+
+	//	----- アニメーション -----
+	void			PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed=1.0f);
+	int				GetCurrentAnimNum();			//	現在再生中のアニメーション番号取得
+	AnimationType	GetCurrentAnimType();			//	現在再生中のアニメーションタイプ取得
+	float const		GetCurrentAnimationSeconds();	//	現在のアニメーション再生時間取得
+	
+	//	-----　移動方向取得 -----
 	DirectX::XMFLOAT3					GetMoveVec()const;				//	スティック入力値から移動ベクトルを取得
-	StateMachine<State<Player>>*		GetStateMachine()	{ return stateMachine_.get(); }		//	ステートマシン取得
-	SoundListener						GetListener()const	{ return listener_; }				//	リスナー取得
+	
+	//	----- State -----
+	StateMachine<State<Player>>*		GetStateMachine()	const { return stateMachine_.get(); }	//	ステートマシン取得
+	void								ChangeState(const StateType& state);						//	ステート遷移
+	StateType							GetCurrentState()	const { return currentState_; }			//	現在のステート取得
+	void								DrawStateStr();												//	現在のステート描画
+
+	//	----- オーディオ -----
+	void UpdateListener();	//	リスナー情報更新
+	SoundListener						GetListener()const	{ return listener_; }			//	リスナー取得
 
 private:
 	static Player* instance_;
 
-	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;			//	ステートマシン
+	//	----- State -----
+	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;	//	ステートマシン
+	StateType currentState_ = StateType::Idle;									//	現在のステート	
 
-	//	エフェクト
-	std::shared_ptr <Effect>	effectResource_;										//	エフェクト
-	float						effectScale_ = 5.0f;									//	エフェクトスケール
-	DirectX::XMFLOAT3			effectPos_ = {};										//	エフェクト再生位置
-	bool						playEffectFlag_ = false;								//	エフェクト再生フラグ
-	bool						drawEffectFlag_ = true;									//	エフェクト描画フラグ(falseなら描画しない)
-	//AnimationType				currentAnimNum_;										//	現在のアニメーション番号
+	//	----- エフェクト -----
+	std::shared_ptr <Effect>	effectResource_;								//	エフェクト
+	float						effectScale_ = 5.0f;							//	エフェクトスケール
+	DirectX::XMFLOAT3			effectPos_ = {};								//	エフェクト再生位置
+	bool						playEffectFlag_ = false;						//	エフェクト再生フラグ
+	bool						drawEffectFlag_ = true;							//	エフェクト描画フラグ(falseなら描画しない)
+	//AnimationType				currentAnimNum_;								//	現在のアニメーション番号
 	
-	//	プレイヤーのパラメータ
-	float						turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
-	static constexpr int		MAX_HP = 100;											//	最大HP
+	//	----- プレイヤーのパラメータ -----
+	float				 turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
+	static constexpr int MAX_HP = 100;											//	最大HP
 
-	bool						isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない
-	bool						isHitEnemy_ = false;	//	エネミーと当たっているか(押し出し用)
-	bool						isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
+	//	----- Collision -----
+	bool isUseCollisionDetection_ = true;	//	押し出し判定をするかどうか
 
-	//	ターゲット
-	bool						isTraget_	= false;	//	ターゲットがいるか
-	float						serchRange_ = 10.0f;	//	ターゲットを見つける範囲
-	DirectX::XMFLOAT3			targetPos	= {};		//	ターゲット位置
+	//	----- ポーズ -----
+	bool isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない
+	
+	//	----- 攻撃 -----
+	bool isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
+	bool isAttackHit_ = false;	//	攻撃ヒットフラグ
 
+	//	----- ターゲット -----
+	bool				isTraget_	= false;	//	ターゲットがいるか
+	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
+	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
 
-	//	オーディオ
+	//	----- オーディオ -----
 	SoundListener listener_ = {};	//	リスナー
 	AudioSource* sources_[static_cast<int>(AudioStereo::Max)] = { nullptr };
 
-private:	//	デバッグ用
+
+private://	----- デバッグ用 -----
 	//	ImGui用
 	bool				isCollisionStage_	= true;
 	bool				isHitStage_			= false;
@@ -163,7 +196,7 @@ private:	//	デバッグ用
 	bool				isAddGravity_		= false;		//	重力加算フラグ
 
 	//	DummyRay
-	float				debugOffset_		= height_ / 2;
+	float				debugOffset_		= height_ / 2.0f;
 	bool				isDummyReset_		= false;
 	bool				isDummyHit_			= false;		//	当てっているかどうか
 	float				dummyRayLimit_		= 100.0f;		//	レイの長さ

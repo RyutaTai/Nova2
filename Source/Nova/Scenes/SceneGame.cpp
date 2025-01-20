@@ -17,6 +17,7 @@
 #include "../../Game/UI/UIInstructions.h"
 #include "../../Game/UI/UITempo.h"
 #include "../../Game/Rhythm.h"
+#include "../Collision/CollisionManager.h"
 
 //	初期化
 void SceneGame::Initialize()
@@ -139,36 +140,38 @@ void SceneGame::Update(const float& elapsedTime)
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	/* ----- カメラ更新処理 ----- */
+	// ----- カメラ更新処理 -----
 	DirectX::XMFLOAT3 cameraTarget = player_->GetTransform()->GetPosition();
 	cameraTarget.y += player_->GetHeight() / 2.0f;
 	Camera::Instance().SetTarget(cameraTarget);
 	Camera::Instance().Update(elapsedTime);
 
-	/* ----- ステートマシン更新処理 ----- */
+	// ----- ステートマシン更新処理 -----
 	stateMachine_->Update(elapsedTime);
 
-	/* ----- ステージ更新処理 ----- */
+	// ----- ステージ更新処理 -----
 	stage_->Update(elapsedTime);
 
-	/* ----- プレイヤー更新処理 ----- */
+	// ----- プレイヤー更新処理 -----
 	player_->Update(elapsedTime);
 
-	/* ----- エネミー更新処理 ----- */
+	// ----- エネミー更新処理 -----
 	EnemyManager::Instance().Update(elapsedTime);
 	//drone_->Update(elapsedTime);
 
-	/* ----- エフェクト更新処理 ----- */
+	// ----- エフェクト更新処理 -----
 	EffectManager::Instance().Update(elapsedTime);
 
-	/* ----- UI更新処理 ----- */
+	// ----- UI更新処理 -----
 	UIManager::Instance().Update(elapsedTime);
 
-	/* ----- Rhythm更新処理 ----- */
+	// ----- Rhythm更新処理 -----
 	Rhythm::Instance().Update();
 
-	//	ゲームクリアへの遷移はWeve3 State内で行っている
-		
+	// ----- Collision更新処理 -----
+	CollisionManager::Instance().Update(elapsedTime);
+
+	//	ゲームクリアへの遷移はWeve3 State内で行っている	
 	//	ゲームオーバー
 	int playerHp = player_->GetHp();
 	if (playerHp <= 0)

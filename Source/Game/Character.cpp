@@ -1,6 +1,5 @@
 #include "Character.h"
 
-#include "Character.h"
 #include "Stage.h"
 #include "../Nova/Core/Framework.h"
 #include "../Nova/Others/MathHelper.h"
@@ -48,18 +47,20 @@ void Character::AddVelocity(const DirectX::XMFLOAT3& addVelocity,const float& el
 	DirectX::XMStoreFloat3(&velocity_, Velocity);
 }
 
+//	Velocity‚ÌY•ûŒü‚Ì‚İ‰ÁZ‚·‚é
 void Character::AddVelocityY(const float& addVelocityY, const float& elapsedTime)
 {
 	velocity_.y += addVelocityY * elapsedTime;
 }
 
+//	Velocity‚ÌXZ•ûŒü‚Ì‚İ‰ÁZ‚·‚é
 void Character::AddVelocityXZ(const float& addVelocityX, const float& addVelocityZ, const float& elapsedTime)
 {
 	velocity_.x += addVelocityX * elapsedTime;
 	velocity_.z += addVelocityZ * elapsedTime;
 }
 
-//	XZ•ûŒü‚ÌVelocity‚Ì‚İ‚Éˆø”‚Ì”‚ğŠ|‚¯‚é
+//	Velocity‚ÌXZ•ûŒü‚Ì‚İæZ‚·‚é
 void Character::MultiplyVelocityXZ(const float& multiplyVelocity, const float& elapsedTime)
 {
 	velocity_.x *= multiplyVelocity * elapsedTime;

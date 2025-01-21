@@ -33,7 +33,7 @@ void Frequency::Update(const float& elapsedTime, Audio* audioSource)
         int index = i + spNowBlock;
         if (index < SPsize)  // 範囲内かチェック
         {
-            windowedData.emplace_back(window_[i] * audioVector[index]);
+            windowedData.emplace_back(window_.at(i) * audioVector[index]);
         }
         else
         {

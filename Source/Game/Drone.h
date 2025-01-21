@@ -65,14 +65,16 @@ public:
 	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<Drone>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
 
+	//	----- デバッグ描画 -----
 	void DrawDebugPrimitive()override;			//	デバッグプリミティブ描画
 	void DrawDebug()	override;				//	デバッグ描画
 
 private:
 	//	----- エフェクト -----
-	std::shared_ptr <Effect>		effectResource_;							//	エフェクト
-	float	effectScale_ = 1.0f;
+	std::shared_ptr <Effect>		effectResource_;	//	エフェクト
+	float	effectScale_ = 1.0f;						//	エフェクトスケール
 	
+	// ----- Bullet -----
 	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
 	
 	//	----- オーディオ -----

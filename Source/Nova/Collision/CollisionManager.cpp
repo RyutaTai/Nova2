@@ -333,6 +333,8 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
     const int maxPlayerData = player.GetCollisionDetectionDataCount();
     const int maxEnemyData = enemy->GetCollisionDetectionDataCount();
 
+    int debugCalcCount = 0;
+
     for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
     {
         const CollisionDetectionData playerData = player.GetCollisionDetectionData(playerDataIndex);
@@ -344,7 +346,10 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
             //  このデータの判定が無効
             if (enemyData.GetIsActive() == false) continue;
 
+            //  押し出し後の位置
             DirectX::XMFLOAT3 resultPosition = {};
+
+            debugCalcCount += 1;
 
             //  Yの値が0.0fのデータとの判定
             if (enemyData.GetFixedY())
@@ -363,9 +368,6 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
             //  その他のデータとの判定
             else
             {
-                //  CollisionDataの位置を更新する
-                player.UpdateCollisionDetectionData(elapsedTime);
-
                 //  当たったかチェック
                 if (IntersectSphereVsSphereNotConsiderY(
                     enemyData.GetPosition(), enemyData.GetRadius(),
@@ -378,6 +380,7 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
             }
         }
     }
+    debugCalcCount;
 }
 
 #pragma endregion   ----- 押し出し判定 -----
@@ -474,9 +477,10 @@ void CollisionManager::UpdateBulletVs()
 
 //  ========== Intersect ==========
 #pragma region  ========== Intersect ==========
-//  球と球の交差判定
+//  球と球の交差判定(押し出しあり)
 bool CollisionManager::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, const float& radiusA, const DirectX::XMFLOAT3& positionB, const float& radiusB, DirectX::XMFLOAT3& outPositionB)
 {
+#if 0
     //	A->Bの単位ベクトルを算出
     DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
     DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
@@ -494,6 +498,24 @@ bool CollisionManager::IntersectSphereVsSphere(const DirectX::XMFLOAT3& position
     Vec = DirectX::XMVectorScale(Vec, range);
     OutPositionB = DirectX::XMVectorAdd(PositionA, Vec);
     DirectX::XMStoreFloat3(&outPositionB, OutPositionB);
+#else
+    float vx = positionB.x - positionA.x;
+    float vz = positionB.z - positionA.z;
+    const float range = radiusA + radiusB;
+    const float distXZ = sqrtf(vx * vx + vz * vz);
+
+    // 当たっていない
+    if (distXZ > range) return false;
+
+    // 正規化
+    vx /= distXZ;
+    vz /= distXZ;
+
+    outPositionB.x = positionA.x + (vx * range);
+    outPositionB.y = positionB.y;
+    outPositionB.z = positionA.z + (vz * range);
+
+#endif
 
     return true;
 
@@ -517,7 +539,7 @@ bool CollisionManager::IntersectSphereVsSphere(const DirectX::XMFLOAT3& position
 }
 
 //  球と球の当たり判定(Y軸方向の押し出しなし)
-const bool CollisionManager::IntersectSphereVsSphereNotConsiderY(const DirectX::XMFLOAT3& positionA, const float radiusA, const DirectX::XMFLOAT3& positionB, const float radiusB, DirectX::XMFLOAT3& outPositionB)
+const bool CollisionManager::IntersectSphereVsSphereNotConsiderY(const DirectX::XMFLOAT3& positionA, const float& radiusA, const DirectX::XMFLOAT3& positionB, const float& radiusB, DirectX::XMFLOAT3& outPositionB)
 {
     DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
     DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);

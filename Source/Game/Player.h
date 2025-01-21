@@ -97,7 +97,7 @@ public:
 
 	bool JointVsEnemiesAndBullet(const float& elapsedTime, const std::string& boneName, const float& jointRadius);
 	bool JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& jointPos, const float& jointRadius);	//	ジョイントと敵の当たり判定
-	bool JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float jointRadius);	//	ジョイントと弾丸の当たり判定
+	bool JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float& jointRadius);	//	ジョイントと弾丸の当たり判定
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか
 
 	//	----- エフェクト -----

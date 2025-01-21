@@ -217,7 +217,7 @@ CollisionMesh::CollisionMesh(ID3D11Device* device, const std::string& fileName, 
 		}
 	}
 
-	CreateAreas(16, 16);
+	CreateAreas(12, 12);
 
 }
 

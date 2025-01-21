@@ -106,10 +106,14 @@ void Player::Initialize()
 //	更新処理
 void Player::Update(const float& elapsedTime)
 {
-	if (isPose_)return;	//	ポーズ中ならreturn
+	//	ポーズ中なら処理しない
+	if (isPose_)return;
 
-	//	ステートごとの更新処理
+	//	----- ステート更新処理 -----
 	stateMachine_->Update(elapsedTime);
+
+	//	----- 当たり判定更新 -----
+	UpdateCollisionDetectionData(elapsedTime);
 
 	//	エフェクト再生確認用
 #if _DEBUG
@@ -145,12 +149,12 @@ void Player::Update(const float& elapsedTime)
 
 	//Move(elapsedTime);	//	inputMoveにもある
 
-	//	アニメーション更新処理
+	//	----- アニメーション更新処理 -----
 	UpdateAnimation(elapsedTime);
 	
 	//DummyRay(elapsedTime);
 
-	//	リスナー更新
+	//	----- リスナー更新 -----
 	UpdateListener();
 
 }
@@ -163,7 +167,7 @@ void Player::UpdateListener()
 	DirectX::XMFLOAT3 scale = GetTransform()->GetScale();
 
 	//listener_.position = { position.x, position.y + (scale.y / 2.0f), position.z };
-	listener_.position_ = { position.x, position.y + height_ / 2, position.z };
+	listener_.position_ = { position.x, position.y + height_ / 2.0f, position.z };
 	listener_.frontVec_ = Camera::Instance().GetFront();
 	listener_.velocity_ = GetMoveVec();
 	listener_.rightVec_ = Camera::Instance().GetRight();
@@ -177,18 +181,44 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
 	// 押し出し判定のみ円柱に変更したい
 	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
+
+#if 0
+	RegisterCollisionDetectionData({ "foot",					0.2f,false ,{0.0f,0.0f,0.0f},"ik_foot_r" });	//	右足首を基準に足元に球を置く
+#endif
+
+#if 1
+	//	右側
 	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_r",	0.2f,false ,{} });	//	右肩
 	RegisterCollisionDetectionData({ "lowerarm_r",					0.2f,false ,{} });	//	右肘
 	RegisterCollisionDetectionData({ "ik_hand_r",					0.2f,false ,{} });	//	右手首
 	RegisterCollisionDetectionData({ "calf_r",						0.2f,false ,{} });	//	右膝
 	RegisterCollisionDetectionData({ "ik_foot_r",					0.2f,false ,{} });	//	右足首
 	
+	//	左側
 	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
 	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
 	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
 	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
 	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
 
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
+	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
+	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
+	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
+	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
+	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
+	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
+	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
+	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
+	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
+	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
+	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
+	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
+
+
+#endif
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -334,7 +364,7 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 }
 
 //	ジョイントと弾丸の当たり判定
-bool Player::JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float jointRadius)
+bool Player::JointVsBullet(const DirectX::XMFLOAT3& jointPos, const float& jointRadius)
 {
 	bool isHitBullet = false;
 	BulletManager& bulletManager = BulletManager::Instance();

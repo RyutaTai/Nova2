@@ -72,8 +72,8 @@ private:	//	”»’è—pŠÖ”
 		const DirectX::XMFLOAT3& positionB, const float& radiusB);
 	//	‹…‚Æ‹…‚Ì“–‚½‚è”»’è(Y²•ûŒü‚Ì‰Ÿ‚µo‚µ‚È‚µ)
 	const bool IntersectSphereVsSphereNotConsiderY(
-		const DirectX::XMFLOAT3& positionA, const float radiusA,
-		const DirectX::XMFLOAT3& positionB, const float radiusB,
+		const DirectX::XMFLOAT3& positionA, const float& radiusA,
+		const DirectX::XMFLOAT3& positionB, const float& radiusB,
 		DirectX::XMFLOAT3& outPositionB);
 	//	‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
 	bool IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, const float& radiusA, const float& heightA,

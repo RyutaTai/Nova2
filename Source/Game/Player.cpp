@@ -46,18 +46,22 @@ Player::Player()
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
 
-	//	オーディオ初期設定
+	//	----- Collision -----
+	RegisterCollisionData();
+
+	//	----- オーディオ初期設定 -----
 	//	リスナー情報セット
 	listener_.innerRadius_ = 0.7f;
 	listener_.outerRadius_ = 1.67f;
 	listener_.filterParam_ = 0.8f;
+
 	//	足音SE
 	sources_[static_cast<int>(AudioStereo::Footsteps)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/FootstepsOne2.wav", Audio::AudioType::SENormal, "GameScene");
 	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetVolume(0.3f, false);
 	sources_[static_cast<int>(AudioStereo::Footsteps)]->SetAudioName("PlayerFootsteps");
 	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::Footsteps)]);
 
-	//	攻撃ヒット音
+	//	攻撃ヒットSE
 	sources_[static_cast<int>(AudioStereo::HitAttack)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/HitAttack.wav", Audio::AudioType::SENormal, "GameScene");
 	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetVolume(1.0f, false);
 	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetAudioName("PlayerHitAttack");
@@ -170,7 +174,10 @@ void Player::UpdateListener()
 void Player::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
-	//RegisterCollisionDetectionData();
+	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	// 押し出し判定のみ円柱に変更したい
+	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
+	RegisterCollisionDetectionData({ "ik_foot_r",0.7f,false ,{} });	//	右足
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -187,7 +194,7 @@ void Player::RegisterCollisionData()
 //	当たり判定更新
 void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 {
-	// くらい判定更新
+	//	くらい判定更新
 	for (DamageDetectionData& data : damageDetectionData_)
 	{
 		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
@@ -195,10 +202,10 @@ void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 
 		data.Update(elapsedTime);
 	}
-	// 攻撃判定更新
+	//	攻撃判定更新
 	for (AttackDetectionData& data : attackDetectionData_)
 	{
-		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
 
@@ -210,10 +217,10 @@ void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 		data.SetJointPosition(pos);
 	}*/
 
-	// 押し出し判定更新
+	//	押し出し判定更新
 	for (CollisionDetectionData& data : collisionDetectionData_)
 	{
-		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		DirectX::XMFLOAT3 pos = GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition());
 
 		if (data.GetFixedY())
@@ -265,7 +272,9 @@ bool Player::JointVsEnemiesAndBullet(const float& elapsedTime, const std::string
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 	//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
 
+	//	ジョイントと敵の当たり判定
 	if (JointVsEnemies(elapsedTime, jointPos, jointRadius) == true)isHit = true;
+	//	ジョイントと弾の当たり判定
 	if (JointVsBullet(jointPos, jointRadius) == true)isHit = true;
 
 	return isHit;

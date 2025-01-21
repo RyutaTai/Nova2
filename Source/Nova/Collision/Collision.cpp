@@ -8,8 +8,8 @@
 #include "../Resources/GltfModel.h"
 
 //	‹…‚Æ‹…‚ÌŒğ·”»’è
-bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA,
-	const DirectX::XMFLOAT3& positionB, float radiusB,
+bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, const float& radiusA,
+	const DirectX::XMFLOAT3& positionB, const float& radiusB,
 	DirectX::XMFLOAT3& outPositionB)
 {
 	//	A->B‚Ì’PˆÊƒxƒNƒgƒ‹‚ğZo
@@ -38,9 +38,9 @@ bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, floa
 }
 
 //	‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
-bool Collision::IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, float radiusA, float heightA,
-	const DirectX::XMFLOAT3& positionB, float radiusB, float heightB,
-	DirectX::XMFLOAT3& outPosition, bool outIsA)
+bool Collision::IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, const float& radiusA, const float& heightA,
+	const DirectX::XMFLOAT3& positionB, const float& radiusB, const float& heightB,
+	DirectX::XMFLOAT3& outPosition, const bool& outIsA)
 {
 	//	A‚Ì‘«Œ³‚ªB‚Ì“ª‚æ‚èã‚È‚ç“–‚½‚Á‚Ä‚¢‚È‚¢
 	if (positionA.y > positionB.y + heightB)
@@ -84,8 +84,8 @@ bool Collision::IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, f
 }
 
 //	‹…‚Æ‰~’Œ‚ÌŒğ·”»’è
-bool Collision::IntersectSphereVsCylinder(const DirectX::XMFLOAT3& spherePosition, float sphereRadius,
-	const DirectX::XMFLOAT3& cylinderPosition, float cylinderRadius, float cylinderHeight,
+bool Collision::IntersectSphereVsCylinder(const DirectX::XMFLOAT3& spherePosition, const float& sphereRadius,
+	const DirectX::XMFLOAT3& cylinderPosition, const float& cylinderRadius, const float& cylinderHeight,
 	DirectX::XMFLOAT3& outCylinderPosition)
 {
 	//	‹…‚ÌˆÊ’u‚ª‰~’Œ‚ÌˆÊ’u‚æ‚èã‚È‚ç“–‚½‚Á‚Ä‚¢‚È‚¢

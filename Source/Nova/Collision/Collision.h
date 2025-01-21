@@ -33,18 +33,18 @@ class Collision
 {
 public:
 	//	‹…‚Æ‹…‚ÌŒğ·”»’è
-	static bool IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA,
-		const DirectX::XMFLOAT3& positionB, float radiusB,
+	static bool IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, const float& radiusA,
+		const DirectX::XMFLOAT3& positionB, const float& radiusB,
 		DirectX::XMFLOAT3& outPositionB);
 
 	//	‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
-	static bool IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, float radiusA, float heightA,
-		const DirectX::XMFLOAT3& positionB, float radiusB, float heightB,
-		DirectX::XMFLOAT3& outPosition, bool outIsA = false/*A‚ğ‰Ÿ‚·‚©B‚ğ‰Ÿ‚·‚©*/);
+	static bool IntersectCylinderVsCyliner(const DirectX::XMFLOAT3& positionA, const float& radiusA, const float& heightA,
+		const DirectX::XMFLOAT3& positionB, const float& radiusB, const float& heightB,
+		DirectX::XMFLOAT3& outPosition, const bool& outIsA = false/*A‚ğ‰Ÿ‚·‚©B‚ğ‰Ÿ‚·‚©*/);
 
 	//	‹…‚Æ‰~’Œ‚ÌŒğ·”»’è
-	static bool IntersectSphereVsCylinder(const DirectX::XMFLOAT3& spherePosition, float sphereRadius,
-		const DirectX::XMFLOAT3& cylinderPosition, float cylinderRadius, float cylinderHeight,
+	static bool IntersectSphereVsCylinder(const DirectX::XMFLOAT3& spherePosition, const float& sphereRadius,
+		const DirectX::XMFLOAT3& cylinderPosition, const float& cylinderRadius, const float& cylinderHeight,
 		DirectX::XMFLOAT3& outCylinderPosition);
 	
 	////	‹…VsOŠpŒ`

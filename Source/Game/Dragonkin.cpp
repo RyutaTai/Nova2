@@ -11,6 +11,7 @@
 Dragonkin::Dragonkin()
 	:Enemy("./Resources/Model/silver-dragonkin-mir4/source/Silver_Dragonkin/Mon_BlackDragon31_Skeleton2.gltf")
 {
+	//	自身の種類設定
 	myType_ = EnemyType::Dragonkin;
 	
 	//	ステートセット(Dragonkin::StateTypeの順と合わせる)
@@ -30,6 +31,9 @@ Dragonkin::Dragonkin()
 	//	モデルのルート設定
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
+
+	//	----- Collision -----
+	RegisterCollisionData();
 
 	//	索敵範囲設定
 	searchRange_ = 13.5f;
@@ -163,7 +167,19 @@ bool Dragonkin::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJu
 //	当たり判定登録
 void Dragonkin::RegisterCollisionData()
 {
+#pragma region ----- 押し出し判定登録 -----
+	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	RegisterCollisionDetectionData({ "Foot_R",0.4f,false,{} });
 
+#pragma endregion ----- 押し出し判定登録 -----
+
+#pragma region ----- くらい判定登録 -----
+	//RegisterDamageDetectionData();
+#pragma endregion ----- くらい判定登録 -----
+
+#pragma region ----- 攻撃判定登録 -----
+	//RegisterAttackDetectionData();
+#pragma endregion ----- 攻撃判定登録 -----
 }
 
 //	当たり判定更新
@@ -199,6 +215,7 @@ void Dragonkin::UpdateCollisions(const float& elapsedTime)
 		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		DirectX::XMFLOAT3 pos = GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition());
 
+		//	Y軸固定
 		if (data.GetFixedY())
 			pos.y = 0.0f;
 
@@ -210,8 +227,8 @@ void Dragonkin::UpdateCollisions(const float& elapsedTime)
 //	破棄処理
 void Dragonkin::Destroy()
 {
-
-	Enemy::Destroy();	//	自身を破棄
+	//	自身を破棄
+	Enemy::Destroy();
 }
 
 //	描画処理
@@ -221,6 +238,7 @@ void Dragonkin::Render()
 	//Graphics::Instance().GetShader()->CreatePsFromCso(Graphics::Instance().GetDevice(), "./Resources/Shader/DronePS.cso", pixelShader_.ReleaseAndGetAddressOf());
 	//this->SetPixelShader(pixelShader_.Get());
 
+	//	描画
 	Character::Render();
 }
 

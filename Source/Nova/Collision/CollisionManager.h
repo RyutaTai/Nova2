@@ -39,7 +39,10 @@ private:
 	void PlayerFlinchVsEnemyAttack();       //	Player Vs Enemy(‹¯‚İ”»’è)
 	void PlayerDamageVsEnemyAttack();       //	Player Vs Enemy(‚­‚ç‚¢”»’è)
 	void PlayerDamageVsBulletAttack();		//	Player Vs Bullet
-	//	‰Ÿ‚µo‚µ”»’è
+	//	
+	// 
+	// 
+	// ”»’è
 	void UpdatePlayerCollision(const float& elapsedTime);           //	PlayerCollision
 	void PlayerVsEnemy(const float& elapsedTime);                   //	Player Vs Enemy
 

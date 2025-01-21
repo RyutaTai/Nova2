@@ -260,6 +260,7 @@ AttackDetectionData& Character::GetAttackDetectionData(const std::string& name)
 	}
 
 	//	Œ©‚Â‚©‚ç‚È‚©‚Á‚½
+	_ASSERT_EXPR(false, "not found AttackDetectionData");
 	return AttackDetectionData();
 }
 
@@ -289,6 +290,7 @@ DamageDetectionData& Character::GetDamageDetectionData(const std::string& name)
 	}
 
 	//	Œ©‚Â‚©‚ç‚È‚©‚Á‚½
+	_ASSERT_EXPR(false, "not found DamageDetectionData");
 	return DamageDetectionData();
 }
 
@@ -319,6 +321,7 @@ CollisionDetectionData& Character::GetCollisionDetectionData(const std::string& 
 	}
 
 	//	Œ©‚Â‚©‚ç‚È‚©‚Á‚½
+	_ASSERT_EXPR(false, "not found CollisionDetectionData");
 	return CollisionDetectionData();
 }
 

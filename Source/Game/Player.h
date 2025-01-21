@@ -104,11 +104,10 @@ public:
 	void SetEffectScale(const float& scale)			{ effectScale_ = scale; }
 	void SetPlayEffectFlag(const bool& playEffect)	{ playEffectFlag_ = playEffect; }
 	void SetEffectPos(const DirectX::XMFLOAT3& pos)	{ effectPos_ = pos; }
-	const bool IsPlayEffect()	const	{ return playEffectFlag_; }
+	const bool IsPlayEffect()const{ return playEffectFlag_; }
 	
 	//	----- HP -----
 	const int	GetMaxHp()		const	{ return MAX_HP; }
-
 	//	----- É_ÉÅÅ[ÉWèàóù -----
 	void AddDamage(const float& damage) { hp_ -= damage; }
 

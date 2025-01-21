@@ -342,12 +342,19 @@ void Drone::Destroy()
 //	当たり判定登録
 void Drone::RegisterCollisionData()
 {
-#pragma region ----- 押し出し判定 -----
+#pragma region ----- 押し出し判定登録 -----
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
-	RegisterCollisionDetectionData({ "foot",0.7f,false });
-	
-#pragma endregion ----- 押し出し判定 -----
+	//RegisterCollisionDetectionData({});
+
+#pragma endregion ----- 押し出し判定登録 -----
+
+#pragma region ----- くらい判定登録 -----
+	//RegisterDamageDetectionData();
+#pragma endregion ----- くらい判定登録 -----
+
+#pragma region ----- 攻撃判定登録 -----
+	//RegisterAttackDetectionData();
+#pragma endregion ----- 攻撃判定登録 -----
 }
 
 //	当たり判定更新

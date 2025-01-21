@@ -9,8 +9,8 @@
 struct CollisionSphereData
 {
 public:
-	CollisionSphereData(const std::string& name,const DirectX::XMFLOAT3& offsetPos,
-		const float& radius,const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f },const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
+	CollisionSphereData(const std::string& name,const float& radius, 
+		const DirectX::XMFLOAT3& offsetPos, const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),offsetPosition_(offsetPos),radius_(radius),
 		defaultColor_(defaultColor), hitColor_(hitColor)
 	{}
@@ -62,8 +62,8 @@ private:
 struct CollisionCylinderData
 {
 public:
-	CollisionCylinderData(const std::string& name,const DirectX::XMFLOAT3& jointPos,const DirectX::XMFLOAT3& offsetPos,
-		const float& radius,const float& height,
+	CollisionCylinderData(const std::string& name, const DirectX::XMFLOAT3& jointPos,
+		const float& radius, const float& height, const DirectX::XMFLOAT3& offsetPos,
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),jointPosition_(jointPos),offsetPosition_(offsetPos),radius_(radius),height_(height),
 		defaultColor_(defaultColor),hitColor_(hitColor)
@@ -121,9 +121,11 @@ private:
 struct AttackDetectionData
 {
 public:
-	AttackDetectionData(const std::string& name, const DirectX::XMFLOAT3& offsetPos, const float& radius,
+	AttackDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos,
+		const std::string& updateName = "",
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
-		:collisionSphereData_({ name,offsetPos,radius,defaultColor,hitColor })
+		:collisionSphereData_({ name,radius,offsetPos,defaultColor,hitColor }),
+		updateName_((updateName == "") ? name : updateName)
 	{}
 	AttackDetectionData() = default;
 
@@ -162,9 +164,12 @@ private:
 struct DamageDetectionData
 {
 public:
-	DamageDetectionData(const std::string& name, const DirectX::XMFLOAT3& offsetPos, const float& radius,
+	DamageDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos = {}, const float& damage = 1.0f,
+		const std::string& updateName = "",
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
-		:collisionSphereData_({ name,offsetPos,radius,defaultColor,hitColor })
+		:collisionSphereData_({ name,radius,offsetPos,defaultColor,hitColor }),
+		damage_(damage),
+		updateName_((updateName == "") ? name : updateName)
 	{}
 	DamageDetectionData() = default;
 
@@ -206,7 +211,7 @@ public:
 	void SetIsHit(const bool& hit) { isHit_ = hit; }
 	const bool IsHit() const { return isHit_; }
 
-	//	----- ダメージ量 -----
+	//	----- ダメージ倍率 -----
 	void SetDamage(const float& damage) { damage_ = damage; }
 	const float GetDamage()const { return damage_; }
 
@@ -216,7 +221,7 @@ public:
 private:
 	CollisionSphereData collisionSphereData_ = {};	//	球体データ
 
-	float damage_ = 0.0f;		//	ダメージ量
+	float damage_ = 1.0f;		//	ダメージ倍率
 	bool  isHit_ = false;		//	当たっているか
 	float hitTimer_ = 0.0f;
 
@@ -230,7 +235,7 @@ struct CollisionDetectionData
 	CollisionDetectionData(const std::string& name, const float& radius, const bool& fixedY = false,
 		const DirectX::XMFLOAT3& offsetPosition = {}, const std::string& updateName = "", 
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f, }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
-		: collisionSphereData_(name, offsetPosition, radius, defaultColor, hitColor),
+		: collisionSphereData_(name, radius, offsetPosition, defaultColor, hitColor),
 		updateName_((updateName == "") ? name : updateName),
 		fixedY_(fixedY)
 	{}

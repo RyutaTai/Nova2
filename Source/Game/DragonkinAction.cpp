@@ -73,10 +73,10 @@ namespace DragonkinAction
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定
-			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+		/*	if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
 			{
 				Player::Instance().SubtractHp(5);
-			}
+			}*/
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
@@ -123,10 +123,10 @@ namespace DragonkinAction
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定
-			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			/*if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
 			{
 				Player::Instance().SubtractHp(5);
-			}
+			}*/
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
@@ -173,10 +173,10 @@ namespace DragonkinAction
 			float jointRadius = 5.0f;
 
 			//	プレイヤーとの当たり判定
-			if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			/*if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
 			{
 				Player::Instance().SubtractHp(5);
-			}
+			}*/
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)

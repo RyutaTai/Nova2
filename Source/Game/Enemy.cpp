@@ -6,8 +6,8 @@
 #include "EnemyManager.h"
 
 //	コンストラクタ
-Enemy::Enemy(const std::string& fileName, const std::string& rootNodeName)
-	:Character(fileName, rootNodeName)
+Enemy::Enemy(const std::string& filename, const std::string& rootNodeName)
+	:Character(filename, rootNodeName)
 {
 	//	エネミーマネージャーに登録
 	EnemyManager::Instance().Register(this);

@@ -180,13 +180,6 @@ void Drone::Update(const float& elapsedTime)
 	
 }
 
-//	攻撃が当たったか判定する
-bool Drone::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)
-{
-
-	return false;
-}
-
 //	エミッター更新
 void Drone::UpdateEmitter()
 {

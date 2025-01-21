@@ -52,9 +52,6 @@ public:
 	void RegisterCollisionData()override;
 	void UpdateCollisions(const float& elapsedTime)override;
 
-	//	攻撃が当たったか判定する
-	bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)override;
-
 	//	----- オーディオ -----
 	void UpdateEmitter();		//	エミッター更新
 	void UpdateAudioSource();	//	オーディオソース更新

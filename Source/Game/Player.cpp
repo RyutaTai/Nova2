@@ -179,46 +179,19 @@ void Player::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	// 押し出し判定のみ円柱に変更したい
-	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
-
-#if 0
-	RegisterCollisionDetectionData({ "foot",					0.2f,false ,{0.0f,0.0f,0.0f},"ik_foot_r" });	//	右足首を基準に足元に球を置く
-#endif
-
-#if 1
-	//	右側
-	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_r",	0.2f,false ,{} });	//	右肩
-	RegisterCollisionDetectionData({ "lowerarm_r",					0.2f,false ,{} });	//	右肘
-	RegisterCollisionDetectionData({ "ik_hand_r",					0.2f,false ,{} });	//	右手首
-	RegisterCollisionDetectionData({ "calf_r",						0.2f,false ,{} });	//	右膝
-	RegisterCollisionDetectionData({ "ik_foot_r",					0.2f,false ,{} });	//	右足首
 	
-	//	左側
+	RegisterCollisionDetectionData({ "head",						0.2f,false ,{} });	//	頭
+	RegisterCollisionDetectionData({ "spine_04",					0.2f,false ,{} });	//	胸部
 	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_r",	0.2f,false ,{} });	//	右肩
 	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
+	RegisterCollisionDetectionData({ "lowerarm_r",					0.2f,false ,{} });	//	右肘
 	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
+	RegisterCollisionDetectionData({ "ik_hand_r",					0.2f,false ,{} });	//	右手首
 	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
+	RegisterCollisionDetectionData({ "calf_r",						0.2f,false ,{} });	//	右膝
 	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
-
-	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
-	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
-	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
-	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
-	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
-	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
-	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
-	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
-	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
-	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
-	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
-	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
-	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
-	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
-	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
-
-
-#endif
+	RegisterCollisionDetectionData({ "ik_foot_r",					0.2f,false ,{} });	//	右足首
 
 #pragma endregion ----- 押し出し判定登録 -----
 

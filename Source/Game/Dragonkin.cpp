@@ -79,7 +79,8 @@ void Dragonkin::Initialize()
 
 	//	スケール
 	//GetTransform()->SetScaleFactor(0.04f);
-	GetTransform()->SetScaleFactor(0.02f);
+	//GetTransform()->SetScaleFactor(0.02f);
+	GetTransform()->SetScaleFactor(0.015f);
 
 	//	初期アニメーション再生速度設定
 	SetAnimationSpeed(1.0f);
@@ -141,50 +142,119 @@ void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, c
 	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
 }
 
-//	攻撃が当たったか判定する
-bool Dragonkin::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const DirectX::XMFLOAT3& attackPos, const float& radius)
-{
-	//	判定区間に入っているか判断する
-	float currentAnimationSeconds = GetCurrentAnimationSeconds();
-	if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
-		return false;
-
-	//	ノードとプレイヤーの当たり判定
-	//	プレイヤーの位置、半径、高さ
-	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
-	float playerRadius = Player::Instance().GetRadius();
-	float playerHeight = Player::Instance().GetHeight();
-
-	//	当たり判定の結果保存用
-	DirectX::XMFLOAT3 outPosition = {};
-
-	//	ジョイント(球)とプレイヤー(円柱)の当たり判定
-	if (Collision::IntersectSphereVsCylinder(attackPos, radius, playerPos, playerRadius, playerHeight, outPosition))
-	{
-
-	}
-
-	return false;
-}
-
 //	当たり判定登録
 void Dragonkin::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	RegisterCollisionDetectionData({ "Foot_R",	0.4f,false,{} });		//	右足首
-	RegisterCollisionDetectionData({ "calf_r",	0.4f,false,{} });		//	右膝
-	RegisterCollisionDetectionData({ "Foot_L",	0.4f,false,{} });		//	左足首
-	RegisterCollisionDetectionData({ "calf_l",	0.4f,false,{} });		//	左膝
+
+	RegisterCollisionDetectionData({ "head",		0.4f,false,{} });		//	頭
+	RegisterCollisionDetectionData({ "spine_02",	0.4f,false,{} });		//	胸部
+	RegisterCollisionDetectionData({ "Shoulder_L",	0.4f,false,{} });		//	左肩
+	RegisterCollisionDetectionData({ "Shoulder_R",	0.4f,false,{} });		//	右肩
+	RegisterCollisionDetectionData({ "lowerarm_l",	0.4f,false,{} });		//	左肘
+	RegisterCollisionDetectionData({ "lowerarm_r",	0.4f,false,{} });		//	右肘
+	RegisterCollisionDetectionData({ "Hand_L",		0.4f,false,{} });		//	左手首
+	RegisterCollisionDetectionData({ "Hand_R",		0.4f,false,{} });		//	右手首
+	RegisterCollisionDetectionData({ "spine_01",	0.4f,false,{} });		//	腰
+	RegisterCollisionDetectionData({ "calf_l",		0.4f,false,{} });		//	左膝
+	RegisterCollisionDetectionData({ "calf_r",		0.4f,false,{} });		//	右膝
+	RegisterCollisionDetectionData({ "Foot_L",		0.4f,false,{} });		//	左足首
+	RegisterCollisionDetectionData({ "Foot_R",		0.4f,false,{} });		//	右足首
+
+	//	左の翼
+	RegisterCollisionDetectionData({ "Wing_L03",	0.4f,false,{} });		//	一番付け根に近い
+	RegisterCollisionDetectionData({ "Wing_L04",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L05",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L06",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L08",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L09",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L10",	0.4f,false,{} });		//	一番先の方
+
+	//	右の翼
+	RegisterCollisionDetectionData({ "Wing_R03",	0.4f,false,{} });		//	一番付け根に近い
+	RegisterCollisionDetectionData({ "Wing_R04",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R05",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R06",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R08",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R09",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R10",	0.4f,false,{} });		//	一番先の方
 
 #pragma endregion ----- 押し出し判定登録 -----
 
 #pragma region ----- くらい判定登録 -----
-	//RegisterDamageDetectionData();
+	//	{名前、半径、オフセット位置、ダメージ倍率、更新名、デフォルトカラー、ヒットカラー}
+
+	RegisterDamageDetectionData({ "head",			0.4f,{} });		//	頭
+	RegisterDamageDetectionData({ "spine_02",		0.4f,{} });		//	胸部
+	RegisterDamageDetectionData({ "Shoulder_L",		0.4f,{} });		//	左肩
+	RegisterDamageDetectionData({ "Shoulder_R",		0.4f,{} });		//	右肩
+	RegisterDamageDetectionData({ "lowerarm_l",		0.4f,{} });		//	左肘
+	RegisterDamageDetectionData({ "lowerarm_r",		0.4f,{} });		//	右肘
+	RegisterDamageDetectionData({ "Hand_L",			0.4f,{} });		//	左手首
+	RegisterDamageDetectionData({ "Hand_R",			0.4f,{} });		//	右手首
+	RegisterDamageDetectionData({ "spine_01",		0.4f,{} });		//	腰
+	RegisterDamageDetectionData({ "calf_l",			0.4f,{} });		//	左膝
+	RegisterDamageDetectionData({ "calf_r",			0.4f,{} });		//	右膝
+	RegisterDamageDetectionData({ "Foot_L",			0.4f,{} });		//	左足首
+	RegisterDamageDetectionData({ "Foot_R",			0.4f,{} });		//	右足首
+
+	//	左の翼
+	RegisterDamageDetectionData({ "Wing_L03",		0.4f,{} });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_L04",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_L05",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_L06",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_L08",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_L09",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_L10",		0.4f,{} });		//	一番先の方
+
+	//	右の翼
+	RegisterDamageDetectionData({ "Wing_R03",		0.4f,{} });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_R04",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_R05",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_R06",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_R08",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_R09",		0.4f,{} });
+	RegisterDamageDetectionData({ "Wing_R10",		0.4f,{} });		//	一番先の方
+
 #pragma endregion ----- くらい判定登録 -----
 
 #pragma region ----- 攻撃判定登録 -----
-	//RegisterAttackDetectionData();
+	//	{名前、半径、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	//name,radius,offsetPos,defaultColor,hitColor })
+
+	RegisterAttackDetectionData({ "head",			0.4f,{} });		//	頭
+	RegisterAttackDetectionData({ "spine_02",		0.4f,{} });		//	胸部
+	RegisterAttackDetectionData({ "Shoulder_L",		0.4f,{} });		//	左肩
+	RegisterAttackDetectionData({ "Shoulder_R",		0.4f,{} });		//	右肩
+	RegisterAttackDetectionData({ "lowerarm_l",		0.4f,{} });		//	左肘
+	RegisterAttackDetectionData({ "lowerarm_r",		0.4f,{} });		//	右肘
+	RegisterAttackDetectionData({ "Hand_L",			0.4f,{} });		//	左手首
+	RegisterAttackDetectionData({ "Hand_R",			0.4f,{} });		//	右手首
+	RegisterAttackDetectionData({ "spine_01",		0.4f,{} });		//	腰
+	RegisterAttackDetectionData({ "calf_l",			0.4f,{} });		//	左膝
+	RegisterAttackDetectionData({ "calf_r",			0.4f,{} });		//	右膝
+	RegisterAttackDetectionData({ "Foot_L",			0.4f,{} });		//	左足首
+	RegisterAttackDetectionData({ "Foot_R",			0.4f,{} });		//	右足首
+
+	//	左の翼
+	RegisterAttackDetectionData({ "Wing_L03",		0.4f,{} });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_L04",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_L05",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_L06",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_L08",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_L09",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_L10",		0.4f,{} });		//	一番先の方
+
+	//	右の翼
+	RegisterAttackDetectionData({ "Wing_R03",		0.4f,{} });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_R04",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_R05",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_R06",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_R08",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_R09",		0.4f,{} });
+	RegisterAttackDetectionData({ "Wing_R10",		0.4f,{} });		//	一番先の方
+
 #pragma endregion ----- 攻撃判定登録 -----
 }
 

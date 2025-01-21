@@ -84,7 +84,12 @@ private:
 	std::unique_ptr<StateMachine<State<Drone>>>	stateMachine_ = nullptr;		//	ステートマシン
 
 private://	デバッグ用の変数
-	bool	bulletLaunch_	= true;		//	弾を発射するかどうか()
+	// ----- DrawDebugPrimitive -----
+	bool isCollisionSphere_ = true;
+	bool isAttackSphere_ = true;
+	bool isDamageSphere_ = false;
+
+	bool	bulletLaunch_	= true;		//	弾を発射するかどうか
 	static const int MAX_HP = 40;		//	最大HP
 	//static const int MAX_HP = 60;		//	最大HP
 	//static const int MAX_HP = 3;		//	最大HP

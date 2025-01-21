@@ -360,7 +360,42 @@ void Drone::RegisterCollisionData()
 //	当たり判定更新
 void Drone::UpdateCollisions(const float& elapsedTime)
 {
+	//	くらい判定更新
+	for (DamageDetectionData& data : damageDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 
+		data.Update(elapsedTime);
+	}
+
+	//	攻撃判定更新
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+	}
+
+	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
+	{
+		AttackDetectionData& data = GetAttackDetectionData(i);
+		DirectX::XMFLOAT3 pos = data.GetPosition();
+		pos.y = 1.0f;
+		data.SetJointPosition(pos);
+	}*/
+
+	//	押し出し判定更新
+	for (CollisionDetectionData& data : collisionDetectionData_)
+	{
+		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
+		DirectX::XMFLOAT3 pos = GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition());
+
+		//	Y軸固定
+		if (data.GetFixedY())
+			pos.y = 0.0f;
+
+		data.SetJointPosition(pos);
+	}
 }
 
 //	描画処理
@@ -401,6 +436,7 @@ void Drone::DrawDebug()
 	{
 		//GetTransform()->DrawDebug();
 		Character::DrawDebug();
+
 		ImGui::Checkbox("Invincible", &isInvincible_);							//	無敵フラグ設定
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
 		ImGui::DragFloat("TurnSpeed", &turnSpeed_, 1.0f, -FLT_MAX, FLT_MAX);	//	旋回速度

@@ -1,9 +1,9 @@
 #include "Character.h"
 
-#include "../Nova/Core/Framework.h"
 #include "Character.h"
-#include "../Nova/Others/MathHelper.h"
 #include "Stage.h"
+#include "../Nova/Core/Framework.h"
+#include "../Nova/Others/MathHelper.h"
 
 //	コンストラクタ
 Character::Character(const std::string& filename, const std::string& rootNodeName)
@@ -222,13 +222,13 @@ void Character::UpdateCollisions(const float& elapsedTime)
 	//	攻撃判定更新
 	for (AttackDetectionData& data : attackDetectionData_)
 	{
-		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
 	//	くらい判定更新
 	for (DamageDetectionData& data : damageDetectionData_)
 	{
-		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 
 		data.Update(elapsedTime);
@@ -236,7 +236,7 @@ void Character::UpdateCollisions(const float& elapsedTime)
 	// 押し出し判定更新
 	for (CollisionDetectionData& data : collisionDetectionData_)
 	{
-		// ジョイントの名前で位置設定 ( 名前がジョイントの名前ではないとき別途更新必要 )
+		// ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
 }
@@ -353,5 +353,35 @@ void Character::DrawDebug()
 	ImGui::DragFloat("Height", &height_, 0.01f, -FLT_MAX, FLT_MAX);					//	高さ
 	ImGui::DragFloat("Radius", &radius_, 0.01f, -FLT_MAX, FLT_MAX);					//	半径
 
+	//	----- Collision -----
+	if (ImGui::TreeNode("Collision"))
+	{
+		if (ImGui::TreeNode("DamageDetection"))
+		{
+			for (DamageDetectionData& data : damageDetectionData_)
+			{
+				data.DrawDebug();
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("AttackDetection"))
+		{
+			for (AttackDetectionData& data : attackDetectionData_)
+			{
+				//if (data.GetIsActive() == false) continue;
+				data.DrawDebug();
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("CollisionDetection"))
+		{
+			for (CollisionDetectionData& data : collisionDetectionData_)
+			{
+				data.DrawDebug();
+			}
+			ImGui::TreePop();
+		}
+		ImGui::TreePop();
+	}
 }
 

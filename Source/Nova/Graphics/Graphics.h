@@ -34,11 +34,11 @@ class Graphics
 public:	//	ç\ë¢ëÃ
 	struct SceneConstants
 	{
-		DirectX::XMFLOAT4X4 viewProjection_;
-		DirectX::XMFLOAT4   lightDirection_;
-		DirectX::XMFLOAT4   cameraPosition_;
-		DirectX::XMFLOAT4X4 lightViewProjection_;	//	Shadow
-		DirectX::XMFLOAT4X4 invViewProjection_;		//	Skymap
+		DirectX::XMFLOAT4X4 viewProjection_ = {};
+		DirectX::XMFLOAT4   lightDirection_ = {};
+		DirectX::XMFLOAT4   cameraPosition_ = {};
+		DirectX::XMFLOAT4X4 lightViewProjection_ = {};	//	Shadow
+		DirectX::XMFLOAT4X4 invViewProjection_ = {};		//	Skymap
 		//DirectX::XMFLOAT4X4 projectionMappingTransform_;
 	};
 

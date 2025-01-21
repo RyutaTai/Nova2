@@ -92,7 +92,9 @@ void SceneGame::Initialize()
 		shaderResourceViews_[1].GetAddressOf(), &texture2dDesc);
 	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/specular_pmrem.dds",
 		shaderResourceViews_[2].GetAddressOf(), &texture2dDesc);
-	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sheen_pmrem.dds",
+	/*LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/sunset_jhbcentral_4k/sheen_pmrem.dds",
+		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);*/
+	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/lut_charlie.dds",
 		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
 #endif
 
@@ -208,9 +210,9 @@ void SceneGame::ShadowRender()
 //	•`‰æˆ—
 void SceneGame::Render()
 {
-	ID3D11ShaderResourceView* nullSrv[15] = { NULL };
+	ID3D11ShaderResourceView* nullSrv[17] = { NULL };
 	ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
-	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(0, 15, nullSrv);
+	Graphics::Instance().GetDeviceContext()->PSSetShaderResources(0, 17, nullSrv);
 
 	Camera::Instance().SetPerspectiveFov();
 
@@ -248,7 +250,7 @@ void SceneGame::Render()
 		Graphics::Instance().GetShader()->SetDepthStencilState(Shader::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON);
 		Graphics::Instance().GetShader()->SetBlendState(Shader::BLEND_STATE::ALPHA);
 
-		//	Shadow‚Í‚±‚ÌŠÖ”‚¶‚á‚È‚­‚ÄShadowRender()‚Å‚â‚Á‚Ä‚é
+		//	Shadow‚Í‚±‚ÌŠÖ”‚¶‚á‚È‚­‚ÄShadowRender()‚Ås‚Á‚Ä‚¢‚é
 		{
 			//Graphics::Instance().SetLightDirection(ShadowMap::Instance().GetLightDirection());
 			DirectX::XMFLOAT4 cameraPosition_ = { Camera::Instance().GetEye().x,Camera::Instance().GetEye().y,Camera::Instance().GetEye().z,1.0f };

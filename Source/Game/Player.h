@@ -186,6 +186,12 @@ private:
 
 
 private://	----- デバッグ用 -----
+	//	----- Collision -----
+		//	----- DebugPrimitive -----
+	bool isCollisionSphere_ = true;
+	bool isAttackSphere_ = true;
+	bool isDamageSphere_ = false;
+
 	//	ImGui用
 	bool				isCollisionStage_	= true;
 	bool				isHitStage_			= false;

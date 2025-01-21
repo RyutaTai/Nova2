@@ -177,7 +177,18 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
 	// 押し出し判定のみ円柱に変更したい
 	//	円柱 半径:radius_ = 0.7f 高さ:height_ = 3.4f;
-	RegisterCollisionDetectionData({ "ik_foot_r",0.7f,false ,{} });	//	右足
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_r",	0.2f,false ,{} });	//	右肩
+	RegisterCollisionDetectionData({ "lowerarm_r",					0.2f,false ,{} });	//	右肘
+	RegisterCollisionDetectionData({ "ik_hand_r",					0.2f,false ,{} });	//	右手首
+	RegisterCollisionDetectionData({ "calf_r",						0.2f,false ,{} });	//	右膝
+	RegisterCollisionDetectionData({ "ik_foot_r",					0.2f,false ,{} });	//	右足首
+	
+	RegisterCollisionDetectionData({ "upperarm_correctiveRoot_l",	0.2f,false ,{} });	//	左肩
+	RegisterCollisionDetectionData({ "lowerarm_l",					0.2f,false ,{} });	//	左肘
+	RegisterCollisionDetectionData({ "ik_hand_l",					0.2f,false ,{} });	//	左手首
+	RegisterCollisionDetectionData({ "calf_l",						0.2f,false ,{} });	//	左膝
+	RegisterCollisionDetectionData({ "ik_foot_l",					0.2f,false ,{} });	//	左足首
+
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -963,6 +974,35 @@ void Player::DrawDebugPrimitive()
 
 	//	円錐を描画
 	debugRenderer->DrawCone(this->GetTransform()->GetPosition(), coneDirection_, radius_, height_, DirectX::XMFLOAT4{ 0,0,0,1 });
+
+	//	----- Collision -----
+	if (isCollisionSphere_)
+	{
+		for (auto& data : GetCollisionDetectionData())
+		{
+			// 現在アクティブではないので表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isDamageSphere_)
+	{
+		for (auto& data : GetDamageDetectionData())
+		{
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isAttackSphere_)
+	{
+		for (auto& data : GetAttackDetectionData())
+		{
+			// 現在アクティブではないでの表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
 
 }
 

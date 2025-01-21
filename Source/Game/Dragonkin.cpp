@@ -94,6 +94,9 @@ void Dragonkin::Update(const float& elapsedTime)
 	//	ビヘイビアツリー更新
 	UpdateBehaviorTree(elapsedTime);
 
+	//	Collision更新
+	UpdateCollisions(elapsedTime);
+
 	//	HPがなくなったら
 	if (hp_ <= 0)
 	{
@@ -169,7 +172,10 @@ void Dragonkin::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	RegisterCollisionDetectionData({ "Foot_R",0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Foot_R",	0.4f,false,{} });		//	右足首
+	RegisterCollisionDetectionData({ "calf_r",	0.4f,false,{} });		//	右膝
+	RegisterCollisionDetectionData({ "Foot_L",	0.4f,false,{} });		//	左足首
+	RegisterCollisionDetectionData({ "calf_l",	0.4f,false,{} });		//	左膝
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -253,6 +259,35 @@ void Dragonkin::DrawDebugPrimitive()
 	//	索敵範囲描画(円柱)
 	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0,1,0.1f,1.0f });
 
+	//	----- Collision -----
+	if (isCollisionSphere_)
+	{
+		for (auto& data : GetCollisionDetectionData())
+		{
+			// 現在アクティブではないので表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isDamageSphere_)
+	{
+		for (auto& data : GetDamageDetectionData())
+		{
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isAttackSphere_)
+	{
+		for (auto& data : GetAttackDetectionData())
+		{
+			// 現在アクティブではないでの表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+
 
 }
 
@@ -268,9 +303,16 @@ void Dragonkin::DrawDebug()
 	if (ImGui::TreeNode(u8"Dragonkin竜人"))
 	{
 		ImGui::Text(u8"Behavior　%s", str.c_str());	//	現在のビヘイビア
+
+		ImGui::Checkbox("DamageSphere", &isDamageSphere_);
+		ImGui::Checkbox("AttackSphere", &isAttackSphere_);
+		ImGui::Checkbox("CollisionSphere", &isCollisionSphere_);
 		Character::DrawDebug();
+
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat("SearchRange", &searchRange_, 0.01f);
+
+
 		ImGui::TreePop();
 	}
 }

@@ -10,7 +10,9 @@ void CollisionSphereData::DrawDebug()
 		ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
 		ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
 		ImGui::DragFloat("Radius", &radius_, 0.01f);
-		ImGui::ColorEdit4("Color", &defaultColor_.x);
+		ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
+		ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
+		ImGui::ColorEdit4("HitColor", &hitColor_.x);
 
 		ImGui::TreePop();
 	}
@@ -24,7 +26,9 @@ void CollisionCylinderData::DrawDebug()
 		ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
 		ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
 		ImGui::DragFloat("Radius", &radius_, 0.01f);
-		ImGui::ColorEdit4("Color", &defaultColor_.x);
+		ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
+		ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
+		ImGui::ColorEdit4("HitColor", &hitColor_.x);
 
 		ImGui::TreePop();
 	}

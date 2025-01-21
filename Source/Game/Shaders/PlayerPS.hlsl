@@ -54,7 +54,6 @@ struct MaterialConstants
 };
 StructuredBuffer<MaterialConstants> materials : register(t0);
 
-// UNIT.36
 #define BASECOLOR_TEXTURE 0
 #define METALLIC_ROUGHNESS_TEXTURE 1
 #define NORMAL_TEXTURE 2
@@ -170,8 +169,7 @@ float4 main(VS_OUT pin, bool is_front_face : SV_IsFrontFace) : SV_TARGET
         diffuse += Li * NoL * BrdfLambertian(f0, f90, c_diff, HoV);
         specular += Li * NoL * BrdfSpecularGgx(f0, f90, alpha_roughness, HoV, NoL, NoV, NoH);
     }
-
-	// UNIT.39
+    
     diffuse += IblRadianceLambertian(N, V, roughness_factor, c_diff, f0);
     specular += IblRadianceGgx(N, V, roughness_factor, f0);
 
@@ -182,29 +180,4 @@ float4 main(VS_OUT pin, bool is_front_face : SV_IsFrontFace) : SV_TARGET
     float3 Lo = diffuse + specular + emmisive;
     return float4(Lo, basecolor_factor.a);
 }
-
-
-#if 0
-float4 main(VS_OUT pin) : SV_TARGET
-{
-	// UNIT.35
-	material_constants m = materials[material];
-
-// UNIT.36
-float4 basecolor = m.pbr_metallic_roughness.basecolor_texture.index > -1 ? material_textures[BASECOLOR_TEXTURE].Sample(samplerStates[ANISOTROPIC], pin.texcoord) : m.pbr_metallic_roughness.basecolor_factor;
-float3 emmisive = m.emissive_texture.index > -1 ? material_textures[EMISSIVE_TEXTURE].Sample(samplerStates[ANISOTROPIC], pin.texcoord).rgb : m.emissive_factor;
-
-float3 N = normalize(pin.w_normal.xyz);
-float3 L = normalize(-light_direction.xyz);
-
-// UNIT.35
-//float3 color = max(0, dot(N, L)) * m.pbr_metallic_roughness.basecolor_factor.rgb;
-//return float4(color, 1);
-
-// UNIT.36
-float3 color = max(0, dot(N, L)) * basecolor.rgb + emmisive.rgb;
-return float4(color, basecolor.a);
-}
-#endif // 0
-
 

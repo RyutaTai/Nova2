@@ -107,6 +107,12 @@ private:
 	BehaviorData*	behaviorData_	= nullptr;
 	NodeBase*		activeNode_		= nullptr;
 
+private:
+	//	----- DebugPrimitive -----
+	bool isCollisionSphere_ = true;
+	bool isAttackSphere_ = true;
+	bool isDamageSphere_ = false;
+
 
 };
 

@@ -122,7 +122,7 @@ void Player::Update(const float& elapsedTime)
 		//}
 #endif
 	//	“G‚Æ‚Ì“–‚½‚è”»’è
-	PlayerVsEnemies(elapsedTime);
+	//PlayerVsEnemies(elapsedTime);
 
 	//	‹ó’†‚É‚¢‚ê‚Î
 	if (isHitStage_ == false && isAddGravity_)

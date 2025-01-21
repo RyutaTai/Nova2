@@ -333,8 +333,6 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
     const int maxPlayerData = player.GetCollisionDetectionDataCount();
     const int maxEnemyData = enemy->GetCollisionDetectionDataCount();
 
-    int debugCalcCount = 0;
-
     for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
     {
         const CollisionDetectionData playerData = player.GetCollisionDetectionData(playerDataIndex);
@@ -348,8 +346,6 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
 
             //  押し出し後の位置
             DirectX::XMFLOAT3 resultPosition = {};
-
-            debugCalcCount += 1;
 
             //  Yの値が0.0fのデータとの判定
             if (enemyData.GetFixedY())
@@ -380,7 +376,6 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
             }
         }
     }
-    debugCalcCount;
 }
 
 #pragma endregion   ----- 押し出し判定 -----

@@ -1,5 +1,4 @@
 External/
-Resources/Model/
 Resources/old/
 Nova/x64/
 .vs/
@@ -9,3 +8,18 @@ Resources/Audio/
 renderDoc.rdc
 *.exe
 PlayerAndDragonkin.rdc
+*.png
+*.bin
+*.glb
+*.gltf
+*.fbx
+*.bat
+*.jpeg
+*.hdr
+Resources/Model/GltfSample/
+*.jpg
+*.DDS
+*.rar
+*.zip
+*.mat
+*.cereal

@@ -58,6 +58,9 @@ void Drone::Initialize()
 	//float scale = 10.0f;
 	GetTransform()->SetScaleFactor(scale);
 
+	//	----- Collision -----
+	RegisterCollisionData();
+
 	//	半径設定
 	height_ = 4.4f;
 	radius_ = 2.5f;
@@ -143,8 +146,11 @@ void Drone::Initialize()
 //	更新処理
 void Drone::Update(const float& elapsedTime)
 {
-	//	ステート毎の更新処理
+	//	----- ステート更新処理 -----
 	stateMachine_->Update(elapsedTime);
+
+	//	----- 当たり判定更新 -----
+	UpdateCollisions(elapsedTime);
 
 	//	次の弾を発射するまでのタイマー更新
 	launchTimer_ -= elapsedTime;
@@ -157,7 +163,7 @@ void Drone::Update(const float& elapsedTime)
 
 	}
 
-	//	旋回処理
+	//	----- 旋回処理 -----
 	Turn(elapsedTime);
 
 	//	弾丸があれば
@@ -174,7 +180,7 @@ void Drone::Update(const float& elapsedTime)
 		Destroy();
 	}
 
-	//	オーディオ更新
+	//	----- オーディオ更新 -----
 	UpdateEmitter();
 	UpdateAudioSource();
 	
@@ -337,7 +343,9 @@ void Drone::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
 	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	//RegisterCollisionDetectionData({});
+	RegisterCollisionDetectionData({ "Body",	0.5f,false });
+	RegisterCollisionDetectionData({ "Left",	0.5f,false });
+	RegisterCollisionDetectionData({ "Right",	0.5f,false });
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -417,6 +425,35 @@ void Drone::DrawDebugPrimitive()
 	
 	//	弾丸のデバッグ球描画
 	BulletManager::Instance().DrawDebugPrimitive();
+
+	//	----- Collision -----
+	if (isCollisionSphere_)
+	{
+		for (auto& data : GetCollisionDetectionData())
+		{
+			// 現在アクティブではないので表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isDamageSphere_)
+	{
+		for (auto& data : GetDamageDetectionData())
+		{
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
+	if (isAttackSphere_)
+	{
+		for (auto& data : GetAttackDetectionData())
+		{
+			// 現在アクティブではないでの表示しない
+			if (data.GetIsActive() == false) continue;
+
+			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
+		}
+	}
 
 }
 

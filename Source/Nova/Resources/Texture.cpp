@@ -45,24 +45,24 @@ HRESULT MakeDummyTexture(ID3D11Device* device, ID3D11ShaderResourceView** shader
 	return hr;
 }
 
-HRESULT LoadTextureFromFile(ID3D11Device* device, const wchar_t* fileName,
+HRESULT LoadTextureFromFile(ID3D11Device* device, const wchar_t* filename,
 	ID3D11ShaderResourceView** shaderResourceView, D3D11_TEXTURE2D_DESC* texture2dDesc)
 {
 	HRESULT hr{ S_OK };
 	Microsoft::WRL::ComPtr<ID3D11Resource>resource;
-	std::filesystem::path ddsFileName(fileName);
-	ddsFileName.replace_extension("dds");
-	if (std::filesystem::exists(ddsFileName.c_str()))	//	ファイル拡張子がddsの場合
+	std::filesystem::path ddsFilename(filename);
+	ddsFilename.replace_extension("dds");
+	if (std::filesystem::exists(ddsFilename.c_str()))	//	ファイル拡張子がddsの場合
 	{
-		hr = DirectX::CreateDDSTextureFromFile(device, ddsFileName.c_str(), resource.GetAddressOf(), shaderResourceView);
+		hr = DirectX::CreateDDSTextureFromFile(device, ddsFilename.c_str(), resource.GetAddressOf(), shaderResourceView);
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 	else
 	{
-		hr = DirectX::CreateWICTextureFromFile(device, fileName, resource.GetAddressOf(), shaderResourceView);
+		hr = DirectX::CreateWICTextureFromFile(device, filename, resource.GetAddressOf(), shaderResourceView);
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
-	resources.insert(std::make_pair(fileName, *shaderResourceView));
+	resources.insert(std::make_pair(filename, *shaderResourceView));
 	
 	if (texture2dDesc)
 	{

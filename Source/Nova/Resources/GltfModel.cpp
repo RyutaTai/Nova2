@@ -26,6 +26,7 @@ GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeNam
 #if USE_SERIALIZE
     std::filesystem::path cerealFilename(filename);
     cerealFilename.replace_extension("cereal");
+    //  シリアライズされたファイルがあれば読み込む
     if (std::filesystem::exists(cerealFilename.c_str()))
     {
         std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
@@ -859,7 +860,7 @@ void GltfModel::AppendAnimation(const std::string& filename)
     FetchAnimations(gltfModel);
 }
 
-void GltfModel::BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes)
+void GltfModel::BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, const float& factor, std::vector<Node>& outNodes)
 {
     _ASSERT_EXPR(fromNodes.size() == toNodes.size(), L"The size of the two node arrays must be the same.");
 

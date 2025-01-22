@@ -86,16 +86,16 @@ public:
 
 	struct Node
 	{
-		std::string name_;
+		std::string name_ = {};
 		int skin_ = -1;  // index of skin referenced by this node 
 		int mesh_ = -1;  // index of mesh referenced by this node 
 
 		std::vector<int> children_; // An array of indices of child nodes of this node 
 
 		// Local transforms 
-		DirectX::XMFLOAT4 rotation_				{ 0, 0, 0, 1 };
-		DirectX::XMFLOAT3 scale_				{ 1, 1, 1 };
-		DirectX::XMFLOAT3 translation_			{ 0, 0, 0 };
+		DirectX::XMFLOAT4 rotation_		= { 0, 0, 0, 1 };
+		DirectX::XMFLOAT3 scale_		= { 1, 1, 1 };
+		DirectX::XMFLOAT3 translation_	= { 0, 0, 0 };
 
 		DirectX::XMFLOAT4X4 globalTransform_=
 		{ 
@@ -139,7 +139,7 @@ public:
 
 	struct Mesh
 	{
-		std::string name_;
+		std::string name_ = {};
 		struct Primitive
 		{
 			int material_;
@@ -217,7 +217,7 @@ public:
 
 	struct Material
 	{
-		std::string name_; 
+		std::string name_ = {};
 
 		struct Cbuffer
 		{
@@ -251,7 +251,7 @@ public:
 
 	struct Texture
 	{
-		std::string name_;
+		std::string name_ = {};
 		int			source_ = -1;
 
 		template<class T>
@@ -264,16 +264,16 @@ public:
 
 	struct Image
 	{
-		std::string		name_;
-		std::wstring	filename_;
+		std::string		name_ = {};
+		std::wstring	filename_ = {};
 		int				width_		= -1;
 		int				height_		= -1;
 		int				component_	= -1;
 		int				bits_		= -1;
 		int				pixelType_	= -1;
 		int				bufferView_ = 0;
-		std::string		mimeType_;
-		std::string		uri_;
+		std::string		mimeType_ = {};
+		std::string		uri_ = {};
 		bool			asIs_		= false;
 
 		template<class T>
@@ -300,13 +300,13 @@ public:
 
 	struct Animation
 	{
-		std::string name_;
+		std::string name_ = {};
 		float		duration_ = 0.0f;
 		struct Channel
 		{
 			int			sampler_	= -1;
 			int			targetNode_ = -1;
-			std::string targetPath_;
+			std::string targetPath_ = {};
 
 			template<class T>
 			void serialize(T& archive)
@@ -320,7 +320,7 @@ public:
 		{
 			int			input_	= -1;
 			int			output_	= -1;
-			std::string interpolation_;
+			std::string interpolation_ = {};
 
 			template<class T>
 			void serialize(T& archive)
@@ -345,11 +345,11 @@ public:
 
 	struct PrimitiveConstants
 	{
-		DirectX::XMFLOAT4X4 world_;
+		DirectX::XMFLOAT4X4 world_ = {};
 		int					material_	= -1;
 		int					hasTangent_ = 0 ;
 		int					skin_		= -1;
-		int					pad_;
+		int					pad_ = 0;
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> primitiveCbuffer_;
 
@@ -372,7 +372,7 @@ public:
 
 	void Animate(const size_t& animationIndex, const float& time, std::vector<Node>& animatedNodes);
 	void AppendAnimation(const std::string& filename);
-	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, float factor, std::vector<Node>& outNodes);
+	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, const float& factor, std::vector<Node>& outNodes);
 	bool IsPlayAnimation()const;
 
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShaderê›íË

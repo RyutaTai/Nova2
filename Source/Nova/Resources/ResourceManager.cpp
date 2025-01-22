@@ -4,12 +4,12 @@
 #include "../Others/Converter.h"
 
 //	FBXモデルリソース読み込み
-std::shared_ptr<Model> ResourceManager::LoadFbxModelResource(const char* fileName, bool triangulate, float samplingRate)
+std::shared_ptr<Model> ResourceManager::LoadFbxModelResource(const char* filename, bool triangulate, float samplingRate)
 {
 	//	モデルを検索
 	for (auto& modelPair : models_)
 	{
-		if (modelPair.first == fileName)	//	文字列比較
+		if (modelPair.first == filename)	//	文字列比較
 		{
 			std::shared_ptr<Model> existModel = modelPair.second.lock();
 			if (existModel)
@@ -19,20 +19,20 @@ std::shared_ptr<Model> ResourceManager::LoadFbxModelResource(const char* fileNam
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<Model> model = std::make_shared<Model>(Graphics::Instance().GetDevice(), fileName);
-	models_[fileName] = model;
+	std::shared_ptr<Model> model = std::make_shared<Model>(Graphics::Instance().GetDevice(), filename);
+	models_[filename] = model;
 
 	//	見つからなかった
 	return model;
 }
 
 //	GLTFモデルリソース読み込み
-std::shared_ptr<GltfModel> ResourceManager::LoadGltfModelResource(const std::string& fileName, const std::string& rootNodeName)
+std::shared_ptr<GltfModel> ResourceManager::LoadGltfModelResource(const std::string& filename, const std::string& rootNodeName)
 {
 	//	モデルを検索
 	for (auto& gltfModelPair : gltfModels_)
 	{
-		if (gltfModelPair.first == fileName)	//	文字列比較
+		if (gltfModelPair.first == filename)	//	文字列比較
 		{
 			std::shared_ptr<GltfModel> existModel = gltfModelPair.second.lock();
 			if (existModel)
@@ -42,20 +42,20 @@ std::shared_ptr<GltfModel> ResourceManager::LoadGltfModelResource(const std::str
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>(fileName, rootNodeName);
-	gltfModels_[fileName] = gltfModel;
+	std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>(filename, rootNodeName);
+	gltfModels_[filename] = gltfModel;
 
 	//	見つからなかった
 	return gltfModel;
 }
 
 //	GLTFモデルリソース読み込み
-std::shared_ptr<GltfModelStaticBatching> ResourceManager::LoadGltfModelStaticResource(const std::string& fileName, const bool setColor, const DirectX::XMFLOAT4 color)
+std::shared_ptr<GltfModelStaticBatching> ResourceManager::LoadGltfModelStaticResource(const std::string& filename, const bool setColor, const DirectX::XMFLOAT4 color)
 {
 	//	モデルを検索
 	for (auto& gltfModelPair : gltfStaticModels_)
 	{
-		if (gltfModelPair.first == fileName)	//	文字列比較
+		if (gltfModelPair.first == filename)	//	文字列比較
 		{
 			std::shared_ptr<GltfModelStaticBatching> existModel = gltfModelPair.second.lock();
 			if (existModel)
@@ -65,8 +65,8 @@ std::shared_ptr<GltfModelStaticBatching> ResourceManager::LoadGltfModelStaticRes
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<GltfModelStaticBatching> gltfStaticModel = std::make_shared<GltfModelStaticBatching>(fileName, setColor, color);
-	gltfStaticModels_[fileName] = gltfStaticModel;
+	std::shared_ptr<GltfModelStaticBatching> gltfStaticModel = std::make_shared<GltfModelStaticBatching>(filename, setColor, color);
+	gltfStaticModels_[filename] = gltfStaticModel;
 
 	//	見つからなかった
 	return gltfStaticModel;
@@ -101,12 +101,12 @@ std::shared_ptr<Sprite> ResourceManager::LoadSpriteResource(const std::string& f
 }
 
 //	エフェクトリソース読み込み
-std::shared_ptr<Effect> ResourceManager::LoadEffectResource(const char* fileName)
+std::shared_ptr<Effect> ResourceManager::LoadEffectResource(const char* filename)
 {
 	//	エフェクトを検索
 	for (auto& effectPair : effects_)
 	{
-		if (effectPair.first == fileName)	//	文字列比較
+		if (effectPair.first == filename)	//	文字列比較
 		{
 			std::shared_ptr<Effect> existEffect = effectPair.second.lock();
 			if (existEffect)
@@ -116,8 +116,8 @@ std::shared_ptr<Effect> ResourceManager::LoadEffectResource(const char* fileName
 		}
 	}
 	//	モデル作成、読み込み
-	std::shared_ptr<Effect> effect = std::make_shared<Effect>(fileName);
-	effects_[fileName] = effect;
+	std::shared_ptr<Effect> effect = std::make_shared<Effect>(filename);
+	effects_[filename] = effect;
 
 	//	見つからなかった
 	return effect;

@@ -333,7 +333,7 @@ namespace PlayerState
 
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-
+		Player::Instance().SetAttackHit(false);
 	}
 
 	void ComboOne1::Update(const float& elapsedTime)
@@ -443,7 +443,7 @@ namespace PlayerState
 
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-
+		Player::Instance().SetAttackHit(false);
 	}
 
 	void ComboOne1::DrawDebug()

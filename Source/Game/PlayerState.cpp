@@ -14,6 +14,7 @@
 #include "../Nova/Input/Input.h"
 #include "../Nova/Audio/AudioManager.h"
 #include "../Nova/Scenes/SceneManager.h"
+#include "../Nova/Collision/CollisionManager.h"
 
 //	待機ステート
 namespace PlayerState
@@ -330,6 +331,9 @@ namespace PlayerState
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+
 	}
 
 	void ComboOne1::Update(const float& elapsedTime)
@@ -339,8 +343,11 @@ namespace PlayerState
 
 		// TODO:アニメーションの長さ調整
 
-		Command command = { KeyK };	//	入力判定
-		JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+		//Command command = { KeyK };	//	入力判定
+		//JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+
+		//	プレイヤーの攻撃判定を有効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
 
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
@@ -433,6 +440,10 @@ namespace PlayerState
 	{
 		owner_->SetUseRootMotion(false);
 		owner_->SetAnimationSpeed(1.0f);
+
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+
 	}
 
 	void ComboOne1::DrawDebug()

@@ -208,7 +208,7 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 	
-	RegisterAttackDetectionData({ "ik_hand_r",5.0f });	//	右手の拳
+	RegisterAttackDetectionData({ "RightPunch",0.2f ,{},"ik_hand_r" });	//	右手のパンチ
 
 #pragma endregion ----- 攻撃判定登録 -----
 
@@ -993,7 +993,7 @@ void Player::DrawDebugPrimitive()
 	{
 		for (auto& data : GetCollisionDetectionData())
 		{
-			// 現在アクティブではないので表示しない
+			// 現在アクティブではないため表示しない
 			if (data.GetIsActive() == false) continue;
 
 			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
@@ -1010,7 +1010,7 @@ void Player::DrawDebugPrimitive()
 	{
 		for (auto& data : GetAttackDetectionData())
 		{
-			// 現在アクティブではないでの表示しない
+			// 現在アクティブではないため表示しない
 			if (data.GetIsActive() == false) continue;
 
 			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());

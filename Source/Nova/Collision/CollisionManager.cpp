@@ -84,6 +84,9 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
     {
         Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
 
+        //player.SetPlayEffectFlag(true);
+        //player.SetEffectPos(player.GetTransform()->GetPosition());
+        
         //  当たり判定データの数
         const int maxPlayerData = player.GetAttackDetectionDataCount();
         const int maxEnemyData = enemy->GetDamageDetectionDataCount();
@@ -123,6 +126,12 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
                     {
                         AudioManager::Instance().PlaySE(SE::Attack0);
                     }*/
+
+                    // ============================================================
+                    // エフェクト再生
+                    // ============================================================
+                    player.SetPlayEffectFlag(true);
+                    player.SetEffectPos(playerData.GetPosition());
 
                     // ============================================================
                     // 敵が死んでいなかったらダメージ処理をする

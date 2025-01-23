@@ -5,39 +5,36 @@
 //	球判定用ImGui
 void CollisionSphereData::DrawDebug()
 {
-	if (ImGui::TreeNode(name_.c_str()))
-	{
-		ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
-		ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
-		ImGui::DragFloat("Radius", &radius_, 0.01f);
-		ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
-		ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
-		ImGui::ColorEdit4("HitColor", &hitColor_.x);
+	ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
+	ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
+	ImGui::DragFloat("Radius", &radius_, 0.01f);
 
-		ImGui::TreePop();
-	}
+	ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
+	ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
+	ImGui::ColorEdit4("HitColor", &hitColor_.x);
+
 }
 
 //	円柱判定用ImGui
 void CollisionCylinderData::DrawDebug()
 {
-	if (ImGui::TreeNode(name_.c_str()))
-	{
-		ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
-		ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
-		ImGui::DragFloat("Radius", &radius_, 0.01f);
-		ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
-		ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
-		ImGui::ColorEdit4("HitColor", &hitColor_.x);
+	ImGui::DragFloat3("JointPos", &jointPosition_.x, 0.01f);
+	ImGui::DragFloat3("OffsetPos", &offsetPosition_.x, 0.01f);
+	ImGui::DragFloat("Radius", &radius_, 0.01f);
+	ImGui::ColorEdit4("CurrentColor", &currentColor_.x);
+	ImGui::ColorEdit4("DefaultColor", &defaultColor_.x);
+	ImGui::ColorEdit4("HitColor", &hitColor_.x);
 
-		ImGui::TreePop();
-	}
 }
 
 //	攻撃判定用
 void AttackDetectionData::DrawDebug()
 {
-	collisionSphereData_.DrawDebug();
+	if (ImGui::TreeNode(GetName().c_str()))
+	{
+		collisionSphereData_.DrawDebug();
+		ImGui::TreePop();
+	}
 }
 
 //	くらい判定更新処理
@@ -63,11 +60,22 @@ void DamageDetectionData::Update(const float& elapsedTime)
 //	くらい判定用
 void DamageDetectionData::DrawDebug()
 {
-	collisionSphereData_.DrawDebug();
+	if (ImGui::TreeNode(GetName().c_str()))
+	{
+		collisionSphereData_.DrawDebug();
+		ImGui::Checkbox("IsHit", &isHit_);
+		ImGui::DragFloat("HitTimer", &hitTimer_);
+		ImGui::DragFloat("Damage", &damage_);
+		ImGui::TreePop();
+	}
 }
 
 //	押し出し判定用
 void CollisionDetectionData::DrawDebug()
 {
-	collisionSphereData_.DrawDebug();
+	if (ImGui::TreeNode(GetName().c_str()))
+	{
+		collisionSphereData_.DrawDebug();
+		ImGui::TreePop();
+	}
 }

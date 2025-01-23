@@ -12,7 +12,7 @@ public:
 	CollisionSphereData(const std::string& name,const float& radius, 
 		const DirectX::XMFLOAT3& offsetPos, const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),offsetPosition_(offsetPos),radius_(radius),
-		defaultColor_(defaultColor), hitColor_(hitColor)
+		defaultColor_(defaultColor), currentColor_(defaultColor), hitColor_(hitColor)
 	{}
 	CollisionSphereData() = default;
 
@@ -66,7 +66,7 @@ public:
 		const float& radius, const float& height, const DirectX::XMFLOAT3& offsetPos,
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),jointPosition_(jointPos),offsetPosition_(offsetPos),radius_(radius),height_(height),
-		defaultColor_(defaultColor),hitColor_(hitColor)
+		defaultColor_(defaultColor), currentColor_(defaultColor), hitColor_(hitColor)
 	{}
 	CollisionCylinderData() = default;
 
@@ -123,7 +123,7 @@ struct AttackDetectionData
 public:
 	AttackDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos,
 		const std::string& updateName = "",
-		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
+		const DirectX::XMFLOAT4& defaultColor = { 1.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:collisionSphereData_({ name,radius,offsetPos,defaultColor,hitColor }),
 		updateName_((updateName == "") ? name : updateName)
 	{}
@@ -156,7 +156,7 @@ public:
 private:
 	CollisionSphereData collisionSphereData_ = {};	//	球体データ
 	std::string         updateName_ = {};           //	更新用の名前
-	bool                isActive_ = true;			//	現在有効か
+	bool                isActive_ = false;			//	現在有効か
 
 };
 
@@ -166,7 +166,7 @@ struct DamageDetectionData
 public:
 	DamageDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos = {}, const float& damage = 1.0f,
 		const std::string& updateName = "",
-		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
+		const DirectX::XMFLOAT4& defaultColor = { 0.0f,1.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:collisionSphereData_({ name,radius,offsetPos,defaultColor,hitColor }),
 		damage_(damage),
 		updateName_((updateName == "") ? name : updateName)

@@ -88,6 +88,7 @@ private://	デバッグ用の変数
 	bool isAttackSphere_ = true;
 	bool isDamageSphere_ = false;
 
+	bool	turnAction_ = true;			//	旋回処理
 	bool	bulletLaunch_	= true;		//	弾を発射するかどうか
 	static const int MAX_HP = 40;		//	最大HP
 	//static const int MAX_HP = 60;		//	最大HP

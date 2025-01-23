@@ -66,7 +66,7 @@ public:
 	const float	GetInvincibleTimer()const						{ return invincibleTimer_; }
 
 	//	----- ジョイントポジション -----
-	DirectX::XMFLOAT3 GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT3& offsetPos = {});											//	ジョイントポジション取得
+	DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const DirectX::XMFLOAT3& offsetPos = {});											//	ジョイントポジション取得
 	DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT3& offsetPos = {});
 
 	//	----- ルートモーション -----

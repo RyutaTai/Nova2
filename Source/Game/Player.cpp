@@ -178,7 +178,8 @@ void Player::UpdateListener()
 void Player::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
-	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	//	{名前、半径、  Y軸を固定するか、オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius, fixedY,			offsetPosition,	updateName,	defaultColor,		hitColor}
 	
 	RegisterCollisionDetectionData({ "head",						0.2f,false ,{} });	//	頭
 	RegisterCollisionDetectionData({ "spine_04",					0.2f,false ,{} });	//	胸部
@@ -196,11 +197,19 @@ void Player::RegisterCollisionData()
 #pragma endregion ----- 押し出し判定登録 -----
 
 #pragma region ----- くらい判定登録 -----
+	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
+	
 	//RegisterDamageDetectionData();
+
 #pragma endregion ----- くらい判定登録 -----
 
 #pragma region ----- 攻撃判定登録 -----
+	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
+	
 	//RegisterAttackDetectionData();
+
 #pragma endregion ----- 攻撃判定登録 -----
 
 }
@@ -240,7 +249,8 @@ void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 		if (data.GetFixedY())
 			pos.y = 0.0f;
 
-		data.SetJointPosition(pos);
+		data.SetPosition(pos);
+		//data.SetJointPosition(pos);
 	}
 }
 

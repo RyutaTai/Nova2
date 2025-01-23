@@ -269,6 +269,9 @@ void Drone::LaunchBullet()
 //	旋回処理
 void Drone::Turn(const float& elapsedTime)
 {
+	//	旋回処理しないならreturn
+	if (turnAction_ == false)return;
+
 	//	プレイヤーをターゲットに設定
 	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
 	SetTargetPosition(playerPos);
@@ -342,19 +345,30 @@ void Drone::Destroy()
 void Drone::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
-	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	RegisterCollisionDetectionData({ "Body",	0.5f,false });
-	RegisterCollisionDetectionData({ "Left",	0.5f,false });
-	RegisterCollisionDetectionData({ "Right",	0.5f,false });
+	//	{名前、半径、  Y軸を固定するか、オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius, fixedY,			offsetPosition,	updateName,	defaultColor,		hitColor}
+
+	RegisterCollisionDetectionData({ "Body",	0.87f,	false });
+	RegisterCollisionDetectionData({ "Head",	0.87f,	false,	{0.0f,0.0f,0.0f},"Body" });
+	RegisterCollisionDetectionData({ "Left",	0.5f,	false });
+	RegisterCollisionDetectionData({ "Right",	0.5f,	false });
 
 #pragma endregion ----- 押し出し判定登録 -----
 
 #pragma region ----- くらい判定登録 -----
+	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
+
 	//RegisterDamageDetectionData();
+
 #pragma endregion ----- くらい判定登録 -----
 
 #pragma region ----- 攻撃判定登録 -----
+	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
+
 	//RegisterAttackDetectionData();
+	
 #pragma endregion ----- 攻撃判定登録 -----
 }
 
@@ -375,6 +389,7 @@ void Drone::UpdateCollisions(const float& elapsedTime)
 	{
 		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
+		//data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
 
 	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
@@ -395,7 +410,8 @@ void Drone::UpdateCollisions(const float& elapsedTime)
 		if (data.GetFixedY())
 			pos.y = 0.0f;
 
-		data.SetJointPosition(pos);
+		data.SetPosition(pos);
+		//data.SetJointPosition(pos);
 	}
 }
 
@@ -467,15 +483,15 @@ void Drone::DrawDebug()
 		//GetTransform()->DrawDebug();
 		Character::DrawDebug();
 
-		ImGui::Checkbox("Invincible", &isInvincible_);							//	無敵フラグ設定
+		ImGui::Checkbox("Invincible", &isInvincible_);			//	無敵フラグ設定
+		ImGui::Checkbox("Bullet Launch ", &bulletLaunch_);		//	弾丸発射
+		ImGui::Checkbox("Turn Action", &turnAction_);			//	旋回するかどうか
+		
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
 		ImGui::DragFloat("TurnSpeed", &turnSpeed_, 1.0f, -FLT_MAX, FLT_MAX);	//	旋回速度
 		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);
-		ImGui::Checkbox("Bullet Launch ", &bulletLaunch_);						//	弾丸発射
 		ImGui::TreePop();
 	}
 	BulletManager::Instance().DrawDebug();	//	弾丸ImGui
-	
-	GetTransform()->SetScaleFactor(scale);
 
 }

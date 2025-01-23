@@ -77,65 +77,72 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
     if (Player::Instance().IsAttackHit()) return;
 
     Player& player = Player::Instance();
-    Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
-    const int maxPlayerData = player.GetAttackDetectionDataCount();
-    const int maxEnemyData = enemy->GetDamageDetectionDataCount();
-
-    for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
+    //  登録されている敵の数だけ処理
+    const int maxEnemyCount = EnemyManager::Instance().GetEnemyCount();
+    for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
-        const AttackDetectionData playerData = player.GetAttackDetectionData(playerDataIndex);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
 
-        for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
+        //  当たり判定データの数
+        const int maxPlayerData = player.GetAttackDetectionDataCount();
+        const int maxEnemyData = enemy->GetDamageDetectionDataCount();
+
+        for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
         {
-            DamageDetectionData enemyData = enemy->GetDamageDetectionData(enemyDataIndex);
+            const AttackDetectionData playerData = player.GetAttackDetectionData(playerDataIndex);
 
-            //  このデータは、既にダメージをくらっている
-            if (enemyData.IsHit()) continue;
-
-            //  当たったかチェック
-            if (IntersectSphereVsSphere(
-                playerData.GetPosition(), playerData.GetRadius(),
-                enemyData.GetPosition(), enemyData.GetRadius()))
+            for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
             {
-                const Player::StateType playerState = player.GetCurrentState();
+                DamageDetectionData enemyData = enemy->GetDamageDetectionData(enemyDataIndex);
 
-                // ============================================================
-                //  Hitフラグを立てる ( このデータの無敵時間設定 )
-                // ============================================================
-                enemyData.SetIsHit(true);
-                enemyData.SetHitTimer(0.01f);
+                //  このデータは、既にダメージをくらっている
+                if (enemyData.IsHit()) continue;
 
-                // ============================================================
-                // 効果音を鳴らす
-                // ============================================================
-                /*if (playerState != Player::StateType::RushAttack)
+                //  当たったかチェック
+                if (IntersectSphereVsSphere(
+                    playerData.GetPosition(), playerData.GetRadius(),
+                    enemyData.GetPosition(), enemyData.GetRadius()))
                 {
-                    AudioManager::Instance().PlaySE(SE::Attack0);
+                    const Player::StateType playerState = player.GetCurrentState();
+
+                    // ============================================================
+                    //  Hitフラグを立てる ( このデータの無敵時間設定 )
+                    // ============================================================
+                    enemyData.SetIsHit(true);
+                    enemyData.SetHitTimer(0.01f);
+
+                    // ============================================================
+                    // 効果音を鳴らす
+                    // ============================================================
+                    /*if (playerState != Player::StateType::RushAttack)
+                    {
+                        AudioManager::Instance().PlaySE(SE::Attack0);
+                    }
+                    else
+                    {
+                        AudioManager::Instance().PlaySE(SE::Attack0);
+                    }*/
+
+                    // ============================================================
+                    // 敵が死んでいなかったらダメージ処理をする
+                    // ============================================================
+                    if (enemy->IsDead() == false)
+                    {
+                        const float attackPower = player.GetAttackPower();
+                        const float damage = attackPower * enemyData.GetDamage();
+
+                        enemy->AddDamage(damage);
+
+                    }
+
+                    // ============================================================
+                    // Playerの攻撃判定を無くす
+                    // ============================================================
+                    player.SetAttackHit(true);
+
+                    return;
                 }
-                else
-                {
-                    AudioManager::Instance().PlaySE(SE::Attack0);
-                }*/
-
-                // ============================================================
-                // 敵が死んでいなかったらダメージ処理をする
-                // ============================================================
-                if (enemy->IsDead() == false)
-                {
-                    const float attackPower = player.GetAttackPower();
-                    const float damage = attackPower * enemyData.GetDamage();
-
-                    enemy->AddDamage(damage);
-
-                }
-
-                // ============================================================
-                // Playerの攻撃判定を無くす
-                // ============================================================
-                player.SetAttackHit(true);
-
-                return;
             }
         }
     }
@@ -163,31 +170,37 @@ void CollisionManager::PlayerFlinchVsEnemyAttack()
     if (Player::Instance().GetCurrentState() == Player::StateType::Flinch) return;
 
     Player& player = Player::Instance();
-    Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
-    const int maxPlayerData = player.GetDamageDetectionDataCount();
-    const int maxEnemyData = enemy->GetAttackDetectionDataCount();
-
-    for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
+    //  登録されている敵の数だけ処理
+    const int maxEnemyCount = EnemyManager::Instance().GetEnemyCount();
+    for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
-        const DamageDetectionData playerData = player.GetDamageDetectionData(playerDataIndex);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
 
-        for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
+        const int maxPlayerData = player.GetDamageDetectionDataCount();
+        const int maxEnemyData = enemy->GetAttackDetectionDataCount();
+
+        for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
         {
-            const AttackDetectionData enemyData = enemy->GetAttackDetectionData(enemyDataIndex);
-            //  このデータは攻撃判定が有効ではない
-            if (enemyData.GetIsActive() == false) continue;
+            const DamageDetectionData playerData = player.GetDamageDetectionData(playerDataIndex);
 
-            //  当たったか判定
-            if (IntersectSphereVsSphere(
-                playerData.GetPosition(), playerData.GetRadius(),
-                enemyData.GetPosition(), enemyData.GetRadius()))
+            for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
             {
-                //  怯みステートに遷移
-                player.ChangeState(Player::StateType::Flinch);
+                const AttackDetectionData enemyData = enemy->GetAttackDetectionData(enemyDataIndex);
+                //  このデータは攻撃判定が有効ではない
+                if (enemyData.GetIsActive() == false) continue;
 
-                //  当たったので終了
-                return;
+                //  当たったか判定
+                if (IntersectSphereVsSphere(
+                    playerData.GetPosition(), playerData.GetRadius(),
+                    enemyData.GetPosition(), enemyData.GetRadius()))
+                {
+                    //  怯みステートに遷移
+                    player.ChangeState(Player::StateType::Flinch);
+
+                    //  当たったので終了
+                    return;
+                }
             }
         }
     }
@@ -202,58 +215,64 @@ void CollisionManager::PlayerDamageVsEnemyAttack()
     if (Player::Instance().IsInvincible()) return;
 
     Player& player = Player::Instance();
-    Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
-    const int maxPlayerData = player.GetDamageDetectionDataCount();
-    const int maxEnemyData = enemy->GetAttackDetectionDataCount();
-
-    for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
+    //  登録されている敵の数だけ処理
+    const int maxEnemyCount = EnemyManager::Instance().GetEnemyCount();
+    for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
-        const DamageDetectionData playerData = player.GetDamageDetectionData(playerDataIndex);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
 
-        for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
+        const int maxPlayerData = player.GetDamageDetectionDataCount();
+        const int maxEnemyData = enemy->GetAttackDetectionDataCount();
+
+        for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
         {
-            const AttackDetectionData enemyData = enemy->GetAttackDetectionData(enemyDataIndex);
+            const DamageDetectionData playerData = player.GetDamageDetectionData(playerDataIndex);
 
-            //  このデータの攻撃判定が有効ではない
-            if (enemyData.GetIsActive() == false) continue;
-
-            //  当たったかチェック
-            if (IntersectSphereVsSphere(
-                playerData.GetPosition(), playerData.GetRadius(),
-                enemyData.GetPosition(), enemyData.GetRadius()))
+            for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
             {
-                //  ==================================================
-                //  ダメージを与える
-                //  ==================================================
-                int damage = enemy->GetAttackPower();
-                player.AddDamage(damage);
+                const AttackDetectionData enemyData = enemy->GetAttackDetectionData(enemyDataIndex);
 
-                //  ==================================================
-                //  コントローラー振動 (ダメージ受けたリアクションとして)
-                //  ==================================================
-                /*if (enemy->GetCurrentAttackAction() != Enemy::AttackAction::SuperNova)
+                //  このデータの攻撃判定が有効ではない
+                if (enemyData.GetIsActive() == false) continue;
+
+                //  当たったかチェック
+                if (IntersectSphereVsSphere(
+                    playerData.GetPosition(), playerData.GetRadius(),
+                    enemyData.GetPosition(), enemyData.GetRadius()))
                 {
-                    Input::Instance().GetGamePad().Vibration(0.2f, 1.0f);
-                }*/
+                    //  ==================================================
+                    //  ダメージを与える
+                    //  ==================================================
+                    int damage = enemy->GetAttackPower();
+                    player.AddDamage(damage);
 
-                //  ==================================================
-                //  ダメージSE再生
-                //  ==================================================
-                //AudioManager::Instance().PlaySE(SE::Damage);
+                    //  ==================================================
+                    //  コントローラー振動 (ダメージ受けたリアクションとして)
+                    //  ==================================================
+                    /*if (enemy->GetCurrentAttackAction() != Enemy::AttackAction::SuperNova)
+                    {
+                        Input::Instance().GetGamePad().Vibration(0.2f, 1.0f);
+                    }*/
 
-                ////  HPがまだあるためDamageStateに遷移
-                //if (player.GetHp() > 0.0f)
-                //{
-                //    player.ChangeState(Player::StateType::Damage);
-                //}
-                ////  HPが無いためDeathStateに遷移
-                //else
-                //{
-                //    player.ChangeState(Player::StateType::Death);  
-                //}
+                    //  ==================================================
+                    //  ダメージSE再生
+                    //  ==================================================
+                    //AudioManager::Instance().PlaySE(SE::Damage);
 
-                return;
+                    ////  HPがまだあるためDamageStateに遷移
+                    //if (player.GetHp() > 0.0f)
+                    //{
+                    //    player.ChangeState(Player::StateType::Damage);
+                    //}
+                    ////  HPが無いためDeathStateに遷移
+                    //else
+                    //{
+                    //    player.ChangeState(Player::StateType::Death);  
+                    //}
+
+                    return;
+                }
             }
         }
     }
@@ -328,50 +347,56 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
     if (Player::Instance().IsUseCollisionDetection() == false) return;
     
     Player& player = Player::Instance();
-    Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
-    const int maxPlayerData = player.GetCollisionDetectionDataCount();
-    const int maxEnemyData = enemy->GetCollisionDetectionDataCount();
-
-    for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
+    //  登録されている敵の数だけ処理
+    const int maxEnemyCount = EnemyManager::Instance().GetEnemyCount();
+    for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
-        const CollisionDetectionData playerData = player.GetCollisionDetectionData(playerDataIndex);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
 
-        for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
+        const int maxPlayerData = player.GetCollisionDetectionDataCount();
+        const int maxEnemyData = enemy->GetCollisionDetectionDataCount();
+
+        for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
         {
-            const CollisionDetectionData enemyData = enemy->GetCollisionDetectionData(enemyDataIndex);
+            const CollisionDetectionData playerData = player.GetCollisionDetectionData(playerDataIndex);
 
-            //  このデータの判定が無効
-            if (enemyData.GetIsActive() == false) continue;
-
-            //  押し出し後の位置
-            DirectX::XMFLOAT3 resultPosition = {};
-
-            //  Yの値が0.0fのデータとの判定
-            if (enemyData.GetFixedY())
+            for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
             {
-                //  当たったかチェック
-                if (IntersectSphereVsSphere(
-                    enemyData.GetPosition(), enemyData.GetRadius(),
-                    player.GetTransform()->GetPosition(), playerData.GetRadius(),
-                    resultPosition))
-                {
-                    resultPosition.y = 0.0f;
+                const CollisionDetectionData enemyData = enemy->GetCollisionDetectionData(enemyDataIndex);
 
-                    player.GetTransform()->SetPosition(resultPosition);
+                //  このデータの判定が無効
+                if (enemyData.GetIsActive() == false) continue;
+
+                //  押し出し後の位置
+                DirectX::XMFLOAT3 resultPosition = {};
+
+                //  Yの値が0.0fのデータとの判定
+                if (enemyData.GetFixedY())
+                {
+                    //  当たったかチェック
+                    if (IntersectSphereVsSphere(
+                        enemyData.GetPosition(), enemyData.GetRadius(),
+                        player.GetTransform()->GetPosition(), playerData.GetRadius(),
+                        resultPosition))
+                    {
+                        resultPosition.y = 0.0f;
+
+                        player.GetTransform()->SetPosition(resultPosition);
+                    }
                 }
-            }
-            //  その他のデータとの判定
-            else
-            {
-                //  当たったかチェック
-                if (IntersectSphereVsSphereNotConsiderY(
-                    enemyData.GetPosition(), enemyData.GetRadius(),
-                    playerData.GetPosition(), playerData.GetRadius(),
-                    resultPosition))
+                //  その他のデータとの判定
+                else
                 {
-                    resultPosition = player.GetTransform()->GetPosition() - resultPosition;
-                    player.GetTransform()->SetPosition(resultPosition);
+                    //  当たったかチェック
+                    if (IntersectSphereVsSphereNotConsiderY(
+                        enemyData.GetPosition(), enemyData.GetRadius(),
+                        playerData.GetPosition(), playerData.GetRadius(),
+                        resultPosition))
+                    {
+                        resultPosition = player.GetTransform()->GetPosition() - resultPosition;
+                        player.GetTransform()->SetPosition(resultPosition);
+                    }
                 }
             }
         }
@@ -404,55 +429,60 @@ void CollisionManager::EnemyDamageVsBulletAttack()
     //  Bulletが存在しない
     if (BulletManager::Instance().GetBulletCount() <= 0) return;
 
-    Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
-    std::vector<Bullet*> bullets = BulletManager::Instance().GetBullets();
-
-    const int maxEnemyData = enemy->GetDamageDetectionDataCount();
-    const int maxBulletData = bullets.size();
-
-    for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
+    //  登録されている敵の数だけ処理
+    const int maxEnemyCount = EnemyManager::Instance().GetEnemyCount();
+    for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
-        DamageDetectionData enemyData = enemy->GetDamageDetectionData(enemyDataIndex);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
+        std::vector<Bullet*> bullets = BulletManager::Instance().GetBullets();
 
-        //  このデータは、既にダメージをくらっている
-        if (enemyData.IsHit()) continue;
+        const int maxEnemyData = enemy->GetDamageDetectionDataCount();
+        const int maxBulletData = bullets.size();
 
-        for (int bulletIndex = 0; bulletIndex < maxBulletData; ++bulletIndex)
+        for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
         {
-            Bullet* bullet = bullets.at(bulletIndex);
+            DamageDetectionData enemyData = enemy->GetDamageDetectionData(enemyDataIndex);
 
-            //  Enemyとの当たり判定を行わない
-            if (bullet->GetOpponentType() == Bullet::OpponentType::Player) continue;
+            //  このデータは、既にダメージをくらっている
+            if (enemyData.IsHit()) continue;
 
-            //  当たったかチェック
-            if (IntersectSphereVsSphere(
-                bullet->GetTransform()->GetPosition(), bullet->GetRadius(),
-                enemyData.GetPosition(), enemyData.GetRadius()))
+            for (int bulletIndex = 0; bulletIndex < maxBulletData; ++bulletIndex)
             {
-                //  当たった位置を求める
-                const DirectX::XMFLOAT3 hitPosition = bullet->GetTransform()->GetPosition() + Normalize(enemyData.GetPosition() - bullet->GetTransform()->GetPosition()) * bullet->GetRadius();
+                Bullet* bullet = bullets.at(bulletIndex);
 
-                // ============================================================
-                //  Hitフラグ & 関数呼び出し
-                // ============================================================
-                enemyData.SetIsHit(true);
-                enemyData.SetHitTimer(0.01f);
-                //bullet->OnHit(hitPosition);
+                //  Enemyとの当たり判定を行わない
+                if (bullet->GetOpponentType() == Bullet::OpponentType::Player) continue;
 
-                // ============================================================
-                // 敵が死んでいなかったらダメージ処理をする
-                // ============================================================
-                if (enemy->IsDead() == false)
+                //  当たったかチェック
+                if (IntersectSphereVsSphere(
+                    bullet->GetTransform()->GetPosition(), bullet->GetRadius(),
+                    enemyData.GetPosition(), enemyData.GetRadius()))
                 {
-                    const float attackPower = bullet->GetAttackPower();
-                    const float damage = attackPower * enemyData.GetDamage();
+                    //  当たった位置を求める
+                    const DirectX::XMFLOAT3 hitPosition = bullet->GetTransform()->GetPosition() + Normalize(enemyData.GetPosition() - bullet->GetTransform()->GetPosition()) * bullet->GetRadius();
 
-                    enemy->AddDamage(damage);
+                    // ============================================================
+                    //  Hitフラグ & 関数呼び出し
+                    // ============================================================
+                    enemyData.SetIsHit(true);
+                    enemyData.SetHitTimer(0.01f);
+                    //bullet->OnHit(hitPosition);
 
-              
+                    // ============================================================
+                    // 敵が死んでいなかったらダメージ処理をする
+                    // ============================================================
+                    if (enemy->IsDead() == false)
+                    {
+                        const float attackPower = bullet->GetAttackPower();
+                        const float damage = attackPower * enemyData.GetDamage();
+
+                        enemy->AddDamage(damage);
+
+
+                    }
+
+                    return;
                 }
-
-                return;
             }
         }
     }

@@ -181,11 +181,11 @@ void Character::SetPixelShader(const char* csoName)
 }
 
 //	名前からジョイントポジション取得
-DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT3& offsetPos)
+DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& nodeName, const DirectX::XMFLOAT3& offsetPos)
 {
 	DirectX::XMFLOAT4X4 transform = {};
 	DirectX::XMStoreFloat4x4(&transform, gltfModelResource_->GetTransform()->CalcWorld());
-	return gltfModelResource_->GetJointPosition(boneName, transform, offsetPos);
+	return gltfModelResource_->GetJointPosition(nodeName, transform, offsetPos);
 }
 
 //	登録番号からジョイントポジション取得

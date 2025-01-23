@@ -897,23 +897,26 @@ int GltfModel::GetCurrentAnimNum()
 }
 
 //  ジョイントポジション取得
-DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& boneName, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos)
+DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos)
 {
     DirectX::XMFLOAT3 position = offsetPos;/*world space*/
-  
+    DirectX::XMFLOAT3 origin = {};
+
     for (int index = 0; index < nodes_.size(); index++)
     {
-        if (nodes_.at(index).name_ == boneName)
+        if (nodes_.at(index).name_ == nodeName)
         {
             const Node& node = nodes_.at(index);
             DirectX::XMFLOAT4X4 globalTransform = node.globalTransform_;
             DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&globalTransform) * DirectX::XMLoadFloat4x4(&transform);
-            DirectX::XMStoreFloat3(&position, DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&position), M));
+            DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
+            DirectX::XMStoreFloat3(&origin, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&origin), M));
             return position;
         }
     }
     _ASSERT_EXPR(false, L"Joint is not found.");
     return {};
+
 }
 
 //  ジョイントポジション取得

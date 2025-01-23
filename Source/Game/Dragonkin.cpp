@@ -86,67 +86,12 @@ void Dragonkin::Initialize()
 	SetAnimationSpeed(1.0f);
 }
 
-//	更新処理
-void Dragonkin::Update(const float& elapsedTime)
-{
-	//	アニメーション更新処理
-	UpdateAnimation(elapsedTime);
-
-	//	ビヘイビアツリー更新
-	UpdateBehaviorTree(elapsedTime);
-
-	//	Collision更新
-	UpdateCollisions(elapsedTime);
-
-	//	HPがなくなったら
-	if (hp_ <= 0)
-	{
-		Destroy();
-	}
-
-}
-
-//	ビヘイビアツリー更新処理
-void Dragonkin::UpdateBehaviorTree(const float& elapsedTime)
-{
-	//	現在実行されているノードが無ければ
-	if (activeNode_ == nullptr)
-	{
-		//	次に実行するノードを推論する
-		activeNode_ = behaviorTree_->ActiveNodeInference(behaviorData_);
-	}
-	//	現在実行するノードがあれば
-	if (activeNode_ != nullptr)
-	{
-		//	ビヘイビアツリーからノードを実行
-		activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_, elapsedTime);
-	}
-}
-
-//	ステージとの当たり判定
-bool Dragonkin::RayVsVertical(const float& elapsedTime)
-{
-
-	return false;
-}
-
-bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
-{
-
-	return false;
-}
-
-//	アニメーション
-void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
-{
-	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
-}
-
 //	当たり判定登録
 void Dragonkin::RegisterCollisionData()
 {
 #pragma region ----- 押し出し判定登録 -----
-	//	{名前、半径、Y軸を固定するか、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
+	//	{名前、半径、  Y軸を固定するか、オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius, fixedY,			offsetPosition,	updateName,	defaultColor,		hitColor}
 
 	RegisterCollisionDetectionData({ "head",		0.4f,false,{} });		//	頭
 	RegisterCollisionDetectionData({ "spine_02",	0.4f,false,{} });		//	胸部
@@ -164,26 +109,27 @@ void Dragonkin::RegisterCollisionData()
 
 	//	左の翼
 	RegisterCollisionDetectionData({ "Wing_L03",	0.4f,false,{} });		//	一番付け根に近い
-	RegisterCollisionDetectionData({ "Wing_L04",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_L05",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_L06",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_L08",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_L09",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_L04",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_L05",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_L06",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_L08",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_L09",	0.4f,false,{} });
 	RegisterCollisionDetectionData({ "Wing_L10",	0.4f,false,{} });		//	一番先の方
 
 	//	右の翼
 	RegisterCollisionDetectionData({ "Wing_R03",	0.4f,false,{} });		//	一番付け根に近い
-	RegisterCollisionDetectionData({ "Wing_R04",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_R05",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_R06",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_R08",	0.4f,false,{} });		
-	RegisterCollisionDetectionData({ "Wing_R09",	0.4f,false,{} });		
+	RegisterCollisionDetectionData({ "Wing_R04",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_R05",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_R06",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_R08",	0.4f,false,{} });
+	RegisterCollisionDetectionData({ "Wing_R09",	0.4f,false,{} });
 	RegisterCollisionDetectionData({ "Wing_R10",	0.4f,false,{} });		//	一番先の方
 
 #pragma endregion ----- 押し出し判定登録 -----
 
 #pragma region ----- くらい判定登録 -----
-	//	{名前、半径、オフセット位置、ダメージ倍率、更新名、デフォルトカラー、ヒットカラー}
+	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
 	RegisterDamageDetectionData({ "head",			0.4f,{} });		//	頭
 	RegisterDamageDetectionData({ "spine_02",		0.4f,{} });		//	胸部
@@ -220,8 +166,8 @@ void Dragonkin::RegisterCollisionData()
 #pragma endregion ----- くらい判定登録 -----
 
 #pragma region ----- 攻撃判定登録 -----
-	//	{名前、半径、オフセット位置、更新名、デフォルトカラー、ヒットカラー}
-	//name,radius,offsetPos,defaultColor,hitColor })
+	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
+	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 
 	RegisterAttackDetectionData({ "head",			0.4f,{} });		//	頭
 	RegisterAttackDetectionData({ "spine_02",		0.4f,{} });		//	胸部
@@ -256,6 +202,65 @@ void Dragonkin::RegisterCollisionData()
 	RegisterAttackDetectionData({ "Wing_R10",		0.4f,{} });		//	一番先の方
 
 #pragma endregion ----- 攻撃判定登録 -----
+}
+
+//	更新処理
+void Dragonkin::Update(const float& elapsedTime)
+{
+	//	アニメーション更新処理
+	UpdateAnimation(elapsedTime);
+
+	//	ビヘイビアツリー更新
+	UpdateBehaviorTree(elapsedTime);
+
+	//	Collision更新
+	UpdateCollisions(elapsedTime);
+
+	//	HPがなくなったら
+	if (hp_ <= 0)
+	{
+		Destroy();
+	}
+
+}
+
+//	ビヘイビアツリー更新処理
+void Dragonkin::UpdateBehaviorTree(const float& elapsedTime)
+{
+	//	ビヘイビアツリー更新フラグがfalseなら更新しない
+	if (behaviorTreeUpdateFlag_ == false)return;
+
+	//	現在実行されているノードが無ければ
+	if (activeNode_ == nullptr)
+	{
+		//	次に実行するノードを推論する
+		activeNode_ = behaviorTree_->ActiveNodeInference(behaviorData_);
+	}
+	//	現在実行するノードがあれば
+	if (activeNode_ != nullptr)
+	{
+		//	ビヘイビアツリーからノードを実行
+		activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_, elapsedTime);
+	}
+}
+
+//	ステージとの当たり判定
+bool Dragonkin::RayVsVertical(const float& elapsedTime)
+{
+
+	return false;
+}
+
+bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
+{
+
+	return false;
+}
+
+//	アニメーション
+void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
+{
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
 }
 
 //	当たり判定更新
@@ -295,7 +300,8 @@ void Dragonkin::UpdateCollisions(const float& elapsedTime)
 		if (data.GetFixedY())
 			pos.y = 0.0f;
 
-		data.SetJointPosition(pos);
+		data.SetPosition(pos);
+		//data.SetJointPosition(pos);
 	}
 
 }
@@ -357,8 +363,6 @@ void Dragonkin::DrawDebugPrimitive()
 			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
 		}
 	}
-
-
 }
 
 //	デバッグ描画
@@ -374,6 +378,7 @@ void Dragonkin::DrawDebug()
 	{
 		ImGui::Text(u8"Behavior　%s", str.c_str());	//	現在のビヘイビア
 
+		ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);
 		ImGui::Checkbox("DamageSphere", &isDamageSphere_);
 		ImGui::Checkbox("AttackSphere", &isAttackSphere_);
 		ImGui::Checkbox("CollisionSphere", &isCollisionSphere_);

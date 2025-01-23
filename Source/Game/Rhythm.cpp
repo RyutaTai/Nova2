@@ -23,14 +23,14 @@ void Rhythm::Update()
 }
 
 //  入力タイミングがリズムにあっているか判定する
-void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力されたか*/, const double& elapsedTime)
+Rhythm::JudgmentType Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力されたか*/, const double& elapsedTime)
 {
     //  ループ後の再生時間を考慮してノートを探索
     //Midi::MidiNote* closestNote = midi_->FindClosestNoteInLoop(inputTime);
     Midi::MidiNote* closestNote = midi_->FindClosestNote(inputTime);
 
     //  ノートが見つからなければreturn
-	if (closestNote == false)return;
+	if (closestNote == false)return JudgmentType::None;
 
     //  入力タイミングとのズレを計算
 	double deltaPlus = std::abs(closestNote->time_ - inputTime);    //  過去の一番近いノーツからプラス方向の差分
@@ -40,7 +40,7 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
     debugInputTime_ = inputTime;
 
     //  判定済みノートは無視
-	if (closestNote->judged_) return;
+	if (closestNote->judged_) return JudgmentType::None;
 
     //  判定範囲による判定
     if (deltaPlus <= PerfectRange_)
@@ -52,6 +52,8 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Perfect);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
+
+        return Rhythm::JudgmentType::Perfect;
     }
     else if (deltaPlus <= GoodRange_)
     {
@@ -61,6 +63,8 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Good);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
+
+        return Rhythm::JudgmentType::Good;
     }
     else
     {
@@ -69,6 +73,8 @@ void Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力され
         UIRhythmJudgment* uiRhythm = new UIRhythmJudgment(JudgmentType::Miss);
         uiRhythm->Initialize();
         uiRhythm->SetIsVisible(true);
+
+        return Rhythm::JudgmentType::Miss;
     }
 }
 

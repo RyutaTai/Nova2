@@ -124,6 +124,7 @@ public:
 
 	//	----- Collision ----
 	void RegisterCollisionData()override;
+	void SetUseCollisionDetection(const bool& useCollisionDetection) { isUseCollisionDetection_ = useCollisionDetection; }
 	const bool IsUseCollisionDetection()const { return isUseCollisionDetection_; }
 	void UpdateCollisionDetectionData(const float& elapsedTime);
 

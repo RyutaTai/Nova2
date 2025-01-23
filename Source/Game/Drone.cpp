@@ -349,7 +349,7 @@ void Drone::RegisterCollisionData()
 	//	{name, radius, fixedY,			offsetPosition,	updateName,	defaultColor,		hitColor}
 
 	RegisterCollisionDetectionData({ "Body",	0.87f,	false });
-	RegisterCollisionDetectionData({ "Head",	0.87f,	false,	{0.0f,0.0f,0.0f},"Body" });
+	RegisterCollisionDetectionData({ "Head",	0.5f,	false,	{0.0f,0.0f,2.42f},"Body" });
 	RegisterCollisionDetectionData({ "Left",	0.5f,	false });
 	RegisterCollisionDetectionData({ "Right",	0.5f,	false });
 
@@ -360,7 +360,7 @@ void Drone::RegisterCollisionData()
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
 	RegisterDamageDetectionData({ "Body",	0.87f });
-	RegisterDamageDetectionData({ "Head",	0.87f,	{0.0f,0.0f,0.0f},1.0f,"Body" });
+	RegisterDamageDetectionData({ "Head",	0.57f,{0.0f,0.0f,2.42f},1.0f,"Body" });
 	RegisterDamageDetectionData({ "Left",	0.5f });
 	RegisterDamageDetectionData({ "Right",	0.5f });
 

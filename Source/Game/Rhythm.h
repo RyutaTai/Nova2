@@ -11,6 +11,7 @@ public:
 		Perfect = 0,
 		Good,
 		Miss,
+		None,			//	”»’èÏ‚Ý
 		Max
 	};
 
@@ -30,7 +31,7 @@ public:
 	
 	const double GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
 
-	void GetJudgmentType(const double& inputTime, const double& elapsedTime);
+	JudgmentType GetJudgmentType(const double& inputTime, const double& elapsedTime);
 
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }

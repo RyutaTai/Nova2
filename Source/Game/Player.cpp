@@ -62,7 +62,7 @@ Player::Player()
 	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::Footsteps)]);
 
 	//	攻撃ヒットSE
-	sources_[static_cast<int>(AudioStereo::HitAttack)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/HitAttack.wav", Audio::AudioType::SENormal, "GameScene");
+	sources_[static_cast<int>(AudioStereo::HitAttack)] = AudioManager::Instance().LoadAudioSource("./Resources/Audio/SE/Player/HitAttack2.wav", Audio::AudioType::SENormal, "GameScene");
 	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetVolume(1.0f, false);
 	sources_[static_cast<int>(AudioStereo::HitAttack)]->SetAudioName("PlayerHitAttack");
 	AudioManager::Instance().Register(sources_[static_cast<int>(AudioStereo::HitAttack)]);
@@ -209,6 +209,8 @@ void Player::RegisterCollisionData()
 	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 	
 	RegisterAttackDetectionData({ "RightPunch",0.2f ,{},"ik_hand_r" });	//	右手のパンチ
+	RegisterAttackDetectionData({ "LeftPunch",0.2f ,{},"ik_hand_l" });	//	左手のパンチ
+	RegisterAttackDetectionData({ "LeftKick",0.2f ,{},"ik_foot_l" });	//	右のキック
 
 #pragma endregion ----- 攻撃判定登録 -----
 
@@ -251,6 +253,10 @@ void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 
 		data.SetPosition(pos);
 		//data.SetJointPosition(pos);
+
+		//	押し出し判定を使用しないなら、すべて無効化する
+		if (isUseCollisionDetection_ == false)
+			data.SetIsActive(false);
 	}
 }
 
@@ -337,9 +343,6 @@ bool Player::JointVsEnemies(const float& elapsedTime, const DirectX::XMFLOAT3& j
 			isHitEnemy = true;
 			SetPlayEffectFlag(true);
 			SetEffectPos(jointPos);
-
-			//	攻撃ヒット音再生
-			//AudioManager::Instance().GetAudioResource("PlayerHitAttack")->Play(false);
 
 		}
 	}
@@ -754,6 +757,9 @@ void Player::PlayEffect()
 
 	//	エフェクト描画フラグリセット
 	playEffectFlag_ = false;
+
+	//	ヒット音再生
+	AudioManager::Instance().GetAudioResource("PlayerHitAttack")->Play(false);
 
 }
 

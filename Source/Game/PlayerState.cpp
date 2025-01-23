@@ -186,72 +186,8 @@ namespace PlayerState
 			return;
 		}
 #endif
-		//	攻撃処理
-		//PunchAttack(elapsedTime, "SKM_Manny_LOD0", "ik_hand_gun");
-
 		//	判定用タイマー更新
 		UpdateJudgeTimer(elapsedTime);
-
-	}
-
-	//	殴打攻撃（普通の攻撃）
-	
-	//bool AttackState::PunchAttack(const float& elapsedTime, const std::string& meshName, const std::string& boneName)
-	//{
-	//	bool isHIt = false;
-	//
-	//	//	右手のワールド座標取得
-	//	DirectX::XMFLOAT4X4 world;
-	//	DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorld());	//	プレイヤーのワールド行列
-	//	//DirectX::XMStoreFloat4x4(&world, owner_->GetTransform()->CalcWorldMatrix(scale));	//	プレイヤーのワールド行列
-	//	DirectX::XMFLOAT3 leftHandPos = owner_->GetJointPosition(meshName, boneName, world);
-	//
-	//	//	当たり判定用の半径セット
-	//	float leftHandRadius = 3.0f;
-	//
-	//	//	衝突判定用のデバッグ球を描画
-	//	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-	//	//debugRenderer->DrawSphere(leftHandPos, leftHandRadius, DirectX::XMFLOAT4(1, 1, 1, 1));
-	//
-	//	//	弾丸への攻撃判定
-	//	if (PuchVsBullet(elapsedTime, leftHandPos, leftHandRadius) == true)isHIt = true;
-	//
-	//	//	敵への当たり判定
-	//	if (PunchVsEnemy(elapsedTime, leftHandPos, leftHandRadius) == true)isHIt = true;
-	//
-	//	return isHIt;
-	//}
-
-	//	拳と弾丸の当たり判定
-	bool AttackState::PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius)
-	{
-		bool isHitBullet = false;
-		BulletManager& bulletManager = BulletManager::Instance();
-		for (int bulletNum = 0; bulletNum < bulletManager.GetBulletCount(); ++bulletNum)
-		{
-			//	弾丸と右手との当たり判定
-			Bullet* bullet = bulletManager.GetBullet(bulletNum);
-			DirectX::XMFLOAT3	bulletPos = bullet->GetTransform()->GetPosition();	//	弾丸の位置
-			float				bulletRadius = bullet->GetRadius();					//	弾丸の半径
-			DirectX::XMFLOAT3	outPos = {};
-			if (Collision::IntersectSphereVsSphere(leftHandPos, leftHandRadius, bulletPos, bulletRadius, outPos))
-			{
-				isHitBullet = true;
-			}
-
-			//	弾丸に拳が当たっていたら
-			if (isHitBullet)
-			{
-				//	弾丸のダメージフラグ設定
-				bulletManager.GetBullet(bulletNum)->SetDamaged(isHitBullet);
-
-				// TODO:弾丸を打ってきた敵の方へ進む処理
-				SetTargetPosition(bullet->GetOwnerPosition());
-				MoveTowardsEnemy(elapsedTime);
-
-			}
-		}
-		return isHitBullet;
 
 	}
 
@@ -320,7 +256,7 @@ namespace PlayerState
 
 		//	判定時間セット
 		animJudgeTime_.SetJudgeTime(0.55f, 0.735f);			//	アニメーション判定区間
-		acceptInputFrame_ = 10.0f;							//	先行入力受付フレーム
+		//acceptInputFrame_ = 10.0f;							//	先行入力受付フレーム
 		cancellationTime_.SetJudgeTime(0.3f, 1.16f);		//	キャンセル可能時間
 
 		//	アニメーション速度変化区間セット
@@ -334,27 +270,32 @@ namespace PlayerState
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
 		Player::Instance().SetAttackHit(false);
+
+		//	攻撃中は押し出し判定しない
+		Player::Instance().SetUseCollisionDetection(false);
+
 	}
 
 	void ComboOne1::Update(const float& elapsedTime)
 	{
-		UpdateElapsedTime(elapsedTime);	//	経過時間更新
-		UpdateAnimationSpeed();			//	アニメーション速度更新
+		//	経過時間更新
+		UpdateElapsedTime(elapsedTime);
 
-		// TODO:アニメーションの長さ調整
-
-		//Command command = { KeyK };	//	入力判定
-		//JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+		//	アニメーション速度更新
+		UpdateAnimationSpeed();			
 
 		//	プレイヤーの攻撃判定を有効にする
 		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
 
-		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
+		//	次のステートへの遷移
+		if (JudgeInput(cancellationTime_))	
 		{
+			//	リズム判定処理(missならreturn)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			return;
+
+			//	miss以外なら次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne2);
-			
-			//	リズム判定処理
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		if (owner_->IsPlayAnimation() == false)
@@ -362,24 +303,6 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
-	}
-
-	//	animJudgeTimeに収まっていて、攻撃がヒットしているか判断する
-	bool ComboOne1::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
-	{
-		//	時間での判定
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
-			return false;
-
-		//	ノードと、敵または弾丸との当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
-		{
-			//owner_->ChangeState(Player::StateType::Idle);
-			return false;
-		}
-
-		return true;
 	}
 
 	bool ComboOne1::JudgeInput(const JudgeTime& cancellationTime)
@@ -390,7 +313,7 @@ namespace PlayerState
 			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
+		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
@@ -443,7 +366,9 @@ namespace PlayerState
 
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-		Player::Instance().SetAttackHit(false);
+		//	プレイヤーの押し出し判定を有効化
+		Player::Instance().SetUseCollisionDetection(true);
+
 	}
 
 	void ComboOne1::DrawDebug()
@@ -477,10 +402,10 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		animJudgeTime_[0].SetJudgeTime(0.21f, 0.25f);
+		animJudgeTime_[0].SetJudgeTime(0.21f, 0.25f);	//	アニメーション再生中に当たっているか判定(アニメーション再生時間をもとに判定)
 		animJudgeTime_[1].SetJudgeTime(0.29f, 0.63f);
 		acceptInputFrame_ = 10.0f;
-		cancellationTime_.SetJudgeTime(0.64f, 1.617f);
+		cancellationTime_.SetJudgeTime(0.64f, 1.617f);	//	入力判定に使用
 
 		//	アニメーション再生速度変化区間セット
 		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.23f);		//	左パンチ出すまで
@@ -491,46 +416,51 @@ namespace PlayerState
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		Player::Instance().SetAttackHit(false);
+		//	攻撃中は押し出し判定しない
+		Player::Instance().SetUseCollisionDetection(false);
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-		UpdateElapsedTime(elapsedTime);	//	経過時間更新
-		Command command = { KeyK };		//	入力判定
+		//	経過時間更新
+		UpdateElapsedTime(elapsedTime);	
 
-		JudgeAttackHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
-		JudgeAttackHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
+		//	アニメーション速度更新
+		UpdateAnimationSpeed();
 
+		//	当たり判定処理(アニメーションが再生されたら再生時間をもとに判定する)
+		if (animJudgeTime_[0].IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
+		}
+		if (animJudgeTime_[1].IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+		}
+
+		//	次のステートへ遷移
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
 		{
+			//	リズム判定処理(missならreturn)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			return;
+
+			//	次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne3);
-			//	リズム判定処理
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
-		if (owner_->IsPlayAnimation() == false)	//	アニメーション再生が終わったら待機へ遷移
+
+		//	アニメーション再生が終わったら待機へ遷移
+		if (owner_->IsPlayAnimation() == false)	
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
 
-	}
-
-	bool ComboOne2::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
-	{
-		//	時間での判定
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
-			return false;
-
-		//	ノードと、敵または弾丸との当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
-		{
-			//owner_->ChangeState(Player::StateType::Idle);
-			return false;
-		}
-
-		return true;
 	}
 
 	bool ComboOne2::JudgeInput(const JudgeTime& cancellationTime)
@@ -541,7 +471,7 @@ namespace PlayerState
 			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
+		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
@@ -593,6 +523,12 @@ namespace PlayerState
 	{
 		owner_->SetUseRootMotion(false);
 		owner_->SetAnimationSpeed(1.0f);
+
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		//	プレイヤーの押し出し判定を有効化
+		Player::Instance().SetUseCollisionDetection(true);
 	}
 
 	void ComboOne2::DrawDebug()
@@ -635,21 +571,41 @@ namespace PlayerState
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(false);
+		Player::Instance().SetAttackHit(false);
+		//	攻撃中は押し出し判定しない
+		Player::Instance().SetUseCollisionDetection(false);
 	}
 
 	void ComboOne3::Update(const float& elapsedTime)
 	{
-		UpdateElapsedTime(elapsedTime);	//	経過時間更新
-		Command command = { KeyK };		//入力判定
-		JudgeAttackHit(elapsedTime, animJudgeTime_[0], "ik_hand_l");
-		JudgeAttackHit(elapsedTime, animJudgeTime_[1], "ik_hand_r");
-		JudgeAttackHit(elapsedTime, animJudgeTime_[2], "ik_foot_l");
+		//	経過時間更新
+		UpdateElapsedTime(elapsedTime);
+
+		if (animJudgeTime_[0].IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
+		}
+		if (animJudgeTime_[1].IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+		}
+		if (animJudgeTime_[2].IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(true);
+		}
 
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
+			//	リズム判定処理(missならreturn)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			return;
+
+			//	次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne4);
-			//	リズム判定処理
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
 		if (owner_->IsPlayAnimation() == false)
@@ -684,7 +640,7 @@ namespace PlayerState
 			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
+		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
@@ -721,6 +677,13 @@ namespace PlayerState
 	{
 		owner_->SetUseRootMotion(false);
 		owner_->SetAnimationSpeed(1.0f);
+
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(false);
+		//	プレイヤーの押し出し判定を有効化
+		Player::Instance().SetUseCollisionDetection(true);
 	}
 
 	void ComboOne3::DrawDebug()
@@ -760,22 +723,27 @@ namespace PlayerState
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().SetAttackHit(false);
+		//	攻撃中は押し出し判定しない
+		Player::Instance().SetUseCollisionDetection(false);
 	}
 
 	void ComboOne4::Update(const float& elapsedTime)
 	{
-		UpdateElapsedTime(elapsedTime);	//	経過時間更新
-		Command command = { KeyK };		//	入力判定
-		
-		JudgeAttackHit(elapsedTime, animJudgeTime_, "ik_hand_r");
+		//	経過時間更新
+		UpdateElapsedTime(elapsedTime);
+	
+		if (animJudgeTime_.IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+		}
 		
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
-			
-			//	リズム判定処理
-			//Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
-			
+
 			return;
 		}
 
@@ -806,7 +774,7 @@ namespace PlayerState
 			return true;
 		}
 
-		if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
+		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
 		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
 		{
@@ -844,6 +812,11 @@ namespace PlayerState
 	{
 		owner_->SetUseRootMotion(false);
 		owner_->SetAnimationSpeed(1.0f);
+
+		//	プレイヤーの攻撃判定を無効にする
+		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		//	プレイヤーの押し出し判定を有効化
+		Player::Instance().SetUseCollisionDetection(true);
 	}
 
 	void ComboOne4::DrawDebug()

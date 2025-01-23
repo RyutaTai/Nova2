@@ -11,19 +11,25 @@ public:
 	BulletHorming(const std::string& filename);
 	~BulletHorming()override;
 
-	//	更新処理
+	void Initialize()override;
 	void Update(const float& elapsedTime)override;
-
-	//	描画処理
+	
+	//	----- 描画処理 -----
 	void Render()override;
 	void RnederCoverModel()override;
+
+	//	----- デバッグ描画 -----
+	void DrawDebug();
+	
+	//	----- Collision -----
+	void RegisterCollisionData()override;
+	void UpdateCollisions(const float& elapsedTime)override;
 
 	void Move(const float& elpasedTime);														//	移動処理
 	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)override;	//	発射
 	void Destroy(const float& elapsedTime)override;												//	破棄処理
 	void SetTarget(const DirectX::XMFLOAT3& target) { target_ = target; }						//	ターゲット設定
 
-	void DrawDebug();	//	デバッグ描画
 
 private:
 	enum EFFECT

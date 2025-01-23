@@ -36,6 +36,25 @@ BulletHorming::~BulletHorming()
 
 }
 
+//	初期化処理
+void BulletHorming::Initialize()
+{
+
+}
+
+//	当たり判定登録
+void BulletHorming::RegisterCollisionData()
+{
+
+}
+
+//	当たり判定更新
+void BulletHorming::UpdateCollisions(const float& elapsedTime)
+{
+
+}
+
+
 //	更新処理
 void BulletHorming::Update(const float& elapsedTime)
 {

@@ -13,7 +13,7 @@ BehaviorTree::~BehaviorTree()
 }
 
 //	ÉmÅ[Éhí«â¡
-void BehaviorTree::AddNode(std::string parentName, std::string entryName, int priority, SelectRule selectRule, JudgmentBase* judgment, ActionBase* action)
+void BehaviorTree::AddNode(const std::string& parentName, const std::string& entryName, const int& priority, const SelectRule& selectRule, JudgmentBase* judgment, ActionBase* action)
 {
 	if (parentName != "")
 	{

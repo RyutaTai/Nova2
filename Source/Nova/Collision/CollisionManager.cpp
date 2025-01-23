@@ -300,7 +300,7 @@ void CollisionManager::PlayerDamageVsBulletAttack()
         {
             Bullet* bullet = bullets.at(bulletIndex);
 
-            //  Playerとの当たり判定を行わない
+            //  Enemyに攻撃する弾はPlayerとの当たり判定を行わない
             if (bullet->GetOpponentType() == Bullet::OpponentType::Enemy) continue;
 
             //  当たったかチェック

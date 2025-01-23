@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Nova/AI/State.h"
 #include "Player.h"
+#include "../Nova/AI/State.h"
 #include "../Nova/Others/JudgeTime.h"
 
 //	待機ステート

@@ -2,18 +2,18 @@
 
 #include <algorithm>
 
+#include "Bullet.h"
+#include "BulletManager.h"
+#include "EnemyManager.h"
+#include "Rhythm.h"
 #include "../Nova/Debug/DebugRenderer.h"
 #include "../Nova/Graphics/Graphics.h"
 #include "../Nova/Collision/Collision.h"
 #include "../Nova/Others/MathHelper.h"
-#include "BulletManager.h"
-#include "Bullet.h"
-#include "EnemyManager.h"
 #include "../Nova/Input/GamePad.h"
 #include "../Nova/Input/Input.h"
 #include "../Nova/Audio/AudioManager.h"
 #include "../Nova/Scenes/SceneManager.h"
-#include "Rhythm.h"
 
 //	待機ステート
 namespace PlayerState

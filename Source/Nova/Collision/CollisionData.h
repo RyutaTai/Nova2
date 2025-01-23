@@ -121,7 +121,7 @@ private:
 struct AttackDetectionData
 {
 public:
-	AttackDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos,
+	AttackDetectionData(const std::string& name, const float& radius, const DirectX::XMFLOAT3& offsetPos = {},
 		const std::string& updateName = "",
 		const DirectX::XMFLOAT4& defaultColor = { 1.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:collisionSphereData_({ name,radius,offsetPos,defaultColor,hitColor }),

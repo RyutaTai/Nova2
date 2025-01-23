@@ -1,8 +1,8 @@
 #include "BulletStraight.h"
 
 //	コンストラクタ
-BulletStraight::BulletStraight(const std::string& fileName)
-	:Bullet(fileName)
+BulletStraight::BulletStraight(const std::string& filename)
+	:Bullet(filename)
 {
 	//	スケール設定
 	GetTransform()->SetScaleFactor(30.0f);
@@ -12,6 +12,24 @@ BulletStraight::BulletStraight(const std::string& fileName)
 BulletStraight::~BulletStraight()
 {
 	
+}
+
+//	初期化処理
+void BulletStraight::Initialize()
+{
+
+}
+
+//	当たり判定登録
+void BulletStraight::RegisterCollisionData()
+{
+
+}
+
+//	当たり判定更新
+void BulletStraight::UpdateCollisions(const float& elapsedTime)
+{
+
 }
 
 //	更新処理
@@ -37,12 +55,6 @@ void BulletStraight::Update(const float& elapsedTime)
 
 }
 
-//	描画処理
-void BulletStraight::Render()
-{
-	gltfStaticModelResource_->Render();
-}
-
 //	発射
 void BulletStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
 {
@@ -50,4 +62,10 @@ void BulletStraight::Launch(const DirectX::XMFLOAT3& direction, const DirectX::X
 
 	this->direction_ = direction;
 	this->GetTransform()->SetPosition(position);
+}
+
+//	描画処理
+void BulletStraight::Render()
+{
+	gltfStaticModelResource_->Render();
 }

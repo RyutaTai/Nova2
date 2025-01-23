@@ -29,6 +29,10 @@ public:
 	virtual void			Render()			= 0;
 	virtual void			RnederCoverModel()	= 0;
 	
+	//	----- Collision -----
+	virtual void RegisterCollisionData() = 0;
+	virtual void UpdateCollisions(const float& elapsedTime) = 0;
+
 	//	----- デバッグ描画 -----
 	virtual void			DrawDebug();																//	デバッグ描画
 	void					DrawDebugPrimitive();														//	デバッグプリミティブ描画

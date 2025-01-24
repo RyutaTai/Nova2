@@ -36,7 +36,7 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
                               { 0, 1.000000, 0, 0},
                               { 0, 0, 1.000000, 0},
@@ -45,79 +45,26 @@ dcl_constantbuffer CB10[512], dynamicIndexed
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
 dcl_temps 2
-//
-// Initial variable locations:
-//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.texcoord.x; v1.y <- pin.texcoord.y; 
-//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
-//
-#line 27 "E:\Program\Nova2\Source\Game\Shaders\SpectrumPS.hlsl"
-mov r0.x, v1.x  // r0.x <- texcoord.x
-
-#line 36
-itof r0.y, l(2048)
-mul r0.y, r0.y, r0.x
-itof r0.z, l(4)
-div r0.y, r0.y, r0.z
-ftou r0.y, r0.y  // r0.y <- t
-
-#line 38
-itof r0.z, l(2048)
-mul r0.x, r0.z, r0.x  // r0.x <- offset
-
-#line 39
+mul r0.xy, v1.xxxx, l(2048.000000, 512.000000, 0.000000, 0.000000)
 ftoi r0.x, r0.x
-ineg r0.z, r0.x
-ineg r0.w, l(4)
-and r1.x, r0.x, l(0x80000000)
-imax r0.x, r0.x, r0.z
-imax r0.z, r0.w, l(4)
-udiv null, r0.x, r0.x, r0.z
-ineg r0.z, r0.x
-ine r0.w, l(0, 0, 0, 0), r1.x
-movc r0.x, r0.w, r0.z, r0.x
-dp4 r0.x, cb10[r0.y + 0].xyzw, icb[r0.x + 0].xyzw  // r0.x <- fft
-
-#line 42
-mov r0.yzw, l(0,1.000000,0,0)  // r0.y <- fft_color.x; r0.z <- fft_color.y; r0.w <- fft_color.z
-
-#line 44
-lt r1.x, l(0.500000), v1.y
-if_nz r1.x
-
-#line 46
-  mov r1.x, l(-0.500000)
-  add r1.x, r1.x, v1.y
-  mul r1.x, r1.x, l(2.000000)  // r1.x <- y
-
-#line 48
-  ge r1.x, r0.x, r1.x
-  movc r1.x, r1.x, l(1.000000), l(0)
-  mul r0.yzw, r0.yyzw, r1.xxxx
-
-#line 50
-else 
-
-#line 51
-  lt r1.x, v1.y, l(0.500000)
-  if_nz r1.x
-
-#line 53
-    mov r1.x, -v1.y
-    add r1.x, r1.x, l(0.500000)
-    mul r1.x, r1.x, l(2.000000)  // r1.x <- y
-
-#line 55
-    ge r0.x, r0.x, r1.x
-    movc r0.x, r0.x, l(1.000000), l(0)
-    mul r0.yzw, r0.xxxx, r0.yyzw
-
-#line 57
-  endif 
-endif 
-
-#line 59
-mov o0.xyz, r0.yzwy
+ftou r0.y, r0.y
+imax r0.z, r0.x, -r0.x
+and r0.xz, r0.xxzx, l(0x80000000, 0, 3, 0)
+ineg r0.w, r0.z
+movc r0.x, r0.x, r0.w, r0.z
+dp4 r0.x, cb10[r0.y + 0].xyzw, icb[r0.x + 0].xyzw
+add r0.y, -v1.y, l(0.500000)
+add r0.y, r0.y, r0.y
+ge r0.y, r0.x, r0.y
+and r0.yzw, r0.yyyy, l(0, 0x3f800000, 0, 0)
+lt r1.x, v1.y, l(0.500000)
+movc r0.yzw, r1.xxxx, r0.yyzw, l(0,1.000000,0,0)
+add r1.x, v1.y, l(-0.500000)
+add r1.x, r1.x, r1.x
+ge r0.x, r0.x, r1.x
+and r1.xyz, r0.xxxx, l(0x3f800000, 0, 0, 0)
+lt r0.x, l(0.500000), v1.y
+movc o0.xyz, r0.xxxx, r1.xyzx, r0.yzwy
 mov o0.w, l(1.000000)
 ret 
-// Approximately 42 instruction slots used
+// Approximately 22 instruction slots used

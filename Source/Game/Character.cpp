@@ -242,6 +242,15 @@ void Character::UpdateCollisions(const float& elapsedTime)
 	}
 }
 
+//	UŒ‚”»’è‚Ì—LŒøƒtƒ‰ƒO‚ğ‚·‚×‚Äİ’è‚·‚é
+void Character::SetAllAttackDetectionActiveFlag(const bool& isActive)
+{
+	for (AttackDetectionData& data : attackDetectionData_)
+	{
+		data.SetIsActive(isActive);
+	}
+}
+
 #pragma region ----- UŒ‚”»’è ----- 
 //	UŒ‚”»’è—pƒf[ƒ^“o˜^
 void Character::RegisterAttackDetectionData(const AttackDetectionData& data)

@@ -56,6 +56,11 @@ void Audio::Play(const bool& loop)
 	if (isPlayable_ == false)return;
 
 	buffer_.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
+
+	//	Ä¶I‚í‚è‚ð‘Ò‚½‚¸‚É‘¦ŽžÄ¶(—v’²®)
+	sourceVoice_->Stop();
+	sourceVoice_->FlushSourceBuffers();
+
 	sourceVoice_->SubmitSourceBuffer(&buffer_);
 	HRESULT hr = sourceVoice_->Start();
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));

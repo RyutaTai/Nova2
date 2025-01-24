@@ -49,7 +49,7 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB0[8], immediateIndexed
 dcl_constantbuffer CB1[10], immediateIndexed
 dcl_sampler s3, mode_default
@@ -57,75 +57,27 @@ dcl_resource_texture2d (float,float,float,float) t0
 dcl_resource_texture2d (float,float,float,float) t1
 dcl_input_ps_siv linear noperspective v0.xy, position
 dcl_output o0.xyzw
-dcl_temps 3
-//
-// Initial variable locations:
-//   v0.x <- sv_position.x; v0.y <- sv_position.y; v0.z <- sv_position.z; v0.w <- sv_position.w; 
-//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
-//
-#line 16 "E:\Program\Nova2\Source\Nova\Shaders\DecalPs.hlsl"
+dcl_temps 2
 resinfo_indexable(texture2d)(float,float,float,float) r0.xy, l(0), t1.xyzw
-mov r0.x, r0.x  // r0.x <- dimension.x
-mov r0.y, r0.y  // r0.y <- dimension.y
-
-#line 17
-div r0.xy, v0.xyxx, r0.xyxx  // r0.x <- texcoord.x; r0.y <- texcoord.y
-
-#line 18
-sample_indexable(texture2d)(float,float,float,float) r1.z, r0.xyxx, t1.yzxw, s3
-mov r1.z, r1.z  // r1.z <- depth
-
-#line 20
-mul r0.x, r0.x, l(2.000000)
-mov r0.z, l(-1.000000)
-add r1.x, r0.z, r0.x
-mul r0.x, r0.y, l(2.000000)
-mov r0.x, -r0.x
-add r1.y, r0.x, l(1.000000)
-mov r1.w, l(1.000000)
-mov r1.xyzw, r1.xyzw  // r1.x <- ndc.x; r1.y <- ndc.y; r1.z <- ndc.z; r1.w <- ndc.w
-
-#line 22
-mul r0.xyzw, r1.xxxx, cb1[6].xyzw
-mul r2.xyzw, r1.yyyy, cb1[7].xyzw
-add r0.xyzw, r0.xyzw, r2.xyzw
-mul r2.xyzw, r1.zzzz, cb1[8].xyzw
-add r0.xyzw, r0.xyzw, r2.xyzw
-mul r1.xyzw, r1.wwww, cb1[9].xyzw
-add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- position.x; r0.y <- position.y; r0.z <- position.z; r0.w <- position.w
-
-#line 23
+div r0.xy, v0.xyxx, r0.xyxx
+mad r0.z, -r0.y, l(2.000000), l(1.000000)
+mul r1.xyzw, r0.zzzz, cb1[7].xyzw
+mad r0.z, r0.x, l(2.000000), l(-1.000000)
+sample_indexable(texture2d)(float,float,float,float) r0.x, r0.xyxx, t1.xyzw, s3
+mad r1.xyzw, r0.zzzz, cb1[6].xyzw, r1.xyzw
+mad r0.xyzw, r0.xxxx, cb1[8].xyzw, r1.xyzw
+add r0.xyzw, r0.xyzw, cb1[9].xyzw
 div r0.xyzw, r0.xyzw, r0.wwww
-
-#line 25
-mul r1.xyz, r0.xxxx, cb0[4].xywx
-mul r2.xyz, r0.yyyy, cb0[5].xywx
-add r1.xyz, r1.xyzx, r2.xyzx
-mul r0.xyz, r0.zzzz, cb0[6].xywx
-add r0.xyz, r0.xyzx, r1.xyzx
-mul r1.xyz, r0.wwww, cb0[7].xywx
-add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- position.x; r0.y <- position.y; r0.z <- position.w
-
-#line 26
+mul r1.xyz, r0.yyyy, cb0[5].xywx
+mad r1.xyz, r0.xxxx, cb0[4].xywx, r1.xyzx
+mad r0.xyz, r0.zzzz, cb0[6].xywx, r1.xyzx
+mad r0.xyz, r0.wwww, cb0[7].xywx, r0.xyzx
 div r0.xy, r0.xyxx, r0.zzzz
-
-#line 28
-mul r0.x, r0.x, l(0.500000)
-add r1.x, r0.x, l(0.500000)  // r1.x <- decalTexcoord.x
-mul r0.x, r0.y, l(-0.500000)
-add r1.y, r0.x, l(0.500000)  // r1.y <- decalTexcoord.y
-
-#line 30
-sample_indexable(texture2d)(float,float,float,float) r0.xyzw, r1.xyxx, t0.xyzw, s3  // r0.x <- color.x; r0.y <- color.y; r0.z <- color.z; r0.w <- color.w
-
-#line 31
-mov r1.x, l(-0.500000)
-add r1.x, r0.w, r1.x
-lt r1.x, r1.x, l(0.000000)
-and r1.x, r1.x, l(-1)
-discard_nz r1.x
-
-#line 33
+mad r0.xy, r0.xyxx, l(0.500000, -0.500000, 0.000000, 0.000000), l(0.500000, 0.500000, 0.000000, 0.000000)
+sample_indexable(texture2d)(float,float,float,float) r0.xyzw, r0.xyxx, t0.xyzw, s3
+add r1.x, r0.w, l(-0.500000)
 mov o0.xyzw, r0.xyzw
+lt r0.x, r1.x, l(0.000000)
+discard_nz r0.x
 ret 
-// Approximately 42 instruction slots used
+// Approximately 22 instruction slots used

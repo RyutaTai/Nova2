@@ -101,11 +101,11 @@ void Dragonkin::RegisterCollisionData()
 	RegisterCollisionDetectionData({ "lowerarm_r",	0.4f,false,{} });		//	右肘
 	RegisterCollisionDetectionData({ "Hand_L",		0.4f,false,{} });		//	左手首
 	RegisterCollisionDetectionData({ "Hand_R",		0.4f,false,{} });		//	右手首
-	RegisterCollisionDetectionData({ "spine_01",	0.4f,false,{} });		//	腰
+	RegisterCollisionDetectionData({ "spine_01",	0.6f,false,{} });		//	腰
 	RegisterCollisionDetectionData({ "calf_l",		0.4f,false,{} });		//	左膝
 	RegisterCollisionDetectionData({ "calf_r",		0.4f,false,{} });		//	右膝
-	RegisterCollisionDetectionData({ "Foot_L",		0.4f,false,{} });		//	左足首
-	RegisterCollisionDetectionData({ "Foot_R",		0.4f,false,{} });		//	右足首
+	RegisterCollisionDetectionData({ "Foot_L",		0.6f,false,{} });		//	左足首
+	RegisterCollisionDetectionData({ "Foot_R",		0.6f,false,{} });		//	右足首
 
 	//	左の翼
 	RegisterCollisionDetectionData({ "Wing_L03",	0.4f,false,{} });		//	一番付け根に近い
@@ -142,8 +142,8 @@ void Dragonkin::RegisterCollisionData()
 	RegisterDamageDetectionData({ "spine_01",		0.4f,{} });		//	腰
 	RegisterDamageDetectionData({ "calf_l",			0.4f,{} });		//	左膝
 	RegisterDamageDetectionData({ "calf_r",			0.4f,{} });		//	右膝
-	RegisterDamageDetectionData({ "Foot_L",			0.4f,{} });		//	左足首
-	RegisterDamageDetectionData({ "Foot_R",			0.4f,{} });		//	右足首
+	RegisterDamageDetectionData({ "Foot_L",			0.6f,{} });		//	左足首
+	RegisterDamageDetectionData({ "Foot_R",			0.6f,{} });		//	右足首
 
 	//	左の翼
 	RegisterDamageDetectionData({ "Wing_L03",		0.4f,{} });		//	一番付け根に近い

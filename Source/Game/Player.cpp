@@ -212,6 +212,8 @@ void Player::RegisterCollisionData()
 	RegisterAttackDetectionData({ "LeftPunch",0.2f ,{},"ik_hand_l" });	//	左手のパンチ
 	RegisterAttackDetectionData({ "LeftKick",0.2f ,{},"ik_foot_l" });	//	右のキック
 
+	SetAllAttackDetectionActiveFlag(false);
+
 #pragma endregion ----- 攻撃判定登録 -----
 
 }

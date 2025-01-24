@@ -83,9 +83,6 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
     for (int enemyIndex = 0; enemyIndex < maxEnemyCount; ++enemyIndex)
     {
         Enemy* enemy = EnemyManager::Instance().GetEnemy(enemyIndex);
-
-        //player.SetPlayEffectFlag(true);
-        //player.SetEffectPos(player.GetTransform()->GetPosition());
         
         //  当たり判定データの数
         const int maxPlayerData = player.GetAttackDetectionDataCount();
@@ -94,6 +91,8 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
         for (int playerDataIndex = 0; playerDataIndex < maxPlayerData; ++playerDataIndex)
         {
             const AttackDetectionData playerData = player.GetAttackDetectionData(playerDataIndex);
+            //  プレイヤーの攻撃判定が無効なら処理しない
+            if (playerData.GetIsActive() == false)continue;
 
             for (int enemyDataIndex = 0; enemyDataIndex < maxEnemyData; ++enemyDataIndex)
             {

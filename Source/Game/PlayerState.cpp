@@ -256,7 +256,7 @@ namespace PlayerState
 
 		//	判定時間セット
 		animJudgeTime_.SetJudgeTime(0.55f, 0.735f);			//	アニメーション判定区間
-		//acceptInputFrame_ = 10.0f;							//	先行入力受付フレーム
+		//acceptInputFrame_ = 10.0f;						//	先行入力受付フレーム
 		cancellationTime_.SetJudgeTime(0.3f, 1.16f);		//	キャンセル可能時間
 
 		//	アニメーション速度変化区間セット
@@ -268,7 +268,7 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 
 		//	攻撃中は押し出し判定しない
@@ -365,7 +365,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
 		Player::Instance().SetUseCollisionDetection(true);
 
@@ -417,8 +417,7 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
 		Player::Instance().SetUseCollisionDetection(false);
@@ -525,8 +524,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
 		Player::Instance().SetUseCollisionDetection(true);
 	}
@@ -572,9 +570,7 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
 		Player::Instance().SetUseCollisionDetection(false);
@@ -679,9 +675,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(false);
-		Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
 		Player::Instance().SetUseCollisionDetection(true);
 	}
@@ -717,14 +711,14 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		animJudgeTime_.SetJudgeTime(0.7f, 0.83f);
+		animJudgeTime_.SetJudgeTime(0.64f, 1.185f);
 		acceptInputFrame_ = 10.0f;
 
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
 		Player::Instance().SetUseCollisionDetection(false);
@@ -735,6 +729,9 @@ namespace PlayerState
 		//	経過時間更新
 		UpdateElapsedTime(elapsedTime);
 	
+		//	リズム判定をとって判定文字を出すため
+		if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+
 		if (animJudgeTime_.IsJudgeFlag(stateElapsedTime_))
 		{
 			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
@@ -814,7 +811,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(false);
+		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
 		Player::Instance().SetUseCollisionDetection(true);
 	}

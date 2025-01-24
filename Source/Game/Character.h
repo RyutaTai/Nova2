@@ -78,6 +78,7 @@ public:
 	//	----- Collision -----
 	virtual void RegisterCollisionData() = 0;
 	virtual void UpdateCollisions(const float& elapsedTime);
+	void SetAllAttackDetectionActiveFlag(const bool& isActive);	//	攻撃判定の有効フラグを全て変更する
 	void CollisionCharacterVsStage();
 	
 	//	----- 攻撃判定 -----
@@ -134,7 +135,7 @@ protected:
 
 	int		hp_ = 100;				//	現在のHP
 	bool	isDead_ = false;		//	死亡フラグ
-	float	attackPower_ = 0.0f;	//	攻撃力
+	float	attackPower_ = 5.0f;	//	攻撃力
 
 private:
 	const float MOVE_SPEED = 10.0f;	//	最大の速さ

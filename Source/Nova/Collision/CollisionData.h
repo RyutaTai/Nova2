@@ -147,8 +147,8 @@ public:
 	const DirectX::XMFLOAT4 GetColor() const { return collisionSphereData_.GetColor(); }
 
 	// ---------- 有効(使用)フラグ ----------
-	const bool GetIsActive() const { return isActive_; }
 	void SetIsActive(const bool& isActive) { isActive_ = isActive; }
+	const bool GetIsActive() const { return isActive_; }
 
 	// ---------- 更新用名前 ----------
 	const std::string GetUpdateName() const { return updateName_; }

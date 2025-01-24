@@ -256,9 +256,8 @@ void Player::UpdateCollisionDetectionData(const float& elapsedTime)
 		data.SetPosition(pos);
 		//data.SetJointPosition(pos);
 
-		//	押し出し判定を使用しないなら、すべて無効化する
-		if (isUseCollisionDetection_ == false)
-			data.SetIsActive(false);
+		//	押し出し判定の有効フラグを更新する
+		data.SetIsActive(isActiveCollisionDetection_);
 	}
 }
 
@@ -942,6 +941,12 @@ void Player::DrawDebug()
 		ImGui::Checkbox("Invincible", &isInvincible_);		//	無敵フラグ
 		ImGui::Checkbox("AddGravity", &isAddGravity_);		//	重力フラグ
 		ImGui::Checkbox("AutoCombo", &isAutoCombo_);		//	オートコンボフラグ
+
+		//	----- コリジョンフラグ -----
+		ImGui::Checkbox("UseCollisionDetection", &isActiveCollisionDetection_);	//	押し出し判定が有効かどうか
+		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);				//	押し出し判定
+		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);					//	攻撃判定
+		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);					//	くらい判定
 
 		Character::DrawDebug();
 

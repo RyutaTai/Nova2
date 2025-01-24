@@ -84,9 +84,9 @@ private:
 
 private://	デバッグ用の変数
 	// ----- DrawDebugPrimitive -----
-	bool isCollisionSphere_ = true;
-	bool isAttackSphere_ = true;
-	bool isDamageSphere_ = false;
+	bool isCollisionSphere_ = true;		//	押し出し判定
+	bool isAttackSphere_ = true;		//	攻撃判定
+	bool isDamageSphere_ = false;		//	くらい判定
 
 	bool	turnAction_ = true;			//	旋回処理
 	bool	bulletLaunch_	= true;		//	弾を発射するかどうか

@@ -255,7 +255,7 @@ namespace PlayerState
 		owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		animJudgeTime_.SetJudgeTime(0.55f, 0.735f);			//	アニメーション判定区間
+		animJudgeTime_.SetJudgeTime(0.180f, 0.38f);			//	アニメーション判定区間
 		//acceptInputFrame_ = 10.0f;						//	先行入力受付フレーム
 		cancellationTime_.SetJudgeTime(0.3f, 1.16f);		//	キャンセル可能時間
 
@@ -285,7 +285,10 @@ namespace PlayerState
 		UpdateAnimationSpeed();			
 
 		//	プレイヤーの攻撃判定を有効にする
-		Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+		if (animJudgeTime_.IsJudgeFlag(stateElapsedTime_))
+		{
+			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+		}
 
 		//	次のステートへの遷移
 		if (JudgeInput(cancellationTime_))	
@@ -435,6 +438,7 @@ namespace PlayerState
 		if (animJudgeTime_[0].IsJudgeFlag(stateElapsedTime_))
 		{
 			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
+			//Player::Instance().SetAttackHit(false);
 		}
 		if (animJudgeTime_[1].IsJudgeFlag(stateElapsedTime_))
 		{

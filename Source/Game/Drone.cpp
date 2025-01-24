@@ -360,7 +360,7 @@ void Drone::RegisterCollisionData()
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
 	RegisterDamageDetectionData({ "Body",	0.87f });
-	RegisterDamageDetectionData({ "Head",	0.57f,{0.0f,0.0f,2.42f},1.0f,"Body" });
+	RegisterDamageDetectionData({ "Head",	0.8f,{0.0f,0.0f,2.88f},1.0f,"Body" });
 	RegisterDamageDetectionData({ "Left",	0.5f });
 	RegisterDamageDetectionData({ "Right",	0.5f });
 
@@ -446,7 +446,7 @@ void Drone::DrawDebugPrimitive()
 	BulletManager::Instance().DrawDebugPrimitive();
 
 	//	----- Collision -----
-	if (isCollisionSphere_)
+	if (isCollisionSphere_)		//	押し出し判定
 	{
 		for (auto& data : GetCollisionDetectionData())
 		{
@@ -456,14 +456,14 @@ void Drone::DrawDebugPrimitive()
 			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
 		}
 	}
-	if (isDamageSphere_)
+	if (isDamageSphere_)		//	くらい判定
 	{
 		for (auto& data : GetDamageDetectionData())
 		{
 			debugRenderer->DrawSphere(data.GetPosition(), data.GetRadius(), data.GetColor());
 		}
 	}
-	if (isAttackSphere_)
+	if (isAttackSphere_)		//	攻撃判定
 	{
 		for (auto& data : GetAttackDetectionData())
 		{
@@ -484,6 +484,11 @@ void Drone::DrawDebug()
 	if (ImGui::TreeNode(u8"Drone ドローン"))
 	{
 		//GetTransform()->DrawDebug();
+
+		//	コリジョン描画フラグ
+		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
+		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定
+		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);		//	くらい判定
 		Character::DrawDebug();
 
 		ImGui::Checkbox("Invincible", &isInvincible_);			//	無敵フラグ設定

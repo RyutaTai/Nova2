@@ -124,8 +124,8 @@ public:
 
 	//	----- Collision ----
 	void RegisterCollisionData()override;
-	void SetUseCollisionDetection(const bool& useCollisionDetection) { isUseCollisionDetection_ = useCollisionDetection; }
-	const bool IsUseCollisionDetection()const { return isUseCollisionDetection_; }
+	void SetUseCollisionDetection(const bool& useCollisionDetection) { isActiveCollisionDetection_ = useCollisionDetection; }
+	const bool IsUseCollisionDetection()const { return isActiveCollisionDetection_; }
 	void UpdateCollisionDetectionData(const float& elapsedTime);
 
 	//	----- アニメーション -----
@@ -167,7 +167,7 @@ private:
 	static constexpr int MAX_HP = 100;											//	最大HP
 
 	//	----- Collision -----
-	bool isUseCollisionDetection_ = true;	//	押し出し判定をするかどうか
+	bool isActiveCollisionDetection_ = true;	//	押し出し判定が有効かどうか
 
 	//	----- ポーズ -----
 	bool isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない

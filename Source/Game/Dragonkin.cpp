@@ -379,9 +379,12 @@ void Dragonkin::DrawDebug()
 		ImGui::Text(u8"Behavior　%s", str.c_str());	//	現在のビヘイビア
 
 		ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);
-		ImGui::Checkbox("DamageSphere", &isDamageSphere_);
-		ImGui::Checkbox("AttackSphere", &isAttackSphere_);
-		ImGui::Checkbox("CollisionSphere", &isCollisionSphere_);
+		
+		//	コリジョン描画フラグ
+		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
+		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定
+		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);		//	くらい判定
+
 		Character::DrawDebug();
 
 		ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);

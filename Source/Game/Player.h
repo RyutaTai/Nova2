@@ -78,7 +78,7 @@ public:
 	void Initialize()override;
 	void Update(const float& elapsedTime)override;
 	void Render()override;
-	
+
 	//	デバッグ
 	void DrawDebug()override;	//	ImGui描画
 	void DrawDebugPrimitive();	//	デバッグプリミティブ描画
@@ -88,7 +88,7 @@ public:
 	void PlayEffect();
 
 	//	指定したキーが押されているか
-	const bool GetButtonDown(const GamePadButton& gamePadButton) { return Input::Instance().GetGamePad().GetButtonDown()& gamePadButton; }
+	const bool GetButtonDown(const GamePadButton& gamePadButton) { return Input::Instance().GetGamePad().GetButtonDown() & gamePadButton; }
 
 	//	判定処理
 	bool RayVsVertical(const float& elapsedTime)override;		//	ステージとの当たり判定(垂直方向)
@@ -101,32 +101,38 @@ public:
 	bool DummyRay(const float& elapsedTime);	//	レイキャストでちゃんと情報が取れているか
 
 	//	----- エフェクト -----
-	void SetEffectScale(const float& scale)			{ effectScale_ = scale; }
-	void SetPlayEffectFlag(const bool& playEffect)	{ playEffectFlag_ = playEffect; }
-	void SetEffectPos(const DirectX::XMFLOAT3& pos)	{ effectPos_ = pos; }
-	const bool IsPlayEffect()const{ return playEffectFlag_; }
-	
+	void SetEffectScale(const float& scale) { effectScale_ = scale; }
+	void SetPlayEffectFlag(const bool& playEffect) { playEffectFlag_ = playEffect; }
+	void SetEffectPos(const DirectX::XMFLOAT3& pos) { effectPos_ = pos; }
+	const bool IsPlayEffect()const { return playEffectFlag_; }
+
 	//	----- HP -----
-	const int	GetMaxHp()		const	{ return MAX_HP; }
+	const int	GetMaxHp()		const { return MAX_HP; }
 	//	----- ダメージ処理 -----
 	void AddDamage(const float& damage) { hp_ -= damage; }
 
 	//	----- ポーズ -----
-	void		SetIsPose(const bool& isPose)	{ isPose_ = isPose; }
+	void		SetIsPose(const bool& isPose) { isPose_ = isPose; }
 	const bool	GetPose()const { return isPose_; }
 
 	//	----- コンボ -----
+	//	オートコンボフラグ
 	void		SetAutoCombo(const bool& isAutoCombo)	{ isAutoCombo_ = isAutoCombo; }
-	const bool	IsAutoCombo()const	{ return isAutoCombo_; }
-	//	----- 攻撃ヒットフラグ -----
-	void		SetAttackHit(const bool& isHit) { isAttackHit_ = isHit; }
-	const bool	IsAttackHit()const { return isAttackHit_; }
+	const bool	IsAutoCombo()const						{ return isAutoCombo_; }
+	//	コンボ数
+	void		SetComboCount(const int& comboCount)	{ comboCount_ = comboCount; }
+	void		AddComboCount()							{ comboCount_++; }
+	void		ResetComboCount()						{ comboCount_ = 0; }
+	const int	GetComboCount()const					{ return comboCount_; }
 
 	//	----- Collision ----
 	void RegisterCollisionData()override;
-	void SetUseCollisionDetection(const bool& useCollisionDetection) { isActiveCollisionDetection_ = useCollisionDetection; }
-	const bool IsUseCollisionDetection()const { return isActiveCollisionDetection_; }
+	void SetIsActiveCollisionDetection(const bool& isActiveCollisionDetection) { isActiveCollisionDetection_ = isActiveCollisionDetection; }
+	const bool IsActiveCollisionDetection()const { return isActiveCollisionDetection_; }
 	void UpdateCollisionDetectionData(const float& elapsedTime);
+	//	----- 攻撃ヒットフラグ -----
+	void		SetAttackHit(const bool& isHit) { isAttackHit_ = isHit; }
+	const bool	IsAttackHit()const { return isAttackHit_; }
 
 	//	----- アニメーション -----
 	void			PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed=1.0f);
@@ -168,13 +174,13 @@ private:
 
 	//	----- Collision -----
 	bool isActiveCollisionDetection_ = true;	//	押し出し判定が有効かどうか
+	bool isAttackHit_ = false;	//	攻撃ヒットフラグ
 
 	//	----- ポーズ -----
 	bool isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない
 	
-	//	----- 攻撃 -----
+	//	----- コンボ -----
 	bool isAutoCombo_ = false;	//	オートコンボ(デフォルトはfalseにする)
-	bool isAttackHit_ = false;	//	攻撃ヒットフラグ
 
 	//	----- ターゲット -----
 	bool				isTraget_	= false;	//	ターゲットがいるか
@@ -192,6 +198,9 @@ private://	----- デバッグ用 -----
 	bool isCollisionSphere_ = true;
 	bool isAttackSphere_ = true;
 	bool isDamageSphere_ = false;
+
+	//	----- コンボ -----
+	int comboCount_ = 0;	//	コンボ攻撃が何連撃ヒットしたか
 
 	//	ImGui用
 	bool				isCollisionStage_	= true;

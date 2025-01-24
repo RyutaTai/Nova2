@@ -100,11 +100,10 @@ namespace PlayerState
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
 
 	private:
-		JudgeTime	animJudgeTime_	= {};			//	判定を取るアニメーション区間
+		JudgeTime	animJudgeTime_	= {};				//	判定を取るアニメーション区間
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	アニメーション速度変化区間
-		JudgeTime	cancellationTime_ = {};			//	キャンセル可能時間
-		float		acceptInputFrame_ = 0.0f;		//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
-				
+		JudgeTime	cancellationTime_ = {};				//	キャンセル可能時間
+		float		acceptInputFrame_ = 0.0f;			//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
 	};
 }
 

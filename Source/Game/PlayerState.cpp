@@ -272,7 +272,10 @@ namespace PlayerState
 		Player::Instance().SetAttackHit(false);
 
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetUseCollisionDetection(false);
+		Player::Instance().SetIsActiveCollisionDetection(false);
+
+		//	プレイヤーのコンボ数を初期化
+		Player::Instance().ResetComboCount();
 
 	}
 
@@ -285,7 +288,8 @@ namespace PlayerState
 		UpdateAnimationSpeed();			
 
 		//	プレイヤーの攻撃判定を有効にする
-		if (animJudgeTime_.IsJudgeFlag(stateElapsedTime_))
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 		{
 			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
@@ -346,7 +350,9 @@ namespace PlayerState
 
 	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
 	{
-		stateElapsedTime_ += elapsedTime;
+		//stateElapsedTime_ += elapsedTime;
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		stateElapsedTime_ = currentAnimationSeconds;
 	}
 
 	//	アニメーション速度の微調整
@@ -370,7 +376,7 @@ namespace PlayerState
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetUseCollisionDetection(true);
+		Player::Instance().SetIsActiveCollisionDetection(true);
 
 	}
 
@@ -378,6 +384,7 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("ComboOne1"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 			
 			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
@@ -423,7 +430,7 @@ namespace PlayerState
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetUseCollisionDetection(false);
+		Player::Instance().SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
@@ -435,15 +442,18 @@ namespace PlayerState
 		UpdateAnimationSpeed();
 
 		//	当たり判定処理(アニメーションが再生されたら再生時間をもとに判定する)
-		if (animJudgeTime_[0].IsJudgeFlag(stateElapsedTime_))
-		{
+		//	一撃目
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		if (animJudgeTime_[0].IsJudgeFlag(currentAnimationSeconds))
 			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
-			//Player::Instance().SetAttackHit(false);
-		}
-		if (animJudgeTime_[1].IsJudgeFlag(stateElapsedTime_))
-		{
+
+		//	一撃目のアニメーションが終わったらヒットフラグをオフにする
+		if (animJudgeTime_[0].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[1].GetMinTime())
+			Player::Instance().SetAttackHit(false);
+
+		//	二撃目
+		if (animJudgeTime_[1].IsJudgeFlag(currentAnimationSeconds))
 			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
-		}
 
 		//	次のステートへ遷移
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
@@ -530,13 +540,14 @@ namespace PlayerState
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetUseCollisionDetection(true);
+		Player::Instance().SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne2::DrawDebug()
 	{
 		if (ImGui::TreeNode("ComboOne2"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 
 			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
@@ -577,7 +588,7 @@ namespace PlayerState
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetUseCollisionDetection(false);
+		Player::Instance().SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne3::Update(const float& elapsedTime)
@@ -585,15 +596,27 @@ namespace PlayerState
 		//	経過時間更新
 		UpdateElapsedTime(elapsedTime);
 
-		if (animJudgeTime_[0].IsJudgeFlag(stateElapsedTime_))
+		//	一撃目の判定
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		if (animJudgeTime_[0].IsJudgeFlag(currentAnimationSeconds))
 		{
 			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
 		}
-		if (animJudgeTime_[1].IsJudgeFlag(stateElapsedTime_))
+		//	一撃目のアニメーションが終わったらヒットフラグをオフにする
+		if (animJudgeTime_[0].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[1].GetMinTime())
+			Player::Instance().SetAttackHit(false);
+
+		//	二撃目の判定
+		if (animJudgeTime_[1].IsJudgeFlag(currentAnimationSeconds))
 		{
 			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
-		if (animJudgeTime_[2].IsJudgeFlag(stateElapsedTime_))
+		//	二撃目のアニメーションが終わったらヒットフラグをオフにする
+		if (animJudgeTime_[1].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[2].GetMinTime())
+			Player::Instance().SetAttackHit(false);
+
+		//	三撃目の判定
+		if (animJudgeTime_[2].IsJudgeFlag(currentAnimationSeconds))
 		{
 			Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(true);
 		}
@@ -681,13 +704,14 @@ namespace PlayerState
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetUseCollisionDetection(true);
+		Player::Instance().SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne3::DrawDebug()
 	{
 		if (ImGui::TreeNode("ComboOne3"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 
 			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
@@ -725,7 +749,7 @@ namespace PlayerState
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		Player::Instance().SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetUseCollisionDetection(false);
+		Player::Instance().SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne4::Update(const float& elapsedTime)
@@ -734,9 +758,10 @@ namespace PlayerState
 		UpdateElapsedTime(elapsedTime);
 	
 		//	リズム判定をとって判定文字を出すため
-		if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
-
-		if (animJudgeTime_.IsJudgeFlag(stateElapsedTime_))
+		Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+		
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 		{
 			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
@@ -817,13 +842,14 @@ namespace PlayerState
 		//	プレイヤーの攻撃判定を無効にする
 		Player::Instance().SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetUseCollisionDetection(true);
+		Player::Instance().SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne4::DrawDebug()
 	{
 		if (ImGui::TreeNode("ComboOne4"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 
 			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間

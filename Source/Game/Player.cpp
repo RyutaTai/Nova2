@@ -940,7 +940,10 @@ void Player::DrawDebug()
 		ImGui::Checkbox("DrawEffect", &drawEffectFlag_);	//	エフェクト描画フラグ
 		ImGui::Checkbox("Invincible", &isInvincible_);		//	無敵フラグ
 		ImGui::Checkbox("AddGravity", &isAddGravity_);		//	重力フラグ
+
+		//	----- コンボ -----
 		ImGui::Checkbox("AutoCombo", &isAutoCombo_);		//	オートコンボフラグ
+		ImGui::DragInt("ComboCount", &comboCount_);			//	コンボヒット数
 
 		//	----- コリジョンフラグ -----
 		ImGui::Checkbox("UseCollisionDetection", &isActiveCollisionDetection_);	//	押し出し判定が有効かどうか

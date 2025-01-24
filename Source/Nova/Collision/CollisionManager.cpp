@@ -114,6 +114,11 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
                     enemyData.SetIsHit(true);
                     enemyData.SetHitTimer(0.01f);
 
+                     // ============================================================
+                    //  プレイヤーのコンボヒット数を増やす
+                    // ============================================================
+                    player.AddComboCount();
+
                     // ============================================================
                     // 効果音を鳴らす
                     // ============================================================
@@ -352,7 +357,7 @@ void CollisionManager::PlayerVsEnemy(const float& elapsedTime)
     //  Enemyが存在しない
     if (EnemyManager::Instance().GetEnemyCount() <= 0) return;
     //  押し出し判定が無効
-    if (Player::Instance().IsUseCollisionDetection() == false) return;
+    if (Player::Instance().IsActiveCollisionDetection() == false) return;
     
     Player& player = Player::Instance();
 

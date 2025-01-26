@@ -1,13 +1,17 @@
 #include "TimelineEditor.h"
-#include "../../imgui/imgui.h"
+
 #include <algorithm>
 
-// コンストラクタ
-TimelineEditor::TimelineEditor(int frameMin, int frameMax)
-    : frameMin_(frameMin), frameMax_(frameMax) {}
+#include "../../imgui/imgui.h"
+
+//  コンストラクタ
+TimelineEditor::TimelineEditor(const int& frameMin, const int& frameMax)
+    : frameMin_(frameMin), frameMax_(frameMax) 
+{}
 
 // キャラクター追加
-void TimelineEditor::AddCharacter(const std::string& characterName, const std::unordered_map<std::string, Joint>& joints) {
+void TimelineEditor::AddCharacter(const std::string& characterName, const std::unordered_map<std::string, Joint>& joints)
+{
     characters_[characterName] = { characterName, joints, {} };
 }
 

@@ -1,108 +1,137 @@
 #include "TimelineEditor.h"
+#include "../../imgui/imgui.h"
+#include <algorithm>
 
-#include <fstream>
-#include <d3d11.h>
+// コンストラクタ
+TimelineEditor::TimelineEditor(int frameMin, int frameMax)
+    : frameMin_(frameMin), frameMax_(frameMax) {}
 
-#include "../../nlohmann/json.hpp"
-
-//  イベント追加
-void TimelineEditor::AddEvent(const TimelineEvent& event)
-{
-    events_.push_back(event);
+// キャラクター追加
+void TimelineEditor::AddCharacter(const std::string& characterName, const std::unordered_map<std::string, Joint>& joints) {
+    characters_[characterName] = { characterName, joints, {} };
 }
 
-//  イベント削除
-void TimelineEditor::RemoveEvent(const int& index) 
-{
-    if (index >= 0 && index < events_.size()) 
-    {
-        events_.erase(events_.begin() + index);
+// キャラクター削除
+void TimelineEditor::RemoveCharacter(const std::string& characterName) {
+    characters_.erase(characterName);
+}
+
+// タイムライン描画
+void TimelineEditor::DrawTimeline() {
+    if (ImGui::Begin("Timeline Editor")) {
+        ImGui::Columns(3, "TimelineColumns", true);
+
+        // 左側: キャラクターリスト
+        DrawCharacterList();
+
+        // 中央: グリッドとタイムライン
+        ImGui::NextColumn();
+        DrawGrid();
+
+        // 右側: プロパティ編集
+        ImGui::NextColumn();
+        DrawEventProperties();
+
+        ImGui::End();
     }
 }
 
-//  イベント更新
-void TimelineEditor::UpdateEvent(const int& index, const TimelineEvent& event) 
-{
-    if (index >= 0 && index < events_.size()) 
-    {
-        events_[index] = event;
+// キャラクターリストの描画
+void TimelineEditor::DrawCharacterList() {
+    ImGui::Text("Characters:");
+    ImGui::Separator();
+
+    for (auto& [characterName, timeline] : characters_) {
+        if (ImGui::TreeNode(characterName.c_str())) {
+            for (size_t i = 0; i < timeline.events_.size(); ++i) {
+                auto& event = timeline.events_[i];
+                if (ImGui::Selectable(event.name_.c_str(), selectedEvent_ == static_cast<int>(i))) {
+                    selectedEvent_ = static_cast<int>(i);
+                }
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    if (ImGui::Button("Add Character")) {
+        AddCharacter("New Character", {});
     }
 }
 
 // グリッドの描画
 void TimelineEditor::DrawGrid() {
+    ImGui::Text("Timeline:");
+    ImGui::Separator();
+
+    float timelineWidth = ImGui::GetContentRegionAvail().x;
+    float timelineHeight = 200.0f;
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     ImVec2 start = ImGui::GetCursorScreenPos();
-    float width = ImGui::GetContentRegionAvail().x;
-    float height = 200; // グリッドエリアの高さ
 
-    // フレーム間隔を設定
-    const int gridSpacing = 10; // 10フレームごとにラインを描画
-    float frameToPixels = width / (frameMax_ - frameMin_);
+    const int gridSpacing = 10; // フレームごとのグリッド間隔
+    float frameToPixels = timelineWidth / (frameMax_ - frameMin_);
 
-    // グリッドラインを描画
+    // グリッド線とラベル
     for (int frame = frameMin_; frame <= frameMax_; frame += gridSpacing) {
         float x = start.x + (frame - frameMin_) * frameToPixels;
-        drawList->AddLine(ImVec2(x, start.y), ImVec2(x, start.y + height), IM_COL32(200, 200, 200, 255));
+        drawList->AddLine(ImVec2(x, start.y), ImVec2(x, start.y + timelineHeight), IM_COL32(200, 200, 200, 255));
+        ImGui::SetCursorScreenPos(ImVec2(x, start.y + timelineHeight + 2));
+        ImGui::Text("%d", frame);
     }
 
-    // ベースラインを描画
-    drawList->AddRect(start, ImVec2(start.x + width, start.y + height), IM_COL32(255, 255, 255, 255));
-    ImGui::Dummy(ImVec2(0, height)); // レイアウトを確保
+    drawList->AddRect(start, ImVec2(start.x + timelineWidth, start.y + timelineHeight), IM_COL32(255, 255, 255, 255));
+    ImGui::Dummy(ImVec2(0, timelineHeight + 20));
 }
 
-// タイムラインの描画
-void TimelineEditor::DrawTimeline() {
-    if (ImGui::Begin("Animation Editor")) {
-        // グリッドを描画
-        DrawGrid();
-
-        // 各イベントの描画
-        for (size_t i = 0; i < events_.size(); ++i) {
-            DrawEventBar(events_[i], static_cast<int>(i));
-        }
-
-        // イベントの選択
-        if (ImGui::Button("Add New Event")) {
-            AddEvent({ frameMin_, frameMin_ + 10, "New Event", {}, {0.5f, 0.5f, 1.0f, 1.0f} });
-        }
+// キャラクタータイムライン描画
+void TimelineEditor::DrawCharacterTimeline(CharacterTimeline& timeline) {
+    ImGui::Separator();
+    for (size_t i = 0; i < timeline.events_.size(); ++i) {
+        DrawEventBar(timeline.events_[i], timeline, static_cast<int>(i));
     }
-    ImGui::End();
+
+    if (ImGui::Button(("Add Event##" + timeline.name_).c_str())) {
+        timeline.events_.push_back({ frameMin_, frameMin_ + 10, "New Event", {} });
+    }
 }
 
 // イベントバーの描画
-void TimelineEditor::DrawEventBar(TimelineEvent& event, const int& index) {
-    ImDrawList* drawList = ImGui::GetWindowDrawList();
+void TimelineEditor::DrawEventBar(TimelineEvent& event, CharacterTimeline& timeline, int index) {
     ImVec2 start = ImGui::GetCursorScreenPos();
-    float timelineWidth = ImGui::GetContentRegionAvail().x;
-    float frameToPixels = timelineWidth / (frameMax_ - frameMin_);
-
-    // バーの位置
-    float barStart = frameToPixels * (event.startFrame_ - frameMin_);
-    float barEnd = frameToPixels * (event.endFrame_ - frameMin_);
+    float frameToPixels = ImGui::GetContentRegionAvail().x / (frameMax_ - frameMin_);
+    float barStart = start.x + (event.startFrame_ - frameMin_) * frameToPixels;
+    float barEnd = start.x + (event.endFrame_ - frameMin_) * frameToPixels;
     float barHeight = 20.0f;
 
-    ImVec2 barPosStart = ImVec2(start.x + barStart, start.y);
-    ImVec2 barPosEnd = ImVec2(start.x + barEnd, start.y + barHeight);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->AddRectFilled(ImVec2(barStart, start.y), ImVec2(barEnd, start.y + barHeight), ImGuiColor(event.color_), 4.0f);
+    drawList->AddRect(ImVec2(barStart, start.y), ImVec2(barEnd, start.y + barHeight), IM_COL32(255, 255, 255, 255));
+}
 
-    // バーの描画
-    drawList->AddRectFilled(barPosStart, barPosEnd, ImGuiColor(event.color_), 4.0f);
-    drawList->AddRect(barPosStart, barPosEnd, IM_COL32(255, 255, 255, 255), 4.0f);
+// 選択したイベントのプロパティを描画
+void TimelineEditor::DrawEventProperties() {
+    ImGui::Text("Properties:");
+    ImGui::Separator();
 
-    // ドラッグ操作でフレーム調整
-    if (ImGui::IsMouseHoveringRect(barPosStart, barPosEnd) && ImGui::IsMouseDown(0)) {
-        ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
-        int frameDelta = static_cast<int>(mouseDelta.x / frameToPixels);
-        event.startFrame_ += frameDelta;
-        event.endFrame_ += frameDelta;
-        event.startFrame_ = max(event.startFrame_, frameMin_);
-        event.endFrame_ = min(event.endFrame_, frameMax_);
+    if (selectedEvent_ >= 0) {
+        auto& event = characters_.begin()->second.events_[selectedEvent_];
+        ImGui::InputText("Name", &event.name_[0], 64);
+        ImGui::SliderInt("Start Frame", &event.startFrame_, frameMin_, frameMax_);
+        ImGui::SliderInt("End Frame", &event.endFrame_, frameMin_, frameMax_);
+        ImGui::ColorEdit4("Color", &event.color_.x);
+
+        for (size_t i = 0; i < event.hitboxes_.size(); ++i) {
+            auto& hitbox = event.hitboxes_[i];
+            ImGui::Text("Hitbox %zu", i);
+            ImGui::Text("Joint", &hitbox.jointName_);
+            ImGui::DragFloat3("Offset", &hitbox.offset_.x, 0.1f);
+            ImGui::DragFloat3("Size", &hitbox.size_.x, 0.1f);
+        }
+
+        if (ImGui::Button("Add Hitbox")) {
+            event.hitboxes_.push_back({});
+        }
     }
-
-    // 名前表示
-    ImGui::SetCursorScreenPos(barPosStart);
-    ImGui::Text("%s", event.name_.c_str());
-    ImGui::Dummy(ImVec2(0, barHeight + 5.0f)); // レイアウト用
 }
 
 // ImGuiカラー変換

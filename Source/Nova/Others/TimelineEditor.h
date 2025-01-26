@@ -17,6 +17,7 @@ struct Hitbox
     DirectX::XMFLOAT3   position_   = {};                   //  判定の位置
 	DirectX::XMFLOAT3   size_       = { 1.0f,1.0f,1.0f };   //  判定の大きさ
 	int                 boneIndex_  = -1;                   //  ボーン番号 (-1の場合、ボーンを使用しない)
+    std::string boneName_ = {};
 };
 
 //  イベントデータ (アニメーション判定用)
@@ -26,6 +27,7 @@ struct TimelineEvent
 	int                 endFrame_   = -1;    //  終了フレーム
     std::string         name_       = {};    //  イベント名 (例: "攻撃判定1")
     std::vector<Hitbox> hitboxes_;           //  判定データのリスト
+    DirectX::XMFLOAT4   color_ = {0.0f,0.0f,0.0f,1.0f};
 };
 
 //  タイムラインエディタクラス
@@ -48,6 +50,9 @@ public:
 
     void DrawTimeline();
 	void DrawEventUI(TimelineEvent& event, const int& index);
+
+    void DrawEventBar(const TimelineEvent& event, int index);
+    DirectX::XMFLOAT4 GenerateColor(int seed) const;
 
     //  フレームごとの判定取得
     std::vector<Hitbox> GetHitboxesAtFrame(const int& frame) const;

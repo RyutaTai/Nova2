@@ -46,13 +46,13 @@ public:
     void UpdateEvent(const int& index, const TimelineEvent& event);
 
     //  描画 (ImGuiでタイムラインを表示)
-    void DrawUI();
+    void DrawGrid();
 
     void DrawTimeline();
 	void DrawEventUI(TimelineEvent& event, const int& index);
 
-    void DrawEventBar(const TimelineEvent& event, int index);
-    DirectX::XMFLOAT4 GenerateColor(int seed) const;
+    void DrawEventBar(TimelineEvent& event, const int& index);
+    unsigned int ImGuiColor(const DirectX::XMFLOAT4& color) const;
 
     //  フレームごとの判定取得
     std::vector<Hitbox> GetHitboxesAtFrame(const int& frame) const;

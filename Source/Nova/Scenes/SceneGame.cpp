@@ -475,6 +475,6 @@ void SceneGame::DrawDebug()
 
 	//	----- タイムラインエディタ -----
 	//timelineEdiotor_.DrawUI();
-	timelineEdiotor_.DrawTimeline();
+	//timelineEdiotor_.DrawTimeline();
 
 }

@@ -22,7 +22,8 @@ void TimelineEditor::RemoveCharacter(const std::string& characterName) {
 
 // タイムライン描画
 void TimelineEditor::DrawTimeline() {
-    if (ImGui::Begin("Timeline Editor")) {
+    ImGui::Begin("Timeline Editor");
+    {
         ImGui::Columns(3, "TimelineColumns", true);
 
         // 左側: キャラクターリスト
@@ -36,8 +37,8 @@ void TimelineEditor::DrawTimeline() {
         ImGui::NextColumn();
         DrawEventProperties();
 
-        ImGui::End();
     }
+    ImGui::End();
 }
 
 // キャラクターリストの描画

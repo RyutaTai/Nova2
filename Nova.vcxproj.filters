@@ -262,6 +262,7 @@
     <ClCompile Include="Source\Nova\Collision\CollisionData.cpp" />
     <ClCompile Include="Source\Nova\Collision\CollisionManager.cpp" />
     <ClCompile Include="Source\Nova\Others\TimelineEditor.cpp" />
+    <ClCompile Include="External\ImGuizmo-master\ImSequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">

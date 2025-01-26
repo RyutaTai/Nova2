@@ -194,6 +194,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="External\ImGuizmo-master\ImSequencer.cpp" />
     <ClCompile Include="Source\Game\Rhythm.cpp" />
     <ClCompile Include="Source\Game\DragonkinAction.cpp" />
     <ClCompile Include="Source\Game\DragonkinJudgment.cpp" />

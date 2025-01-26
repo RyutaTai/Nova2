@@ -11,7 +11,7 @@
 #include "../../Game/Drone.h"
 #include "../PostProcess/Bloom.h"
 #include "../../Game/UI/UI.h"
-#include "../Graphics/Decal.h"
+#include "../Others/TimelineEditor.h"
 
 class SceneGame : public Scene
 {
@@ -58,7 +58,6 @@ public:
 	float	GetChangeTitleTimer()	{ return changeTitleTimer_; }
 	bool	GetIsResult()			{ return isResult_; }
 
-	//	ゲーム用変数
 private:
 	/* ----- オブジェクト ----- */
 	std::unique_ptr	<Stage>		stage_;
@@ -75,6 +74,10 @@ private:
 	DirectX::XMFLOAT4							lightDirection_ = { 0,-1,0,0 };
 	float										nearZ_ = 50.0f;
 	float										farZ_ = 400000.0f;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> sceneConstantBuffer_;
+
+	/* ----- タイムライン ----- */
+	TimelineEditor timelineEdiotor_;
 
 	/* ----- スプライト ----- */
 	enum SPRITE_GAME
@@ -90,16 +93,7 @@ private:
 		GameOver,		//	ゲームオーバー
 		Max,			//	スプライトの上限数
 	};
-
-	enum class UI_GAME
-	{
-		Instructions,		//	操作方法
-		Max,				//	UIの上限数
-	};
-
 	std::unique_ptr <Sprite>			  sprite_[static_cast<int>(SPRITE_GAME::Max)];
-	Microsoft::WRL::ComPtr <ID3D11Buffer> sceneConstantBuffer_;
-	UI* ui_[static_cast<int>(UI_GAME::Max)];//	UI		
 
 	/* ----- ゲーム内で使う変数 ----- */
 	float	waveStartTimer_		= 0.0f;		//	ウェーブ開始のUIが表示されている間

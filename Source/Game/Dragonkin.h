@@ -111,6 +111,7 @@ private:	//	デバッグ用
 	bool isAttackSphere_ = true;
 	bool isDamageSphere_ = false;
 
+	bool updateFlag_ = true;					
 	bool behaviorTreeUpdateFlag_ = true;	//	ビヘイビアツリー更新フラグ
 
 };

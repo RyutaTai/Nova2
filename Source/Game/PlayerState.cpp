@@ -268,14 +268,14 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
-		Player::Instance().SetAttackHit(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAttackHit(false);
 
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetIsActiveCollisionDetection(false);
+		owner_->SetIsActiveCollisionDetection(false);
 
 		//	プレイヤーのコンボ数を初期化
-		Player::Instance().ResetComboCount();
+		owner_->ResetComboCount();
 
 	}
 
@@ -291,7 +291,7 @@ namespace PlayerState
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 		{
-			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
 
 		//	次のステートへの遷移
@@ -374,9 +374,9 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetIsActiveCollisionDetection(true);
+		owner_->SetIsActiveCollisionDetection(true);
 
 	}
 
@@ -427,10 +427,10 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
-		Player::Instance().SetAttackHit(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetIsActiveCollisionDetection(false);
+		owner_->SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne2::Update(const float& elapsedTime)
@@ -445,15 +445,15 @@ namespace PlayerState
 		//	一撃目
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_[0].IsJudgeFlag(currentAnimationSeconds))
-			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("LeftPunch").SetIsActive(true);
 
 		//	一撃目のアニメーションが終わったらヒットフラグをオフにする
 		if (animJudgeTime_[0].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[1].GetMinTime())
-			Player::Instance().SetAttackHit(false);
+			owner_->SetAttackHit(false);
 
 		//	二撃目
 		if (animJudgeTime_[1].IsJudgeFlag(currentAnimationSeconds))
-			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 
 		//	次のステートへ遷移
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
@@ -538,9 +538,9 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetIsActiveCollisionDetection(true);
+		owner_->SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne2::DrawDebug()
@@ -585,10 +585,10 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
-		Player::Instance().SetAttackHit(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetIsActiveCollisionDetection(false);
+		owner_->SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne3::Update(const float& elapsedTime)
@@ -600,25 +600,25 @@ namespace PlayerState
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_[0].IsJudgeFlag(currentAnimationSeconds))
 		{
-			Player::Instance().GetAttackDetectionData("LeftPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("LeftPunch").SetIsActive(true);
 		}
 		//	一撃目のアニメーションが終わったらヒットフラグをオフにする
 		if (animJudgeTime_[0].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[1].GetMinTime())
-			Player::Instance().SetAttackHit(false);
+			owner_->SetAttackHit(false);
 
 		//	二撃目の判定
 		if (animJudgeTime_[1].IsJudgeFlag(currentAnimationSeconds))
 		{
-			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
 		//	二撃目のアニメーションが終わったらヒットフラグをオフにする
 		if (animJudgeTime_[1].GetMaxTime() < currentAnimationSeconds && currentAnimationSeconds < animJudgeTime_[2].GetMinTime())
-			Player::Instance().SetAttackHit(false);
+			owner_->SetAttackHit(false);
 
 		//	三撃目の判定
 		if (animJudgeTime_[2].IsJudgeFlag(currentAnimationSeconds))
 		{
-			Player::Instance().GetAttackDetectionData("LeftKick").SetIsActive(true);
+			owner_->GetAttackDetectionData("LeftKick").SetIsActive(true);
 		}
 
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
@@ -702,9 +702,9 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetIsActiveCollisionDetection(true);
+		owner_->SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne3::DrawDebug()
@@ -746,10 +746,10 @@ namespace PlayerState
 		stateElapsedTime_ = 0.0f;
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
-		Player::Instance().SetAttackHit(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAttackHit(false);
 		//	攻撃中は押し出し判定しない
-		Player::Instance().SetIsActiveCollisionDetection(false);
+		owner_->SetIsActiveCollisionDetection(false);
 	}
 
 	void ComboOne4::Update(const float& elapsedTime)
@@ -763,7 +763,7 @@ namespace PlayerState
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 		{
-			Player::Instance().GetAttackDetectionData("RightPunch").SetIsActive(true);
+			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
 		
 		if (owner_->IsPlayAnimation() == false)
@@ -840,9 +840,9 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
-		Player::Instance().SetAllAttackDetectionActiveFlag(false);
+		owner_->SetAllAttackDetectionActiveFlag(false);
 		//	プレイヤーの押し出し判定を有効化
-		Player::Instance().SetIsActiveCollisionDetection(true);
+		owner_->SetIsActiveCollisionDetection(true);
 	}
 
 	void ComboOne4::DrawDebug()

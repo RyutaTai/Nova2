@@ -118,7 +118,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;USE_IMGUI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\External\Autodesk\FBX\FBX_SDK\2020.2\include;.\External\cereal-master\include;.\External\DirectXTK-main\Inc;.\External\Effekseer170e\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\External\Autodesk\FBX\FBX_SDK\2020.2\include;.\External\cereal-master\include;.\External\DirectXTK-main\Inc;.\External\Effekseer170e\include;.\External\nlohmann</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -174,7 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\External\cereal-master\include;.\External\DirectXTK-main\Inc;.\External\Autodesk\FBX\FBX_SDK\2020.2\include;.\External\Effekseer170e\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\External\cereal-master\include;.\External\DirectXTK-main\Inc;.\External\Autodesk\FBX\FBX_SDK\2020.2\include;.\External\Effekseer170e\include;.\External\nlohmann</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -288,8 +288,55 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
     <ClCompile Include="Source\Game\UI\UITempo.cpp" />
     <ClCompile Include="Source\Game\UI\UIRhythmJudgment.cpp" />
+    <ClCompile Include="Source\Nova\Others\TimelineEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="External\nlohmann\adl_serializer.hpp" />
+    <ClInclude Include="External\nlohmann\byte_container_with_subtype.hpp" />
+    <ClInclude Include="External\nlohmann\detail\abi_macros.hpp" />
+    <ClInclude Include="External\nlohmann\detail\conversions\from_json.hpp" />
+    <ClInclude Include="External\nlohmann\detail\conversions\to_chars.hpp" />
+    <ClInclude Include="External\nlohmann\detail\conversions\to_json.hpp" />
+    <ClInclude Include="External\nlohmann\detail\exceptions.hpp" />
+    <ClInclude Include="External\nlohmann\detail\hash.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\binary_reader.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\input_adapters.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\json_sax.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\lexer.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\parser.hpp" />
+    <ClInclude Include="External\nlohmann\detail\input\position_t.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\internal_iterator.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\iteration_proxy.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\iterator_traits.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\iter_impl.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\json_reverse_iterator.hpp" />
+    <ClInclude Include="External\nlohmann\detail\iterators\primitive_iterator.hpp" />
+    <ClInclude Include="External\nlohmann\detail\json_custom_base_class.hpp" />
+    <ClInclude Include="External\nlohmann\detail\json_pointer.hpp" />
+    <ClInclude Include="External\nlohmann\detail\json_ref.hpp" />
+    <ClInclude Include="External\nlohmann\detail\macro_scope.hpp" />
+    <ClInclude Include="External\nlohmann\detail\macro_unscope.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\call_std\begin.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\call_std\end.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\cpp_future.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\detected.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\identity_tag.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\is_sax.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\std_fs.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\type_traits.hpp" />
+    <ClInclude Include="External\nlohmann\detail\meta\void_t.hpp" />
+    <ClInclude Include="External\nlohmann\detail\output\binary_writer.hpp" />
+    <ClInclude Include="External\nlohmann\detail\output\output_adapters.hpp" />
+    <ClInclude Include="External\nlohmann\detail\output\serializer.hpp" />
+    <ClInclude Include="External\nlohmann\detail\string_concat.hpp" />
+    <ClInclude Include="External\nlohmann\detail\string_escape.hpp" />
+    <ClInclude Include="External\nlohmann\detail\string_utils.hpp" />
+    <ClInclude Include="External\nlohmann\detail\value_t.hpp" />
+    <ClInclude Include="External\nlohmann\json.hpp" />
+    <ClInclude Include="External\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="External\nlohmann\ordered_map.hpp" />
+    <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
+    <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
     <ClInclude Include="Source\Game\Rhythm.h" />
     <ClInclude Include="Source\Game\AudioResourceTable.h" />
     <ClInclude Include="Source\Game\DragonkinAction.h" />
@@ -397,6 +444,7 @@
     <ClInclude Include="Source\Game\TitleState.h" />
     <ClInclude Include="Source\Game\UI\UITempo.h" />
     <ClInclude Include="Source\Game\UI\UIRhythmJudgment.h" />
+    <ClInclude Include="Source\Nova\Others\TimelineEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Game\Shaders\BulletCoverPS.hlsl">

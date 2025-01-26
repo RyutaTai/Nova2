@@ -161,7 +161,7 @@ private:
 	StateType currentState_ = StateType::Idle;									//	現在のステート	
 
 	//	----- エフェクト -----
-	std::shared_ptr <Effect>	effectResource_;								//	エフェクト
+	std::shared_ptr<Effect>		effectResource_;								//	エフェクト
 	float						effectScale_ = 5.0f;							//	エフェクトスケール
 	DirectX::XMFLOAT3			effectPos_ = {};								//	エフェクト再生位置
 	bool						playEffectFlag_ = false;						//	エフェクト再生フラグ

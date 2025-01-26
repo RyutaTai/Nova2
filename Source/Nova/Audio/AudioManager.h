@@ -6,7 +6,6 @@
 #include "AudioSource3D.h"
 #include "AudioSource.h"
 
-//	オーディオをまとめて管理する
 class AudioManager
 {
 private:

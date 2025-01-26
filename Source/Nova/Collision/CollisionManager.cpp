@@ -209,7 +209,7 @@ void CollisionManager::PlayerFlinchVsEnemyAttack()
                     enemyData.GetPosition(), enemyData.GetRadius()))
                 {
                     //  ‹¯‚ÝƒXƒe[ƒg‚É‘JˆÚ
-                    player.ChangeState(Player::StateType::Flinch);
+                    //player.ChangeState(Player::StateType::Flinch);
 
                     //  “–‚½‚Á‚½‚Ì‚ÅI—¹
                     return;
@@ -329,12 +329,12 @@ void CollisionManager::PlayerDamageVsBulletAttack()
                 //  HP‚ª‚Ü‚¾‚ ‚é‚½‚ßDamageState‚É‘JˆÚ
                 if (player.GetHp() > 0.0f)
                 {
-                    player.ChangeState(Player::StateType::Damage);
+                    //player.ChangeState(Player::StateType::Damage);
                 }
                 //  HP‚ª–³‚¢‚½‚ßDeathState‚É‘JˆÚ
                 else
                 {
-                    player.ChangeState(Player::StateType::Death);
+                    //player.ChangeState(Player::StateType::Death);
                 }
                 return;
             }

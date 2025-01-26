@@ -9,8 +9,8 @@
 struct CollisionSphereData
 {
 public:
-	CollisionSphereData(const std::string& name,const float& radius, 
-		const DirectX::XMFLOAT3& offsetPos, const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
+	CollisionSphereData(const std::string& name, const float& radius,
+		const DirectX::XMFLOAT3& offsetPos = {}, const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),offsetPosition_(offsetPos),radius_(radius),
 		defaultColor_(defaultColor), currentColor_(defaultColor), hitColor_(hitColor)
 	{}
@@ -63,7 +63,7 @@ struct CollisionCylinderData
 {
 public:
 	CollisionCylinderData(const std::string& name, const DirectX::XMFLOAT3& jointPos,
-		const float& radius, const float& height, const DirectX::XMFLOAT3& offsetPos,
+		const float& radius, const float& height, const DirectX::XMFLOAT3& offsetPos = {},
 		const DirectX::XMFLOAT4& defaultColor = { 0.0f,0.0f,0.0f,1.0f }, const DirectX::XMFLOAT4& hitColor = { 1.0f,1.0f,1.0f,1.0f })
 		:name_(name),jointPosition_(jointPos),offsetPosition_(offsetPos),radius_(radius),height_(height),
 		defaultColor_(defaultColor), currentColor_(defaultColor), hitColor_(hitColor)

@@ -217,7 +217,7 @@ CollisionMesh::CollisionMesh(ID3D11Device* device, const std::string& fileName, 
 		}
 	}
 
-	CreateAreas(12, 12);
+	CreateAreas(areaGridSize_, areaGridSize_);
 
 }
 
@@ -529,3 +529,16 @@ bool CollisionMesh::RaycastWithSpaceDivision(_In_ const DirectX::XMFLOAT3& raySt
 	return hit;
 }
 
+//	ImGui•`‰æ
+void CollisionMesh::DrawDebug()
+{
+	if (ImGui::TreeNode("CollisionMesh"))
+	{
+		if (ImGui::InputInt("AreaGridSize", &areaGridSize_))
+		{
+			SetAreaGridSize(areaGridSize_);
+		}
+
+		ImGui::TreePop();
+	}
+}

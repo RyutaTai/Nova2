@@ -372,6 +372,10 @@ void Character::DrawDebug()
 			{
 				data.DrawDebug();
 			}
+			if (ImGui::Button("Add"))
+			{
+				RegisterDamageDetectionData({});
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("AttackDetection"))
@@ -381,6 +385,10 @@ void Character::DrawDebug()
 				//if (data.GetIsActive() == false) continue;
 				data.DrawDebug();
 			}
+			if (ImGui::Button("Add"))
+			{
+				RegisterAttackDetectionData({});
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("CollisionDetection"))
@@ -388,6 +396,10 @@ void Character::DrawDebug()
 			for (CollisionDetectionData& data : collisionDetectionData_)
 			{
 				data.DrawDebug();
+			}
+			if (ImGui::Button("Add"))
+			{
+				RegisterCollisionDetectionData({});
 			}
 			ImGui::TreePop();
 		}

@@ -130,11 +130,7 @@ void Stage::UpdateEmissive(const float& elapsedTime)
 	if (useFrequency_ == false)emissiveConstant_.emissiveIntensity_ = 1.0f;
 
 	//	周波数データ更新
-#if 0
-	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("Game.wav"));
-#else
 	frequency_->Update(elapsedTime, AudioManager::Instance().GetAudioResource("GameBGM"));
-#endif
 
 	//	frequencyData_更新(配列のデータをずらし、新しいデータを設定)
 	for (int i = FrequencyDataMax - 1; 0 < i; --i)
@@ -450,6 +446,9 @@ void Stage::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Stageステージ"))
 	{
+		//	コリジョンメッシュ
+		collisionMesh_->DrawDebug();
+
 		//	円形のオーディオスペクトラムテクスチャ
 		ImGui::Text(u8"CircleSpectrumSRV_Slot15");
 		{

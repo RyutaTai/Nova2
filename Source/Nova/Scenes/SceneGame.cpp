@@ -81,7 +81,7 @@ void SceneGame::Initialize()
 	//drone_ = new Drone("./Resources/Model/Drone/Drone.glb");
 	//drone_->Initialize();
 
-	// --- テクスチャ読み込み ---
+	// ----- テクスチャ読み込み -----
 	D3D11_TEXTURE2D_DESC texture2dDesc = {};
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 
@@ -108,7 +108,7 @@ void SceneGame::Initialize()
 	LoadTextureFromFile(device, L"./Resources/Model/GltfSample/environments/tears_of_steel_bridge_4k/sheen_pmrem.dds",
 		shaderResourceViews_[3].GetAddressOf(), &texture2dDesc);
 #endif
-	//	ブルーム
+	//	----- ブルーム -----
 	framebuffers_[0] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	framebuffers_[1] = std::make_unique<FrameBuffer>(device, SCREEN_WIDTH, SCREEN_HEIGHT);	//	sprite
 	bitBlockTransfer_ = std::make_unique<FullScreenQuad>(device);
@@ -116,7 +116,7 @@ void SceneGame::Initialize()
 	bloomer_ = std::make_unique<Bloom>(device, SCREEN_WIDTH, SCREEN_HEIGHT);
 	Graphics::Instance().GetShader()->CreatePsFromCso(device, "./Resources/Shader/FinalPassPs.cso", pixelShaders_[0].ReleaseAndGetAddressOf());
 
-	//	ステート登録
+	//	----- ステート登録 -----
 	stateMachine_.reset(new StateMachine<State<SceneGame>>());
 	stateMachine_->RegisterState(new GameState::Wave1State(this));		//	Wave1
 	stateMachine_->RegisterState(new GameState::Wave2State(this));		//	Wave2
@@ -126,6 +126,9 @@ void SceneGame::Initialize()
 	stateMachine_->RegisterState(new GameState::ContinueState(this));	//	コンティニュー
 	//	初期ステート設定
 	stateMachine_->SetState(static_cast<int>(SceneGameState::Wave1));	//	初期ステートセット
+
+	//	----- タイムラインエディタ生成 -----
+	timelineEdiotor_ = TimelineEditor(0, 100);
 
 }
 
@@ -443,23 +446,35 @@ void SceneGame::DrawDebug()
 	auto srv = ShadowMap::Instance().GetShaderResourceView();
 	ImGui::Image(reinterpret_cast<void*>(srv), ImVec2(viewport.Width / 5.0f, viewport.Height / 5.0f));
 
-	Graphics::Instance().GetDebugRenderer()->DrawDebugGUI();	//	DebugRenderer
+	//	----- DebugRenderer -----
+	Graphics::Instance().GetDebugRenderer()->DrawDebugGUI();
 
 	ImGui::DragFloat4("LightDirection", &lightDirection_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	ライトの向き
 
+	//	----- ブルーム -----
 	if (bloomer_)bloomer_->DrawDebug();	//	Bloom
+	//	----- シャドウマップ -----
 	ShadowMap::Instance().DrawDebug();	//	Shadow
 
-	Camera::Instance().DrawDebug();		//	Camera
+	//	----- カメラ -----
+	Camera::Instance().DrawDebug();
 	
-	player_->DrawDebug();				//	Player
+	//	----- プレイヤー -----
+	player_->DrawDebug();
 
-	stage_->DrawDebug();				//	Stage
+	//	----- ステージ -----
+	stage_->DrawDebug();
 
+	//	-----エネミー -----
 	EnemyManager::Instance().DrawDebug();
 	
-	
-	UIManager::Instance().DrawDebug();	//	UIManagerとUI
+	//	----- UI -----
+	UIManager::Instance().DrawDebug();
+	//	----- Rhythm -----
 	Rhythm::Instance().DrawDebug();
+
+	//	----- タイムラインエディタ -----
+	//timelineEdiotor_.DrawUI();
+	timelineEdiotor_.DrawTimeline();
 
 }

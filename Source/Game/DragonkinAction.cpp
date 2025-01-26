@@ -63,20 +63,28 @@ namespace DragonkinAction
 			//	アニメーション再生
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 0.2f);
 			//	判定を取る区間を設定
-			animJudgeTime_.SetJudgeTime(0.42f, 0.53f);
+			animJudgeTime_.SetJudgeTime(0.42f, 0.5f);
 
 			step_++;
 			break;
 		case 1:
-			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Hand_R");
-			float jointRadius = 5.0f;
-
 			//	プレイヤーとの当たり判定
-		/*	if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+			if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 			{
-				Player::Instance().SubtractHp(5);
-			}*/
+				owner_->GetAttackDetectionData("Hand_R").SetIsActive(true);
+
+				//	攻撃中は押し出し判定しない
+				Player::Instance().SetIsActiveCollisionDetection(false);
+
+			}
+			else
+			{
+				owner_->GetAttackDetectionData("Hand_R").SetIsActive(false);
+
+				//	押し出し判定をオンにする
+				Player::Instance().SetIsActiveCollisionDetection(true);
+			}
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
@@ -118,15 +126,26 @@ namespace DragonkinAction
 			step_++;
 			break;
 		case 1:
-			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L");
-			float jointRadius = 5.0f;
-
 			//	プレイヤーとの当たり判定
-			/*if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+			if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 			{
-				Player::Instance().SubtractHp(5);
-			}*/
+				owner_->GetAttackDetectionData("Foot_L").SetIsActive(true);
+				owner_->GetAttackDetectionData("calf_l").SetIsActive(true);
+
+				//	攻撃中は押し出し判定しない
+				Player::Instance().SetIsActiveCollisionDetection(false);
+
+			}
+			else
+			{
+				owner_->GetAttackDetectionData("Foot_L").SetIsActive(false);
+				owner_->GetAttackDetectionData("calf_l").SetIsActive(false);
+
+				//	押し出し判定をオンにする
+				Player::Instance().SetIsActiveCollisionDetection(true);
+
+			}
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)
@@ -168,15 +187,36 @@ namespace DragonkinAction
 			step_++;
 			break;
 		case 1:
-			//	自分の位置、ジョイントの位置
-			DirectX::XMFLOAT3 jointPos = owner_->GetJointPosition("Foot_L");
-			float jointRadius = 5.0f;
-
 			//	プレイヤーとの当たり判定
-			/*if (owner_->JudgeAttackHit(elapsedTime, animJudgeTime_, jointPos, jointRadius))
+			float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+			if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 			{
-				Player::Instance().SubtractHp(5);
-			}*/
+				owner_->GetAttackDetectionData("Wing_L03").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L04").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L05").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L06").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L08").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L09").SetIsActive(true);
+				owner_->GetAttackDetectionData("Wing_L10").SetIsActive(true);
+
+				//	攻撃中は押し出し判定しない
+				Player::Instance().SetIsActiveCollisionDetection(false);
+
+			}
+			else
+			{
+				owner_->GetAttackDetectionData("Wing_L03").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L04").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L05").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L06").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L08").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L09").SetIsActive(false);
+				owner_->GetAttackDetectionData("Wing_L10").SetIsActive(false);
+
+				//	押し出し判定をオンにする
+				Player::Instance().SetIsActiveCollisionDetection(true);
+
+			}
 
 			//	アニメーション再生が終わったら終了
 			if (owner_->IsPlayAnimation() == false)

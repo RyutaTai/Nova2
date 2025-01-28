@@ -58,7 +58,7 @@ void SceneModelCheck::Update(const float& elapsedTime)
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	//Camera::Instance().SetTarget(object_[(int)MODEL_ModelCheck::CITY]->GetTransform()->GetPosition());
+	//Camera::Instance().SetTargetPos(object_[(int)MODEL_ModelCheck::CITY]->GetTransform()->GetPosition());
 	Camera::Instance().Update(elapsedTime);
 
 #if 1//ŽÀŒ±—p

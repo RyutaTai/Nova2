@@ -146,6 +146,8 @@ void Drone::Initialize()
 //	更新処理
 void Drone::Update(const float& elapsedTime)
 {
+	Character::Update(elapsedTime);
+
 	//	----- ステート更新処理 -----
 	stateMachine_->Update(elapsedTime);
 

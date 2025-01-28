@@ -39,6 +39,12 @@ public:
 		DodgeAirRight,	//	空中右回避
 		DodgeAirBack,	//	空中後ろ回避
 		DodgeAirLeft,	//	空中左回避
+		HitBack,		//	くらい(後ろからくらった)
+		HitDeath,		//	くらい(後ろにふっとび)
+		HitFront,		//	くらい(前からくらった)
+		HitLeft,		//	くらい(左からくらった)
+		HitRight,		//	くらい(右からくらった)
+
 
 		Max,			//	アニメーション最大数
 	};
@@ -130,12 +136,13 @@ public:
 	void SetIsActiveCollisionDetection(const bool& isActiveCollisionDetection) { isActiveCollisionDetection_ = isActiveCollisionDetection; }
 	const bool IsActiveCollisionDetection()const { return isActiveCollisionDetection_; }
 	void UpdateCollisionDetectionData(const float& elapsedTime);
-	//	----- 攻撃ヒットフラグ -----
+
+	//	----- 攻撃ヒットフラグ(自分の攻撃が相手に当たったか) -----
 	void		SetAttackHit(const bool& isHit) { isAttackHit_ = isHit; }
 	const bool	IsAttackHit()const { return isAttackHit_; }
 
 	//	----- アニメーション -----
-	void			PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed=1.0f);
+	void			PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);
 	int				GetCurrentAnimNum();			//	現在再生中のアニメーション番号取得
 	AnimationType	GetCurrentAnimType();			//	現在再生中のアニメーションタイプ取得
 	float const		GetCurrentAnimationSeconds();	//	現在のアニメーション再生時間取得
@@ -152,6 +159,10 @@ public:
 	//	----- オーディオ -----
 	void UpdateListener();	//	リスナー情報更新
 	SoundListener						GetListener()const	{ return listener_; }			//	リスナー取得
+
+	//	----- 攻撃してきた敵の位置 -----
+	void SetEnemyPos(const DirectX::XMFLOAT3& enemyPos) { enemyPos_ = enemyPos; }
+	const DirectX::XMFLOAT3 GetEnemyPos()const { return enemyPos_; }
 
 private:
 	static Player* instance_;
@@ -186,6 +197,7 @@ private:
 	bool				isTraget_	= false;	//	ターゲットがいるか
 	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
 	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
+	DirectX::XMFLOAT3 enemyPos_ = {};	//	攻撃してきた敵の位置
 
 	//	----- オーディオ -----
 	SoundListener listener_ = {};	//	リスナー

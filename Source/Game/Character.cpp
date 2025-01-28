@@ -11,6 +11,12 @@ Character::Character(const std::string& filename, const std::string& rootNodeNam
 	gltfModelResource_ = ResourceManager::Instance().LoadGltfModelResource(filename, rootNodeName);
 }
 
+//	更新処理
+void Character::Update(const float& elapsedTime)
+{
+	UpdateForce(elapsedTime);
+}
+
 //	ベロシティ更新
 void Character::UpdateVelocity(const float& elapsedTime)
 {
@@ -100,6 +106,31 @@ void Character::AddMoveSpeed(const float& addMoveSpeed, const float& elapsedTime
 	}
 }
 
+//	吹っ飛ばし処理更新
+void Character::UpdateForce(const float& elapsedTime)
+{
+	// パワーが無いときは処理しない
+	if (blowPower_ <= 0) return;
+
+	blowPower_ -= decelerationForce_ * elapsedTime;
+	blowPower_ = std::max(blowPower_, 0.0f); // 0.0f以下にならないようにする
+
+	// 吹っ飛び方向にどれだけ、吹っ飛ばすかを計算する
+	DirectX::XMFLOAT3 direction = {};
+	direction = Normalize(blowDirection_) * blowPower_ * elapsedTime;
+
+	// 吹っ飛ばす。
+	GetTransform()->AddPosition(direction);
+}
+
+//	吹っ飛ばし
+void Character::AddForce(const DirectX::XMFLOAT3& direction, const float& power, const float& decelerationForce)
+{
+	blowDirection_ = direction;
+	blowPower_ = power;
+	decelerationForce_ = decelerationForce;
+}
+
 //	移動処理
 void Character::Move(const float& elapsedTime)
 {
@@ -155,9 +186,9 @@ void Character::Turn(const float& elapsedTime, float vx, float vz, float speed)
 }
 
 //	アニメーション再生
-void Character::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
+void Character::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& animSpeed, const float& startFrame, const float& endFrame)
 {
-	gltfModelResource_->PlayAnimation(index, loop, blendTime, startFrame, animSpeed);
+	gltfModelResource_->PlayAnimation(index, loop, blendTime, animSpeed, startFrame, endFrame);
 }
 
 //	アニメーション更新処理

@@ -96,12 +96,12 @@ namespace PlayerState
 		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
 		bool JudgeInput(const JudgeTime& inputJudgeTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
-		void UpdateElapsedTime(const float& elapsedTime);	//	経過時間更新
+		void UpdateStateElapsedTime(const float& elapsedTime)override;	//	経過時間更新
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
 
 	private:
 		JudgeTime	animJudgeTime_	= {};				//	判定を取るアニメーション区間
-		JudgeTime	animSpeedChangeInterval_[3] = {};	//	アニメーション速度変化区間
+		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
 		JudgeTime	cancellationTime_ = {};				//	キャンセル可能時間
 		float		acceptInputFrame_ = 0.0f;			//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
 	};
@@ -125,13 +125,12 @@ namespace PlayerState
 		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
 		bool JudgeInput(const JudgeTime& cancellationTime);
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
-		void UpdateElapsedTime(const float& elapsedTime);
 		void UpdateAnimationSpeed();
 
 	private:
 		static constexpr int AnimJudgeCount = 2;	//	アニメーション判定区間の数
 		JudgeTime			animJudgeTime_[AnimJudgeCount] = {};	//	判定を取るアニメーション区間
-		JudgeTime			animSpeedChangeInterval_[4] = {};		//	判定を取るアニメーション区間
+		JudgeTime			animSpeedChangeInterval_[4] = {};		//	再生速度を変更するアニメーション区間
 		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
 		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
 		bool				isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
@@ -157,7 +156,6 @@ namespace PlayerState
 		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
 		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
-		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
 		static constexpr int AnimJudgeCount = 3;	//	アニメーション判定区間の数
@@ -187,7 +185,6 @@ namespace PlayerState
 		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
 		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
-		void UpdateElapsedTime(const float& elapsedTime);
 
 	private:
 		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
@@ -206,6 +203,65 @@ namespace PlayerState
 	public:
 		DodgeState(Player* owner) : State(owner) {}
 		~DodgeState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	};
+}
+
+//	ダメージステート
+namespace PlayerState
+{
+	class DamageState :public State<Player>
+	{
+	public:
+		DamageState(Player* owner) :State(owner) {}
+		~DamageState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	private:
+		void UpdateAnimationSpeed();	//	アニメーション速度調整
+
+	private:
+		const float AnimSpeedSectionCount = 3;			//	アニメーション速度変化区間の数
+		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
+		float		animationSpeed_[3] = { 1.0f,1.2f,2.0f };
+
+	};
+}
+
+//	怯みステート
+namespace PlayerState
+{
+	class FlinchState :public State<Player>
+	{
+	public:
+		FlinchState(Player* owner) :State(owner) {}
+		~FlinchState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	};
+}
+
+//	死亡ステート
+namespace PlayerState
+{
+	class DeathState :public State<Player>
+	{
+	public:
+		DeathState(Player* owner) :State(owner) {}
+		~DeathState(){}
 
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;

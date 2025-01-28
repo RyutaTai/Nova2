@@ -18,15 +18,10 @@ public:
 	void Render()override;
 	void RnederCoverModel()override {}
 
-	//	----- Collision -----
-	void RegisterCollisionData()override;
-	void UpdateCollisions(const float& elapsedTime)override;
-
-	//	”­Ë
+	//	----- ”­Ë -----
 	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)override;
 
-private:
-	float				speed_ = 300.0f;		//	‹…‚Ì‘¬‚³
-	float				lifeTimer_ = 3.0f;		//	‹…‚Ì¶‘¶ŠÔ
+	//	----- ˆÚ“® -----
+	void Move(const float& elapsedTime);
 
 };

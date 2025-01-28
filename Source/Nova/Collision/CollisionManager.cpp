@@ -260,6 +260,8 @@ void CollisionManager::PlayerDamageVsEnemyAttack()
                     int damage = enemy->GetAttackPower();
                     player.AddDamage(damage);
 
+                    player.SetEnemyPos(enemy->GetTransform()->GetPosition());
+
                     //  ==================================================
                     //  ÉRÉìÉgÉçÅ[ÉâÅ[êUìÆ (É_ÉÅÅ[ÉWéÛÇØÇΩÉäÉAÉNÉVÉáÉìÇ∆ÇµÇƒ)
                     //  ==================================================
@@ -273,16 +275,17 @@ void CollisionManager::PlayerDamageVsEnemyAttack()
                     //  ==================================================
                     //AudioManager::Instance().PlaySE(SE::Damage);
 
-                    ////  HPÇ™Ç‹ÇæÇ†ÇÈÇΩÇﬂDamageStateÇ…ëJà⁄
-                    //if (player.GetHp() > 0.0f)
-                    //{
-                    //    player.ChangeState(Player::StateType::Damage);
-                    //}
-                    ////  HPÇ™ñ≥Ç¢ÇΩÇﬂDeathStateÇ…ëJà⁄
-                    //else
-                    //{
-                    //    player.ChangeState(Player::StateType::Death);  
-                    //}
+                    //  HPÇ™Ç‹ÇæÇ†ÇÈÇΩÇﬂDamageStateÇ…ëJà⁄
+                    if (player.GetHp() > 0.0f)
+                    {
+                        player.ChangeState(Player::StateType::Damage);
+
+                    }
+                    //  HPÇ™ñ≥Ç¢ÇΩÇﬂDeathStateÇ…ëJà⁄
+                    else
+                    {
+                        //player.ChangeState(Player::StateType::Death);  
+                    }
 
                     return;
                 }
@@ -313,8 +316,8 @@ void CollisionManager::PlayerDamageVsBulletAttack()
         {
             Bullet* bullet = bullets.at(bulletIndex);
 
-            //  EnemyÇ…çUåÇÇ∑ÇÈíeÇÕPlayerÇ∆ÇÃìñÇΩÇËîªíËÇçsÇÌÇ»Ç¢
-            if (bullet->GetOpponentType() == Bullet::OpponentType::Enemy) continue;
+            //  BulletÇÃçUåÇëäéËÇ™Playerà»äOÇ»ÇÁìñÇΩÇËîªíËÇçsÇÌÇ»Ç¢
+            if (bullet->GetOpponentType() != Bullet::OpponentType::Player) continue;
 
             //  ìñÇΩÇ¡ÇΩÇ©É`ÉFÉbÉN
             if (IntersectSphereVsSphere(
@@ -326,10 +329,15 @@ void CollisionManager::PlayerDamageVsBulletAttack()
                 //  É_ÉÅÅ[ÉWÇó^Ç¶ÇÈ
                 player.AddDamage(bullet->GetAttackPower());
 
+                player.SetEnemyPos(bullet->GetTransform()->GetPosition());
+
+                //  îjä¸èàóù
+                bullet->Destroy();
+
                 //  HPÇ™Ç‹ÇæÇ†ÇÈÇΩÇﬂDamageStateÇ…ëJà⁄
                 if (player.GetHp() > 0.0f)
                 {
-                    //player.ChangeState(Player::StateType::Damage);
+                    player.ChangeState(Player::StateType::Damage);
                 }
                 //  HPÇ™ñ≥Ç¢ÇΩÇﬂDeathStateÇ…ëJà⁄
                 else
@@ -463,8 +471,8 @@ void CollisionManager::EnemyDamageVsBulletAttack()
             {
                 Bullet* bullet = bullets.at(bulletIndex);
 
-                //  EnemyÇ∆ÇÃìñÇΩÇËîªíËÇçsÇÌÇ»Ç¢
-                if (bullet->GetOpponentType() == Bullet::OpponentType::Player) continue;
+                //  BulletÇÃçUåÇëäéËÇ™Enemyà»äOÇ»ÇÁìñÇΩÇËîªíËÇçsÇÌÇ»Ç¢
+                if (bullet->GetOpponentType() != Bullet::OpponentType::Enemy) continue;
 
                 //  ìñÇΩÇ¡ÇΩÇ©É`ÉFÉbÉN
                 if (IntersectSphereVsSphere(
@@ -494,6 +502,9 @@ void CollisionManager::EnemyDamageVsBulletAttack()
 
                     }
 
+                    //  îjä¸èàóù
+                    bullet->Destroy();
+
                     return;
                 }
             }
@@ -506,12 +517,12 @@ void CollisionManager::EnemyDamageVsBulletAttack()
 #pragma endregion  ========== Enemy Vs ÅZÅZ ==========
 
 //  ==================== Bullet VS ÅZÅZ ====================
-#pragma region  ==================== Projectile VS ÅZÅZ ====================
+#pragma region  ==================== Bullet VS ÅZÅZ ====================
 void CollisionManager::UpdateBulletVs()
 {
 }
 
-#pragma endregion   ==================== Projectile VS ÅZÅZ ====================
+#pragma endregion   ==================== Bullet VS ÅZÅZ ====================
 
 //  ========== Intersect ==========
 #pragma region  ========== Intersect ==========

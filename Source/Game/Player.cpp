@@ -38,9 +38,12 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
 	stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
 	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
+	stateMachine_->RegisterState(new PlayerState::DamageState(this));	//	ダメージ
+	stateMachine_->RegisterState(new PlayerState::FlinchState(this));	//	怯み
+	stateMachine_->RegisterState(new PlayerState::DeathState(this));	//	死亡
 
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
-	PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);
+	PlayAnimation(Player::AnimationType::Idle, true, 1.0f);
 
 	//	モデルのルート設定
 	int rootNodeIndex = GetNodeIndex("root");
@@ -109,24 +112,13 @@ void Player::Update(const float& elapsedTime)
 	//	ポーズ中なら処理しない
 	if (isPose_)return;
 
+	Character::Update(elapsedTime);
+
 	//	----- ステート更新処理 -----
 	stateMachine_->Update(elapsedTime);
 
 	//	----- 当たり判定更新 -----
 	UpdateCollisionDetectionData(elapsedTime);
-
-	//	エフェクト再生確認用
-#if _DEBUG
-		//GamePad& gamePad = Input::Instance().GetGamePad();
-		//if (gamePad.GetButtonDown() & GamePad::BTN_A)	//	Zキー入力(エフェクト確認用)
-		//{
-		//	DirectX::XMFLOAT3 pos = this->GetTransform()->GetPosition();
-		//	pos.y += height_;
-		//	effectResource_->Play(pos, effectScale_);
-		//}
-#endif
-	//	敵との当たり判定
-	//PlayerVsEnemies(elapsedTime);
 
 	//	空中にいれば
 	if (isHitStage_ == false && isAddGravity_)
@@ -152,9 +144,7 @@ void Player::Update(const float& elapsedTime)
 	//	----- アニメーション更新処理 -----
 	UpdateAnimation(elapsedTime);
 	
-	//DummyRay(elapsedTime);
-
-	//	----- リスナー更新 -----
+	//	----- オーディオリスナー更新 -----
 	UpdateListener();
 
 }
@@ -812,9 +802,9 @@ bool Player::DummyRay(const float& elapsedTime)
 }
 
 //	アニメーション
-void Player::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
+void Player::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& animSpeed, const float& startFrame, const float& endFrame)
 {
-	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, animSpeed, startFrame, endFrame);
 }
 
 //	スティック入力値から移動ベクトルを取得
@@ -919,7 +909,7 @@ void Player::DrawStateStr()
 	{
 		"Idle","Move","Attack",
 		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
-		"Doege"
+		"Doege","Damage","Flinch","Death"
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示

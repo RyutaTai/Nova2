@@ -9,19 +9,25 @@
 //	コンストラクタ
 Bullet::Bullet(const std::string& filename)
 {
-	//	モデル生成
+	//	----- モデル生成 -----
 	gltfStaticModelResource_= ResourceManager::Instance().LoadGltfModelStaticResource(filename);
 
-	//	生成時にマネージャーに登録する
+	//	----- 生成時にマネージャーに登録する -----
 	BulletManager::Instance().Register(this);
 
-	//	弾丸半径(当たり判定用)
+	//	----- 弾丸半径(当たり判定用) -----
 	radius_ = 0.5f;
 
-	//	スケール
+	//	----- スケール -----
 	GetTransform()->SetScaleFactor(0.4f);
+	
+	//	----- 攻撃相手を設定 -----
+	opponentType_ = OpponentType::Player;
 
-	//	オーディオ初期設定
+	//	----- 生存時間 -----
+	float lifeTimer_ = 2.5f;
+
+	//	----- オーディオ -----
 	emitter_.position_ = GetTransform()->GetPosition();
 	//emitter_.velocity_ = velocity_;
 	emitter_.velocity_ = { 1,2,1 };
@@ -32,8 +38,13 @@ Bullet::Bullet(const std::string& filename)
 	se_[static_cast<int>(Audio3D::Move)] = AudioManager::Instance().LoadAudioSource3D("./Resources/Audio/SE/Bullet/bulletMove.wav", Audio::AudioType::SE3D, "GameScene", &emitter_);
 	se_[static_cast<int>(Audio3D::Move)]->SetVolume(0.5f, false);
 	se_[static_cast<int>(Audio3D::Move)]->SetAudioName("BulletMove");
+	//se_[static_cast<int>(Audio3D::Move)]->SetSceneName("Game");
 	se_[static_cast<int>(Audio3D::Move)]->SetDSPSetting(Player::Instance().GetListener());
 	AudioManager::Instance().Register(se_[static_cast<int>(Audio3D::Move)]);
+
+	//	----- エフェクト -----
+	effectResource_[EFFECT::EXPLOSION] = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/Blow11_2.efk");
+	effectScale_[EFFECT::EXPLOSION] = 0.3f;
 
 }
 
@@ -46,7 +57,10 @@ void Bullet::Initialize()
 //	更新処理
 void Bullet::Update(const float& elapsedTime)
 {
-	//	オーディオ関連更新
+	//	----- 生存時間更新 -----
+	UpdateLifeTimer(elapsedTime);
+
+	//	----- オーディオ関連更新 -----
 	UpdateEmitter();
 	UpdateAudioSource();
 	
@@ -87,13 +101,13 @@ void Bullet::CoverModelUpdate(const float& elpasedTime)
 }
 
 //	破棄
-void Bullet::Destroy(const float& elapsedTime)
+void Bullet::Destroy()
 {
 	//	無敵状態なら破棄しない
 	if (isInvincible_)return;
 
-	//	爆発音再生
-	//se_[static_cast<int>(AudioSE3D::Explosion)]->Play(false);
+	//	エフェクト描画
+	effectResource_[EFFECT::EXPLOSION]->Play(GetTransform()->GetPosition(), effectScale_[EFFECT::EXPLOSION]);
 
 	//	オーディオ削除
 	AudioManager::Instance().GetAudioResource("BulletMove")->Stop();
@@ -101,6 +115,19 @@ void Bullet::Destroy(const float& elapsedTime)
 
 	//	マネージャーから自分を削除する
 	BulletManager::Instance().Remove(this);
+}
+
+//	生存時間更新
+void Bullet::UpdateLifeTimer(const float& elapsedTime)
+{
+	lifeTimer_ -= elapsedTime;
+
+	//	生存時間が無くなったら破棄
+	if (lifeTimer_ <= 0.0f)
+	{
+		Destroy();
+	}
+
 }
 
 //	デバッグプリミティブ描画
@@ -116,15 +143,16 @@ void Bullet::DrawDebugPrimitive()
 //	デバッグ描画
 void Bullet::DrawDebug()
 {
-	float scale = GetTransform()->GetScaleFactor();
-
 	GetTransform()->DrawDebug();
 	ImGui::DragFloat("Radius", &radius_, 1.0f, -FLT_MAX, FLT_MAX);				//	半径
-	ImGui::DragFloat("Scale", &scale, 0.1f, 1.0f, FLT_MAX);						//	スケール
-	ImGui::DragFloat("AmountOfDamage", &attackPower_, 0.1f, 1.0f, FLT_MAX);	//	ダメージ量
 
-	ImGui::DragFloat3("EmitterPosition", &emitter_.position_.x, 0.1f);	//	エミッターの位置
-	ImGui::DragFloat("EmitterVolume", &emitter_.volume_, 0.01f);		//	エミッターの音量
+	float scale = GetTransform()->GetScaleFactor();
+	ImGui::DragFloat("Scale", &scale, 0.1f, 1.0f, FLT_MAX);						//	スケール
 	GetTransform()->SetScaleFactor(scale);
 
+	ImGui::DragFloat("AttackPower", &attackPower_, 0.1f, 1.0f, FLT_MAX);	//	ダメージ量
+
+	//	----- オーディオ -----
+	ImGui::DragFloat3("EmitterPosition", &emitter_.position_.x, 0.1f);	//	エミッターの位置
+	ImGui::DragFloat("EmitterVolume", &emitter_.volume_, 0.01f);		//	エミッターの音量
 }

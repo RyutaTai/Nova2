@@ -1,10 +1,11 @@
 #pragma once
 
+#include "../Game/BulletManager.h"
 #include "../Nova/Resources/GltfModelStaticBatching.h"
 #include "../Nova/Resources/Effect.h"
-#include "../Game/BulletManager.h"
 #include "../Nova/Audio/AudioSource3D.h"
 #include "../Nova/Audio/AudioSource.h"
+#include "../Nova/Collision/CollisionData.h"
 
 //	弾丸クラス
 class Bullet
@@ -29,9 +30,10 @@ public:
 	virtual void			Render()			= 0;
 	virtual void			RnederCoverModel()	= 0;
 	
+	Transform* GetTransform()const { return gltfStaticModelResource_->GetTransform(); }
+	
 	//	----- Collision -----
-	virtual void RegisterCollisionData() = 0;
-	virtual void UpdateCollisions(const float& elapsedTime) = 0;
+	const float	 GetRadius()const { return radius_; }				//	半径取得
 
 	//	----- デバッグ描画 -----
 	virtual void			DrawDebug();																//	デバッグ描画
@@ -49,13 +51,18 @@ public:
 	void					UpdateEmitter();
 	void					UpdateAudioSource();	//	オーディオソース更新処理
 	
-	virtual void			Destroy(const float& elapsedTime);											//	破棄処理
-	void					SetInvincible(const bool& isInvincible)			{ isInvincible_ = isInvincible; }
-	void					SetDamaged(const bool& damaged)						{ isDamaged_ = damaged; }		//	ダメージフラグ設定
-
-	Transform* GetTransform()const { return gltfStaticModelResource_->GetTransform(); }
-	float		GetRadius()										{ return radius_; }			//	半径取得
+	//	----- 破棄処理 -----
+	virtual void			Destroy();											//	破棄処理
 	
+	//	----- ダメージフラグ -----
+	void					SetDamaged(const bool& damaged) { isDamaged_ = damaged; }					//	ダメージフラグ設定
+
+	//	----- 無敵フラグ -----
+	void					SetInvincible(const bool& isInvincible) { isInvincible_ = isInvincible; }	//	無敵フラグ設定
+
+	//	----- 生存時間 -----
+	void UpdateLifeTimer(const float& elapsedTime);
+
 	//	----- 攻撃力 -----
 	void SetAttackPower(const float& attackPower) { attackPower_ = attackPower; }
 	const float GetAttackPower()const { return attackPower_; }
@@ -63,6 +70,10 @@ public:
 	//	----- 攻撃する相手 -----
 	void SetOpponentType(const OpponentType& opponentType) { opponentType_ = opponentType; }
 	const OpponentType GetOpponentType()const { return opponentType_; }
+
+	//	----- ターゲット位置 -----
+	void SetTargetPos(const DirectX::XMFLOAT3& target) { targetPos_ = target; }
+	const DirectX::XMFLOAT3 GetTargetPos()const { return targetPos_; }
 
 private:
 	enum class Audio3D	//	3Dで鳴らすSEの種類
@@ -73,13 +84,24 @@ private:
 	};
 
 protected:
-	DirectX::XMFLOAT3							velocity_ = {};					//	速度
-	DirectX::XMFLOAT3							direction_ = {};				//	弾が飛ぶ方向
-	float										radius_ = 1.0f;					//	弾の半径
-	
+	//	----- モデル -----
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
-	std::unique_ptr<GltfModelStaticBatching>	coverModel_ = {};				//	弾の周りを覆うモデル
+	std::unique_ptr<GltfModelStaticBatching>	coverModel_;					//	弾の周りを覆うモデル
+
+	//	----- カバーモデル -----
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>	coverPixelShader_;				//	弾丸のキューブのピクセルシェーダー
 	
+	//	----- 移動処理 -----
+	DirectX::XMFLOAT3	velocity_ = {};		//	速度
+	float				moveSpeed_ = 1.0f;	//	弾の速さ
+	DirectX::XMFLOAT3	direction_ = {};	//	弾が飛ぶ方向
+
+	//	----- Collision -----
+	std::vector<AttackDetectionData>	attackDetectionData_;		//	攻撃判定用
+	std::vector<DamageDetectionData>	damageDetectionData_;		//	くらい判定
+	std::vector<CollisionDetectionData>	collisionDetectionData_;	//	押し出し判定用
+	float								radius_ = 1.0f;				//	弾の半径
+
 	//	----- ダメージ -----
 	bool										isDamaged_ = false;				//	攻撃を受けたかどうか
 	float										attackPower_ = 5.0f;			//	攻撃力
@@ -87,18 +109,35 @@ protected:
 	//	----- 弾丸の所有者 -----
 	DirectX::XMFLOAT3							ownerPosition_ = {};			//	弾丸所有者の位置
 
-	//	----- カバーモデル -----
-	Microsoft::WRL::ComPtr<ID3D11PixelShader>	coverPixelShader_;				//	弾丸のキューブのピクセルシェーダー
-	
+	//	----- 攻撃する相手 -----
+	OpponentType		opponentType_;		//	攻撃相手の種類
+	DirectX::XMFLOAT3	targetPos_ = {};	//	ターゲット位置
+
+	//	----- 無敵処理 -----
+	bool isInvincible_ = false;
+
+	//	----- 生存時間 -----
+	float lifeTimer_ = 2.5f;
+
 	//	----- オーディオ -----
-	SoundEmitter emitter_ = {};							//	エミッターを自分の位置で持つ
+	SoundEmitter emitter_ = {};											//	エミッターを自分の位置で持つ
 	AudioSource3D* se_[static_cast<int>(Audio3D::Max)] = { nullptr };	//	弾丸のSE(3Dで鳴らす)
 	AudioSource* debugSE_ = nullptr;
 
-	bool isInvincible_ = false;	//	無敵
+private:
+	//	----- エフェクト -----
+		enum EFFECT
+		{
+			FIRE = 0,		//	弾の周りのエフェクト
+			EXPLOSION,		//	爆発
+			Max,			//	最大数
+		};
 
-	//	----- 攻撃する相手 -----
-	OpponentType opponentType_;
+private:
+	//	----- エフェクト -----
+	std::shared_ptr <Effect>	effectResource_[EFFECT::Max];			//	エフェクトリソース
+	float						effectScale_[EFFECT::Max] = { 1.0f };	//	エフェクトスケール
+
 
 };
 

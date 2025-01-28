@@ -13,7 +13,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::Idle01), false, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::Idle01), false, 1.0f, 0.2f);
 			step_++;
 			break;
 		case 1:
@@ -61,7 +61,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			//	アニメーション再生
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.42f, 0.5f);
 
@@ -119,7 +119,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			//	アニメーション再生
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.52f, 0.6f);
 			
@@ -180,7 +180,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			//	アニメーション再生
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.34f, 0.41f);
 			

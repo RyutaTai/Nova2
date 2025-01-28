@@ -9,10 +9,6 @@
 BulletHorming::BulletHorming(const std::string& filename)
 	:Bullet(filename)
 {
-	//	エフェクト読み込み
-	effectResource_[EFFECT::EXPLOSION] = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/Blow11_2.efk");
-	effectScale_[EFFECT::EXPLOSION] = 0.3f;
-
 	//	カバーモデル
 	DirectX::XMFLOAT4 coverModelColor = { 1.0f,0.0f,0.0f,1.0f };
 	coverModel_ = std::make_unique<GltfModelStaticBatching>("./Resources/Model/Cube/source/Cube2.gltf", true, coverModelColor);
@@ -26,7 +22,7 @@ BulletHorming::BulletHorming(const std::string& filename)
 	coverModel_->GetTransform()->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 #endif
 	//	移動速度設定
-	speed_ = 6.0f;
+	moveSpeed_ = 6.0f;
 
 }
 
@@ -42,19 +38,6 @@ void BulletHorming::Initialize()
 
 }
 
-//	当たり判定登録
-void BulletHorming::RegisterCollisionData()
-{
-
-}
-
-//	当たり判定更新
-void BulletHorming::UpdateCollisions(const float& elapsedTime)
-{
-
-}
-
-
 //	更新処理
 void BulletHorming::Update(const float& elapsedTime)
 {
@@ -62,9 +45,6 @@ void BulletHorming::Update(const float& elapsedTime)
 
 	//	移動処理
 	Move(elapsedTime);
-
-	//	破棄処理
-	Destroy(elapsedTime);
 
 	//	カバーモデル更新処理
 	CoverModelUpdate(elapsedTime);
@@ -81,66 +61,23 @@ void BulletHorming::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XM
 
 }
 
-//	破棄処理
-void BulletHorming::Destroy(const float& elapsedTime)
-{
-	//	寿命処理
-	lifeTimer_ -= elapsedTime;
-
-	//	球と円柱の当たり判定
-	bool isHitPlayer = false;
-	DirectX::XMFLOAT3 bulletPos = this->GetTransform()->GetPosition();
-	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();		//	プレイヤーの位置
-	float playerRadius = Player::Instance().GetRadius();								//	プレイヤーの半径
-	float playerHeight = Player::Instance().GetHeight();								//	プレイヤーの高さ
-	playerPos.y += playerHeight / 2.0f;
-	DirectX::XMFLOAT3 outPosition = {};
-	isHitPlayer = Collision::IntersectSphereVsCylinder(bulletPos, radius_, playerPos, playerRadius, playerHeight, outPosition);
-
-	//	生存時間がなくなるか、プレイヤーに当たるか、プレイヤーに攻撃されたら
-#if 1
-	if (lifeTimer_ <= 0.0f || isHitPlayer || isDamaged_)
-#else
-	if(isDamaged_)
-#endif
-	{
-		DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
-
-		//	エフェクト描画
-		effectResource_[EFFECT::EXPLOSION]->Play(pos, effectScale_[EFFECT::EXPLOSION]);
-		//effectResource_[EFFECT::EXPLOSION]->PlayAsync(pos, effectScale_[EFFECT::EXPLOSION]);
-
-		//	自分を削除
-		Bullet::Destroy(elapsedTime);
-
-	}
-
-	//	プレイヤーに当たっていたらダメージ処理
-	if (isHitPlayer)
-	{
-		Player::Instance().SubtractHp(attackPower_);
-	}
-
-}
-
 //	移動処理
 void BulletHorming::Move(const float& elapsedTime)
 {
-	//	移動
+	//	弾丸からプレイヤーまでのベクトルを求め、正規化する
 	DirectX::XMFLOAT3 myPos = GetTransform()->GetPosition();
 	DirectX::XMFLOAT3 dir = {};
-	target_ = Player::Instance().GetTransform()->GetPosition();
-	target_.y += Player::Instance().GetHeight() / 1.5f;			//	プレイヤーの拳に当たるようにするため
-	dir = target_ - myPos;
-	dir = Normalize(dir);										//	正規化
+	targetPos_ = Player::Instance().GetTransform()->GetPosition();
+	targetPos_.y += Player::Instance().GetHeight() / 1.5f;			//	プレイヤーの拳に当たるようにするため
+	dir = targetPos_ - myPos;
+	dir = Normalize(dir);											//	正規化
 
-	float speed = speed_ * elapsedTime;
+	//	速度計算
+	velocity_ = dir * moveSpeed_ * elapsedTime;
+
+	//	ポジション更新
 	DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
-
-	velocity_ = dir * speed;
-
 	position = position + velocity_;
-
 	GetTransform()->SetPosition(position);
 
 }
@@ -174,9 +111,9 @@ void BulletHorming::DrawDebug()
 	if (ImGui::TreeNode(u8"Bullet 弾丸"))
 	{
 		Bullet::DrawDebug();
-		ImGui::DragFloat3("Target", &target_.x, 1.0f, -FLT_MAX, FLT_MAX);			//	ターゲット
+		ImGui::DragFloat3("Target", &targetPos_.x, 1.0f, -FLT_MAX, FLT_MAX);			//	ターゲット
 		ImGui::DragFloat3("OwnerPos", &ownerPosition_.x, 0.1f, -FLT_MAX, FLT_MAX);	//	所有者の位置
-		ImGui::DragFloat("Speed", &speed_, 0.5f, -FLT_MAX, FLT_MAX);				//	弾の速さ
+		ImGui::DragFloat("Speed", &moveSpeed_, 0.5f, -FLT_MAX, FLT_MAX);				//	弾の速さ
 		ImGui::DragFloat("LifeTimer", &lifeTimer_, 0.5f, -FLT_MAX, FLT_MAX);		//	生存時間
 		ImGui::TreePop();
 	}

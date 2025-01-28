@@ -13,7 +13,7 @@ Dragonkin::Dragonkin()
 {
 	//	自身の種類設定
 	myType_ = EnemyType::Dragonkin;
-	
+
 	//	ステートセット(Dragonkin::StateTypeの順と合わせる)
 	//stateMachine_.reset(new StateMachine<State<Player>>());
 	//stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機
@@ -51,13 +51,13 @@ Dragonkin::Dragonkin()
 	behaviorData_ = new BehaviorData();
 	behaviorTree_ = new BehaviorTree(this);
 
-	behaviorTree_->AddNode("",			"Root",			0,	BehaviorTree::SelectRule::Priority,	nullptr,											nullptr);										//	ルートノード
-	behaviorTree_->AddNode("Root",		"Idle",			0,	BehaviorTree::SelectRule::Non,		new DragonkinJudgment::IdleJudgment(this),			new DragonkinAction::IdleAction(this));			//	待機ノード(末端)
-	behaviorTree_->AddNode("Root",		"Battle",		1,	BehaviorTree::SelectRule::Random,	new DragonkinJudgment::BattleJudgment(this),		nullptr);										//	戦闘ノード(中間)
+	behaviorTree_->AddNode("", "Root", 0, BehaviorTree::SelectRule::Priority, nullptr, nullptr);										//	ルートノード
+	behaviorTree_->AddNode("Root", "Idle", 0, BehaviorTree::SelectRule::Non, new DragonkinJudgment::IdleJudgment(this), new DragonkinAction::IdleAction(this));			//	待機ノード(末端)
+	behaviorTree_->AddNode("Root", "Battle", 1, BehaviorTree::SelectRule::Random, new DragonkinJudgment::BattleJudgment(this), nullptr);										//	戦闘ノード(中間)
 
-	behaviorTree_->AddNode("Battle",	"AttackPunch",	0,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackPunchAction(this));	//	通常パンチ攻撃(末端)
-	behaviorTree_->AddNode("Battle",	"AttackKick",	1,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackKickAction(this));	//	通常キック攻撃(末端)
-	behaviorTree_->AddNode("Battle",	"AttackWing",	2,	BehaviorTree::SelectRule::Non,		nullptr,											new DragonkinAction::AttackWingAction(this));	//	通常キック攻撃(末端)
+	behaviorTree_->AddNode("Battle", "AttackPunch", 0, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackPunchAction(this));	//	通常パンチ攻撃(末端)
+	behaviorTree_->AddNode("Battle", "AttackKick", 1, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackKickAction(this));	//	通常キック攻撃(末端)
+	behaviorTree_->AddNode("Battle", "AttackWing", 2, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackWingAction(this));	//	通常キック攻撃(末端)
 
 }
 
@@ -93,37 +93,37 @@ void Dragonkin::RegisterCollisionData()
 	//	{名前、半径、  Y軸を固定するか、オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius, fixedY,			offsetPosition,	updateName,	defaultColor,		hitColor}
 
-	RegisterCollisionDetectionData({ "Head",		0.4f,false,{},"head"		});		//	頭
-	RegisterCollisionDetectionData({ "Chest",		0.4f,false,{},"spine_02"	});		//	胸部
-	RegisterCollisionDetectionData({ "Shoulder_L",	0.4f,false,{},"Shoulder_L"	});		//	左肩
-	RegisterCollisionDetectionData({ "Shoulder_R",	0.4f,false,{},"Shoulder_R"	});		//	右肩
-	RegisterCollisionDetectionData({ "lowerarm_l",	0.4f,false,{},"lowerarm_l"	});		//	左肘
-	RegisterCollisionDetectionData({ "lowerarm_r",	0.4f,false,{},"lowerarm_r"	});		//	右肘
-	RegisterCollisionDetectionData({ "Hand_L",		0.4f,false,{},"Hand_L"		});		//	左手首
-	RegisterCollisionDetectionData({ "Hand_R",		0.4f,false,{},"Hand_R"		});		//	右手首
-	RegisterCollisionDetectionData({ "spine_01",	0.6f,false,{},"spine_01"	});		//	腰
-	RegisterCollisionDetectionData({ "calf_l",		0.4f,false,{},"calf_l"		});		//	左膝
-	RegisterCollisionDetectionData({ "calf_r",		0.4f,false,{},"calf_r"		});		//	右膝
-	RegisterCollisionDetectionData({ "Foot_L",		0.6f,false,{},"Foot_L"		});		//	左足首
-	RegisterCollisionDetectionData({ "Foot_R",		0.6f,false,{},"Foot_R"		});		//	右足首
+	RegisterCollisionDetectionData({ "Head",		0.4f,false,{},"head" });		//	頭
+	RegisterCollisionDetectionData({ "Chest",		0.4f,false,{},"spine_02" });		//	胸部
+	RegisterCollisionDetectionData({ "Shoulder_L",	0.4f,false,{},"Shoulder_L" });		//	左肩
+	RegisterCollisionDetectionData({ "Shoulder_R",	0.4f,false,{},"Shoulder_R" });		//	右肩
+	RegisterCollisionDetectionData({ "lowerarm_l",	0.4f,false,{},"lowerarm_l" });		//	左肘
+	RegisterCollisionDetectionData({ "lowerarm_r",	0.4f,false,{},"lowerarm_r" });		//	右肘
+	RegisterCollisionDetectionData({ "Hand_L",		0.4f,false,{},"Hand_L" });		//	左手首
+	RegisterCollisionDetectionData({ "Hand_R",		0.4f,false,{},"Hand_R" });		//	右手首
+	RegisterCollisionDetectionData({ "spine_01",	0.6f,false,{},"spine_01" });		//	腰
+	RegisterCollisionDetectionData({ "calf_l",		0.4f,false,{},"calf_l" });		//	左膝
+	RegisterCollisionDetectionData({ "calf_r",		0.4f,false,{},"calf_r" });		//	右膝
+	RegisterCollisionDetectionData({ "Foot_L",		0.6f,false,{},"Foot_L" });		//	左足首
+	RegisterCollisionDetectionData({ "Foot_R",		0.6f,false,{},"Foot_R" });		//	右足首
 
 	//	左の翼
-	RegisterCollisionDetectionData({ "Wing_L03",	0.4f,false,{},"Wing_L03"	});		//	一番付け根に近い
-	RegisterCollisionDetectionData({ "Wing_L04",	0.4f,false,{},"Wing_L04"	});
-	RegisterCollisionDetectionData({ "Wing_L05",	0.4f,false,{},"Wing_L05"	});
-	RegisterCollisionDetectionData({ "Wing_L06",	0.4f,false,{},"Wing_L06"	});
-	RegisterCollisionDetectionData({ "Wing_L08",	0.4f,false,{},"Wing_L08"	});
-	RegisterCollisionDetectionData({ "Wing_L09",	0.4f,false,{},"Wing_L09"	});
-	RegisterCollisionDetectionData({ "Wing_L10",	0.4f,false,{},"Wing_L10"	});		//	一番先の方
+	RegisterCollisionDetectionData({ "Wing_L03",	0.4f,false,{},"Wing_L03" });		//	一番付け根に近い
+	RegisterCollisionDetectionData({ "Wing_L04",	0.4f,false,{},"Wing_L04" });
+	RegisterCollisionDetectionData({ "Wing_L05",	0.4f,false,{},"Wing_L05" });
+	RegisterCollisionDetectionData({ "Wing_L06",	0.4f,false,{},"Wing_L06" });
+	RegisterCollisionDetectionData({ "Wing_L08",	0.4f,false,{},"Wing_L08" });
+	RegisterCollisionDetectionData({ "Wing_L09",	0.4f,false,{},"Wing_L09" });
+	RegisterCollisionDetectionData({ "Wing_L10",	0.4f,false,{},"Wing_L10" });		//	一番先の方
 
 	//	右の翼
-	RegisterCollisionDetectionData({ "Wing_R03",	0.4f,false,{},"Wing_R03"	});		//	一番付け根に近い
-	RegisterCollisionDetectionData({ "Wing_R04",	0.4f,false,{},"Wing_R04"	});
-	RegisterCollisionDetectionData({ "Wing_R05",	0.4f,false,{},"Wing_R05"	});
-	RegisterCollisionDetectionData({ "Wing_R06",	0.4f,false,{},"Wing_R06"	});
-	RegisterCollisionDetectionData({ "Wing_R08",	0.4f,false,{},"Wing_R08"	});
-	RegisterCollisionDetectionData({ "Wing_R09",	0.4f,false,{},"Wing_R09"	});
-	RegisterCollisionDetectionData({ "Wing_R10",	0.4f,false,{},"Wing_R10"	});		//	一番先の方
+	RegisterCollisionDetectionData({ "Wing_R03",	0.4f,false,{},"Wing_R03" });		//	一番付け根に近い
+	RegisterCollisionDetectionData({ "Wing_R04",	0.4f,false,{},"Wing_R04" });
+	RegisterCollisionDetectionData({ "Wing_R05",	0.4f,false,{},"Wing_R05" });
+	RegisterCollisionDetectionData({ "Wing_R06",	0.4f,false,{},"Wing_R06" });
+	RegisterCollisionDetectionData({ "Wing_R08",	0.4f,false,{},"Wing_R08" });
+	RegisterCollisionDetectionData({ "Wing_R09",	0.4f,false,{},"Wing_R09" });
+	RegisterCollisionDetectionData({ "Wing_R10",	0.4f,false,{},"Wing_R10" });		//	一番先の方
 
 #pragma endregion ----- 押し出し判定登録 -----
 
@@ -131,19 +131,19 @@ void Dragonkin::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
-	RegisterDamageDetectionData({ "head",			0.4f,{},1.0f, "head"		});		//	頭
-	RegisterDamageDetectionData({ "spine_02",		0.4f,{},1.0f, "spine_02"	});		//	胸部
-	RegisterDamageDetectionData({ "Shoulder_L",		0.4f,{},1.0f, "Shoulder_L"	});		//	左肩
-	RegisterDamageDetectionData({ "Shoulder_R",		0.4f,{},1.0f, "Shoulder_R"	});		//	右肩
-	RegisterDamageDetectionData({ "lowerarm_l",		0.4f,{},1.0f, "lowerarm_l"	});		//	左肘
-	RegisterDamageDetectionData({ "lowerarm_r",		0.4f,{},1.0f, "lowerarm_r"	});		//	右肘
-	RegisterDamageDetectionData({ "Hand_L",			0.4f,{},1.0f, "Hand_L"		});		//	左手首
-	RegisterDamageDetectionData({ "Hand_R",			0.4f,{},1.0f, "Hand_R"		});		//	右手首
-	RegisterDamageDetectionData({ "spine_01",		0.4f,{},1.0f, "spine_01"	});		//	腰
-	RegisterDamageDetectionData({ "calf_l",			0.4f,{},1.0f, "calf_l"		});		//	左膝
-	RegisterDamageDetectionData({ "calf_r",			0.4f,{},1.0f, "calf_r"		});		//	右膝
-	RegisterDamageDetectionData({ "Foot_L",			0.6f,{},1.0f, "Foot_L"		});		//	左足首
-	RegisterDamageDetectionData({ "Foot_R",			0.6f,{},1.0f, "Foot_R"		});		//	右足首
+	RegisterDamageDetectionData({ "head",			0.4f,{},1.0f, "head" });		//	頭
+	RegisterDamageDetectionData({ "spine_02",		0.4f,{},1.0f, "spine_02" });		//	胸部
+	RegisterDamageDetectionData({ "Shoulder_L",		0.4f,{},1.0f, "Shoulder_L" });		//	左肩
+	RegisterDamageDetectionData({ "Shoulder_R",		0.4f,{},1.0f, "Shoulder_R" });		//	右肩
+	RegisterDamageDetectionData({ "lowerarm_l",		0.4f,{},1.0f, "lowerarm_l" });		//	左肘
+	RegisterDamageDetectionData({ "lowerarm_r",		0.4f,{},1.0f, "lowerarm_r" });		//	右肘
+	RegisterDamageDetectionData({ "Hand_L",			0.4f,{},1.0f, "Hand_L" });		//	左手首
+	RegisterDamageDetectionData({ "Hand_R",			0.4f,{},1.0f, "Hand_R" });		//	右手首
+	RegisterDamageDetectionData({ "spine_01",		0.4f,{},1.0f, "spine_01" });		//	腰
+	RegisterDamageDetectionData({ "calf_l",			0.4f,{},1.0f, "calf_l" });		//	左膝
+	RegisterDamageDetectionData({ "calf_r",			0.4f,{},1.0f, "calf_r" });		//	右膝
+	RegisterDamageDetectionData({ "Foot_L",			0.6f,{},1.0f, "Foot_L" });		//	左足首
+	RegisterDamageDetectionData({ "Foot_R",			0.6f,{},1.0f, "Foot_R" });		//	右足首
 
 	//	左の翼
 	RegisterDamageDetectionData({ "Wing_L03",		0.4f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
@@ -169,37 +169,37 @@ void Dragonkin::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 
-	RegisterAttackDetectionData({ "head",			0.4f,{}, "head"			});		//	頭
-	RegisterAttackDetectionData({ "spine_02",		0.4f,{}, "spine_02"		});		//	胸部
-	RegisterAttackDetectionData({ "Shoulder_L",		0.4f,{}, "Shoulder_L"	});		//	左肩
-	RegisterAttackDetectionData({ "Shoulder_R",		0.4f,{}, "Shoulder_R"	});		//	右肩
-	RegisterAttackDetectionData({ "lowerarm_l",		0.4f,{}, "lowerarm_l"	});		//	左肘
-	RegisterAttackDetectionData({ "lowerarm_r",		0.4f,{}, "lowerarm_r"	});		//	右肘
-	RegisterAttackDetectionData({ "Hand_L",			0.4f,{}, "Hand_L"		});		//	左手首
-	RegisterAttackDetectionData({ "Hand_R",			0.4f,{}, "Hand_R"		});		//	右手首
-	RegisterAttackDetectionData({ "spine_01",		0.4f,{}, "spine_01"		});		//	腰
-	RegisterAttackDetectionData({ "calf_l",			0.4f,{}, "calf_l"		});		//	左膝
-	RegisterAttackDetectionData({ "calf_r",			0.4f,{}, "calf_r"		});		//	右膝
-	RegisterAttackDetectionData({ "Foot_L",			0.6f,{}, "Foot_L"		});		//	左足首
-	RegisterAttackDetectionData({ "Foot_R",			0.4f,{}, "Foot_R"		});		//	右足首
+	RegisterAttackDetectionData({ "head",			0.4f,{}, "head" });		//	頭
+	RegisterAttackDetectionData({ "spine_02",		0.4f,{}, "spine_02" });		//	胸部
+	RegisterAttackDetectionData({ "Shoulder_L",		0.4f,{}, "Shoulder_L" });		//	左肩
+	RegisterAttackDetectionData({ "Shoulder_R",		0.4f,{}, "Shoulder_R" });		//	右肩
+	RegisterAttackDetectionData({ "lowerarm_l",		0.4f,{}, "lowerarm_l" });		//	左肘
+	RegisterAttackDetectionData({ "lowerarm_r",		0.4f,{}, "lowerarm_r" });		//	右肘
+	RegisterAttackDetectionData({ "Hand_L",			0.4f,{}, "Hand_L" });		//	左手首
+	RegisterAttackDetectionData({ "Hand_R",			0.4f,{}, "Hand_R" });		//	右手首
+	RegisterAttackDetectionData({ "spine_01",		0.4f,{}, "spine_01" });		//	腰
+	RegisterAttackDetectionData({ "calf_l",			0.4f,{}, "calf_l" });		//	左膝
+	RegisterAttackDetectionData({ "calf_r",			0.4f,{}, "calf_r" });		//	右膝
+	RegisterAttackDetectionData({ "Foot_L",			0.6f,{}, "Foot_L" });		//	左足首
+	RegisterAttackDetectionData({ "Foot_R",			0.4f,{}, "Foot_R" });		//	右足首
 
 	//	左の翼
-	RegisterAttackDetectionData({ "Wing_L03",		0.4f,{} });		//	一番付け根に近い
-	RegisterAttackDetectionData({ "Wing_L04",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_L05",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_L06",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_L08",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_L09",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_L10",		0.4f,{} });		//	一番先の方
+	RegisterAttackDetectionData({ "Wing_L03",		0.4f,{}, "Wing_L03" });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_L04",		0.4f,{}, "Wing_L04" });
+	RegisterAttackDetectionData({ "Wing_L05",		0.4f,{}, "Wing_L05" });
+	RegisterAttackDetectionData({ "Wing_L06",		0.4f,{}, "Wing_L06" });
+	RegisterAttackDetectionData({ "Wing_L08",		0.4f,{}, "Wing_L08" });
+	RegisterAttackDetectionData({ "Wing_L09",		0.4f,{}, "Wing_L09" });
+	RegisterAttackDetectionData({ "Wing_L10",		0.4f,{}, "Wing_L10" });		//	一番先の方
 
-	//	右の翼
-	RegisterAttackDetectionData({ "Wing_R03",		0.4f,{} });		//	一番付け根に近い
-	RegisterAttackDetectionData({ "Wing_R04",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_R05",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_R06",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_R08",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_R09",		0.4f,{} });
-	RegisterAttackDetectionData({ "Wing_R10",		0.4f,{} });		//	一番先の方
+	//	右の翼												  
+	RegisterAttackDetectionData({ "Wing_R03",		0.4f,{}, "Wing_R03" });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_R04",		0.4f,{}, "Wing_R04" });
+	RegisterAttackDetectionData({ "Wing_R05",		0.4f,{}, "Wing_R05" });
+	RegisterAttackDetectionData({ "Wing_R06",		0.4f,{}, "Wing_R06" });
+	RegisterAttackDetectionData({ "Wing_R08",		0.4f,{}, "Wing_R08" });
+	RegisterAttackDetectionData({ "Wing_R09",		0.4f,{}, "Wing_R09" });
+	RegisterAttackDetectionData({ "Wing_R10",		0.4f,{}, "Wing_R10" });		//	一番先の方
 
 #pragma endregion ----- 攻撃判定登録 -----
 }
@@ -209,6 +209,8 @@ void Dragonkin::Update(const float& elapsedTime)
 {
 	//	更新フラグがfalseなら処理しない
 	if (updateFlag_ == false)return;
+
+	Character::Update(elapsedTime);
 
 	//	アニメーション更新処理
 	UpdateAnimation(elapsedTime);
@@ -261,9 +263,9 @@ bool Dragonkin::RayVsHorizontal(const float& elapsedTime)
 }
 
 //	アニメーション
-void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
+void Dragonkin::PlayAnimation(const AnimationType& animType, const bool& loop, const float& blendTime, const float& animSpeed, const float& startFrame, const float& endFrame)
 {
-	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, startFrame, animSpeed);
+	Character::PlayAnimation(static_cast<int>(animType), loop, blendTime, animSpeed, startFrame, endFrame);
 }
 
 //	当たり判定更新
@@ -385,7 +387,7 @@ void Dragonkin::DrawDebug()
 		//	----- ビヘイビアツリー -----
 		ImGui::Text(u8"Behavior　%s", str.c_str());								//	現在のビヘイビア
 		ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);	//	ビヘイビアツリー更新フラグ
-		
+
 		//	----- コリジョン描画フラグ -----
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
 		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定

@@ -37,7 +37,7 @@ public:
 	void SetEyeX(const float& eyeX)					{ this->eye_.x = eyeX; }	
 	void SetEyeY(const float& eyeY)					{ this->eye_.y = eyeY; }
 	void SetEyeZ(const float& eyeZ)					{ this->eye_.z = eyeZ; }
-	void SetTarget(const DirectX::XMFLOAT3& target) { this->focus_ = target; }				//	ターゲット位置設定
+	void SetTargetPos(const DirectX::XMFLOAT3& target) { this->focus_ = target; }				//	ターゲット位置設定
 	void SetRange(const float& range)				{ this->range_ = range; }				//	カメラ距離設定
 	void SetIsPose(bool isPose)						{ this->isPose_ = isPose; }
 

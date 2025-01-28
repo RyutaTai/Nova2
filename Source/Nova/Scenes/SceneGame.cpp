@@ -148,7 +148,7 @@ void SceneGame::Update(const float& elapsedTime)
 	// ----- カメラ更新処理 -----
 	DirectX::XMFLOAT3 cameraTarget = player_->GetTransform()->GetPosition();
 	cameraTarget.y += player_->GetHeight() / 2.0f;
-	Camera::Instance().SetTarget(cameraTarget);
+	Camera::Instance().SetTargetPos(cameraTarget);
 	Camera::Instance().Update(elapsedTime);
 
 	// ----- ステートマシン更新処理 -----

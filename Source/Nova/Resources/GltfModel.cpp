@@ -687,7 +687,7 @@ GltfModel::BufferView GltfModel::MakeBufferView(const tinygltf::Accessor& access
     return bufferView;
 }
 
-void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& startFrame, const float& animSpeed)
+void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& blendTime, const float& animSpeed, const float& startFrame, const float& endFrame)
 {
     Animate(animationClip_, currentAnimationSeconds_, animatedNodes_[0]);
     animationClip_ = index;
@@ -703,6 +703,11 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& b
 
     transitionTime_ = blendTime;
     factor_ = 0;
+
+	animationDuration_ = endFrame == 0.0f ? 
+        animations_.at(animationClip_).duration_ : 
+        endFrame;
+
 }
 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
@@ -726,7 +731,8 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
         currentAnimationSeconds_ += elapsedTime * animationSpeed_;
 
         //  アニメーションの長さ
-		float animationDuration = animations_.at(animationClip_).duration_;
+		float animationDuration = animationDuration_;
+		//float animationDuration = animations_.at(animationClip_).duration_;
         
         if (currentAnimationSeconds_ > animationDuration)
         {

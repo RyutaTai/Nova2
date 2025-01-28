@@ -89,7 +89,7 @@ public:
 	void DrawDebugPrimitive()override;
 
 	//	----- アニメーション -----
-	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
+	void PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);
 
 	//	----- Collision -----
 	void UpdateCollisions(const float& elapsedTime)override;

@@ -22,7 +22,8 @@ namespace PlayerState
 	void IdleState::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.2f);
+		//owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.2f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f);
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
@@ -282,7 +283,7 @@ namespace PlayerState
 	void ComboOne1::Update(const float& elapsedTime)
 	{
 		//	経過時間更新
-		UpdateElapsedTime(elapsedTime);
+		UpdateStateElapsedTime(elapsedTime);
 
 		//	アニメーション速度更新
 		UpdateAnimationSpeed();			
@@ -348,7 +349,7 @@ namespace PlayerState
 		return false;
 	}
 
-	void ComboOne1::UpdateElapsedTime(const float& elapsedTime)
+	void ComboOne1::UpdateStateElapsedTime(const float& elapsedTime)
 	{
 		//stateElapsedTime_ += elapsedTime;
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
@@ -436,7 +437,7 @@ namespace PlayerState
 	void ComboOne2::Update(const float& elapsedTime)
 	{
 		//	経過時間更新
-		UpdateElapsedTime(elapsedTime);	
+		UpdateStateElapsedTime(elapsedTime);	
 
 		//	アニメーション速度更新
 		UpdateAnimationSpeed();
@@ -510,11 +511,6 @@ namespace PlayerState
 			return true;
 		}
 		return false;
-	}
-
-	void ComboOne2::UpdateElapsedTime(const float& elapsedTime)
-	{
-		stateElapsedTime_ += elapsedTime;
 	}
 
 	//	アニメーション再生速度の微調整
@@ -594,7 +590,7 @@ namespace PlayerState
 	void ComboOne3::Update(const float& elapsedTime)
 	{
 		//	経過時間更新
-		UpdateElapsedTime(elapsedTime);
+		UpdateStateElapsedTime(elapsedTime);
 
 		//	一撃目の判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
@@ -691,11 +687,6 @@ namespace PlayerState
 		}
 	}
 
-	void ComboOne3::UpdateElapsedTime(const float& elapsedTime)
-	{
-		stateElapsedTime_ += elapsedTime;
-	}
-
 	void ComboOne3::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
@@ -755,7 +746,7 @@ namespace PlayerState
 	void ComboOne4::Update(const float& elapsedTime)
 	{
 		//	経過時間更新
-		UpdateElapsedTime(elapsedTime);
+		UpdateStateElapsedTime(elapsedTime);
 	
 		//	リズム判定をとって判定文字を出すため
 		Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
@@ -829,11 +820,6 @@ namespace PlayerState
 		return false;
 	}
 
-	void ComboOne4::UpdateElapsedTime(const float& elapsedTime)
-	{
-		stateElapsedTime_ += elapsedTime;
-	}
-
 	void ComboOne4::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
@@ -890,4 +876,153 @@ namespace PlayerState
 			ImGui::TreePop();
 		}
 	}
+}
+
+//	ダメージステート
+namespace PlayerState
+{
+	void DamageState::Initialize()
+	{
+		//	アニメーションの速度を変える区間を設定
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.54f);		//	地面につく
+		animSpeedChangeInterval_[1].SetJudgeTime(0.55f, 1.16f);		//	動作終わり
+		animSpeedChangeInterval_[2].SetJudgeTime(1.17f, 2.2f);		//	余韻
+
+		//	くらいモーション
+		//owner_->PlayAnimation(Player::AnimationType::HitFront, false, 0.1f, 0.2f);
+		//owner_->SetAnimationSpeed(1.8f);
+
+		//	吹っ飛びモーション
+		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, 0.35f, 1.18f);
+		owner_->SetAnimationSpeed(1.5f);
+
+		//  敵からプレイヤーの方向へ吹っ飛ばす
+		DirectX::XMFLOAT3 direction = Normalize(owner_->GetTransform()->GetPosition() - owner_->GetEnemyPos());
+		direction.y = 0.0f;
+		float length = 5.0f;
+		float decelerationForce = 5.0f;
+		owner_->AddForce(direction, length, decelerationForce);
+
+		//	
+		/*DirectX::XMFLOAT3 playerUp = owner_->GetTransform()->CalcUp();
+		float angle = XMFLOAT3Dot(Normalize(playerUp), direction);
+		owner_->GetTransform()->SetRotationY(angle);*/
+	}
+
+	void DamageState::Update(const float& elapsedTime)
+	{
+		//	ステート経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+		
+		//	アニメーション速度調整
+		UpdateAnimationSpeed();
+
+		//	アニメーション再生が終わったらステート終了
+		if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+		}
+
+	}
+
+	void DamageState::UpdateAnimationSpeed()
+	{
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+
+		//	アニメーション速度更新
+		for (int i = 0; i < AnimSpeedSectionCount; ++i)
+		{
+			if (animSpeedChangeInterval_[i].IsJudgeFlag(currentAnimationSeconds))
+			{
+				owner_->SetAnimationSpeed(animationSpeed_[i]);
+				break;
+			}
+		}
+
+	/*	if (animSpeedChangeInterval_[0].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.0f);
+		else if (animSpeedChangeInterval_[1].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(1.2f);
+		else if (animSpeedChangeInterval_[2].IsJudgeFlag(currentAnimationSeconds))
+			owner_->SetAnimationSpeed(2.0f);*/
+	}
+
+	void DamageState::Finalize()
+	{
+		owner_->SetAnimationSpeed(1.0f);
+		owner_->GetTransform()->SetRotationY(0.0f);
+	}
+
+	void DamageState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Damage"))
+		{
+			if(ImGui::TreeNode("AnimationSpeed"))
+			{
+				ImGui::DragFloat("AnimSpeedSection0", &animationSpeed_[0]);
+				ImGui::DragFloat("AnimSpeedSection1", &animationSpeed_[1]);
+				ImGui::DragFloat("AnimSpeedSection2", &animationSpeed_[2]);
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+	}
+}
+
+//	怯みステート
+namespace PlayerState
+{
+	void FlinchState::Initialize()
+	{
+
+	}
+
+	void FlinchState::Update(const float& elapsedTime)
+	{
+		owner_->ChangeState(Player::StateType::Idle);
+	}
+
+	void FlinchState::Finalize()
+	{
+
+	}
+
+	void FlinchState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Flinch"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+}
+
+//	死亡ステート
+namespace PlayerState
+{
+	void DeathState::Initialize()
+	{
+
+	}
+
+	void DeathState::Update(const float& elapsedTime)
+	{
+		owner_->ChangeState(Player::StateType::Idle);
+	}
+
+	void DeathState::Finalize()
+	{
+
+	}
+
+	void DeathState::DrawDebug()
+	{
+		if (ImGui::TreeNode("Death"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
 }

@@ -140,7 +140,7 @@ void Graphics::CreateDirect2dObjects()
 			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE)), d2dBitmap1.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-	d2d1DeviceContext_->SetTarget(d2dBitmap1.Get());
+	d2d1DeviceContext_->SetTargetPos(d2dBitmap1.Get());
 
 	Microsoft::WRL::ComPtr<IDWriteFactory> dwriteFactory;
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(dwriteFactory.GetAddressOf()));

@@ -11,7 +11,7 @@ public:
 	virtual ~Character() {}
 
 	virtual void Initialize() = 0;
-	virtual void Update(const float& elapsedTime) = 0;
+	virtual void Update(const float& elapsedTime);
 	virtual bool RayVsVertical(const float& elapsedTime) = 0;		//	ステージとの当たり判定
 	virtual bool RayVsHorizontal(const float& elapsedTime) = 0;
 	virtual void Render();
@@ -38,12 +38,16 @@ public:
 	void SetAcceleration(const DirectX::XMFLOAT3& acceleration) { acceleration_ = acceleration; }
 	const DirectX::XMFLOAT3 GetAcceleration()const { return acceleration_; }
 	
+	//	----- 吹っ飛ばし -----
+	void UpdateForce(const float& elapsedTime);
+	void AddForce(const DirectX::XMFLOAT3& direction, const float& power, const float& decelerationForce);
+
 	//	----- 移動 -----
 	virtual void Move(const float& elpasedTime);
 	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
 
 	//	----- アニメーション -----
-	void		PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& startFrame = 0.0f, const float& animSpeed = 1.0f);
+	void		PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);
 	void		UpdateAnimation(const float& elapsedTime);
 	void		AppendAnimation(const std::string& filename);
 	bool		IsPlayAnimation()const;
@@ -111,6 +115,11 @@ public:
 	//	----- 攻撃力 -----
 	void SetAttackPower(const float& attackPower) { attackPower_ = attackPower; }
 	const float GetAttackPower()const { return attackPower_; }
+
+	//	----- 吹っ飛ばし -----
+	float				blowPower_ = 0.0f;			//	吹っ飛ばす力
+	DirectX::XMFLOAT3	blowDirection_ = {};		//	吹っ飛ばす方向
+	float				decelerationForce_ = 0.0f;	//	1フレームでどれくらい力を減衰させるか
 
 	Transform* GetTransform() { return gltfModelResource_->GetTransform(); }
 

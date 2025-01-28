@@ -50,7 +50,7 @@ private:
 	void UpdateEnemyVs();
 	// ----- Ç≠ÇÁÇ¢îªíË -----
 	void UpdateEnemyDamage();               // EnemyDamage
-	void EnemyDamageVsBulletAttack();		// Enemy VS Proejctile
+	void EnemyDamageVsBulletAttack();		// Enemy VS Bullet
 
 #pragma endregion	========== Enemy Vs ÅZÅZ ==========
 

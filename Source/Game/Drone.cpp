@@ -168,13 +168,9 @@ void Drone::Update(const float& elapsedTime)
 	//	----- ù‰ñˆ— -----
 	Turn(elapsedTime);
 
-	//	’eŠÛ‚ª‚ ‚ê‚Î
-	if (BulletManager::Instance().GetBulletCount() > 0)
-	{
-		//	’eŠÛXVˆ—
-		BulletManager::Instance().Update(elapsedTime);
-		BulletManager::Instance().CoverModelUpdate(elapsedTime);
-	}
+	//	’eŠÛXVˆ—
+	BulletManager::Instance().Update(elapsedTime);
+	BulletManager::Instance().CoverModelUpdate(elapsedTime);
 
 	//	HP‚ª‚È‚­‚È‚Á‚½‚ç
 	if (hp_ <= 0)

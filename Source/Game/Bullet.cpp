@@ -57,13 +57,16 @@ void Bullet::Initialize()
 //	更新処理
 void Bullet::Update(const float& elapsedTime)
 {
+	//	更新フラグがfalseなら処理しない
+	if (updateFlag_ == false)return;
+
 	//	----- 生存時間更新 -----
 	UpdateLifeTimer(elapsedTime);
 
 	//	----- オーディオ関連更新 -----
 	UpdateEmitter();
 	UpdateAudioSource();
-	
+
 }
 
 //	発射
@@ -78,8 +81,11 @@ void Bullet::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3&
 void Bullet::UpdateEmitter()
 {
 	//	位置更新
-	emitter_.position_ = GetTransform()->GetPosition();
-	se_[static_cast<int>(Audio3D::Move)]->SetPosition(emitter_.position_);	//	AudioSource3Dのemitter_のpositionに渡す
+	//emitter_.position_ = GetTransform()->GetPosition();
+	//se_[static_cast<int>(Audio3D::Move)]->SetPosition(emitter_.position_);	//	AudioSource3Dのemitter_のpositionに渡す
+	////emitter_.velocity_ = velocity_;
+	 
+	se_[static_cast<int>(Audio3D::Move)]->SetPosition(GetTransform()->GetPosition());	//	AudioSource3Dのemitter_のpositionに渡す
 	//emitter_.velocity_ = velocity_;
 }
 
@@ -115,6 +121,10 @@ void Bullet::Destroy()
 
 	//	マネージャーから自分を削除する
 	BulletManager::Instance().Remove(this);
+
+	//	更新フラグをオフにする
+	updateFlag_ = false;
+
 }
 
 //	生存時間更新

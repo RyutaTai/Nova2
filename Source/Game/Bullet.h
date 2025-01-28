@@ -124,6 +124,9 @@ protected:
 	AudioSource3D* se_[static_cast<int>(Audio3D::Max)] = { nullptr };	//	弾丸のSE(3Dで鳴らす)
 	AudioSource* debugSE_ = nullptr;
 
+	//	----- 更新フラグ -----
+	bool updateFlag_ = true;
+
 private:
 	//	----- エフェクト -----
 		enum EFFECT

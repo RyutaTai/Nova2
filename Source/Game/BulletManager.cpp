@@ -24,35 +24,84 @@ void BulletManager::Initialize()
 	}
 }
 
+//	弾丸登録
+void BulletManager::Register(Bullet* bullet)
+{
+	bullet->SetInvincible(isInvincible_);
+	//bullets_.emplace_back(bullet);
+
+	generates_.insert(bullet);
+}
+
 //	更新処理
 void BulletManager::Update(const float& elapsedTime)
 {
-	//	更新処理
-	for (Bullet* bullet : bullets_)
+	////	破棄処理
+	////	※bulletsの範囲for文内でerase()すると不具合が発生するため,
+	////	更新処理が終わった後に、破棄リストに積まれたオブジェクトを削除する
+	//for (Bullet* remove : removes_)
+	//{
+	//	//	std::vectorから要素を破棄するときはイテレーターで削除しなければならない
+	//	//	std::vectorで管理されている要素を削除するにはerase()関数を使用する
+	//	//	破棄リストのポインタからイテレーターを検索し、erase()に渡す
+	//	std::vector	<Bullet*>::iterator it =
+	//		std::find(bullets_.begin(), bullets_.end(), remove);
+	//
+	//	if (it != bullets_.end())
+	//	{
+	//		bullets_.erase(it);
+	//	}
+	//
+	//	//	弾丸処理
+	//	delete remove;
+	//}
+	////	破棄リストをクリア
+	//removes_.clear();
+	//
+	//
+	////	更新処理
+	//for (Bullet* bullet : bullets_)
+	//{
+	//	bullet->Update(elapsedTime);
+	//}
+	//
+	// -------------------------
+	//          生成
+	// -------------------------
+	for (Bullet* bullet : generates_)
+	{
+		bullets_.emplace_back(bullet);
+		bullet->Initialize();
+	}
+	generates_.clear();
+
+
+	// -------------------------
+	//          更新
+	// -------------------------
+	for (Bullet*& bullet : bullets_)
 	{
 		bullet->Update(elapsedTime);
 	}
 
-	//	破棄処理
-	//	※bulletsの範囲for文内でerase()すると不具合が発生するため,
-	//	更新処理が終わった後に、破棄リストに積まれたオブジェクトを削除する
-	for (Bullet* remove : removes_)
+	// -------------------------
+	//          破棄
+	// -------------------------
+	for (Bullet* bullet : removes_)
 	{
-		//	std::vectorから要素を破棄するときはイテレーターで削除しなければならない
-		//	std::vectorで管理されている要素を削除するにはerase()関数を使用する
-		//	破棄リストのポインタからイテレーターを検索し、erase()に渡す
-		std::vector	<Bullet*>::iterator it =
-			std::find(bullets_.begin(), bullets_.end(), remove);
+		auto it = std::find(bullets_.begin(), bullets_.end(), bullet);
 
 		if (it != bullets_.end())
 		{
 			bullets_.erase(it);
 		}
 
-		//	弾丸処理
-		delete remove;
+		if (bullet != nullptr)
+		{
+			delete bullet;
+			bullet = nullptr;
+		}
 	}
-	//	破棄リストをクリア
 	removes_.clear();
 }
 
@@ -128,13 +177,6 @@ void BulletManager::Render()
 	}
 }
 
-//	弾丸登録
-void BulletManager::Register(Bullet* bullet)
-{
-	bullet->SetInvincible(isInvincible_);
-	bullets_.emplace_back(bullet);
-}
-
 //	弾丸全削除
 void BulletManager::Clear()
 {
@@ -167,8 +209,17 @@ void BulletManager::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"BulletManager"))
 	{
+		//	弾の数
+		int generatesCount = generates_.size();
+		int bulletCount = GetBulletCount();
+		int removesCount = removes_.size();
+		ImGui::DragInt("GeneratesCount", &generatesCount);
+		ImGui::DragInt("BulletCount", &bulletCount);
+		ImGui::DragInt("RemovesCount", &removesCount);
+
+		//	無敵状態
 		bool previousInvincible = isInvincible_;
-		if(ImGui::Checkbox("Invincible", &isInvincible_))	//	無敵状態
+		if(ImGui::Checkbox("Invincible", &isInvincible_))	
 		{
 			if (previousInvincible != isInvincible_)
 			{

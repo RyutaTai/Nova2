@@ -64,6 +64,7 @@ public:
 
 private:
 	std::vector	<Bullet*>	bullets_;
+	std::set	<Bullet*>	generates_;
 	std::set	<Bullet*>	removes_;
 #if 0
 	float					coverScale_		= 30.0f;	//	カバーモデルのスケール

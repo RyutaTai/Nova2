@@ -23,7 +23,7 @@ namespace PlayerState
 	{
 		//	アニメーションセット
 		//owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.2f);
-		owner_->PlayAnimation(Player::AnimationType::Idle, true, 1.0f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.3f);
 		owner_->SetAnimationSpeed(1.0f);
 	}
 

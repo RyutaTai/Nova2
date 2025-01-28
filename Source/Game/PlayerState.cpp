@@ -899,9 +899,7 @@ namespace PlayerState
 		//  “G‚©‚çƒvƒŒƒCƒ„[‚Ì•ûŒü‚Ö‚Á”ò‚Î‚·
 		DirectX::XMFLOAT3 direction = Normalize(owner_->GetTransform()->GetPosition() - owner_->GetEnemyPos());
 		direction.y = 0.0f;
-		float length = 5.0f;
-		float decelerationForce = 5.0f;
-		owner_->AddForce(direction, length, decelerationForce);
+		owner_->AddForce(direction, blowPower_, decelerationForce_);
 
 		//	
 		/*DirectX::XMFLOAT3 playerUp = owner_->GetTransform()->CalcUp();
@@ -962,6 +960,13 @@ namespace PlayerState
 				ImGui::DragFloat("AnimSpeedSection0", &animationSpeed_[0]);
 				ImGui::DragFloat("AnimSpeedSection1", &animationSpeed_[1]);
 				ImGui::DragFloat("AnimSpeedSection2", &animationSpeed_[2]);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("AddForce"))
+			{
+				ImGui::DragFloat("BlowPower", &blowPower_);
+				ImGui::DragFloat("DecelerationForce", &decelerationForce_);
+
 				ImGui::TreePop();
 			}
 

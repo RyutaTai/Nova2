@@ -234,6 +234,10 @@ namespace PlayerState
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
 		float		animationSpeed_[3] = { 1.0f,1.2f,2.0f };
 
+		//	吹っ飛ばし用
+		float blowPower_ = 20.0f;
+		float decelerationForce_ = 30.0f;
+
 	};
 }
 

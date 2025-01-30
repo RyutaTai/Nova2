@@ -20,11 +20,11 @@ public:
 
 	void NormalCamera(const float& elapsedTime);	//	通常カメラ
 
-	// この関数をコールすればカメラ移動がイージングで始まります。
+	// この関数をコールすればカメラ移動がイージングで始まる
 	//第一引数：目標座標
 	//第二引数：目標角度
 	//第三引数：何秒で移動するか
-	bool LaunchCameraMove(DirectX::XMFLOAT3 targetEye_, DirectX::XMFLOAT3 targetAngle, float moveTime_);
+	bool LaunchCameraMove(const DirectX::XMFLOAT3& targetEye, const DirectX::XMFLOAT3& targetAngle, const float& moveTime);
 
 	//	デバッグ用
 	void DebugCamera(const float& elapsedTime);	//	デバッグ用カメラ更新処理
@@ -39,7 +39,7 @@ public:
 	void SetEyeZ(const float& eyeZ)					{ this->eye_.z = eyeZ; }
 	void SetTargetPos(const DirectX::XMFLOAT3& target) { this->focus_ = target; }				//	ターゲット位置設定
 	void SetRange(const float& range)				{ this->range_ = range; }				//	カメラ距離設定
-	void SetIsPose(bool isPose)						{ this->isPose_ = isPose; }
+	void SetIsPose(const bool& isPose)				{ this->isPose_ = isPose; }
 
 	Transform*					GetTransform()		{ return &transform_; }
 	const DirectX::XMMATRIX		GetViewMatrix()const{ return viewMatrix_; }					//	ビュー行列取得
@@ -69,7 +69,7 @@ private:
 	DirectX::XMMATRIX projectionMatrix_;						//	プロジェクション行列
 	DirectX::XMMATRIX viewProjectionMatrix_;					//	ビュープロジェクション行列
 	DirectX::XMMATRIX invViewProjectionMatrix_;					//	ビュープロジェクション逆行列
-	DirectX::XMFLOAT3 eye_;										//	カメラの視点
+	DirectX::XMFLOAT3 eye_ = {};								//	カメラの視点
 	DirectX::XMFLOAT3 focus_		= { 0,-10,10 };				//	カメラの注視点
 	DirectX::XMFLOAT3 angle_		= { 0,0,0 };				//	カメラの回転値
 	DirectX::XMFLOAT3 eyeOffset_	= { 0,0,0 };				//	カメラの視点eye_を動かすときの移動値
@@ -85,20 +85,20 @@ private:
 	float nearZ_			= 50.0f;
 	float farZ_				= 400000.0f;
 
-	DirectX::XMFLOAT3 up_;										//	カメラの上方向
-	DirectX::XMFLOAT3 front_;									//	カメラの前方向
-	DirectX::XMFLOAT3 right_;									//	カメラの右方向
+	DirectX::XMFLOAT3 up_ = {};										//	カメラの上方向
+	DirectX::XMFLOAT3 front_ = {};									//	カメラの前方向
+	DirectX::XMFLOAT3 right_ = {};									//	カメラの右方向
 
 	bool isPose_ = false;
 
 	bool CameraMove(const float& elapsedTime);
 	bool cameraMove_ = false;
-	float moveTime_;
-	float moveTimer_;
-	DirectX::XMFLOAT3 moveTargetEye_;
-	DirectX::XMFLOAT3 moveTargetAngle_;
-	DirectX::XMFLOAT3 cashPos_;
-	DirectX::XMFLOAT3 cashAngle_;
+	float moveTime_ = 0.0f;
+	float moveTimer_ = 0.0f;
+	DirectX::XMFLOAT3 moveTargetEye_ = {};
+	DirectX::XMFLOAT3 moveTargetAngle_ = {};
+	DirectX::XMFLOAT3 cashPos_ = {};
+	DirectX::XMFLOAT3 cashAngle_ = {};
 
 	//	デバッグ用
 	bool isDebugCamera_ = false;

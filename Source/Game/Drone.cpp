@@ -66,7 +66,7 @@ void Drone::Initialize()
 	radius_ = 2.5f;
 
 	//	索敵範囲設定
-	searchRange_ = 11.0f;
+	searchRange_ = 15.0f;
 
 	//	HP設定
 	hp_ = MaxHp_;
@@ -154,16 +154,12 @@ void Drone::Update(const float& elapsedTime)
 	//	----- 当たり判定更新 -----
 	UpdateCollisions(elapsedTime);
 
-	//	次の弾を発射するまでのタイマー更新
+	//	----- 次の弾を発射するまでのタイマー更新 -----
 	launchTimer_ -= elapsedTime;
 
-	//	プレイヤーを見つけたら
-	if (SearchPlayer())
-	{
-		//	弾丸処理
-		LaunchBullet();
-
-	}
+	//	----- 移動更新 -----
+	UpdateVelocity(elapsedTime);
+	Move(elapsedTime);
 
 	//	----- 旋回処理 -----
 	Turn(elapsedTime);
@@ -210,58 +206,57 @@ void Drone::UpdateAudioSource()
 //	弾丸処理
 void Drone::LaunchBullet()
 {
-	//	弾丸発射フラグが立っていたら(デバッグ用)
-	if (bulletLaunch_)	
-	{
+	//	弾丸発射フラグが立っていなければreturn(デバッグ用)
+	if (bulletLaunch_ == false)return;
 
 #if 1
-		//	一定間隔で弾を発射
-		if (launchTimer_ <= 0.0f)
+	//	一定間隔で弾を発射
+	if (launchTimer_ <= 0.0f)
 #else
-		GamePad gamePad = Input::Instance().GetGamePad();
-		if (gamePad.GetButtonDown() & GamePad::BTN_START)	//	Enterキーで発射
+	GamePad gamePad = Input::Instance().GetGamePad();
+	if (gamePad.GetButtonDown() & GamePad::BTN_START)	//	Enterキーで発射
 #endif
-		{
-			//	前方向
-			DirectX::XMFLOAT3 dir = {};
-			float angleY = GetTransform()->GetRotationY();
+	{
+		//	前方向
+		DirectX::XMFLOAT3 dir = {};
+		float angleY = GetTransform()->GetRotationY();
 
-			dir.x = sinf(angleY);
-			dir.y = 0.0f;
-			dir.z = cosf(angleY);
+		dir.x = sinf(angleY);
+		dir.y = 0.0f;
+		dir.z = cosf(angleY);
 
-			//	発射位置
-			DirectX::XMFLOAT3 pos = this->GetTransform()->GetPosition();
-			pos = pos + dir * 2.0f;
+		//	発射位置
+		DirectX::XMFLOAT3 pos = this->GetTransform()->GetPosition();
+		pos = pos + dir * 2.0f;
 
-			//	弾丸ファイル名
-			const char* bulletName = "./Resources/Model/Bullet/Sphere.gltf";
+		//	弾丸ファイル名
+		const char* bulletName = "./Resources/Model/Bullet/Sphere.gltf";
 #if  0	//	直進する弾丸生成
-			BulletStraight* bullet = new BulletStraight(bulletName);
-			bullet->Launch(dir, pos);
+		BulletStraight* bullet = new BulletStraight(bulletName);
+		bullet->Launch(dir, pos);
 
 #else	//	追従する弾丸生成
-			BulletHorming* bullet = new BulletHorming(bulletName);
-			bullet->Launch(dir, pos);
+		BulletHorming* bullet = new BulletHorming(bulletName);
+		bullet->Launch(dir, pos);
 #endif	
-			//	所有者の位置設定
-			bullet->SetOwnerPosition(this->GetTransform()->GetPosition());
+		//	所有者の位置設定
+		bullet->SetOwnerPosition(this->GetTransform()->GetPosition());
 
-			//	発射タイマーリセット
-			launchTimer_ = 3.5f;
+		//	発射タイマーリセット
+		launchTimer_ = 3.5f;
 
-			//	発射音再生
+		//	発射音再生
 #if 0
-			if (sources_[static_cast<int>(Audio3D::Shot)])
-			{
-				sources_[static_cast<int>(Audio3D::Shot)]->Play(false);
-			}
+		if (sources_[static_cast<int>(Audio3D::Shot)])
+		{
+			sources_[static_cast<int>(Audio3D::Shot)]->Play(false);
+		}
 #else
-			AudioManager::Instance().GetAudioResource("LaunchBullet")->Play(false);
+		AudioManager::Instance().GetAudioResource("LaunchBullet")->Play(false);
 #endif
 
-		}
 	}
+
 }
 
 //	旋回処理
@@ -278,37 +273,6 @@ void Drone::Turn(const float& elapsedTime)
 	DirectX::XMFLOAT3 dronePos = this->GetTransform()->GetPosition();
 	float vx = targetPosition_.x - dronePos.x;
 	float vz = targetPosition_.z - dronePos.z;
-
-
-	//	ドローン用の回転処理
-#if 0
-	DirectX::XMVECTOR TargetPos = DirectX::XMLoadFloat3(&targetPosition_);				//	ターゲットの位置ベクトル
-	DirectX::XMVECTOR DronePos = DirectX::XMLoadFloat3(&GetTransform()->GetPosition());	//	ドローンの位置ベクトル
-	DirectX::XMVECTOR DroneToTarget = DirectX::XMVectorSubtract(TargetPos, DronePos);	//	ドローンからターゲットへのベクトル
-	DroneToTarget = DirectX::XMVector3Normalize(DroneToTarget);							//	ターゲットへのベクトルを正規化	
-	DirectX::XMVECTOR Front = DirectX::XMLoadFloat3(&GetTransform()->CalcForward());	//	ドローンの前方向
-	Front = DirectX::XMVector3Normalize(Front);											//	ドローンの前方向ベクトルを正規化
-	
-	DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(Front, DroneToTarget);				//	外積を行い、回転軸を算出
-	float rad = DirectX::XMVectorGetX(DirectX::XMVector3Dot(Front, DroneToTarget));		//	内積する
-	rad = acosf(rad);	//	内積の結果から回転角度を求める
-
-	if (fabsf(rad) > 1e-8f)
-	{
-		//DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(Axis, rad * elapsedTime);											//	回転軸Axisと回転角度radから回転クオータニオンを求める
-		//DirectX::XMVECTOR Rotate = DirectX::XMQuaternionMultiply(DirectX::XMLoadFloat4(&GetTransform()->GetRotation()), Q);		//	求めたクオータニオンをかけ合わせる
-		//DirectX::XMFLOAT4 rotation;
-		//DirectX::XMStoreFloat4(&rotation, Rotate);
-		//GetTransform()->SetRotation(rotation);
-
-		DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(Axis, rad);														//	回転軸Axisと回転角度radから回転クオータニオンを求める
-		DirectX::XMVECTOR Rotate = DirectX::XMQuaternionMultiply(DirectX::XMLoadFloat4(&GetTransform()->GetRotation()), Q);		//	求めたクオータニオンをかけ合わせる
-		DirectX::XMFLOAT4 rotation;
-		DirectX::XMStoreFloat4(&rotation, Rotate);
-		GetTransform()->SetRotation(rotation);
-	}
-
-#endif
 
 	//	旋回処理
 #if 1
@@ -474,6 +438,20 @@ void Drone::DrawDebugPrimitive()
 
 }
 
+//	現在のステート表示
+void Drone::DrawStateStr()
+{
+	//	ステート文字列
+	std::string stateStr[static_cast<int>(StateType::Max)] =
+	{
+		"Idle","Search","Move",
+		"Attack","Avoidance"
+	};
+
+	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
+
+}
+
 //	デバッグ描画
 void Drone::DrawDebug()
 {
@@ -481,7 +459,9 @@ void Drone::DrawDebug()
 
 	if (ImGui::TreeNode(u8"Drone ドローン"))
 	{
-		//GetTransform()->DrawDebug();
+		//	ステート
+		DrawStateStr();
+		stateMachine_->DrawDebug();
 
 		//	コリジョン描画フラグ
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
@@ -495,7 +475,8 @@ void Drone::DrawDebug()
 		
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
 		ImGui::DragFloat("TurnSpeed", &turnSpeed_, 1.0f, -FLT_MAX, FLT_MAX);	//	旋回速度
-		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);
+		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);	//	索敵範囲
+		ImGui::DragFloat("LaunchRange", &launchRange_, 0.1f, -FLT_MAX, FLT_MAX);	//	射程範囲
 		ImGui::TreePop();
 	}
 	BulletManager::Instance().DrawDebug();	//	弾丸ImGui

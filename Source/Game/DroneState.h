@@ -17,6 +17,10 @@ namespace DroneState
 		void Finalize()override;
 		void DrawDebug()override;
 
+	private:
+		float IdleTime_ = 1.0f;			//	‘Ò‹@‚É“ü‚Á‚ÄÃ~‚·‚éŠÔ
+		//const float IdleTime_ = 1.0f;	//	‘Ò‹@‚É“ü‚Á‚ÄÃ~‚·‚éŠÔ
+
 	};
 }
 
@@ -67,9 +71,6 @@ namespace DroneState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 		void DrawDebug()override;
-
-		void LaunchBullet();
-		void Attack();
 
 	};
 }

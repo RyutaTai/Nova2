@@ -823,7 +823,7 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 
 	//	移動ベクトルはXZ平面に水平なベクトルになるようにする
 	//	カメラ右方向ベクトルをXZ単位ベクトルに変換
-	float rLength;
+	float rLength = 0.0f;
 	DirectX::XMStoreFloat(&rLength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraRight)));
 	float cameraRightX = cameraRight.x;
 	float cameraRightZ = cameraRight.z;
@@ -836,7 +836,7 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 	}
 
 	//	カメラ前方向ベクトルをXZ単位ベクトルに変換
-	float zLength;
+	float zLength = 0.0f;
 	DirectX::XMStoreFloat(&zLength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraFoward)));
 	float cameraFrontX = cameraFoward.x;
 	float cameraFrontZ = cameraFoward.z;
@@ -851,7 +851,7 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 	//	スティックの水平入力値をカメラ右方向に反映し、
 	//	スティック垂直入力値をカメラ前方向に反映し、
 	//	進行ベクトルを計算する
-	DirectX::XMFLOAT3 vec;
+	DirectX::XMFLOAT3 vec = {};
 	vec.x = (cameraFrontX * ay + cameraRightX * ax) * moveSpeed_;
 	vec.z = (cameraFrontZ * ay + cameraRightZ * ax) * moveSpeed_;
 
@@ -929,7 +929,6 @@ void Player::DrawDebug()
 {
 	if (ImGui::TreeNode(u8"Playerプレイヤー"))
 	{
-
 		//	ステート表示
 		DrawStateStr();
 		stateMachine_->DrawDebug();

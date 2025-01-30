@@ -24,6 +24,27 @@ void Enemy::SetRandomTargetPosition()
 	targetPosition_.z = territoryOrigin_.z + cosf(theta) * range;
 }
 
+//	ターゲットまでの距離
+const float Enemy::CalcDistanceToTarget()
+{
+	float distance = 0.0f;	//	ターゲットまでの距離
+	DirectX::XMFLOAT3 position = GetTransform()->GetPosition();		//	自分の位置
+	distance = Length(targetPosition_ - position);					//	ターゲットまでの距離算出
+
+	return distance;
+}
+
+//	ターゲットに接近する
+void Enemy::ApproachingTarget(const float& elapsedTime)
+{
+	DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
+	//	Y方向は行かないようにする
+	position.y = 0.0f;
+
+	moveVec_ = Normalize(targetPosition_ - position);
+
+}
+
 //	プレイヤー索敵
 bool Enemy::SearchPlayer()
 {

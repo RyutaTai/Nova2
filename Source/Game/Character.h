@@ -45,6 +45,7 @@ public:
 	//	----- 移動 -----
 	virtual void Move(const float& elpasedTime);
 	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
+	void SetMoveVec(const DirectX::XMFLOAT3& vec) { moveVec_ = vec; }
 
 	//	----- アニメーション -----
 	void		PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);

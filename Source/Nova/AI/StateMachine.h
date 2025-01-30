@@ -86,6 +86,7 @@ template<class T>
 inline void StateMachine<T>::ChangeState(const int& newState)
 {
     currentState_->Finalize();
+    currentState_->ResetStateElapsedTime();
     SetState(newState);
 }
 

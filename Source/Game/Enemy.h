@@ -56,6 +56,7 @@ public:
 
 	//	----- プレイヤー探索 -----
 	virtual bool SearchPlayer();
+	const float GetSearchRange()const { return searchRange_; }
 
 	//	----- 敵の種類 -----
 	void		SetMyType(const EnemyType& myType) { myType_ = myType; }	//	自分の種類設定
@@ -70,11 +71,13 @@ public:
 	bool			IsDamaged()const				{ return isDamaged_; }		//	ダメージフラグ取得
 	virtual void	AddDamage(const float& damage);
 
-	//	----- ターゲット位置 -----
+	//	----- ターゲット -----
 	virtual void		SetRandomTargetPosition();																//	ターゲット位置をランダム設定
 	void				SetTargetPosition(const DirectX::XMFLOAT3& position)	{ targetPosition_ = position; }	//	ターゲットポジション設定
 	DirectX::XMFLOAT3	GetTargetPosition()const								{ return targetPosition_; }		//	ターゲットポジション取得
-	
+	const	float		CalcDistanceToTarget();						//	ターゲットまでの距離
+	virtual void		ApproachingTarget(const float& elapsdTime);	//	ターゲットに接近する
+
 	//	----- ステートタイマー -----
 	void				SetRunTimer(const float& timer) { runTimer_ = timer; }		//	ステートタイマー設定
 	float				GetRunTimer()const				{ return runTimer_; }		//	ステートタイマー取得
@@ -82,10 +85,14 @@ public:
 	bool				IsUseOffsetY()const { return useOffsetY_; }
 
 protected:
+	//	----- ターゲット -----
 	DirectX::XMFLOAT3	targetPosition_		=	{ 0.0f,0.0f,0.0f };				//	ターゲット位置
+
+	//	----- 索敵範囲 -----
 	DirectX::XMFLOAT3	territoryOrigin_	=	{ 0.0f,0.0f,0.0f };				//	索敵範囲の原点
 	float				territoryRange_		=	10.0f;							//	索敵範囲
-	float				searchRange_		=	50.0f;							//	索敵距離
+	float				searchRange_		=	13.0f;							//	索敵距離
+
 	float				runTimer_			=	0.0f;							//
 	bool				isDamaged_			=	false;							//	攻撃を受けたかどうか
 

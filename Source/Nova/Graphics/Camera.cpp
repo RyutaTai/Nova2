@@ -131,16 +131,16 @@ void Camera::SetLookAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& fo
 
 }
 
-bool Camera::LaunchCameraMove(DirectX::XMFLOAT3 targetEye_, DirectX::XMFLOAT3 targetAngle, float moveTime_)
+bool Camera::LaunchCameraMove(const DirectX::XMFLOAT3& targetEye, const DirectX::XMFLOAT3& targetAngle, const float& moveTime)
 {
 	if (cameraMove_)return false;
 
-	moveTime_ = moveTime_;
+	moveTime_ = moveTime;
 	moveTimer_ = 0.0f;
 
 	cashPos_ = eye_;
 	cashAngle_ = angle_;
-	moveTargetEye_ = targetEye_;
+	moveTargetEye_ = targetEye;
 	moveTargetAngle_ = targetAngle;
 
 	cameraMove_ = true;
@@ -150,7 +150,7 @@ bool Camera::LaunchCameraMove(DirectX::XMFLOAT3 targetEye_, DirectX::XMFLOAT3 ta
 
 bool Camera::CameraMove(const float& elapsedTime)
 {
-	if (!cameraMove_)return false;
+	if (cameraMove_ == false)return false;
 
 	if (moveTimer_ >= moveTime_)
 	{
@@ -167,7 +167,6 @@ bool Camera::CameraMove(const float& elapsedTime)
 	angle_.y = Easing::InSine(moveTimer_, moveTime_, moveTargetAngle_.y, cashAngle_.y);
 	angle_.z = Easing::InSine(moveTimer_, moveTime_, moveTargetAngle_.z, cashAngle_.z);
 
-	//float time = HighResolutionTimer::Instance().GetDeltaTime();
 	moveTimer_ += elapsedTime;
 
     return true;

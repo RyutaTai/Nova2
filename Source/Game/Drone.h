@@ -40,27 +40,31 @@ public:
 	void Update(const float& elapsedTime)override;
 	void Render()override;
 
-	bool RayVsVertical(const float& elapsedTime)override;
-	bool RayVsHorizontal(const float& elapsedTime)override;
-	void Move(const float& elapsedTime)override {}
 	void Attack();
-	void LaunchBullet();					//	弾丸生成処理
 	void Turn(const float& elpasedTime);	//	旋回処理
 	void Destroy()override;					//	破棄処理
+
+	//	----- 弾丸 -----
+	void LaunchBullet();										//	弾丸生成処理
+	const float GetLaunchRange() const { return launchRange_; }	//	射程距離取得
 
 	//	----- Collision -----
 	void RegisterCollisionData()override;
 	void UpdateCollisions(const float& elapsedTime)override;
+	bool RayVsVertical(const float& elapsedTime)override;
+	bool RayVsHorizontal(const float& elapsedTime)override;
 
 	//	----- オーディオ -----
 	void UpdateEmitter();		//	エミッター更新
 	void UpdateAudioSource();	//	オーディオソース更新
 
+	//	----- HP -----
 	const int GetMaxHp()const { return MaxHp_; }		//	最大HP取得
 
 	//	----- ステート -----
 	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<Drone>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
+	void DrawStateStr();	//	現在のステート文字列設定
 
 	//	----- デバッグ描画 -----
 	void DrawDebugPrimitive()override;			//	デバッグプリミティブ描画
@@ -71,9 +75,10 @@ private:
 	std::shared_ptr <Effect>		effectResource_;	//	エフェクト
 	float	effectScale_ = 1.0f;						//	エフェクトスケール
 	
-	// ----- Bullet -----
+	// ----- 弾丸 -----
 	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
-	
+	float	launchRange_ = 10.0f;	//	射程距離
+
 	//	----- オーディオ -----
 	SoundEmitter	emitter_ = {};				//	エミッター
 	AudioSource3D*	sources_[static_cast<int>(Audio3D::Max)] = { nullptr };		//	オーディオソース

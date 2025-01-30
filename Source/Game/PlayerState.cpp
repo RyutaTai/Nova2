@@ -29,6 +29,9 @@ namespace PlayerState
 
 	void IdleState::Update(const float& elapsedTime)
 	{
+		//	経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+
 		//	ステートへ遷移
 		DetermineStateTransition(elapsedTime);
 
@@ -211,6 +214,8 @@ namespace PlayerState
 
 	void AttackState::Update(const float& elapsedTime)
 	{
+		//	経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
 #if 1
 		DetermineStateTransition(elapsedTime);
 #endif
@@ -896,6 +901,9 @@ namespace PlayerState
 
 	void DodgeState::Update(const float& elapsedTime)
 	{
+		//	経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+
 		//	----- ルートモーション設定 -----
 		if (owner_->IsBlendAnimation() == false)
 		{
@@ -1098,6 +1106,9 @@ namespace PlayerState
 
 	void FlinchState::Update(const float& elapsedTime)
 	{
+		//	経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+
 		//	次のステートへ遷移
 		DetermineStateTransition(elapsedTime);
 
@@ -1134,6 +1145,9 @@ namespace PlayerState
 
 	void DeathState::Update(const float& elapsedTime)
 	{
+		//	経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+
 		//	次のステートへ遷移
 		DetermineStateTransition(elapsedTime);
 

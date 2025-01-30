@@ -587,7 +587,7 @@ void GltfModel::CumulateTransforms(std::vector<Node>& nodes)
             DirectX::XMStoreFloat4x4(&node.globalTransform_, S * R * T * DirectX::XMLoadFloat4x4(&parentGlobalTransforms.top()));
             
             //  アニメーションの移動値を反映しない
-            if (node.isRoot_)
+			if (node.isRoot_ && useRootMotionMovement_ == false)
             {
                 node.globalTransform_._41 = 0;
                 node.globalTransform_._42 = 0;
@@ -706,8 +706,9 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& b
 
 	animationDuration_ = endFrame == 0.0f ? 
         animations_.at(animationClip_).duration_ : 
-        endFrame;
+		std::min(animations_.at(animationClip_).duration_, endFrame);
 
+    isBlendAnimation_ = true;
 }
 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
@@ -723,11 +724,14 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 		{
 			transitionState_ = 0;
             blendAnimationSeconds_ = 0.0f;
+            isBlendAnimation_ = false;
 		}
         nodes_ = blendedAnimatedNodes_;
     }
     else    //  アニメーションの遷移が終わったら
     {
+        isBlendAnimation_ = false;
+
         currentAnimationSeconds_ += elapsedTime * animationSpeed_;
 
         //  アニメーションの長さ
@@ -743,7 +747,7 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
             else
             {
                 animationEndFlag_ = true;
-                //currentAnimationSeconds_ = 0.0f;
+                //currentAnimationSeconds_ = animationDuration;
             }
         }
         Animate(animationClip_, currentAnimationSeconds_, nodes_);
@@ -971,7 +975,7 @@ void GltfModel::RootMotion(const float& scaleFactor)
         isFirstTimeRootMotion_ = false;
     }
 
-    DirectX::XMFLOAT3 position = { node.globalTransform_._41,node.globalTransform_._42,node.globalTransform_._43 };
+    DirectX::XMFLOAT3 position  = { node.globalTransform_._41,node.globalTransform_._42,node.globalTransform_._43 };
     DirectX::XMFLOAT3 displacement = { position.x - lastPosition_.x,position.y - lastPosition_.y,position.z - lastPosition_.z };
 
     DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&GetTransform()->GetCoordinateSystemTransform(Transform::CoordinateSystem::cRightYup)) * DirectX::XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor);

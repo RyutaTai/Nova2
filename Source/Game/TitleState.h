@@ -49,7 +49,7 @@ namespace TitleState
 		void DrawDebug()override;
 
 	private:
-		static constexpr float FADE_TIME = 1.5f;	//	フェードする時間
+		static constexpr float FadeTime_ = 1.5f;	//	フェードする時間
 		float fadeTimer_ = 0.0f;
 
 	};

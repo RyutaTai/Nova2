@@ -82,7 +82,7 @@ namespace TitleState
 	void FadeState::Update(const float& elapsedTime)
 	{
 		fadeTimer_ += elapsedTime;
-		//if (FADE_TIME < fadeTimer_)	//	フェード完了したら
+		//if (FadeTime_ < fadeTimer_)	//	フェード完了したら
 		{
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 		}

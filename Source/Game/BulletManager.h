@@ -69,18 +69,18 @@ private:
 #if 0
 	float					coverScale_		= 30.0f;	//	カバーモデルのスケール
 	float					scaleAdd_		= 10.0f;	//	どのくらいscaleを加算するか
-	const float				COVER_SCALE_MAX = 50.0f;	//	スケール上限
-	const float				COVER_SCALE_MIN = 20.0f;	//	スケール下限	小さすぎると弾に埋まって見えない
+	const float				CoverScaleMax_ = 50.0f;	//	スケール上限
+	const float				CoverScaleMin_ = 20.0f;	//	スケール下限	小さすぎると弾に埋まって見えない
 #else
 	//float					coverScale_ = 10;		//	カバーモデルのスケール
 	//float					scaleAdd_ = 5;			//	どのくらいscaleを加算するか
-	//const float				COVER_SCALE_MAX = 12;	//	スケール上限
-	//const float				COVER_SCALE_MIN = 7;	//	スケール下限	小さすぎると弾に埋まって見えない
+	//const float				CoverScaleMax_ = 12;	//	スケール上限
+	//const float				CoverScaleMin_ = 7;	//	スケール下限	小さすぎると弾に埋まって見えない
 
 	float					coverScale_ = 0.1f;		//	カバーモデルのスケール
 	float					scaleAdd_ = 0.4f;		//	どのくらいscaleを加算するか
-	const float				COVER_SCALE_MAX = 0.48f;	//	スケール上限
-	const float				COVER_SCALE_MIN = 0.28f;	//	スケール下限	小さすぎると弾に埋まって見えない
+	const float				CoverScaleMax_ = 0.48f;	//	スケール上限
+	const float				CoverScaleMin_ = 0.28f;	//	スケール下限	小さすぎると弾に埋まって見えない
 
 	float					coverScaleTimer_ = 0.0f;
 

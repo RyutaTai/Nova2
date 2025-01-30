@@ -45,7 +45,7 @@ Dragonkin::Dragonkin()
 	useOffsetY_ = false;
 
 	//	HP設定
-	hp_ = MAX_HP;
+	hp_ = MaxHp_;
 
 	//	ビヘイビアツリー設定
 	behaviorData_ = new BehaviorData();
@@ -66,7 +66,7 @@ void Dragonkin::Initialize()
 {
 	//stateMachine_->SetState(static_cast<int>(StateType::Idle));			//	初期ステートセット
 	//PlayAnimation(Player::AnimationType::Idle, true, 1.0f, 0.0f);			//	待機アニメーション再生
-	//SetAnimation(DragonkinAnimation::ANIM_IDLE02);						//	待機アニメーションセット
+	//SetAnimation(DragonkinAnimation::Idle02);						//	待機アニメーションセット
 
 	//	位置設定
 	GetTransform()->SetPosition({ 23.0f, 0.0f,3.0f });

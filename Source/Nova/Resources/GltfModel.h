@@ -374,23 +374,25 @@ public:
 	void AppendAnimation(const std::string& filename);
 	void BlendAnimations(const std::vector<Node>& fromNodes, const std::vector<Node>& toNodes, const float& factor, std::vector<Node>& outNodes);
 	bool IsPlayAnimation()const;
+	bool IsBlendAnimation()const { return isBlendAnimation_; }
+	const float GetAnimationDuration(const int& animIndex)const { return animations_.at(animIndex).duration_; }
 
 	void SetPixelShader(ID3D11PixelShader* pixelShader) { pixelShader_ = pixelShader; }		//	PixelShader設定
-	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
-	void SetUseRootMotion(const bool& useRootMotion);
 	void SetAnimationSpeed(const float& animationSpeed) { animationSpeed_ = animationSpeed; }
 
 	Transform*			GetTransform() { return &transform_; }
 	int					GetCurrentAnimNum();	//	現在再生中のアニメーション番号
-	float const			GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
+	const float			GetCurrentAnimationSeconds() { return currentAnimationSeconds_; }	//	現在のアニメーション再生時間取得
 	DirectX::XMFLOAT3	GetJointPosition(const std::string& nodeName, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos = {});		//	ジョイントポジション取得
 	DirectX::XMFLOAT3	GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT4X4& transform, const DirectX::XMFLOAT3& offsetPos = {});
 	const int			GetNodeIndex(const std::string& nodeName);
 	std::vector<Node>*	GetNodes() { return &nodes_; }
 
 	//	ルートモーション
+	void SetRootJointIndex(const int& index) { rootJointIndex_ = index; }
 	void RootMotion(const float& scaleFactor);
-
+	void SetUseRootMotion(const bool& useRootMotion);
+	void SetRootMotionSpeed(const float& rootMotionSpeed) { rootMotionSpeed_ = rootMotionSpeed; }
 
 private:
 	void FetchNodes(const tinygltf::Model& gltfModel, const std::string& rootNodeName);
@@ -406,11 +408,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	pixelShader_;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>	inputLayout_;
 
-	std::string filename_;
+	std::string filename_ = {};
 
 	Transform				transform_ = {};
 
-	// --- GLTF_ANIMATION ---
+	// ----- gltf Animation -----
 	bool	isAnimationLoop_			= false;	//	アニメーションループフラグ
 	int		currentAnimationIndex_		= -1;		//	アニメーション番号
 	float	animationSpeed_				= 1.0f;		//	再生速度
@@ -426,8 +428,9 @@ private:
 	bool	isTransition_ = false;			//	アニメーション遷移中かどうか
 	bool	animationEndFlag_ = false;		//	アニメーション再生が終わっているかどうか
 	float	animationDuration_ = 0.0f;		//	アニメーションの長さ
+	bool	isBlendAnimation_ = false;		//	ブレンドアニメーションしているか
 
-	//	ルートモーション
+	//	----- ルートモーション -----
 	std::vector<GltfModel::Node> initAnimatedNode_;
 	DirectX::XMFLOAT3	lastPosition_			= {};
 	int					rootJointIndex_			= 1;

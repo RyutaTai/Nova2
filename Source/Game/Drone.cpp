@@ -69,7 +69,7 @@ void Drone::Initialize()
 	searchRange_ = 11.0f;
 
 	//	HPİ’è
-	hp_ = MAX_HP;
+	hp_ = MaxHp_;
 
 	//	’eŠÛ‰Šú‰»
 	BulletManager::Instance().Initialize();

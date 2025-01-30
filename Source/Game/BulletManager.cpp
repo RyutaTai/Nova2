@@ -114,14 +114,14 @@ void BulletManager::CoverModelUpdate(const float& elapsedTime)
 		//	スケール加算
 #if 0
 		coverScale_ += scaleAdd_ * elapsedTime;
-		if (coverScale_ > COVER_SCALE_MAX)
+		if (coverScale_ > CoverScaleMax_)
 		{
-			coverScale_ = COVER_SCALE_MIN;
+			coverScale_ = CoverScaleMin_;
 			scaleAdd_ = -scaleAdd_;
 		}
-		if (coverScale_ < COVER_SCALE_MIN)
+		if (coverScale_ < CoverScaleMin_)
 		{
-			coverScale_ = COVER_SCALE_MIN;
+			coverScale_ = CoverScaleMin_;
 			scaleAdd_ = -scaleAdd_;
 		}
 #endif
@@ -129,14 +129,14 @@ void BulletManager::CoverModelUpdate(const float& elapsedTime)
 		//	スケール減算
 #if 1
 		coverScale_ -= scaleAdd_ * elapsedTime;
-		if (coverScale_ > COVER_SCALE_MAX)
+		if (coverScale_ > CoverScaleMax_)
 		{
-			coverScale_ = COVER_SCALE_MAX;
+			coverScale_ = CoverScaleMax_;
 			scaleAdd_ = -scaleAdd_;
 		}
-		if (coverScale_ < COVER_SCALE_MIN)
+		if (coverScale_ < CoverScaleMin_)
 		{
-			coverScale_ = COVER_SCALE_MAX;
+			coverScale_ = CoverScaleMax_;
 			scaleAdd_ = -scaleAdd_;
 		}
 #endif

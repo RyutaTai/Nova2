@@ -14,7 +14,7 @@ protected:
 	};
 	EnemyType myType_;
 
-	enum class STATE		//	ステート
+	enum class StateType		//	ステート
 	{
 		Search,
 		Battle,

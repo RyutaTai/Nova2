@@ -129,17 +129,17 @@ protected:
 
 private:
 	//	----- エフェクト -----
-		enum EFFECT
+		enum class EffectType
 		{
-			FIRE = 0,		//	弾の周りのエフェクト
-			EXPLOSION,		//	爆発
+			Fire = 0,		//	弾の周りのエフェクト
+			Explosion,		//	爆発
 			Max,			//	最大数
 		};
 
 private:
 	//	----- エフェクト -----
-	std::shared_ptr <Effect>	effectResource_[EFFECT::Max];			//	エフェクトリソース
-	float						effectScale_[EFFECT::Max] = { 1.0f };	//	エフェクトスケール
+	std::shared_ptr <Effect>	effectResource_[static_cast<int>(EffectType::Max)];			//	エフェクトリソース
+	float						effectScale_[static_cast<int>(EffectType::Max)] = { 1.0f };	//	エフェクトスケール
 
 
 };

@@ -43,8 +43,8 @@ Bullet::Bullet(const std::string& filename)
 	AudioManager::Instance().Register(se_[static_cast<int>(Audio3D::Move)]);
 
 	//	----- エフェクト -----
-	effectResource_[EFFECT::EXPLOSION] = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/Blow11_2.efk");
-	effectScale_[EFFECT::EXPLOSION] = 0.3f;
+	effectResource_[static_cast<int>(EffectType::Explosion)] = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/Blow11_2.efk");
+	effectScale_[static_cast<int>(EffectType::Explosion)] = 0.3f;
 
 }
 
@@ -113,7 +113,7 @@ void Bullet::Destroy()
 	if (isInvincible_)return;
 
 	//	エフェクト描画
-	effectResource_[EFFECT::EXPLOSION]->Play(GetTransform()->GetPosition(), effectScale_[EFFECT::EXPLOSION]);
+	effectResource_[static_cast<int>(EffectType::Explosion)]->Play(GetTransform()->GetPosition(), effectScale_[static_cast<int>(EffectType::Explosion)]);
 
 	//	オーディオ削除
 	AudioManager::Instance().GetAudioResource("BulletMove")->Stop();

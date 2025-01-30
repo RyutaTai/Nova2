@@ -56,7 +56,7 @@ public:
 	void UpdateEmitter();		//	エミッター更新
 	void UpdateAudioSource();	//	オーディオソース更新
 
-	const int GetMaxHp()const { return MAX_HP; }		//	最大HP取得
+	const int GetMaxHp()const { return MaxHp_; }		//	最大HP取得
 
 	//	----- ステート -----
 	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
@@ -90,9 +90,9 @@ private://	デバッグ用の変数
 
 	bool	turnAction_ = true;			//	旋回処理
 	bool	bulletLaunch_	= true;		//	弾を発射するかどうか
-	static const int MAX_HP = 40;		//	最大HP
-	//static const int MAX_HP = 60;		//	最大HP
-	//static const int MAX_HP = 3;		//	最大HP
+	static const int MaxHp_ = 40;		//	最大HP
+	//static const int MaxHp_ = 60;		//	最大HP
+	//static const int MaxHp_ = 3;		//	最大HP
 
 };
 

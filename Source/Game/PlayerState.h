@@ -18,6 +18,13 @@ namespace PlayerState
 		void Finalize()override;
 		void DrawDebug()override;
 
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapssedTime);
+
+	private:
+		//	----- アニメーション再生 -----
+		float blendAnimTime_ = 0.2f;	//	アニメーションブレンド時間
+
 	};
 }
 
@@ -35,10 +42,17 @@ namespace PlayerState
 		void Finalize()override;
 		void DrawDebug()override;
 
-	private:
-		void PlayFootsteps(const float& elapsedTime);	//	足音再生
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapssedTime);
 
 	private:
+		void PlayFootstepsSE(const float& elapsedTime);	//	足音再生
+
+	private:
+		//	----- アニメーション再生 -----
+		float blendAnimTime_ = 0.25f;	//	アニメーションブレンド時間
+
+		//	----- 足音SE -----
 		float playFootstepsInterval_	= 0.278f;		//	足音SE再生間隔
 		float footStepsTimer_			= 0.0f;			//	足音SE再生間隔用タイマー
 
@@ -60,19 +74,18 @@ namespace PlayerState
 		void DrawDebug()override;
 
 		void UpdateJudgeTimer(const float& elapsedTime) { judgeTimer_ += elapsedTime; }
-		//bool PunchAttack(const float& elapsedTime, const std::string& meshName, const std::string& boneName);
-		bool PuchVsBullet(const float& elapsedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
-		bool PunchVsEnemy(const float& elpasedTime, const DirectX::XMFLOAT3& leftHandPos, const float leftHandRadius);
-		bool PuchAttackCollision();
+		
 		void MoveTowardsEnemy(const float& elapsedTime);	//	ターゲットの方向へに向かって移動
 
 		void SetTargetPosition(const DirectX::XMFLOAT3& pos) { targetPos_ = pos; }	//	ターゲット位置設定
 
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapssedTime);
 
 	private:
 		DirectX::XMFLOAT3 targetPos_ = {};	//	ターゲット
 		float moveTime_ = 1.0f;				//	ターゲットへ向かってどのくらいの時間動くか
-		bool isMove_ = false;				//	ターゲットへ移動中
+		bool isMoving = false;				//	ターゲットへ移動中
 		float judgeTimer_ = 0.0f;			//	判定する時間を制限するときに使用
 
 	};
@@ -93,17 +106,25 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		//	----- 入力判定 -----
 		bool JudgeInput(const JudgeTime& inputJudgeTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		
+		//	----- 経過時間更新 -----
 		void UpdateStateElapsedTime(const float& elapsedTime)override;	//	経過時間更新
+		
+		//	----- アニメーション再生速度を調整 -----
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
+
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
 
 	private:
 		JudgeTime	animJudgeTime_	= {};				//	判定を取るアニメーション区間
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
 		JudgeTime	cancellationTime_ = {};				//	キャンセル可能時間
 		float		acceptInputFrame_ = 0.0f;			//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
+	
 	};
 }
 
@@ -122,18 +143,25 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		//	----- 入力判定 -----
 		bool JudgeInput(const JudgeTime& cancellationTime);
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+		
+		//	----- アニメーション再生速度を調整 -----
 		void UpdateAnimationSpeed();
 
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapedTime);
+
 	private:
-		static constexpr int AnimJudgeCount = 2;	//	アニメーション判定区間の数
-		JudgeTime			animJudgeTime_[AnimJudgeCount] = {};	//	判定を取るアニメーション区間
-		JudgeTime			animSpeedChangeInterval_[4] = {};		//	再生速度を変更するアニメーション区間
-		JudgeTime			cancellationTime_ = {};		//	キャンセル可能時間
-		float				acceptInputFrame_ = 0.0f;	//	入力時間を受け付ける範囲
-		bool				isHit_ = false;				//	このコンボの最後の攻撃があたったらtrue
+		static const int	AnimJudgeCount_ = 2;					//	アニメーション判定区間の数
+		JudgeTime			animJudgeTime_[AnimJudgeCount_] = {};	//	判定を取るアニメーション区間
+		
+		static const int	AnimSpeedSectionCount_ = 4;								//	アニメーション速度変化区間の数
+		JudgeTime			animSpeedChangeInterval_[AnimSpeedSectionCount_] = {};	//	再生速度を変更するアニメーション区間
+		JudgeTime			cancellationTime_ = {};									//	キャンセル可能時間
+		float				acceptInputFrame_ = 0.0f;								//	入力時間を受け付ける範囲
+		bool				isHit_ = false;											//	このコンボの最後の攻撃があたったらtrue
 
 	};
 }
@@ -153,16 +181,18 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		//	----- 入力判定 -----
 		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapedTime);
+
 	private:
-		static constexpr int AnimJudgeCount = 3;	//	アニメーション判定区間の数
-		JudgeTime	animJudgeTime_[AnimJudgeCount] = {};		//	判定を取るアニメーション区間
-		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
-		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
-		bool		isHit_ = false;
+		static const int	AnimJudgeCount_ = 3;					//	アニメーション判定区間の数
+		JudgeTime			animJudgeTime_[AnimJudgeCount_] = {};	//	判定を取るアニメーション区間
+		JudgeTime			cancellationTime_ = {};					//	キャンセル可能時間
+		float				acceptInputFrame_ = {};					//	入力時間を受け付ける範囲
 
 	};
 }
@@ -182,15 +212,17 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		bool JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName);
+		//	----- 入力判定 -----
 		bool JudgeInput(const JudgeTime& cancellationTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
+
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
 
 	private:
 		JudgeTime	animJudgeTime_	= {};		//	判定を取るアニメーション区間
 		JudgeTime	cancellationTime_ = {};		//	キャンセル可能時間
 		float		acceptInputFrame_ = {};		//	入力時間を受け付ける範囲
-		bool		isHit_ = false;
 
 	};
 }
@@ -208,6 +240,31 @@ namespace PlayerState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 		void DrawDebug()override;
+
+	private:
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
+
+		//	----- アニメーション再生速度を調整 -----
+		void UpdateAnimationSpeed();
+
+		//	----- 移動 -----
+		void MoveForward(const float& elapsedTime);
+		
+	private:
+		//	----- 移動 -----
+		float moveLength_ = 2.0f;			//	移動量
+		float decelerationForce_ = 4.0f;	//	
+
+		//	----- ルートモーション -----
+		float rootMotionSpeed_ = 1.0f;
+
+		//	----- アニメーション -----
+		static const int	AnimSpeedSectionCount_ = 2;									//	アニメーション速度変化区間の数
+		JudgeTime			animSpeedChangeInterval_[AnimSpeedSectionCount_] = {};		//	再生速度を変更するアニメーション区間
+		float				animationSpeed_[AnimSpeedSectionCount_] = { 1.0f,1.2f };	//	各区間のアニメーション速度
+
+		float				endFrame_ = 1.333f;	//	回避アニメーションの長さで初期化
 
 	};
 }
@@ -227,16 +284,21 @@ namespace PlayerState
 		void DrawDebug()override;
 
 	private:
-		void UpdateAnimationSpeed();	//	アニメーション速度調整
+		//	----- アニメーション再生速度を調整 -----
+		void UpdateAnimationSpeed();
+
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
 
 	private:
-		const float AnimSpeedSectionCount = 3;			//	アニメーション速度変化区間の数
-		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
-		float		animationSpeed_[3] = { 1.0f,1.2f,2.0f };
+		//	----- アニメーション速度 -----
+		static const int	AnimSpeedSectionCount_								= 3;					//	アニメーション速度変化区間の数
+		JudgeTime			animSpeedChangeInterval_[AnimSpeedSectionCount_]	= {};					//	再生速度を変更するアニメーション区間
+		float				animationSpeed_[AnimSpeedSectionCount_]				= { 1.0f,1.2f,2.0f };	//	各区間のアニメーション速度
 
-		//	吹っ飛ばし用
-		float blowPower_ = 20.0f;
-		float decelerationForce_ = 30.0f;
+		//	----- 吹っ飛ばし -----
+		float blowPower_ = 20.0f;			//	吹っ飛ばし力
+		float decelerationForce_ = 30.0f;	//	
 
 	};
 }
@@ -255,6 +317,10 @@ namespace PlayerState
 		void Finalize()override;
 		void DrawDebug()override;
 
+	private:
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
+
 	};
 }
 
@@ -271,6 +337,10 @@ namespace PlayerState
 		void Update(const float& elapsedTime)override;
 		void Finalize()override;
 		void DrawDebug()override;
+
+	private:
+		//	----- ステートの遷移を判断 -----
+		void DetermineStateTransition(const float& elapsedTime);
 
 	};
 }

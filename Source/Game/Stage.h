@@ -100,7 +100,7 @@ private:
 	std::shared_ptr<GltfModelStaticBatching>	gltfStaticModelResource_;		//	Gltfモデル
 	std::unique_ptr<CollisionMesh>				collisionMesh_;
 
-	//	プロジェクションマッピング
+	//	----- プロジェクションマッピング -----
 	std::unique_ptr<FullScreenQuad>				bitBlockTransfer_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumWaveformPS_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>	spectrumCirclePS_;

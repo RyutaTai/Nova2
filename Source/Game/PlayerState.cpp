@@ -23,22 +23,29 @@ namespace PlayerState
 	{
 		//	アニメーションセット
 		//owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.2f);
-		owner_->PlayAnimation(Player::AnimationType::Idle, true, 0.3f);
+		owner_->PlayAnimation(Player::AnimationType::Idle, true, blendAnimTime_);
 		owner_->SetAnimationSpeed(1.0f);
 	}
 
 	void IdleState::Update(const float& elapsedTime)
 	{
+		//	ステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステート遷移を判断する
+	void IdleState::DetermineStateTransition(const float& elapsedTime)
+	{
 		//	移動入力があれば、移動ステートへ遷移
 		if (owner_->InputMove(elapsedTime))
 		{
 			owner_->ChangeState(Player::StateType::Move);
-			//owner_->PlayAnimation(Player::AnimationType::ANIM_WALK);
-		 return;
+			return;
 		}
-		
+
 		//	攻撃ステートへ遷移
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
@@ -47,6 +54,12 @@ namespace PlayerState
 			return;
 		}
 
+		//	回避ステートへ遷移
+		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
+		{
+			owner_->ChangeState(Player::StateType::Dodge);
+			return;
+		}
 	}
 
 	void IdleState::Finalize()
@@ -58,6 +71,7 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("Idle"))
 		{
+			ImGui::DragFloat("BlendAnimTime", &blendAnimTime_, 0.001f);
 
 			ImGui::TreePop();
 		}
@@ -70,7 +84,7 @@ namespace PlayerState
 	void MoveState::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Run, true, 0.25f);
+		owner_->PlayAnimation(Player::AnimationType::Run, true, blendAnimTime_);
 		owner_->SetAnimationSpeed(1.2f);
 
 		owner_->SetMoveSpeed(3.0f);
@@ -89,10 +103,18 @@ namespace PlayerState
 		UpdateStateElapsedTime(elapsedTime);
 		
 		//	足音再生
-		PlayFootsteps(elapsedTime);
+		PlayFootstepsSE(elapsedTime);
 
+		//	ステート遷移を判断
+		DetermineStateTransition(elapsedTime);
+		
+	}
+
+	//	ステート遷移を判断
+	void MoveState::DetermineStateTransition(const float& elapsedTime)
+	{
 		//	移動入力がなくなったら待機ステートへ遷移
-		if (!owner_->InputMove(elapsedTime))
+		if (owner_->InputMove(elapsedTime) == false)
 		{
 			//	待機ステートへ遷移
 			owner_->ChangeState(Player::StateType::Idle);
@@ -100,7 +122,7 @@ namespace PlayerState
 		}
 
 		//	攻撃ステートへ遷移
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
@@ -108,13 +130,19 @@ namespace PlayerState
 			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
 			return;
 		}
-		
+
+		//	回避ステートへ遷移
+		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
+		{
+			owner_->ChangeState(Player::StateType::Dodge);
+			return;
+		}
 	}
 
 	//	足音SE再生
-	void MoveState::PlayFootsteps(const float& elapsedTime)
+	void MoveState::PlayFootstepsSE(const float& elapsedTime)
 	{
-		//	ピッチを0.4～0.6の間でランダムに決める
+		//	ピッチを0.4～0.6の間でランダムに決めている
 #if 1
 		srand(static_cast<unsigned int>(time(NULL)));
 		float pitch = (rand() % 20 + 40) / 100.0f;
@@ -152,6 +180,10 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("Move"))
 		{
+			//	----- アニメーション再生 -----
+			ImGui::DragFloat("BlendTime", &blendAnimTime_, 0.001f);
+
+			//	----- 足音SE -----
 			ImGui::DragFloat("PlayFootstepsInterval", &playFootstepsInterval_, 0.01f);	//	足音SE再生間隔
 			ImGui::DragFloat("FootstepsTimer", &footStepsTimer_, 0.01f);				//	足音SE再生間隔タイマー
 
@@ -169,8 +201,8 @@ namespace PlayerState
 	void AttackState::Initialize()
 	{
 		//	アニメーションセット
-		//owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 2.0f, 0.0f);
-		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 0.0f);
+		//owner_->PlayAnimation(Player::AnimationType::ComboOne1, false, 2.0f, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::ComboOne1, false, 0.0f);
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	当たり判定タイマー初期化
@@ -180,22 +212,28 @@ namespace PlayerState
 	void AttackState::Update(const float& elapsedTime)
 	{
 #if 1
-		//	アニメーション再生が終わったら待機ステートへ遷移
-		if (owner_->IsPlayAnimation() == false /* && isMove_ == false*/)
-		{
-			owner_->ChangeState(Player::StateType::Idle);
-			return;
-		}
+		DetermineStateTransition(elapsedTime);
 #endif
 		//	判定用タイマー更新
 		UpdateJudgeTimer(elapsedTime);
 
 	}
 
+	//	ステート遷移を判断
+	void AttackState::DetermineStateTransition(const float& elapsedTime)
+	{
+		//	アニメーション再生が終わったら待機ステートへ遷移
+		if (owner_->IsPlayAnimation() == false /* && isMoving == false*/)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+			return;
+		}
+	}
+
 	//	敵の方向へに向かって移動
 	void AttackState::MoveTowardsEnemy(const float& elapsedTime)
 	{
-		isMove_ = true;
+		isMoving = true;
 		DirectX::XMVECTOR Velocity = {};
 		DirectX::XMVECTOR PlayerPos = DirectX::XMLoadFloat3(&owner_->GetTransform()->GetPosition());	//	プレイヤーの位置
 		DirectX::XMVECTOR TargetPos = DirectX::XMLoadFloat3(&targetPos_);								//	敵の位置
@@ -212,7 +250,7 @@ namespace PlayerState
 		moveTimer -= elapsedTime;
 		if (moveTimer < 0.0f)
 		{
-			isMove_ = false;
+			isMoving = false;
 		}
 		DirectX::XMFLOAT3 velocity;
 		DirectX::XMStoreFloat3(&velocity, Velocity);
@@ -249,7 +287,7 @@ namespace PlayerState
 	void ComboOne1::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_1, false, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::ComboOne1, false, 0.0f);
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
@@ -259,6 +297,7 @@ namespace PlayerState
 		animJudgeTime_.SetJudgeTime(0.180f, 0.38f);			//	アニメーション判定区間
 		//acceptInputFrame_ = 10.0f;						//	先行入力受付フレーム
 		cancellationTime_.SetJudgeTime(0.3f, 1.16f);		//	キャンセル可能時間
+		cancellationTime_.SetName("CancellationTime");
 
 		//	アニメーション速度変化区間セット
 		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.32f);		//	パンチ前
@@ -295,12 +334,20 @@ namespace PlayerState
 			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
 
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+		
+	}
+
+	//	ステート遷移を判断
+	void ComboOne1::DetermineStateTransition(const float& elapsedTime)
+	{
 		//	次のステートへの遷移
-		if (JudgeInput(cancellationTime_))	
+		if (JudgeInput(cancellationTime_))
 		{
 			//	リズム判定処理(missならreturn)
 			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
-			return;
+				return;
 
 			//	miss以外なら次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne2);
@@ -323,7 +370,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			return true;
 		}
@@ -349,6 +396,7 @@ namespace PlayerState
 		return false;
 	}
 
+	//	ステート経過時間更新
 	void ComboOne1::UpdateStateElapsedTime(const float& elapsedTime)
 	{
 		//stateElapsedTime_ += elapsedTime;
@@ -388,11 +436,8 @@ namespace PlayerState
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 			
-			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
-			float cancellationTimeMax = cancellationTime_.GetMaxTime();
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
-			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+			//	キャンセル可能時間
+			cancellationTime_.DrawDebug();
 
 			ImGui::TreePop();
 		}
@@ -406,7 +451,7 @@ namespace PlayerState
 	void ComboOne2::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_2, false, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::ComboOne2, false, 0.0f);
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
@@ -416,7 +461,8 @@ namespace PlayerState
 		animJudgeTime_[0].SetJudgeTime(0.21f, 0.25f);	//	アニメーション再生中に当たっているか判定(アニメーション再生時間をもとに判定)
 		animJudgeTime_[1].SetJudgeTime(0.29f, 0.63f);
 		acceptInputFrame_ = 10.0f;
-		cancellationTime_.SetJudgeTime(0.64f, 1.617f);	//	入力判定に使用
+		cancellationTime_.SetJudgeTime(0.64f, 1.617f);	//	キャンセル可能時間
+		cancellationTime_.SetName("CancellationTime");
 
 		//	アニメーション再生速度変化区間セット
 		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.23f);		//	左パンチ出すまで
@@ -457,11 +503,19 @@ namespace PlayerState
 			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 
 		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステート遷移を判断
+	void ComboOne2::DetermineStateTransition(const float& elapsedTime)
+	{
+		//	次のステートへ遷移
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
 		{
 			//	リズム判定処理(missならreturn)
 			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
-			return;
+				return;
 
 			//	次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne3);
@@ -469,12 +523,11 @@ namespace PlayerState
 		}
 
 		//	アニメーション再生が終わったら待機へ遷移
-		if (owner_->IsPlayAnimation() == false)	
+		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
-
 	}
 
 	bool ComboOne2::JudgeInput(const JudgeTime& cancellationTime)
@@ -487,7 +540,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			return true;
 		}
@@ -546,11 +599,8 @@ namespace PlayerState
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 
-			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
-			float cancellationTimeMax = cancellationTime_.GetMaxTime();
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
-			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
+			//	キャンセル可能時間
+			cancellationTime_.DrawDebug();
 
 			ImGui::TreePop();
 		}
@@ -564,7 +614,7 @@ namespace PlayerState
 	void ComboOne3::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_3, false, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::ComboOne3, false, 0.0f);
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
@@ -576,6 +626,7 @@ namespace PlayerState
 		animJudgeTime_[2].SetJudgeTime(0.53f, 0.76f);
 		acceptInputFrame_ = 10.0f;
 		cancellationTime_.SetJudgeTime(0.7f, 1.6f);
+		cancellationTime_.SetName("CancellationTime");
 
 		//	ステート経過時間初期化
 		stateElapsedTime_ = 0.0f;
@@ -617,11 +668,19 @@ namespace PlayerState
 			owner_->GetAttackDetectionData("LeftKick").SetIsActive(true);
 		}
 
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステートの遷移を判断
+	void ComboOne3::DetermineStateTransition(const float& elapsedTime)
+	{
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
 			//	リズム判定処理(missならreturn)
 			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
-			return;
+				return;
 
 			//	次のステートへ遷移
 			owner_->ChangeState(Player::StateType::ComboOne4);
@@ -634,23 +693,6 @@ namespace PlayerState
 		}
 	}
 
-	bool ComboOne3::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
-	{
-		//	時間での判定
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
-			return false;
-
-		//	ノードと、敵または弾丸との当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
-		{
-			//owner_->ChangeState(Player::StateType::Idle);
-			return false;
-		}
-
-		return true;
-	}
-
 	bool ComboOne3::JudgeInput(const JudgeTime& cancellationTime)
 	{
 		//	オートコンボがオンなら入力判定をtrueにする
@@ -661,7 +703,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			return true;
 		}
@@ -705,12 +747,8 @@ namespace PlayerState
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
 
-			float cancellationTimeMin = cancellationTime_.GetMinTime();	//	キャンセル可能時間
-			float cancellationTimeMax = cancellationTime_.GetMaxTime();
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMin);
-			ImGui::DragFloat("CancelTimeMin", &cancellationTimeMax);
-			cancellationTime_.SetJudgeTime(cancellationTimeMin, cancellationTimeMax);
-
+			//	キャンセル可能時間
+			cancellationTime_.DrawDebug();
 			ImGui::TreePop();
 		}
 	}
@@ -723,7 +761,7 @@ namespace PlayerState
 	void ComboOne4::Initialize()
 	{
 		//	アニメーションセット
-		owner_->PlayAnimation(Player::AnimationType::Combo0_4, false, 0.0f);
+		owner_->PlayAnimation(Player::AnimationType::ComboOne4, false, 0.0f);
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
@@ -757,30 +795,20 @@ namespace PlayerState
 			owner_->GetAttackDetectionData("RightPunch").SetIsActive(true);
 		}
 		
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステートの遷移を判断
+	void ComboOne4::DetermineStateTransition(const float& elapsedTime)
+	{
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 
 			return;
 		}
-
-	}
-
-	bool ComboOne4::JudgeAttackHit(const float& elapsedTime, const JudgeTime& animJudgeTime, const std::string& nodeName)
-	{
-		//	時間での判定
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
-		if (animJudgeTime.IsJudgeFlag(currentAnimationSeconds) == false)
-			return false;
-
-		//	ノードと、敵または弾丸との当たり判定
-		if (owner_->JointVsEnemiesAndBullet(elapsedTime, nodeName, 5.0f) == false)	//	当たっていなかったらコンボキャンセル
-		{
-			//owner_->ChangeState(Player::StateType::Idle);
-			return false;
-		}
-
-		return true;
 	}
 
 	bool ComboOne4::JudgeInput(const JudgeTime& cancellationTime)
@@ -793,7 +821,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if (owner_->GetButtonDown(GamePad::BTN_B/*Xキー*/))
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
 		{
 			return true;
 		}
@@ -854,25 +882,113 @@ namespace PlayerState
 {
 	void DodgeState::Initialize()
 	{
-		owner_->PlayAnimation(Player::AnimationType::DodgeFront, false, 0.0f);
+		//	----- アニメーション再生設定 -----
+		owner_->PlayAnimation(Player::AnimationType::DodgeBack, false, 0.0f, 1.0f, 0.0f, endFrame_);
 		owner_->SetAnimationSpeed(1.0f);
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.79f);
+		animSpeedChangeInterval_[0].SetName("AnimSpeedInterval0");
+		animSpeedChangeInterval_[1].SetJudgeTime(0.80f, 1.333f);
+		animSpeedChangeInterval_[1].SetName("AnimSpeedInterval1");
+
+		//	----- ルートモーション -----
+		owner_->SetUseRootMotion(true);
 	}
 
 	void DodgeState::Update(const float& elapsedTime)
 	{
+		//	----- ルートモーション設定 -----
+		if (owner_->IsBlendAnimation() == false)
+		{
+			owner_->SetRootMotionSpeed(-rootMotionSpeed_);
+		}
 
+		//	回避移動
+		//MoveForward(elapsedTime);
+		
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	アニメーション再生速度を調整
+	void DodgeState::UpdateAnimationSpeed()
+	{
+		//	現在のアニメーション再生時間
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
+
+		//	アニメーション速度更新
+		for (int i = 0; i < AnimSpeedSectionCount_; ++i)
+		{
+			if (animSpeedChangeInterval_[i].IsJudgeFlag(currentAnimationSeconds))
+			{
+				owner_->SetAnimationSpeed(animationSpeed_[i]);
+				break;
+			}
+		}
+	}
+
+	//	回避移動
+	void DodgeState::MoveForward(const float& elapsedTime)
+	{
+		//	プレイヤーの前方向
+		DirectX::XMFLOAT3 moveVec = owner_->GetMoveVec();
+		//DirectX::XMFLOAT3 playerForward = owner_->GetTransform()->CalcForward();
+		moveVec.y = 0.0f;
+
+		owner_->AddForce(moveVec, moveLength_, decelerationForce_);
+
+	}
+
+	//	ステートの遷移を判断	
+	void DodgeState::DetermineStateTransition(const float& elapsedTime)
+	{
+		//	アニメーション再生中なら遷移しない
+		if (owner_->IsPlayAnimation())return;
+		
+		//	移動入力があれば移動ステートへ遷移
+		if (owner_->InputMove(elapsedTime))
+			owner_->ChangeState(Player::StateType::Move);
+
+		//	待機ステートへ遷移
+		owner_->ChangeState(Player::StateType::Idle);
 	}
 
 	void DodgeState::Finalize()
 	{
 		owner_->SetAnimationSpeed(1.0f);
+		owner_->SetUseRootMotion(false);
 	}
 
 	void DodgeState::DrawDebug()
 	{
 		if (ImGui::TreeNode("Dodge"))
 		{
+			if (ImGui::TreeNode("Animation"))
+			{
+				//	アニメーション終了フレーム
+				ImGui::DragFloat("EndFrame", &endFrame_);
 
+				//	アニメーション速度を変化させる区間	
+				for (int i = 0; i < AnimSpeedSectionCount_; ++i)
+				{
+					animSpeedChangeInterval_[i].DrawDebug();
+				}
+
+				//	設定した区間のアニメーション速度
+				ImGui::DragFloat("AnimSpeed0", &animationSpeed_[0]);
+				ImGui::DragFloat("AnimSpeed1", &animationSpeed_[1]);
+				ImGui::DragFloat("AnimSpeed2", &animationSpeed_[2]);
+
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Move"))
+			{
+				ImGui::DragFloat("MoveLength", &moveLength_);
+				ImGui::DragFloat("DecelerationForce", &decelerationForce_);
+				ImGui::DragFloat("RootMotionSpeed", &rootMotionSpeed_);
+
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 	}
@@ -887,10 +1003,6 @@ namespace PlayerState
 		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.54f);		//	地面につく
 		animSpeedChangeInterval_[1].SetJudgeTime(0.55f, 1.16f);		//	動作終わり
 		animSpeedChangeInterval_[2].SetJudgeTime(1.17f, 2.2f);		//	余韻
-
-		//	くらいモーション
-		//owner_->PlayAnimation(Player::AnimationType::HitFront, false, 0.1f, 0.2f);
-		//owner_->SetAnimationSpeed(1.8f);
 
 		//	吹っ飛びモーション
 		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, 0.35f, 1.18f);
@@ -915,20 +1027,28 @@ namespace PlayerState
 		//	アニメーション速度調整
 		UpdateAnimationSpeed();
 
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステートの遷移を判断
+	void DamageState::DetermineStateTransition(const float& elapsedTime)
+	{
 		//	アニメーション再生が終わったらステート終了
 		if (owner_->IsPlayAnimation() == false)
 		{
 			owner_->ChangeState(Player::StateType::Idle);
 		}
-
 	}
 
 	void DamageState::UpdateAnimationSpeed()
 	{
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
+		//	現在のアニメーション再生時間
+		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();
 
 		//	アニメーション速度更新
-		for (int i = 0; i < AnimSpeedSectionCount; ++i)
+		for (int i = 0; i < AnimSpeedSectionCount_; ++i)
 		{
 			if (animSpeedChangeInterval_[i].IsJudgeFlag(currentAnimationSeconds))
 			{
@@ -936,13 +1056,6 @@ namespace PlayerState
 				break;
 			}
 		}
-
-	/*	if (animSpeedChangeInterval_[0].IsJudgeFlag(currentAnimationSeconds))
-			owner_->SetAnimationSpeed(1.0f);
-		else if (animSpeedChangeInterval_[1].IsJudgeFlag(currentAnimationSeconds))
-			owner_->SetAnimationSpeed(1.2f);
-		else if (animSpeedChangeInterval_[2].IsJudgeFlag(currentAnimationSeconds))
-			owner_->SetAnimationSpeed(2.0f);*/
 	}
 
 	void DamageState::Finalize()
@@ -964,8 +1077,8 @@ namespace PlayerState
 			}
 			if (ImGui::TreeNode("AddForce"))
 			{
-				ImGui::DragFloat("BlowPower", &blowPower_);
-				ImGui::DragFloat("DecelerationForce", &decelerationForce_);
+				ImGui::DragFloat("BlowPower",			&blowPower_);
+				ImGui::DragFloat("DecelerationForce",	&decelerationForce_);
 
 				ImGui::TreePop();
 			}
@@ -984,6 +1097,14 @@ namespace PlayerState
 	}
 
 	void FlinchState::Update(const float& elapsedTime)
+	{
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステートの遷移を判断
+	void FlinchState::DetermineStateTransition(const float& elapsedTime)
 	{
 		owner_->ChangeState(Player::StateType::Idle);
 	}
@@ -1008,10 +1129,18 @@ namespace PlayerState
 {
 	void DeathState::Initialize()
 	{
-
+		//owner_->PlayAnimation(Player::AnimationType:)
 	}
 
 	void DeathState::Update(const float& elapsedTime)
+	{
+		//	次のステートへ遷移
+		DetermineStateTransition(elapsedTime);
+
+	}
+
+	//	ステートの遷移を判断
+	void DeathState::DetermineStateTransition(const float& elapsedTime)
 	{
 		owner_->ChangeState(Player::StateType::Idle);
 	}

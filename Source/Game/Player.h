@@ -27,10 +27,10 @@ public:
 		JumpBack,		//	後ろジャンプ
 		JumpLeft,		//	左ジャンプ
 		DoubleJamp,		//	2段ジャンプの2段目
-		Combo0_1,		//	コンボ1_1
-		Combo0_2,		//	コンボ1_2
-		Combo0_3,		//	コンボ1_3
-		Combo0_4,		//	コンボ1_4
+		ComboOne1,		//	コンボ1_1
+		ComboOne2,		//	コンボ1_2
+		ComboOne3,		//	コンボ1_3
+		ComboOne4,		//	コンボ1_4
 		DodgeFront,		//	前回避
 		DodgeRight,		//	右回避
 		DodgeBack,		//	後ろ回避
@@ -44,7 +44,7 @@ public:
 		HitFront,		//	くらい(前からくらった)
 		HitLeft,		//	くらい(左からくらった)
 		HitRight,		//	くらい(右からくらった)
-
+		Execution01,	//	
 
 		Max,			//	アニメーション最大数
 	};
@@ -90,13 +90,13 @@ public:
 	void DrawDebugPrimitive();	//	デバッグプリミティブ描画
 	void DrawDummyRay();
 
-	bool InputMove(const float& elapsedTime);		//	移動入力処理
+	//	----- 移動入力処理 -----
+	bool InputMove(const float& elapsedTime);
+	
+	//	----- エフェクト再生 -----
 	void PlayEffect();
 
-	//	指定したキーが押されているか
-	const bool GetButtonDown(const GamePadButton& gamePadButton) { return Input::Instance().GetGamePad().GetButtonDown() & gamePadButton; }
-
-	//	判定処理
+	//	----- 判定処理 -----
 	bool RayVsVertical(const float& elapsedTime)override;		//	ステージとの当たり判定(垂直方向)
 	bool RayVsHorizontal(const float& elapsedTime)override;		//	ステージとの当たり判定(水平方向)	
 	bool PlayerVsEnemies(const float& elapsedTime);				//	押し合い処理
@@ -113,7 +113,7 @@ public:
 	const bool IsPlayEffect()const { return playEffectFlag_; }
 
 	//	----- HP -----
-	const int	GetMaxHp()		const { return MAX_HP; }
+	const int	GetMaxHp()		const { return MaxHp_; }
 	//	----- ダメージ処理 -----
 	void AddDamage(const float& damage) { hp_ -= damage; }
 
@@ -143,10 +143,11 @@ public:
 
 	//	----- アニメーション -----
 	void			PlayAnimation(const AnimationType& animType, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);
-	int				GetCurrentAnimNum();			//	現在再生中のアニメーション番号取得
-	AnimationType	GetCurrentAnimType();			//	現在再生中のアニメーションタイプ取得
-	float const		GetCurrentAnimationSeconds();	//	現在のアニメーション再生時間取得
-	
+	int				GetCurrentAnimNum();						//	現在再生中のアニメーション番号取得
+	AnimationType	GetCurrentAnimType();						//	現在再生中のアニメーションタイプ取得
+	const float		GetCurrentAnimationSeconds();				//	現在のアニメーション再生時間取得
+	const float		GetAnimationDuration(const AnimationType& animType);	//	アニメーションの長さ取得
+
 	//	-----　移動方向取得 -----
 	DirectX::XMFLOAT3					GetMoveVec()const;				//	スティック入力値から移動ベクトルを取得
 	
@@ -154,7 +155,10 @@ public:
 	StateMachine<State<Player>>*		GetStateMachine()	const { return stateMachine_.get(); }	//	ステートマシン取得
 	void								ChangeState(const StateType& state);						//	ステート遷移
 	StateType							GetCurrentState()	const { return currentState_; }			//	現在のステート取得
+	StateType							GetLastState()		const { return lastState_; }			//	ひとつ前のステート取得
 	void								DrawStateStr();												//	現在のステート描画
+	//void ForceChangeState();	//	どのステートからでも遷移するステート
+
 
 	//	----- オーディオ -----
 	void UpdateListener();	//	リスナー情報更新
@@ -170,6 +174,7 @@ private:
 	//	----- State -----
 	std::unique_ptr<StateMachine<State<Player>>>	stateMachine_ = nullptr;	//	ステートマシン
 	StateType currentState_ = StateType::Idle;									//	現在のステート	
+	StateType lastState_	= StateType::Idle;									//	ひとつ前のステート	
 
 	//	----- エフェクト -----
 	std::shared_ptr<Effect>		effectResource_;								//	エフェクト
@@ -180,12 +185,12 @@ private:
 	//AnimationType				currentAnimNum_;								//	現在のアニメーション番号
 	
 	//	----- プレイヤーのパラメータ -----
+	static constexpr int MaxHp_ = 100;											//	最大HP
 	float				 turnSpeed_ = DirectX::XMConvertToRadians(720);			//	旋回速度
-	static constexpr int MAX_HP = 100;											//	最大HP
 
 	//	----- Collision -----
 	bool isActiveCollisionDetection_ = true;	//	押し出し判定が有効かどうか
-	bool isAttackHit_ = false;	//	攻撃ヒットフラグ
+	bool isAttackHit_ = false;					//	攻撃ヒットフラグ
 
 	//	----- ポーズ -----
 	bool isPose_ = false;		//	ポーズ中プレイヤーの操作を受け付けない
@@ -197,7 +202,7 @@ private:
 	bool				isTraget_	= false;	//	ターゲットがいるか
 	float				serchRange_ = 10.0f;	//	ターゲットを見つける範囲
 	DirectX::XMFLOAT3	targetPos	= {};		//	ターゲット位置
-	DirectX::XMFLOAT3 enemyPos_ = {};	//	攻撃してきた敵の位置
+	DirectX::XMFLOAT3	enemyPos_	= {};		//	攻撃してきた敵の位置
 
 	//	----- オーディオ -----
 	SoundListener listener_ = {};	//	リスナー

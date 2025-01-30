@@ -51,9 +51,11 @@ public:
 	void		UpdateAnimation(const float& elapsedTime);
 	void		AppendAnimation(const std::string& filename);
 	bool		IsPlayAnimation()const;
+	bool		IsBlendAnimation()const { return gltfModelResource_->IsBlendAnimation(); }
 	void		SetAnimationSpeed(const float& animationSpeed)			{ gltfModelResource_->SetAnimationSpeed(animationSpeed); }
-	float const	GetCurrentAnimationSeconds()const{ return gltfModelResource_->GetCurrentAnimationSeconds(); }		//	現在再生中ののアニメーション再生時間取得
+	const float	GetCurrentAnimationSeconds()const{ return gltfModelResource_->GetCurrentAnimationSeconds(); }		//	現在再生中ののアニメーション再生時間取得
 	int			GetCurrentAnimNum()			const{ return gltfModelResource_->GetCurrentAnimNum(); }				//	現在再生中のアニメーション番号取得
+	const float GetAnimationDuration(const int& animIndex)const { return gltfModelResource_->GetAnimationDuration(animIndex); }
 
 	//	-----	ピクセルシェーダー -----
 	void SetPixelShader(const char* csoName);
@@ -78,6 +80,7 @@ public:
 	void RootMotion() { gltfModelResource_->RootMotion(GetTransform()->GetScaleFactor()); }
 	void SetRootJointIndex(const int& index) { gltfModelResource_->SetRootJointIndex(index); }
 	void SetUseRootMotion(const bool& useRootMotion) { gltfModelResource_->SetUseRootMotion(useRootMotion); }
+	void SetRootMotionSpeed(const float& rootMotionSpeed) { gltfModelResource_->SetRootMotionSpeed(rootMotionSpeed); }
 
 	//	----- Collision -----
 	virtual void RegisterCollisionData() = 0;

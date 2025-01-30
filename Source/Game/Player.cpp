@@ -82,9 +82,10 @@ void Player::Initialize()
 	effectScale_ = 0.4f;
 
 	//	位置設定
-	//GetTransform()->SetPosition({ 0.0f, 5.0f, 0.0f });
-	//GetTransform()->SetPosition({ 14.0f, 5.0f, -20.0f });
 	GetTransform()->SetPosition({ 14.0f, 0.01f, -20.0f });
+
+	//	回転値設定
+	GetTransform()->SetRotationY(DirectX::XMConvertToRadians(44.0f));
 
 	//	スケール設定
 	//GetTransform()->SetScaleFactor(3.0f);
@@ -100,7 +101,7 @@ void Player::Initialize()
 	moveSpeed_ = 2.0f;
 	//moveSpeed_ = 25.0f;
 
-	hp_ = MAX_HP;
+	hp_ = MaxHp_;
 
 	SetPixelShader("./Resources/Shader/PlayerPS.cso");
 
@@ -822,29 +823,29 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 
 	//	移動ベクトルはXZ平面に水平なベクトルになるようにする
 	//	カメラ右方向ベクトルをXZ単位ベクトルに変換
-	float Rlength;
-	DirectX::XMStoreFloat(&Rlength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraRight)));
+	float rLength;
+	DirectX::XMStoreFloat(&rLength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraRight)));
 	float cameraRightX = cameraRight.x;
 	float cameraRightZ = cameraRight.z;
 	float cameraRightLength = sqrtf(cameraRightX * cameraRightX + cameraRightZ * cameraRightZ);
 	if (cameraRightLength > 0.0f)
 	{
 		//	単位ベクトル化
-		cameraRightX = cameraRight.x / Rlength;
-		cameraRightZ = cameraRight.z / Rlength;
+		cameraRightX = cameraRight.x / rLength;
+		cameraRightZ = cameraRight.z / rLength;
 	}
 
 	//	カメラ前方向ベクトルをXZ単位ベクトルに変換
-	float Zlength;
-	DirectX::XMStoreFloat(&Zlength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraFoward)));
+	float zLength;
+	DirectX::XMStoreFloat(&zLength, DirectX::XMVector3Length(DirectX::XMLoadFloat3(&cameraFoward)));
 	float cameraFrontX = cameraFoward.x;
 	float cameraFrontZ = cameraFoward.z;
 	float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
 	if (cameraFrontLength > 0.0f)
 	{
 		//	単位ベクトル化
-		cameraFrontX = cameraFoward.x / Zlength;
-		cameraFrontZ = cameraFoward.z / Zlength;
+		cameraFrontX = cameraFoward.x / zLength;
+		cameraFrontZ = cameraFoward.z / zLength;
 	}
 
 	//	スティックの水平入力値をカメラ右方向に反映し、
@@ -889,14 +890,21 @@ Player::AnimationType Player::GetCurrentAnimType()
 }
 
 //	現在再生中のアニメーションの再生時間取得
-float const Player::GetCurrentAnimationSeconds()
+const float Player::GetCurrentAnimationSeconds()
 {
 	return Character::GetCurrentAnimationSeconds();
+}
+
+//	アニメーションの長さ取得
+const float Player::GetAnimationDuration(const AnimationType& animType)
+{
+	return Character::GetAnimationDuration(static_cast<int>(animType));
 }
 
 //	ステート遷移
 void Player::ChangeState(const StateType& state)
 {
+	lastState_ = currentState_;
 	currentState_ = state;
 	stateMachine_->ChangeState(static_cast<int>(state));
 }

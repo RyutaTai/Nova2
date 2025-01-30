@@ -21,40 +21,40 @@ public:
 		AttackPunch = 0, 	//	パンチ
 		AttackKick,			//	キック
 		AttackWing,			//	翼攻撃
-		ANIM_ATTACK04,
-		ANIM_INIT01,
-		ANIM_INIT02,
-		ANIM_INIT03,
-		ANIM_RUN,
-		ANIM_SKIL01,
-		ANIM_SKIL02,
-		ANIM_SKIL03,
-		ANIM_SKIL04,
-		ANIM_SKIL05,
-		ANIM_SKIL06,
-		ANIM_SKIL07,
-		ANIM_SKIL08,
+		Attack04,
+		Init01,
+		Init02,
+		Init03,
+		Run,
+		Skil01,
+		Skil02,
+		Skil03,
+		Skil04,
+		Skil05,
+		Skil06,
+		Skil07,
+		Skil08,
 		Idle01,				//	待機
-		ANIM_IDLE02,		//	待機2
-		ANIM_WALK,
-		ANIM_DMG_DIE01,
-		ANIM_DMG_DIE02,
-		ANIM_DMG_DIE03,
-		ANIM_DMG_DIE_DOWN,
-		ANIM_DMG_DOWN01,
-		ANIM_DMG_DOWN02,
-		ANIM_DMG_HIT01,
-		ANIM_DMG_HIT02,
-		ANIM_STU01,
-		ANIM_STU02,
-		ANIM_STU03,
-		ANIM_BD01,
-		ANIM_BD02,
-		ANIM_BD03,
-		ANIM_BD04,
-		ANIM_BD05,
-		ANIM_CINE02,
-		ANIM_CINE03,
+		Idle02,				//	待機2
+		Walk,
+		DmageDie01,
+		DmageDie02,
+		DmageDie03,
+		DmageDieDown,
+		DamageDown01,
+		DamageDown02,
+		DamageHit01,
+		DamageHit02,
+		STU01,
+		STU02,
+		STU03,
+		BD01,
+		BD02,
+		BD03,
+		BD04,
+		BD05,
+		Cine02,
+		Cine03,
 		Max,
 	};
 
@@ -99,7 +99,7 @@ private:
 	void UpdateBehaviorTree(const float& elapsedTime);	//	ビヘイビアツリー更新処理
 
 private:
-	static const int MAX_HP = 70;
+	static const int MaxHp_ = 70;
 
 	BehaviorTree*	behaviorTree_	= nullptr;
 	BehaviorData*	behaviorData_	= nullptr;

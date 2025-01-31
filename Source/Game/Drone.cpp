@@ -22,6 +22,7 @@ Drone::Drone()
 	stateMachine_->RegisterState(new DroneState::IdleState(this));			//	待機
 	stateMachine_->RegisterState(new DroneState::SearchState(this));		//	探索
 	stateMachine_->RegisterState(new DroneState::MoveState(this));			//	移動
+	stateMachine_->RegisterState(new DroneState::PursuitState(this));		//	追跡
 	stateMachine_->RegisterState(new DroneState::AttackState(this));		//	攻撃
 	stateMachine_->RegisterState(new DroneState::AvoidanceState(this));		//	回避
 
@@ -42,18 +43,18 @@ Drone::~Drone()
 //	初期化
 void Drone::Initialize()
 {
-	//	アニメーションセット
+	//	----- 自身の種類を設定 -----
 	myType_ = EnemyType::Drone;
 
-	//	初期位置設定
+	//	----- 位置設定 -----
 	/*DirectX::XMFLOAT3 position = { 190,700,1620 };
 	GetTransform()->SetPosition(position);*/
 
-	//	初期角度設定
+	//	----- 角度設定 -----
 	float angleY = ConvertToRadian(220.0f);
 	GetTransform()->SetRotationY(angleY);
 
-	//	スケール
+	//	----- スケール -----
 	float scale = 0.6f;
 	//float scale = 10.0f;
 	GetTransform()->SetScaleFactor(scale);
@@ -61,23 +62,24 @@ void Drone::Initialize()
 	//	----- Collision -----
 	RegisterCollisionData();
 
-	//	半径設定
+	//	----- 半径、高さ設定 -----
 	height_ = 4.4f;
 	radius_ = 2.5f;
 
-	//	索敵範囲設定
+	//	----- 索敵範囲設定 -----
 	searchRange_ = 15.0f;
 
-	//	HP設定
+	//	----- HP設定 -----
 	hp_ = MaxHp_;
 
-	//	弾丸初期化
+	//	----- 移動速度 -----
+	moveSpeed_ = 6.5f;
+
+	//	----- 弾丸初期化 -----
 	BulletManager::Instance().Initialize();
 
-	//	エフェクト読み込み
+	//	----- エフェクト設定 -----
 	effectResource_ = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/HitEff.efk");
-
-	//	エフェクトスケール設定
 	effectScale_ = 80.0f;
 
 	/* ----- オーディオ初期化 ----- */
@@ -148,6 +150,9 @@ void Drone::Update(const float& elapsedTime)
 {
 	Character::Update(elapsedTime);
 
+	//	----- ターゲット位置更新 -----
+	UpdateTargetPosition();
+
 	//	----- ステート更新処理 -----
 	stateMachine_->Update(elapsedTime);
 
@@ -161,24 +166,25 @@ void Drone::Update(const float& elapsedTime)
 	UpdateVelocity(elapsedTime);
 	Move(elapsedTime);
 
-	//	----- 旋回処理 -----
-	Turn(elapsedTime);
-
-	//	弾丸更新処理
-	BulletManager::Instance().Update(elapsedTime);
+	//	----- 弾丸更新処理 -----
+ 	BulletManager::Instance().Update(elapsedTime);
 	BulletManager::Instance().CoverModelUpdate(elapsedTime);
 
-	//	HPがなくなったら
-	if (hp_ <= 0)
-	{
-		Destroy();
-	}
+	//	----- 破棄処理 -----
+	JudgeDestroy();
 
 	//	----- オーディオ更新 -----
 	UpdateEmitter();
 	UpdateAudioSource();
 	
 }
+
+//	破棄判定
+void Drone::JudgeDestroy()
+{
+	if (isDead_)Destroy();
+}
+
 
 //	エミッター更新
 void Drone::UpdateEmitter()
@@ -207,7 +213,7 @@ void Drone::UpdateAudioSource()
 void Drone::LaunchBullet()
 {
 	//	弾丸発射フラグが立っていなければreturn(デバッグ用)
-	if (bulletLaunch_ == false)return;
+	if (isBulletLaunch_ == false)return;
 
 #if 1
 	//	一定間隔で弾を発射
@@ -257,27 +263,6 @@ void Drone::LaunchBullet()
 
 	}
 
-}
-
-//	旋回処理
-void Drone::Turn(const float& elapsedTime)
-{
-	//	旋回処理しないならreturn
-	if (turnAction_ == false)return;
-
-	//	プレイヤーをターゲットに設定
-	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
-	SetTargetPosition(playerPos);
-
-	//	ターゲット方向への進行ベクトルを算出(単位ベクトル化はTurn関数内で行っている)
-	DirectX::XMFLOAT3 dronePos = this->GetTransform()->GetPosition();
-	float vx = targetPosition_.x - dronePos.x;
-	float vz = targetPosition_.z - dronePos.z;
-
-	//	旋回処理
-#if 1
-	Character::Turn(elapsedTime, vx, vz, turnSpeed_);
-#endif
 }
 
 //	ステージとの当たり判定
@@ -444,7 +429,7 @@ void Drone::DrawStateStr()
 	//	ステート文字列
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
-		"Idle","Search","Move",
+		"Idle","Search","Move","Pursuit",
 		"Attack","Avoidance"
 	};
 
@@ -459,24 +444,28 @@ void Drone::DrawDebug()
 
 	if (ImGui::TreeNode(u8"Drone ドローン"))
 	{
-		//	ステート
+		//	----- ステート -----
 		DrawStateStr();
 		stateMachine_->DrawDebug();
+
+		Character::DrawDebug();
 
 		//	コリジョン描画フラグ
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
 		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定
 		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);		//	くらい判定
-		Character::DrawDebug();
 
 		ImGui::Checkbox("Invincible", &isInvincible_);			//	無敵フラグ設定
-		ImGui::Checkbox("Bullet Launch ", &bulletLaunch_);		//	弾丸発射
-		ImGui::Checkbox("Turn Action", &turnAction_);			//	旋回するかどうか
+		ImGui::Checkbox("Bullet Launch ", &isBulletLaunch_);		//	弾丸発射
 		
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
-		ImGui::DragFloat("TurnSpeed", &turnSpeed_, 1.0f, -FLT_MAX, FLT_MAX);	//	旋回速度
-		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);	//	索敵範囲
-		ImGui::DragFloat("LaunchRange", &launchRange_, 0.1f, -FLT_MAX, FLT_MAX);	//	射程範囲
+
+		//	----- ターゲット -----
+		float distanceToTarget = CalcDistanceToTarget();
+		ImGui::DragFloat("DistanceToTarget", &distanceToTarget, 0.1f, -FLT_MAX, FLT_MAX);	//	ターゲットまでの距離
+		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);				//	索敵範囲
+		ImGui::DragFloat("LaunchRange", &launchRange_, 0.1f, -FLT_MAX, FLT_MAX);			//	射程範囲
+
 		ImGui::TreePop();
 	}
 	BulletManager::Instance().DrawDebug();	//	弾丸ImGui

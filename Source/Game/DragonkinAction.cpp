@@ -3,38 +3,30 @@
 #include "../Nova/Others/MathHelper.h"
 #include "Player.h"
 
-//	待機行動(IdleAction)
+//	待機行動
 namespace DragonkinAction
 {
 	ActionBase::State IdleAction::Run(const float& elapsedTime)
 	{
-		float runTimer = owner_->GetRunTimer();
 		switch (step_)
 		{
 		case 0:
-			owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
+			owner_->ResetRunTimer();
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::Idle01), false, 1.0f, 0.2f);
 			step_++;
 			break;
 		case 1:
-			runTimer -= elapsedTime;
 			//	タイマー更新
-			owner_->SetRunTimer(runTimer);
+			owner_->UpdateRunTimer(elapsedTime);
 
 			//	待機時間が過ぎた時
-			if (runTimer <= 0.0f)
+			if (owner_->GetRunTimer() >= IdleTimer_)
 			{
 				owner_->SetRandomTargetPosition();
 				step_ = 0;
 				return ActionBase::State::Complete;
 			}
 
-			//	プレイヤーを見つけた時
-			if (owner_->SearchPlayer())
-			{
-				step_ = 0;
-				return ActionBase::State::Complete;
-			}
 			break;
 		}
 		return ActionBase::State::Run;
@@ -51,16 +43,51 @@ namespace DragonkinAction
 
 }
 
-//	通常殴打(AttackPunchAction)
+//	索敵行動
+namespace DragonkinAction
+{
+	ActionBase::State SearchAction::Run(const float& elapsedTime)
+	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			step_++;
+			break;
+		case 1:
+			//	プレイヤーを見つけた時
+			if (owner_->SearchPlayer())
+			{
+				step_ = 0;
+				return ActionBase::State::Complete;
+			}
+
+			return ActionBase::State::Complete;
+			break;
+		}
+		return ActionBase::State::Run;
+	}
+
+	void SearchAction::DrawDebug()
+	{
+		if (ImGui::TreeNode("SearchAction"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+
+}
+
+//	通常殴打
 namespace DragonkinAction
 {
 	ActionBase::State AttackPunchAction::Run(const float& elapsedTime)
 	{
-		float runTimer = owner_->GetRunTimer();
 		switch (step_)
 		{
 		case 0:
-			//	アニメーション再生
+			owner_->ResetRunTimer();
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.42f, 0.5f);
@@ -109,16 +136,15 @@ namespace DragonkinAction
 
 }
 
-//	通常キック(AttackKickAction)
+//	通常キック
 namespace DragonkinAction
 {
 	ActionBase::State AttackKickAction::Run(const float& elapsedTime)
 	{
-		float runTimer = owner_->GetRunTimer();
 		switch (step_)
 		{
 		case 0:
-			//	アニメーション再生
+			owner_->ResetRunTimer();
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.52f, 0.6f);
@@ -153,7 +179,6 @@ namespace DragonkinAction
 				step_ = 0;
 				return ActionBase::State::Complete;
 			}
-
 			break;
 		}
 		return ActionBase::State::Run;
@@ -170,16 +195,15 @@ namespace DragonkinAction
 
 }
 
-//	通常翼攻撃(AttackWingAction)
+//	通常翼攻撃
 namespace DragonkinAction
 {
 	ActionBase::State AttackWingAction::Run(const float& elapsedTime)
 	{
-		float runTimer = owner_->GetRunTimer();
 		switch (step_)
 		{
 		case 0:
-			//	アニメーション再生
+			owner_->ResetRunTimer();
 			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false, 1.0f, 0.2f);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.34f, 0.41f);
@@ -241,11 +265,21 @@ namespace DragonkinAction
 
 }
 
-//	スキル攻撃行動(SkillAction)
+//	スキル攻撃行動
 namespace DragonkinAction
 {
 	ActionBase::State SkillAction::Run(const float& elapsedTime)
 	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			step_++;
+			break;
+		case 1:
+			return ActionBase::State::Complete;
+			break;
+		}
 		return ActionBase::State::Run;
 	}
 
@@ -259,11 +293,21 @@ namespace DragonkinAction
 	}
 }
 
-//	追跡行動(PursuitAction)
+//	追跡行動
 namespace DragonkinAction
 {
 	ActionBase::State PursuitAction::Run(const float& elapsedTime)
 	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			step_++;
+			break;
+		case 1:
+			return ActionBase::State::Complete;
+			break;
+		}
 		return ActionBase::State::Run;
 	}
 
@@ -278,30 +322,21 @@ namespace DragonkinAction
 
 }
 
-//	徘徊行動(WanderAction)
-namespace DragonkinAction
-{
-	ActionBase::State WanderAction::Run(const float& elasedTime)
-	{
-		return ActionBase::State::Run;
-	}
-
-	void WanderAction::DrawDebug()
-	{
-		if (ImGui::TreeNode("WanderAction"))
-		{
-
-			ImGui::TreePop();
-		}
-	}
-
-}
-
-//	逃走行動(LeaveAction)
+//	逃走行動
 namespace DragonkinAction
 {
 	ActionBase::State LeaveAction::Run(const float& elapsedTime)
 	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			step_++;
+			break;
+		case 1:
+			return ActionBase::State::Complete;
+			break;
+		}
 		return ActionBase::State::Run;
 	}
 
@@ -316,11 +351,21 @@ namespace DragonkinAction
 
 }
 
-//	回復行動(RecoverAction)
+//	回復行動
 namespace DragonkinAction
 {
 	ActionBase::State RecoverAction::Run(const float& elapsedTime)
 	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			step_++;
+			break;
+		case 1:
+			return ActionBase::State::Complete;
+			break;
+		}
 		return ActionBase::State::Run;
 	}
 
@@ -332,5 +377,73 @@ namespace DragonkinAction
 			ImGui::TreePop();
 		}
 	}
+}
 
+//	ダメージ行動
+namespace DragonkinAction
+{
+	ActionBase::State DamageAction::Run(const float& elapsedTIme)
+	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DamageHit01), false, 1.0f, 0.2f);
+			step_++;
+			break;
+		case 1:
+			//	アニメーション再生が終わったら終了
+			if (owner_->IsPlayAnimation() == false)
+			{
+				step_ = 0;
+				return ActionBase::State::Complete;
+			}
+			break;
+		}
+		return ActionBase::State::Run;
+	}
+
+	void DamageAction::DrawDebug()
+	{
+		if (ImGui::TreeNode("DamageAction"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
+}
+
+//	死亡行動
+namespace DragonkinAction
+{
+	ActionBase::State DeathAction::Run(const float& elapsedTIme)
+	{
+		switch (step_)
+		{
+		case 0:
+			owner_->ResetRunTimer();
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DmageDieDown), false, 1.0f, 0.2f);
+			step_++;
+			break;
+		case 1:
+			//	アニメーション再生が終わったら終了
+			if (owner_->IsPlayAnimation() == false)
+			{
+				step_ = 0;
+				owner_->SetIsDead(true);
+				return ActionBase::State::Complete;
+			}
+			break;
+		}
+		return ActionBase::State::Run;
+	}
+
+	void DeathAction::DrawDebug()
+	{
+		if (ImGui::TreeNode("DeathAction"))
+		{
+
+			ImGui::TreePop();
+		}
+	}
 }

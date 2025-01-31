@@ -17,10 +17,18 @@ public:
 	virtual void Render();
 	virtual void DrawDebug();	//	デバッグ描画
 
+	//	----- 移動 -----
+	virtual void Move(const float& elpasedTime);
+	void SetMoveVec(const DirectX::XMFLOAT3& vec) { moveVec_ = vec; }
+	//	----- 旋回処理 -----
+	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
 	//	----- 速さ -----
 	void AddMoveSpeed(const float& addMoveSpeed, const float& elapsedTime);
 	void SetMoveSpeed(const float& moveSpeed){ moveSpeed_ = moveSpeed; }
+	void ResetMoveSpeed() { moveSpeed_ = defaultMoveSpeed_; }
 	const float	GetMoveSpeed()const { return moveSpeed_; }
+	void SetDefaultMoveSpeed(const float& moveSpeed) { defaultMoveSpeed_ = moveSpeed; }
+	const float GetDefaultMoveSpeed()const { return defaultMoveSpeed_; }
 
 	//	----- 速度 -----
 	void UpdateVelocity(const float& elapsedTime);
@@ -30,7 +38,6 @@ public:
 	void MultiplyVelocityXZ(const float& multiplyVelocity, const float& elapsedTime);
 	void SetVelocity(const DirectX::XMFLOAT3& velocity)			{ velocity_ = velocity; }
 	const DirectX::XMFLOAT3 GetVelocity()const { return velocity_; }
-	
 	//	----- 加速度 -----
 	void AddAcceleration(const DirectX::XMFLOAT3& addAcceleration, const float& elapsedTime);
 	void AddAccelerationY(const float& addAccelerationY, const float& elapsedTime);
@@ -41,11 +48,6 @@ public:
 	//	----- 吹っ飛ばし -----
 	void UpdateForce(const float& elapsedTime);
 	void AddForce(const DirectX::XMFLOAT3& direction, const float& power, const float& decelerationForce);
-
-	//	----- 移動 -----
-	virtual void Move(const float& elpasedTime);
-	virtual void Turn(const float& elapsedTime, float vx, float vz, float speed);
-	void SetMoveVec(const DirectX::XMFLOAT3& vec) { moveVec_ = vec; }
 
 	//	----- アニメーション -----
 	void		PlayAnimation(const int& index, const bool& loop = false, const float& blendTime = 1.0f, const float& animSpeed = 1.0f, const float& startFrame = 0.0f, const float& endFrame = 0.0f);
@@ -62,9 +64,13 @@ public:
 	void SetPixelShader(const char* csoName);
 	
 	//	----- HP -----
-	void		SubtractHp(const int& hp);
-	void		SetHp(const int& hp){ hp_ = hp; }
-	const int	GetHp()const { return hp_; }
+	void			SubtractHp(const int& hp);
+	void			SetHp(const int& hp){ hp_ = hp; }
+	const int		GetHp()const { return hp_; }
+
+	//	----- 死亡フラグ -----
+	void			SetIsDead(const bool& isDead) { isDead_ = isDead; }
+	const bool		IsDead()const { return isDead_; }
 
 	//	----- 無敵処理 -----
 	void		SetIsInvincible(const bool& isInvincible)		{ isInvincible_ = isInvincible; }
@@ -112,12 +118,8 @@ public:
 	CollisionDetectionData& GetCollisionDetectionData(const std::string& name);
 	CollisionDetectionData& GetCollisionDetectionData(const int& index);
 
-	//	----- 死亡フラグ -----
-	void SetIsDead(const bool& isDead) { isDead_ = isDead; }
-	const bool IsDead()const { return isDead_; }
-
 	//	----- 攻撃力 -----
-	void SetAttackPower(const float& attackPower) { attackPower_ = attackPower; }
+	void		SetAttackPower(const float& attackPower) { attackPower_ = attackPower; }
 	const float GetAttackPower()const { return attackPower_; }
 
 	//	----- 吹っ飛ばし -----
@@ -132,9 +134,13 @@ protected:
 	DirectX::XMFLOAT3	velocity_		= {};	//	移動速度
 	DirectX::XMFLOAT3	acceleration_	= {};	//	加速度(0なら等速直線運動)
 	DirectX::XMFLOAT3	moveVec_		= {};	//	移動ベクトル
-	float				turnSpeed_		= DirectX::XMConvertToRadians(720);	//	旋回する速さ
-	float				moveSpeed_		= 2.0f;								//	移動する速さ
+	float				moveSpeed_		= 4.0f;								//	移動する速さ
+	float				defaultMoveSpeed_ = 4.0f;							//	通常時の移動する速さ
 
+	//	----- 旋回処理 -----
+	bool	isTurnAction_	= true;								//	旋回処理するかどうか
+	float	turnSpeed_		= DirectX::XMConvertToRadians(720);	//	旋回する速さ
+	
 	//	----- 無敵処理 -----
 	bool	isInvincible_	= false;		//	無敵かどうか
 	float	invincibleTimer_ = 0.0f;		//	無敵時間
@@ -151,7 +157,7 @@ protected:
 	float	attackPower_ = 5.0f;	//	攻撃力
 
 private:
-	const float MOVE_SPEED = 10.0f;	//	最大の速さ
+	const float MoveSpeed_ = 20.0f;	//	最大の速さ
 
 private:
 	std::shared_ptr <GltfModel>					gltfModelResource_;		//	Gltfモデル

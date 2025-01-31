@@ -1226,7 +1226,7 @@ void GltfModel::Render(const DirectX::XMMATRIX& world)
 //  デバッグ描画
 void GltfModel::DrawDebug()
 {
-    if (ImGui::TreeNode(u8"GltfModel"))
+    if (ImGui::TreeNode(u8"Animation"))
     {
         ImGui::InputInt("CurrentAnimationIndex", &currentAnimationIndex_);      //  現在のアニメーション番号
         ImGui::SliderFloat("TransitionTime", &transitionTime_, 0.0f, 5.0f);

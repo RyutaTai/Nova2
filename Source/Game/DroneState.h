@@ -58,6 +58,23 @@ namespace DroneState
 	};
 }
 
+//	追跡ステート
+namespace DroneState
+{
+	class PursuitState :public State<Drone>
+	{
+	public:
+		PursuitState(Drone* owner) :State(owner) {}
+		~PursuitState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	};
+}
+
 //	攻撃ステート
 namespace DroneState
 {

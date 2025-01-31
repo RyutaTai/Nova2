@@ -51,7 +51,11 @@ public:
 	
 	//virtual bool OnMessage(const Telegram& msg);							//	メッセージ受信関数
 
+	//	----- 旋回処理 -----
+	virtual void Turn(const float& elapsedTime);
+
 	//	----- 破棄処理 -----
+	virtual void JudgeDestroy() = 0;
 	virtual void Destroy();
 
 	//	----- プレイヤー探索 -----
@@ -72,6 +76,7 @@ public:
 	virtual void	AddDamage(const float& damage);
 
 	//	----- ターゲット -----
+	void				UpdateTargetPosition();	//	ターゲット位置更新
 	virtual void		SetRandomTargetPosition();																//	ターゲット位置をランダム設定
 	void				SetTargetPosition(const DirectX::XMFLOAT3& position)	{ targetPosition_ = position; }	//	ターゲットポジション設定
 	DirectX::XMFLOAT3	GetTargetPosition()const								{ return targetPosition_; }		//	ターゲットポジション取得
@@ -79,8 +84,10 @@ public:
 	virtual void		ApproachingTarget(const float& elapsdTime);	//	ターゲットに接近する
 
 	//	----- ステートタイマー -----
-	void				SetRunTimer(const float& timer) { runTimer_ = timer; }		//	ステートタイマー設定
-	float				GetRunTimer()const				{ return runTimer_; }		//	ステートタイマー取得
+	void				UpdateRunTimer(const float& elapsedTime)	{ runTimer_ += elapsedTime; }	//	ステートタイマー更新
+	void				SetRunTimer(const float& timer)				{ runTimer_ = timer; }			//	ステートタイマー設定
+	void				ResetRunTimer()								{ runTimer_ = 0.0f; }			//	ステートタイマー初期化
+	float				GetRunTimer()const							{ return runTimer_; }			//	ステートタイマー取得
 
 	bool				IsUseOffsetY()const { return useOffsetY_; }
 
@@ -96,6 +103,6 @@ protected:
 	float				runTimer_			=	0.0f;							//
 	bool				isDamaged_			=	false;							//	攻撃を受けたかどうか
 
-	bool				useOffsetY_			= true;	//	当たり判定でY方向のオフセット値を使うか
+	bool				useOffsetY_			=	true;	//	当たり判定でY方向のオフセット値を使うか
 };
 

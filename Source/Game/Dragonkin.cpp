@@ -14,34 +14,20 @@ Dragonkin::Dragonkin()
 	//	自身の種類設定
 	myType_ = EnemyType::Dragonkin;
 
-	//	ステートセット(Dragonkin::StateTypeの順と合わせる)
-	//stateMachine_.reset(new StateMachine<State<Player>>());
-	//stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機
-	//stateMachine_->RegisterState(new PlayerState::MoveState(this));		//	移動
-	//stateMachine_->RegisterState(new PlayerState::AttackState(this));		//	攻撃
-	//stateMachine_->RegisterState(new PlayerState::ComboOne1(this));		//	コンボ0_1
-	//stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
-	//stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
-	//stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
-	//stateMachine_->RegisterState(new PlayerState::ComboOne5(this));		//	コンボ0_5
-	//stateMachine_->RegisterState(new PlayerState::ComboOne6(this));		//	コンボ0_6
-	//stateMachine_->RegisterState(new PlayerState::ComboOne7(this));		//	コンボ0_7
-	//stateMachine_->RegisterState(new PlayerState::DodgeState(this));		//	回避
-
-	//	モデルのルート設定
+	//	----- モデルのルート設定 -----
 	int rootNodeIndex = GetNodeIndex("root");
 	SetRootJointIndex(rootNodeIndex);
 
 	//	----- Collision -----
 	RegisterCollisionData();
 
-	//	索敵範囲設定
+	//	----- 索敵範囲設定 -----
 	searchRange_ = 13.5f;
 
 	//	当たり判定用高さ、半径設定
-	//radius_ = 1.79f;
 	radius_ = 3.0f;
 	height_ = 10.0f;
+
 	useOffsetY_ = false;
 
 	//	HP設定
@@ -51,13 +37,16 @@ Dragonkin::Dragonkin()
 	behaviorData_ = new BehaviorData();
 	behaviorTree_ = new BehaviorTree(this);
 
-	behaviorTree_->AddNode("", "Root", 0, BehaviorTree::SelectRule::Priority, nullptr, nullptr);										//	ルートノード
-	behaviorTree_->AddNode("Root", "Idle", 0, BehaviorTree::SelectRule::Non, new DragonkinJudgment::IdleJudgment(this), new DragonkinAction::IdleAction(this));			//	待機ノード(末端)
-	behaviorTree_->AddNode("Root", "Battle", 1, BehaviorTree::SelectRule::Random, new DragonkinJudgment::BattleJudgment(this), nullptr);										//	戦闘ノード(中間)
+	behaviorTree_->AddNode("",			"Root",			0, BehaviorTree::SelectRule::Priority,	nullptr, nullptr);																			//	ルートノード
+	behaviorTree_->AddNode("Root",		"Death",		0, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::DeathJudgment(this),		new DragonkinAction::DeathAction(this));	//	死亡ノード(末端)
+	behaviorTree_->AddNode("Root",		"Damage",		1, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::DamageJudgment(this),	new DragonkinAction::DamageAction(this));	//	ダメージノード(末端)
+	behaviorTree_->AddNode("Root",		"Search",		2, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::SearchJudgment(this),	new DragonkinAction::SearchAction(this));	//	索敵ノード(末端)
+	behaviorTree_->AddNode("Root",		"Battle",		3, BehaviorTree::SelectRule::Random,	new DragonkinJudgment::BattleJudgment(this),	nullptr);									//	戦闘ノード(中間)
+	behaviorTree_->AddNode("Root",		"Idle",			4, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::IdleJudgment(this),		new DragonkinAction::IdleAction(this));		//	待機ノード(末端)
 
-	behaviorTree_->AddNode("Battle", "AttackPunch", 0, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackPunchAction(this));	//	通常パンチ攻撃(末端)
-	behaviorTree_->AddNode("Battle", "AttackKick", 1, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackKickAction(this));	//	通常キック攻撃(末端)
-	behaviorTree_->AddNode("Battle", "AttackWing", 2, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackWingAction(this));	//	通常キック攻撃(末端)
+	behaviorTree_->AddNode("Battle",	"AttackPunch",	0, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackPunchAction(this));							//	通常パンチ攻撃(末端)
+	behaviorTree_->AddNode("Battle",	"AttackKick",	1, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackKickAction(this));							//	通常キック攻撃(末端)
+	behaviorTree_->AddNode("Battle",	"AttackWing",	2, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackWingAction(this));							//	通常キック攻撃(末端)
 
 }
 
@@ -212,20 +201,23 @@ void Dragonkin::Update(const float& elapsedTime)
 
 	Character::Update(elapsedTime);
 
-	//	アニメーション更新処理
+	//	----- アニメーション更新処理 -----
 	UpdateAnimation(elapsedTime);
 
-	//	ビヘイビアツリー更新
+	//	----- ターゲット位置更新 -----
+	UpdateTargetPosition();
+
+	//	----- ビヘイビアツリー更新 -----
 	UpdateBehaviorTree(elapsedTime);
 
-	//	Collision更新
+	//	----- 当たり判定更新 -----
 	UpdateCollisions(elapsedTime);
 
-	//	HPがなくなったら
-	if (hp_ <= 0)
-	{
-		Destroy();
-	}
+	//	----- 旋回処理 -----
+	Turn(elapsedTime);
+
+	//	----- 破棄判定 -----
+	JudgeDestroy();
 
 }
 
@@ -311,11 +303,16 @@ void Dragonkin::UpdateCollisions(const float& elapsedTime)
 
 }
 
+//	破棄判定
+void Dragonkin::JudgeDestroy()
+{
+	if (isDead_)Destroy();
+}
+
 //	破棄処理
 void Dragonkin::Destroy()
 {
-	//	自身を破棄
-	Enemy::Destroy();
+	Enemy::Destroy();	//	自身を破棄
 }
 
 //	描画処理

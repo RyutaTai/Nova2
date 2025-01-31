@@ -14,7 +14,9 @@ Character::Character(const std::string& filename, const std::string& rootNodeNam
 //	更新処理
 void Character::Update(const float& elapsedTime)
 {
+	//	----- 吹っ飛ばし処理更新 -----
 	UpdateForce(elapsedTime);
+
 }
 
 //	ベロシティ更新
@@ -96,13 +98,13 @@ void Character::AddAccelerationXZ(const float& addAccelerationX, const float& ad
 void Character::AddMoveSpeed(const float& addMoveSpeed, const float& elapsedTime)
 {
 	//	最大スピードを超えていない場合のみ加算処理
-	if (moveSpeed_ < MOVE_SPEED)
+	if (moveSpeed_ < MoveSpeed_)
 	{
 		moveSpeed_ += addMoveSpeed * elapsedTime;
 	}
-	else if (MOVE_SPEED >= moveSpeed_)
+	else if (MoveSpeed_ >= moveSpeed_)
 	{
-		moveSpeed_ = MOVE_SPEED;
+		moveSpeed_ = MoveSpeed_;
 	}
 }
 
@@ -384,13 +386,25 @@ void Character::Render()
 //	デバッグ描画
 void Character::DrawDebug()
 {
-	gltfModelResource_->DrawDebug();
+	//	----- トランスフォーム -----
 	GetTransform()->DrawDebug();
+	//	----- アニメーション -----
+	gltfModelResource_->DrawDebug();
 
-	ImGui::DragInt("HP", &hp_, 1.0f, 0, INT_MAX);									//	HP
+	//	----- HP -----
+	ImGui::DragInt("HP", &hp_, 1.0f, 0, INT_MAX);
+	//	----- 移動 -----
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f, -FLT_MAX, FLT_MAX);			//	移動速度
 	ImGui::DragFloat3("Acceleration", &acceleration_.x, 0.01f, -FLT_MAX, FLT_MAX);	//	加速度
 	ImGui::DragFloat3("moveVec", &moveVec_.x, 0.01f, -FLT_MAX, FLT_MAX);			//	移動ベクトル
+	ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.01f, 0.0f, FLT_MAX);				//	移動する速さ
+	ImGui::DragFloat("DefaultMoveSpeed", &defaultMoveSpeed_, 0.01f, 0.0f, FLT_MAX);	//	デフォルトの移動する速さ
+
+	//	----- 旋回 -----
+	ImGui::Checkbox("Turn Action", &isTurnAction_);			//	旋回するかどうか
+	ImGui::DragFloat("TurnSpeed", &turnSpeed_, 0.01f);		//	旋回速度
+
+	//	----- 当たり判定の大きさ -----
 	ImGui::DragFloat("Height", &height_, 0.01f, -FLT_MAX, FLT_MAX);					//	高さ
 	ImGui::DragFloat("Radius", &radius_, 0.01f, -FLT_MAX, FLT_MAX);					//	半径
 

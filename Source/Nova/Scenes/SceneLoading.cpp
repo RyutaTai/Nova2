@@ -10,19 +10,18 @@
 void SceneLoading::Initialize()
 {
 	//	スプライト初期化
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)] = std::make_unique<Sprite>( L"./Resources/Image/Loading.png");
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetPosition(900, 855);
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->AddPosition(50, 50);
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetPivot(0.5f, 0.5f);
-	sprite_[static_cast<int>(SPRITE_LOADING::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
-	sprite_[static_cast<int>(SPRITE_LOADING::TitleText)] = std::make_unique<Sprite>( L"./Resources/Image/Groove2.png");
-	//sprite_ = std::make_unique<Sprite>( L"./Resources/Image/NowLoading.png");
+	sprites_[static_cast<int>(SpriteLoading::Loading)] = std::make_unique<Sprite>( L"./Resources/Image/Loading.png");
+	sprites_[static_cast<int>(SpriteLoading::Loading)]->GetTransform()->SetPosition(900, 855);
+	sprites_[static_cast<int>(SpriteLoading::Loading)]->GetTransform()->AddPosition(50, 50);
+	sprites_[static_cast<int>(SpriteLoading::Loading)]->GetTransform()->SetPivot(0.5f, 0.5f);
+	sprites_[static_cast<int>(SpriteLoading::Back)] = std::make_unique<Sprite>(L"./Resources/Image/Back2.png");
+	sprites_[static_cast<int>(SpriteLoading::TitleText)] = std::make_unique<Sprite>( L"./Resources/Image/Groove2.png");
 
 	//	スレッド開始
 	thread_ = new std::thread(LoadingThread, this);	//	LoadingThread関数にthisを渡す
 
 	//	ロード画像の角度初期化
-	loadSpriteangle_ = 0.0f;
+	loadSpriteAngle_ = 0.0f;
 
 	//	オーディオ初期化
 	AudioSource* loadBGM = AudioManager::Instance().LoadAudioSource("./Resources/Audio/BGM/Load.wav", Audio::AudioType::BGMNormal, "LoadingScene");
@@ -45,11 +44,11 @@ void SceneLoading::Finalize()
 	}
 
 	//	スプライト終了化
-	for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
+	for (int i = 0; i < static_cast<int>(SpriteLoading::Max); i++)
 	{
-		if (sprite_[i] != nullptr)
+		if (sprites_[i] != nullptr)
 		{
-			sprite_[i] = nullptr;
+			sprites_[i] = nullptr;
 		}
 	}
 
@@ -62,19 +61,29 @@ void SceneLoading::Finalize()
 void SceneLoading::Update(const float& elapsedTime)
 {
 	//	次のシーンの準備が完了したらシーンを切り替える
-	if (nextScene_->IsReady()) {
+	if (nextScene_->IsReady()) 
+	{
 		SceneManager::Instance().ChangeScene(nextScene_);
 		nextScene_ = nullptr;
 	}
 
 	//	角度更新
-	loadSpriteangle_ += 90.0f * elapsedTime;
-	if (loadSpriteangle_ > 360.0f)
+	loadSpriteAngle_ += 90.0f * elapsedTime;
+	if (loadSpriteAngle_ > 360.0f)
 	{
-		loadSpriteangle_ = 0.0f;
+		loadSpriteAngle_ = 0.0f;
 	}
-	sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->GetTransform()->SetAngle(loadSpriteangle_);
+	sprites_[static_cast<int>(SpriteLoading::Loading)]->GetTransform()->SetAngle(loadSpriteAngle_);
 
+}
+
+//	タイトルシーンのスプライトのアルファ値を設定
+void SceneLoading::SetAllSpriteAlpha()
+{
+	for (int i = 0; i < static_cast<int>(SpriteLoading::Max); ++i)
+	{
+		sprites_[i]->GetTransform()->SetColorA(allSpriteAlpha_);
+	}
 }
 
 void SceneLoading::ShadowRender()
@@ -86,32 +95,10 @@ void SceneLoading::ShadowRender()
 void SceneLoading::Render()
 {
 	//	Sprite
-	{
-#if 0
-		//	ローディング画面を描画
-		float spriteWidth = 1280.0f;
-		float spriteHeight = 720.0f;
-		sprite_->GetTransform()->SetSize({ spriteWidth,spriteHeight });
-		//sprite_->GetTransform()->SetSize({ 5120,720 });//5120では無理?
-		sprite_->GetTransform()->SetTexSize({ spriteWidth,spriteHeight });
-
-		animationTimer_++;	//	elapsedTimeを関数で取得して足したほうがいい？ 速くなったり遅くなったりする
-		//animationTimer += this->timeAddend + this->GetElapsedTime();
-		if (animationTimer_ > animationFrame_)
-		{
-			float x = animationNumber_ * spriteWidth;
-			sprite_->GetTransform()->SetTexPosX(x);					//	次のコマに移動
-			animationTimer_ = 0;										//	アニメーションタイマーをリセット
-			animationNumber_++;										//	アニメーション数を増やす
-			if (animationNumber_ > animationMAX_)animationNumber_ = 0;	//	アニメーション数をリセット
-		}
-		sprite_->Render();
-#endif
-
-		sprite_[static_cast<int>(SPRITE_LOADING::Back)]->Render();
-		sprite_[static_cast<int>(SPRITE_LOADING::TitleText)]->Render();
-		sprite_[static_cast<int>(SPRITE_LOADING::Loading)]->Render();
-	}
+	sprites_[static_cast<int>(SpriteLoading::Back)]->Render();
+	sprites_[static_cast<int>(SpriteLoading::TitleText)]->Render();
+	sprites_[static_cast<int>(SpriteLoading::Loading)]->Render();
+	
 }
 
 //	ローディングスレッド
@@ -136,12 +123,11 @@ void SceneLoading::DrawDebug()
 {
 	if (ImGui::TreeNode("Loading Sprite"))
 	{
-		//	スプライト終了化
-		for (int i = 0; i < static_cast<int>(SPRITE_LOADING::Max); i++)
+		for (int i = 0; i < static_cast<int>(SpriteLoading::Max); i++)
 		{
-			if (sprite_[i] != nullptr)
+			if (sprites_[i] != nullptr)
 			{
-				sprite_[i]->DrawDebug();
+				sprites_[i]->DrawDebug();
 			}
 		}
 		ImGui::TreePop();

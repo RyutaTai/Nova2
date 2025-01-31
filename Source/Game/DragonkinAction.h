@@ -13,9 +13,28 @@ namespace DragonkinAction
 		IdleAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
+
+	private:
+		float IdleTimer_ = 1.0f;	//	‘Ò‹@‚·‚éŠÔ
+
 	};
 }
 
+//	õ“Gs“®
+namespace DragonkinAction
+{
+	class SearchAction : public ActionBase
+	{
+	public:
+		SearchAction(Dragonkin* owner) :ActionBase(owner) {}
+		ActionBase::State Run(const float& elapsedTime)override;
+		void DrawDebug()override;
+
+	};
+}
+
+#pragma region ===== UŒ‚ =====
+#pragma region ----- ’ÊíUŒ‚ -----
 //	’Êí‰£‘Å
 namespace DragonkinAction
 {
@@ -63,7 +82,9 @@ namespace DragonkinAction
 
 	};
 }
+#pragma endregion ----- ’ÊíUŒ‚ -----
 
+#pragma region ----- ƒXƒLƒ‹UŒ‚ -----
 //	ƒXƒLƒ‹UŒ‚s“®
 namespace DragonkinAction
 {
@@ -79,6 +100,8 @@ namespace DragonkinAction
 
 	};
 }
+#pragma endregion ----- ƒXƒLƒ‹UŒ‚ -----
+#pragma endregion ===== UŒ‚ =====
 
 //	’ÇÕs“®
 namespace DragonkinAction
@@ -87,18 +110,6 @@ namespace DragonkinAction
 	{
 	public:
 		PursuitAction(Dragonkin* enemy) :ActionBase(enemy) {}
-		ActionBase::State Run(const float& elapsedTime)override;
-		void DrawDebug()override;
-	};
-}
-
-//	œpœjs“®
-namespace DragonkinAction
-{
-	class WanderAction : public ActionBase
-	{
-	public:
-		WanderAction(Dragonkin* owner) :ActionBase(owner) {}
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
 	};
@@ -128,3 +139,28 @@ namespace DragonkinAction
 	};
 }
 
+//	ƒ_ƒ[ƒWs“®
+namespace DragonkinAction
+{
+	class DamageAction :public ActionBase
+	{
+	public:
+		DamageAction(Dragonkin* owner) :ActionBase(owner) {}
+		ActionBase::State Run(const float& elapsedTime)override;
+		void DrawDebug()override;
+
+	};
+}
+
+//	€–Ss“®
+namespace DragonkinAction
+{
+	class DeathAction :public ActionBase
+	{
+	public:
+		DeathAction(Dragonkin* owner) :ActionBase(owner) {}
+		ActionBase::State Run(const float& elapsedTime)override;
+		void DrawDebug()override;
+
+	};
+}

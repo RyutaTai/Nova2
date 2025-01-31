@@ -14,6 +14,32 @@ Enemy::Enemy(const std::string& filename, const std::string& rootNodeName)
 
 }
 
+//	旋回処理
+void Enemy::Turn(const float& elapsedTime)
+{
+	//	旋回処理しないならreturn
+	if (isTurnAction_ == false)return;
+
+	//	ターゲット方向への進行ベクトルを算出(単位ベクトル化はTurn関数内で行っている)
+	DirectX::XMFLOAT3 dronePos = this->GetTransform()->GetPosition();
+	float vx = targetPosition_.x - dronePos.x;
+	float vz = targetPosition_.z - dronePos.z;
+
+	//	旋回処理
+#if 1
+	Character::Turn(elapsedTime, vx, vz, turnSpeed_);
+#endif
+}
+
+//	ターゲット位置更新
+void Enemy::UpdateTargetPosition()
+{
+	//	プレイヤーをターゲットに設定
+	DirectX::XMFLOAT3 playerPos = Player::Instance().GetTransform()->GetPosition();
+	playerPos.y += Player::Instance().GetHeight() / 2.0f;
+	SetTargetPosition(playerPos);
+}
+
 //	ターゲット位置をランダム設定
 void Enemy::SetRandomTargetPosition()
 {
@@ -38,8 +64,6 @@ const float Enemy::CalcDistanceToTarget()
 void Enemy::ApproachingTarget(const float& elapsedTime)
 {
 	DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
-	//	Y方向は行かないようにする
-	position.y = 0.0f;
 
 	moveVec_ = Normalize(targetPosition_ - position);
 

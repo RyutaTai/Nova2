@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Nova/AI/JudgmentBase.h"
 #include "Dragonkin.h"
+#include "../Nova/AI/JudgmentBase.h"
 
 //	IdleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
@@ -10,7 +10,20 @@ namespace DragonkinJudgment
 	{
 	public:
 		IdleJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
-		// ”»’è
+		//	”»’è
+		bool Judgment();
+
+	};
+}
+
+//	SearchNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
+namespace DragonkinJudgment
+{
+	class SearchJudgment :public JudgmentBase
+	{
+	public:
+		SearchJudgment(Dragonkin* owner) :JudgmentBase(owner) {}
+		//	”»’è
 		bool Judgment();
 
 	};
@@ -23,32 +36,6 @@ namespace DragonkinJudgment
 	{
 	public:
 		BattleJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
-		// ”»’è
-		bool Judgment();
-
-	};
-}
-
-//	AttackPunchNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-namespace DragonkinJudgment
-{
-	class AttackPunchJudgment : public JudgmentBase
-	{
-	public:
-		AttackPunchJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
-		//	”»’è
-		bool Judgment();
-
-	};
-}
-
-//	AttackPunchNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-namespace DragonkinJudgment
-{
-	class AttackKickJudgment : public JudgmentBase
-	{
-	public:
-		AttackKickJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
 		//	”»’è
 		bool Judgment();
 
@@ -68,19 +55,6 @@ namespace DragonkinJudgment
 	};
 }
 
-//	WanderNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-namespace DragonkinJudgment
-{
-	class WanderJudgment : public JudgmentBase
-	{
-	public:
-		WanderJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
-		//	”»’è
-		bool Judgment();
-
-	};
-}
-
 //	Escape‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 namespace DragonkinJudgment
 {
@@ -90,5 +64,32 @@ namespace DragonkinJudgment
 		EscapeJudgment(Dragonkin* owner) :JudgmentBase(owner) {};
 		//	”»’è
 		bool Judgment();
+	
+	};
+}
+
+//	Damage‚É‘JˆÚ‚Å‚«‚é‚©”»’è
+namespace DragonkinJudgment
+{
+	class DamageJudgment :public JudgmentBase
+	{
+	public:
+		DamageJudgment(Dragonkin* owner) :JudgmentBase(owner) {}
+		//	”»’è
+		bool Judgment();
+
+	};
+}
+
+//	Death‚É‘JˆÚo‚é‚©”»’è
+namespace DragonkinJudgment
+{
+	class DeathJudgment :public JudgmentBase
+	{
+	public:
+		DeathJudgment(Dragonkin* owner) :JudgmentBase(owner) {}
+		//	”»’è
+		bool Judgment();
+
 	};
 }

@@ -98,7 +98,9 @@ void Player::Initialize()
 	radius_ = 0.7f;
 	height_ = 3.4f;
 
-	moveSpeed_ = 2.0f;
+	//	----- 移動速度 -----
+	defaultMoveSpeed_ = 4.0f;
+	moveSpeed_ = 4.0f;
 	//moveSpeed_ = 25.0f;
 
 	hp_ = MaxHp_;
@@ -852,8 +854,8 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 	//	スティック垂直入力値をカメラ前方向に反映し、
 	//	進行ベクトルを計算する
 	DirectX::XMFLOAT3 vec = {};
-	vec.x = (cameraFrontX * ay + cameraRightX * ax) * moveSpeed_;
-	vec.z = (cameraFrontZ * ay + cameraRightZ * ax) * moveSpeed_;
+	vec.x = (cameraFrontX * ay + cameraRightX * ax);
+	vec.z = (cameraFrontZ * ay + cameraRightZ * ax);
 
 	//	Y軸方向には移動しない
 	vec.y = 0.0f;
@@ -933,15 +935,13 @@ void Player::DrawDebug()
 		DrawStateStr();
 		stateMachine_->DrawDebug();
 
+		//	
+		Character::DrawDebug();
+
 		//	ステージヒット文字列
 		std::string hitStage = "";
 		if (isHitStage_)hitStage = "true";
 		else hitStage = "false";
-
-		//	アニメーション関連
-		//int currentAnimationIndex = GetCurrentBlendAnimationIndex();		//	現在のアニメーション番号取得
-		//float weight = GetWeight();										//	weight値取得		
-		//float blendRate = GetBlendRate();
 
 		ImGui::Checkbox("IsPose", &isPose_);				//	ポーズフラグ
 		ImGui::Checkbox("PlayEffect", &playEffectFlag_);	//	エフェクト再生フラグ
@@ -959,7 +959,6 @@ void Player::DrawDebug()
 		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);					//	攻撃判定
 		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);					//	くらい判定
 
-		Character::DrawDebug();
 
 		ImGui::DragFloat("Gravity", &gravity_, 0.1f, 0.0f);												//	重力
 		ImGui::DragFloat("EffectScale", &effectScale_, 0.01f, -FLT_MAX, FLT_MAX);						//	エフェクトスケール
@@ -970,7 +969,6 @@ void Player::DrawDebug()
 		ImGui::Checkbox(u8"StageCollision", &isCollisionStage_);										//	ステージとの当たり判定オン/オフ
 		ImGui::Text(u8"HitStage %s", hitStage.c_str());													//	ステージと当たっているか
 		ImGui::DragFloat("Gravity", &gravity_, 0.01f, -FLT_MAX, FLT_MAX);								//	重力
-		ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.01f, 0.0f, FLT_MAX);								//	移動する速さ
 
 		ImGui::DragFloat("RayPosRadius", &rayPosRadius_);	//	レイキャストの始点終点を表す球の半径
 

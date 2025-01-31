@@ -5,6 +5,49 @@
 #include "../Nova/Scenes/SceneLoading.h"
 #include "../Nova/Scenes/SceneGame.h"
 
+//	FadeIn
+namespace TitleState
+{
+	void FadeInState::Initialize()
+	{
+		logoAlpha_ = 0.0f;
+	}
+
+	void FadeInState::Update(const float& elapsedTime)
+	{
+		//	----- ステート経過時間更新 -----
+		UpdateStateElapsedTime(elapsedTime);
+
+		//  ----- タイトル文字のフェード -----
+		logoAlpha_ += logoAlphaAdd_ * elapsedTime;
+
+		//	ロゴのアルファ値が1.0f以上ならメインステートへ遷移
+		if (logoAlpha_ >= 1.0f)
+		{
+			logoAlpha_ = 1.0f;
+			owner_->ChangeState(SceneTitle::SceneTitleState::Main);
+		}
+		
+		//	アルファ値を適応
+		owner_->SetTitleLogoAlpha(logoAlpha_);
+	}
+
+	void FadeInState::Finalize()
+	{
+
+	}
+
+	void FadeInState::DrawDebug()
+	{
+		if (ImGui::TreeNode("FadeInState"))
+		{
+			ImGui::DragFloat("LogoAlphaAdd", &logoAlphaAdd_, 0.01f);
+
+			ImGui::TreePop();
+		}
+	}
+}
+
 //	Main
 namespace TitleState
 {
@@ -16,12 +59,11 @@ namespace TitleState
 	void MainState::Update(const float& elapsedTime)
 	{
 		GamePad& gamePad = Input::Instance().GetGamePad();
-		if (gamePad.GetButtonDown() & GamePad::BTN_A)   //  コントローラAキー
+		//	Aボタン(Zキー)が押されたらSEを鳴らし、Fadeステートへ遷移
+		if (gamePad.GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			AudioManager::Instance().GetAudioResource("Decision")->Play(false);
-			owner_->ChangeState(SceneTitle::SceneTitleState::Fade);
-
-			//SceneManager::Instance().ChangeScene(new SceneGame);
+			owner_->ChangeState(SceneTitle::SceneTitleState::FadeOut);
 
 		}
 	}
@@ -71,32 +113,36 @@ namespace TitleState
 
 }
 
-//	Fade
+//	FadeOut
 namespace TitleState
 {
-	void FadeState::Initialize()
+	void FadeOutState::Initialize()
 	{
-		fadeTimer_ = 0.0f;
+		
 	}
 
-	void FadeState::Update(const float& elapsedTime)
+	void FadeOutState::Update(const float& elapsedTime)
 	{
-		fadeTimer_ += elapsedTime;
-		//if (FadeTime_ < fadeTimer_)	//	フェード完了したら
+		//	----- ステート経過時間更新 -----
+		UpdateStateElapsedTime(elapsedTime);
+
+		//	フェードが終わったらローディングシーンへ遷移
+		if (stateElapsedTime_ >= FadeOutTime_)
 		{
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 		}
 	}
 
-	void FadeState::Finalize()
+	void FadeOutState::Finalize()
 	{
 
 	}
 
-	void FadeState::DrawDebug()
+	void FadeOutState::DrawDebug()
 	{
-		if (ImGui::TreeNode("FadeState"))
+		if (ImGui::TreeNode("FadeOutState"))
 		{
+			ImGui::DragFloat("FadeOutTime", &FadeOutTime_, 0.01f);
 
 			ImGui::TreePop();
 		}

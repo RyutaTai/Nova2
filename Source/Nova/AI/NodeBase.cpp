@@ -79,7 +79,10 @@ NodeBase* NodeBase::Inference(Enemy* enemy, BehaviorData* data)
 	{
 		if (children_.at(i)->judgment_ != nullptr)
 		{
-			if (children_.at(i)->judgment_->Judgment())list.emplace_back(children_.at(i));
+			if (children_.at(i)->judgment_->Judgment())
+			{
+				list.emplace_back(children_.at(i));
+			}
 		}
 		else 
 		{

@@ -90,7 +90,8 @@ namespace PlayerState
 		owner_->PlayAnimation(Player::AnimationType::Run, true, blendAnimTime_);
 		owner_->SetAnimationSpeed(1.2f);
 
-		owner_->SetMoveSpeed(3.0f);
+		//	移動速度を設定
+		owner_->SetMoveSpeed(moveSpeed_);
 
 		//	足音SE再生
 		//AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
@@ -168,7 +169,7 @@ namespace PlayerState
 
 	void MoveState::Finalize()
 	{
-		owner_->SetMoveSpeed(2.0f);
+		owner_->ResetMoveSpeed();
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	足音停止
@@ -183,6 +184,9 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("Move"))
 		{
+			//	----- 移動速度 -----
+			ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.01f);
+			
 			//	----- アニメーション再生 -----
 			ImGui::DragFloat("BlendTime", &blendAnimTime_, 0.001f);
 
@@ -190,7 +194,7 @@ namespace PlayerState
 			ImGui::DragFloat("PlayFootstepsInterval", &playFootstepsInterval_, 0.01f);	//	足音SE再生間隔
 			ImGui::DragFloat("FootstepsTimer", &footStepsTimer_, 0.01f);				//	足音SE再生間隔タイマー
 
-			bool isPlaying = AudioManager::Instance().GetAudioResource("PlayerFootsteps")->IsPlaying();
+			bool isPlaying = AudioManager::Instance().GetAudioResource("PlayerFootsteps")->IsPlaying();	//	再生中フラグ
 			ImGui::Checkbox("IsPlaying", &isPlaying);
 
 			ImGui::TreePop();
@@ -296,7 +300,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
-		owner_->SetUseRootMotion(true);
+		//owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
 		animJudgeTime_.SetJudgeTime(0.180f, 0.38f);			//	アニメーション判定区間
@@ -425,6 +429,7 @@ namespace PlayerState
 	void ComboOne1::Finalize()
 	{
 		owner_->SetUseRootMotion(false);
+		
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	プレイヤーの攻撃判定を無効にする
@@ -460,7 +465,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
-		owner_->SetUseRootMotion(true);
+		//owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
 		animJudgeTime_[0].SetJudgeTime(0.21f, 0.25f);	//	アニメーション再生中に当たっているか判定(アニメーション再生時間をもとに判定)
@@ -623,7 +628,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
-		owner_->SetUseRootMotion(true);
+		//owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
 		animJudgeTime_[0].SetJudgeTime(0.07f, 0.127f);
@@ -770,7 +775,7 @@ namespace PlayerState
 		owner_->SetAnimationSpeed(1.0f);
 
 		//	ルートモーション
-		owner_->SetUseRootMotion(true);
+		//owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
 		animJudgeTime_.SetJudgeTime(0.64f, 1.185f);

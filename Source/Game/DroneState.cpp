@@ -31,7 +31,7 @@ namespace DroneState
 		if (ImGui::TreeNode("IdleState"))
 		{
 			ImGui::DragFloat("IdleTime", &IdleTime_, 0.1f);
-			ImGui::DragFloat("ElapsedTIme", &stateElapsedTime_, 0.1f);
+			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -53,15 +53,10 @@ namespace DroneState
 		//	----- 経過時間更新 -----
 		UpdateStateElapsedTime(elapsedTime);
 
-		//	プレイヤーを見つけていなければreturn
-		if (owner_->SearchPlayer() == false)
+		//	プレイヤーを見つけたら移動ステートへ遷移
+		if (owner_->SearchPlayer())
 		{
-			return;
-		}
-		else //	見つけていれば
-		{
-			//	移動ステートに遷移
-			owner_->ChangeState(Drone::StateType::Move);
+			owner_->ChangeState(Drone::StateType::Pursuit);
 			return;
 		}
 
@@ -97,20 +92,6 @@ namespace DroneState
 		//	----- 経過時間更新 -----
 		UpdateStateElapsedTime(elapsedTime);
 
-		//	----- 移動処理 -----
-		//	プレイヤーが索敵範囲外なら近づかない
-		if (owner_->CalcDistanceToTarget() > owner_->GetSearchRange())return;
-
-		//	プレイヤーが射程範囲内なら近づかない
-		if (owner_->CalcDistanceToTarget() < owner_->GetLaunchRange())
-		{
-			owner_->ChangeState(Drone::StateType::Attack);
-			return;
-		}
-
-		//	プレイヤーが索敵範囲内かつ、射程範囲外なら近づく
-		owner_->ApproachingTarget(elapsedTime);
-		
 	}
 
 	void MoveState::Finalize()
@@ -122,12 +103,63 @@ namespace DroneState
 	{
 		if (ImGui::TreeNode("MoveState"))
 		{
-			ImGui::DragFloat("ElapsedTIme", &stateElapsedTime_, 0.1f);
+			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
 	}
 
+}
+
+//	追跡ステート
+namespace DroneState
+{
+	void PursuitState::Initialize()
+	{
+
+	}
+
+	void PursuitState::Update(const float& elapsedTime)
+	{
+		//	----- 経過時間更新 -----
+		UpdateStateElapsedTime(elapsedTime);
+
+		//	----- 追跡処理 -----
+		//	プレイヤーが索敵範囲外なら待機ステートへ遷移
+		if (owner_->CalcDistanceToTarget() > owner_->GetSearchRange())
+		{
+			owner_->SetMoveVec({});							//	移動をやめる
+			owner_->ChangeState(Drone::StateType::Idle);	//	待機ステートへ遷移
+			return;
+		}
+
+		//	プレイヤーが射程範囲内なら攻撃ステートへ遷移
+		if (owner_->CalcDistanceToTarget() < owner_->GetLaunchRange())
+		{
+			owner_->SetMoveVec({});							//	移動をやめる
+			owner_->ChangeState(Drone::StateType::Attack);	//	攻撃ステートへ遷移
+			return;
+		}
+
+		//	プレイヤーが索敵範囲内かつ、射程範囲外なら近づく
+		owner_->ApproachingTarget(elapsedTime);
+
+	}
+
+	void PursuitState::Finalize()
+	{
+		owner_->SetMoveVec({});	//	移動をやめる
+	}
+
+	void PursuitState::DrawDebug()
+	{
+		if (ImGui::TreeNode("PursuitState"))
+		{
+			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
+
+			ImGui::TreePop();
+		}
+	}
 }
 
 //	攻撃ステート
@@ -163,7 +195,7 @@ namespace DroneState
 	{
 		if (ImGui::TreeNode("AttackState"))
 		{
-			ImGui::DragFloat("ElapsedTIme", &stateElapsedTime_, 0.1f);
+			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -195,6 +227,7 @@ namespace DroneState
 	{
 		if (ImGui::TreeNode("AvoidanceState"))
 		{
+			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}

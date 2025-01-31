@@ -247,7 +247,6 @@
     <ClCompile Include="Source\Game\TitleState.cpp" />
     <ClCompile Include="Source\Game\UI\UIHealth.cpp" />
     <ClCompile Include="Source\Nova\Others\JudgeTime.cpp" />
-    <ClCompile Include="Source\Game\Target.cpp" />
     <ClCompile Include="Source\Game\UI\UIInstructions.cpp" />
     <ClCompile Include="Source\Game\UI\UITempo.cpp" />
     <ClCompile Include="Source\Nova\Graphics\Decal.cpp" />
@@ -479,7 +478,6 @@
     <ClInclude Include="Source\Game\TitleState.h" />
     <ClInclude Include="Source\Game\UI\UIHealth.h" />
     <ClInclude Include="Source\Nova\Others\JudgeTime.h" />
-    <ClInclude Include="Source\Game\Target.h" />
     <ClInclude Include="Source\Game\UI\UIInstructions.h" />
     <ClInclude Include="Source\Game\UI\UITempo.h" />
     <ClInclude Include="Source\Nova\Graphics\Decal.h" />

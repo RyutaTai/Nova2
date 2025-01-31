@@ -5,9 +5,18 @@ namespace DragonkinJudgment
 {
 	bool IdleJudgment::Judgment()
 	{
-		//	プレイヤーを見つけていなかったら待機
-		if (owner_->SearchPlayer() == false)return true;
 
+		return true;
+	}
+}
+
+//	SearchJudgment
+namespace DragonkinJudgment
+{
+	bool SearchJudgment::Judgment()
+	{
+		//	プレイヤーを見つけていなければtrue
+		if (owner_->SearchPlayer() == false)return true;
 		return false;
 	}
 }
@@ -17,28 +26,9 @@ namespace DragonkinJudgment
 {
 	bool BattleJudgment::Judgment()
 	{
-		
-		return true;
-	}
-}
-
-//	AttackPunchJudgment
-namespace DragonkinJudgment
-{
-	bool AttackPunchJudgment::Judgment()
-	{
-
-		return true;
-	}
-}
-
-//	AttackKickJudgment
-namespace DragonkinJudgment
-{
-	bool AttackKickJudgment::Judgment()
-	{
-
-		return true;
+		//	プレイヤーを見つけていたらtrue
+		if (owner_->SearchPlayer())return true;
+		return false;
 	}
 }
 
@@ -48,17 +38,7 @@ namespace DragonkinJudgment
 	bool SkillJudgment::Judgment()
 	{
 
-		return false;
-	}
-}
-
-//	WanderJudgment
-namespace DragonkinJudgment
-{
-	bool WanderJudgment::Judgment()
-	{
-
-		return false;
+		return true;
 	}
 }
 
@@ -68,6 +48,30 @@ namespace DragonkinJudgment
 	bool EscapeJudgment::Judgment()
 	{
 
+		return true;
+	}
+}
+
+//	DamageJudgment
+namespace DragonkinJudgment
+{
+	bool DamageJudgment::Judgment()
+	{
+		//	仮で通らないようにしている
+		return false;
+	}
+}
+
+//	DeathJudgment
+namespace DragonkinJudgment
+{
+	bool DeathJudgment::Judgment()
+	{
+		//	HPがなければtrue
+		if (owner_->GetHp() <= 0)
+		{
+			return true;
+		}
 		return false;
 	}
 }

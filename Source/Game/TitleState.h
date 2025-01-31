@@ -5,6 +5,26 @@
 
 namespace TitleState
 {
+	class FadeInState :public State<SceneTitle>
+	{
+	public:
+		FadeInState(SceneTitle* owner) :State(owner) {}
+		~FadeInState(){}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	private:
+		float logoAlpha_ = 0.0f;
+		float logoAlphaAdd_ = 0.28f;
+
+	};
+}
+
+namespace TitleState
+{
 	class MainState : public State<SceneTitle>
 	{
 	public:
@@ -37,11 +57,11 @@ namespace TitleState
 
 namespace TitleState
 {
-	class FadeState : public State<SceneTitle>
+	class FadeOutState : public State<SceneTitle>
 	{
 	public:
-		FadeState(SceneTitle* owner) : State(owner){}
-		~FadeState() {}
+		FadeOutState(SceneTitle* owner) : State(owner){}
+		~FadeOutState() {}
 
 		void Initialize()override;
 		void Update(const float& elapsedTime)override;
@@ -49,8 +69,7 @@ namespace TitleState
 		void DrawDebug()override;
 
 	private:
-		static constexpr float FadeTime_ = 1.5f;	//	フェードする時間
-		float fadeTimer_ = 0.0f;
+		float FadeOutTime_ = 0.0f;	//	フェードする時間
 
 	};
 

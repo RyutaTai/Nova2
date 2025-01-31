@@ -15,21 +15,22 @@ public:
 	void Finalize()							override;
 
 	void Update(const float& elapsedTime)	override;
-
 	void ShadowRender() 					override;
 	void Render()							override;
-
 	void DrawDebug()						override;
 
+	//	----- フェード -----
+	void SetAllSpriteAlpha();
+
 private:
-	enum class SPRITE_LOADING
+	enum class SpriteLoading
 	{
 		Back,				//	背景画像
 		Loading,			//	ローディング　テキスト
 		TitleText,
 		Max,				//	スプライトの上限数
 	};
-	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_LOADING::Max)];
+	std::unique_ptr	<Sprite> sprites_[static_cast<int>(SpriteLoading::Max)];
 
 	//	ローディングスレッド
 	static void LoadingThread(SceneLoading* scene);
@@ -37,12 +38,16 @@ private:
 private:
 	Scene*						nextScene_	= nullptr;
 	std::thread*				thread_		= nullptr;
-	//std::unique_ptr	<Sprite>	sprite_		= nullptr;
-	float loadSpriteangle_ = 0.0f;
 
+	//	----- スプライトアニメーション -----
+	float loadSpriteAngle_ = 0.0f;
 	int animationNumber_		= 0;		//	現在のアニメーション数(何枚目のアニメーションか)
 	int animationMAX_			= 5;		//	画像のアニメーション枚数
 	float animationFrame_		= 120.0f;	//	次のコマに行くまでのフレーム数
 	float animationTimer_		= 0;		//	現在のフレーム数(アニメーションタイマー)
+
+	//	----- フェード -----
+	float allSpriteAlpha_ = 1.0f;
+
 };
 

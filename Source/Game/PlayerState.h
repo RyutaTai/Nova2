@@ -49,6 +49,9 @@ namespace PlayerState
 		void PlayFootstepsSE(const float& elapsedTime);	//	足音再生
 
 	private:
+		//	----- 移動速度 -----
+		float moveSpeed_ = 9.0f;
+
 		//	----- アニメーション再生 -----
 		float blendAnimTime_ = 0.25f;	//	アニメーションブレンド時間
 

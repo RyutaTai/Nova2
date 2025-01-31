@@ -15,9 +15,10 @@ public:
 	//	ステート
 	enum class SceneTitleState
 	{
+		FadeIn,
 		Main,
 		Setting,
-		Fade,
+		FadeOut,
 		Max,
 	};
 
@@ -25,31 +26,38 @@ public:
 	SceneTitle(){}
 	~SceneTitle()override{}
 
-	void Initialize()						override;
-	void Finalize()							override;
+	void Initialize()	override;
+	void Finalize()		override;
 
-	void Update(const float& elapsedTime)	override;
+	void Update(const float& elapsedTime)override;
+	void ShadowRender()	override {}
+	void Render()		override;
+	void DrawDebug()	override;
+	void DrawStateStr();
 
-	void ShadowRender() 					override;
-	void Render()							override;
-
-	void DrawDebug()						override;
-
+	//	----- ステート -----
 	void ChangeState(SceneTitleState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<SceneTitle>>* GetStateMachine() { return stateMachine_.get(); }					//	ステートマシン取得
 
+	//	----- フェード -----
+	void SetTitleLogoAlpha(const float& alpha) { titleLogoAlpha_ = alpha; }
+
 private:
-	std::unique_ptr<StateMachine<State<SceneTitle>>>	stateMachine_ = nullptr;		//	ステートマシン
+	//	----- ステート -----
+	std::unique_ptr<StateMachine<State<SceneTitle>>>	stateMachine_ = nullptr;	//	ステートマシン
 
 private:	//	スプライト
-	enum class SPRITE_TITLE
+	enum class SpriteTitle
 	{
 		Back,				//	背景画像
 		Groove,				//	グルーブ(タイトルテキスト)
 		KeyText,			//	キーテキスト
 		Max,				//	スプライトの上限数
 	};
-	std::unique_ptr	<Sprite> sprite_[static_cast<int>(SPRITE_TITLE::Max)];
+	std::unique_ptr	<Sprite> sprites_[static_cast<int>(SpriteTitle::Max)];
+
+	//	----- フェード処理 -----
+	float titleLogoAlpha_ = 0.0f;		//	タイトルロゴのアルファ値
 
 };
 

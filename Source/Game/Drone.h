@@ -17,6 +17,7 @@ public:
 		Idle = 0,			//	待機
 		Search, 			//	サーチ
 		Move,				//	移動
+		Pursuit,			//	追跡
 		Attack,				//	攻撃
 		Avoidance,			//	回避
 		Max,				//	ステート最大数
@@ -41,7 +42,9 @@ public:
 	void Render()override;
 
 	void Attack();
-	void Turn(const float& elpasedTime);	//	旋回処理
+
+	//	----- 破棄処理 -----
+	void JudgeDestroy()override;			//	破棄判定
 	void Destroy()override;					//	破棄処理
 
 	//	----- 弾丸 -----
@@ -93,8 +96,7 @@ private://	デバッグ用の変数
 	bool isAttackSphere_ = true;		//	攻撃判定
 	bool isDamageSphere_ = false;		//	くらい判定
 
-	bool	turnAction_ = true;			//	旋回処理
-	bool	bulletLaunch_	= true;		//	弾を発射するかどうか
+	bool	isBulletLaunch_	= true;		//	弾を発射するかどうか
 	static const int MaxHp_ = 40;		//	最大HP
 	//static const int MaxHp_ = 60;		//	最大HP
 	//static const int MaxHp_ = 3;		//	最大HP

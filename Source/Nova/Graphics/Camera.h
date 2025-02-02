@@ -20,10 +20,10 @@ public:
 
 	void NormalCamera(const float& elapsedTime);	//	通常カメラ
 
-	// この関数をコールすればカメラ移動がイージングで始まる
-	//第一引数：目標座標
-	//第二引数：目標角度
-	//第三引数：何秒で移動するか
+	//	この関数をコールすればカメラ移動がイージングで始まる
+	//	第一引数：目標座標
+	//	第二引数：目標角度
+	//	第三引数：何秒で移動するか
 	bool LaunchCameraMove(const DirectX::XMFLOAT3& targetEye, const DirectX::XMFLOAT3& targetAngle, const float& moveTime);
 
 	//	デバッグ用
@@ -55,10 +55,14 @@ public:
 	const float					GetFarZ()	const	{ return farZ_; }
 	bool						GetIsPose()			{ return isPose_; }
 
+	//	----- カメラ移動 -----
 	bool						IsCameraMove()		{ return cameraMove_; }					//	カメラ演出中かどうか
+	bool						CameraMove(const float& elapsedTime);
+
 	bool						RayCastVsStage(DirectX::XMFLOAT3& intersectionPos, DirectX::XMFLOAT3& intersectionNormal, std::string& intersectionMesh, std::string& intersectionMaterial);
+
 private:
-	Transform transform_;
+	Transform transform_ = {};
 
 	static constexpr float MaxAngleX = DirectX::XMConvertToRadians(45);
 	static constexpr float MinAngleX = DirectX::XMConvertToRadians(-45);
@@ -74,9 +78,9 @@ private:
 	DirectX::XMFLOAT3 angle_		= { 0,0,0 };				//	カメラの回転値
 	DirectX::XMFLOAT3 eyeOffset_	= { 0,0,0 };				//	カメラの視点eye_を動かすときの移動値
 
-	float fov_;													//	視野角
+	float fov_				= 60.0f;							//	視野角
 	float range_			= 250.0f;							//	カメラとターゲットの距離を決めるのに使う
-	float rollSpeed_		= DirectX::XMConvertToRadians(75);	//	カメラの回転速度
+	float rollSpeed_		= DirectX::XMConvertToRadians(80);	//	カメラの回転速度
 	float maxAngleX_		= DirectX::XMConvertToRadians(45);	//	カメラの回転値制限
 	float minAngleX_		= DirectX::XMConvertToRadians(-45);	//	カメラの回転値制限
 	float moveSpeed_		=  2.0f;							//	カメラの移動速度
@@ -91,7 +95,6 @@ private:
 
 	bool isPose_ = false;
 
-	bool CameraMove(const float& elapsedTime);
 	bool cameraMove_ = false;
 	float moveTime_ = 0.0f;
 	float moveTimer_ = 0.0f;

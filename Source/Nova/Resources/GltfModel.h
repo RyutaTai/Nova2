@@ -410,7 +410,7 @@ private:
 
 	std::string filename_ = {};
 
-	Transform				transform_ = {};
+	Transform	transform_ = {};
 
 	// ----- gltf Animation -----
 	bool	isAnimationLoop_			= false;	//	アニメーションループフラグ

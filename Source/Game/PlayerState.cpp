@@ -1017,7 +1017,7 @@ namespace PlayerState
 		animSpeedChangeInterval_[1].SetJudgeTime(0.55f, 1.16f);		//	動作終わり
 		animSpeedChangeInterval_[2].SetJudgeTime(1.17f, 2.2f);		//	余韻
 
-		//	吹っ飛びモーション
+		//	吹っ飛びアニメーション再生
 		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, 0.35f, 1.18f);
 		owner_->SetAnimationSpeed(1.5f);
 
@@ -1026,10 +1026,11 @@ namespace PlayerState
 		direction.y = 0.0f;
 		owner_->AddForce(direction, blowPower_, decelerationForce_);
 
-		//	
-		/*DirectX::XMFLOAT3 playerUp = owner_->GetTransform()->CalcUp();
-		float angle = XMFLOAT3Dot(Normalize(playerUp), direction);
-		owner_->GetTransform()->SetRotationY(angle);*/
+		//	吹っ飛び方向から回転角度を求める
+		float blowbackRotationY = atan2(direction.x, direction.z) + DirectX::XM_PI;
+
+		//	吹っ飛び方向に応じた回転処理
+		owner_->GetTransform()->SetRotationY(blowbackRotationY); // 吹っ飛ぶ方向に回転
 	}
 
 	void DamageState::Update(const float& elapsedTime)

@@ -35,9 +35,8 @@ void SceneTitle::Initialize()
 	stateMachine_->RegisterState(new TitleState::FadeInState(this));	//	FadeIn
 	stateMachine_->RegisterState(new TitleState::MainState(this));		//	Main
 	stateMachine_->RegisterState(new TitleState::SettingState(this));	//	Setting
-	stateMachine_->RegisterState(new TitleState::FadeOutState(this));	//	FadeOut
 	//	初期ステート設定
-	stateMachine_->SetState(static_cast<int>(SceneTitleState::FadeIn));	//	初期ステートセット
+	stateMachine_->SetState(static_cast<int>(StateType::FadeIn));		//	初期ステートセット
 
 }
 
@@ -73,7 +72,19 @@ void SceneTitle::Update(const float& elapsedTime)
 	// ----- ステートマシン更新 -----
 	stateMachine_->Update(elapsedTime);
 
+}
 
+//	ローディングシーンへ遷移 
+void SceneTitle::ChangeLoadingScene()
+{
+	GamePad& gamePad = Input::Instance().GetGamePad();
+
+	//	Aボタン(Zキー)が押されたらSEを鳴らし、Fadeステートへ遷移
+	if (gamePad.GetButtonDown() & GamePad::BTN_A/*Zキー*/)
+	{
+		AudioManager::Instance().GetAudioResource("Decision")->Play(false);
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+	}
 }
 
 //	描画処理
@@ -87,6 +98,7 @@ void SceneTitle::Render()
 	sprites_[static_cast<int>(SpriteTitle::Back)]->Render();
 	sprites_[static_cast<int>(SpriteTitle::Groove)]->GetTransform()->SetColorA(titleLogoAlpha_);
 	sprites_[static_cast<int>(SpriteTitle::Groove)]->Render();
+	sprites_[static_cast<int>(SpriteTitle::KeyText)]->GetTransform()->SetColorA(keyTextAlpha_);
 	sprites_[static_cast<int>(SpriteTitle::KeyText)]->Render();
 
 }
@@ -94,6 +106,13 @@ void SceneTitle::Render()
 //	現在のステート表示
 void SceneTitle::DrawStateStr()
 {
+	//	ステート文字列
+	std::string stateStr[static_cast<int>(StateType::Max)] =
+	{
+		"FadeIn","Main","Setting"
+	};
+
+	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
 
 }
 

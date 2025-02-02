@@ -5,7 +5,7 @@
 #include <Xinput.h>
 
 // 更新
-void GamePad::Update()
+void GamePad::Update(const float& elapsedTime)
 {
 	axisLx_ = axisLy_ = 0.0f;
 	axisRx_ = axisRy_ = 0.0f;
@@ -188,4 +188,33 @@ void GamePad::Update()
 		buttonDown_ = ~buttonState_[1] & newButtonState;	// 押した瞬間
 		buttonUp_ = ~newButtonState & buttonState_[1];	// 離した瞬間
 	}
+
+	//	コントローラー振動
+	if (isVibration_ == false)return;
+	vibrationTime_ -= elapsedTime;
+	if (vibrationTime_ <= 0.0f)
+	{
+		StopVibration();
+	}
+
+}
+
+//	コントローラー振動
+void GamePad::SetVibration(const float& leftMotor, const float& rightMotor, const float& time)
+{
+	isVibration_ = true;
+	vibrationTime_ = time;
+
+	XINPUT_VIBRATION vibration = {};
+	vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotor * 65535);
+	vibration.wRightMotorSpeed = static_cast<WORD>(rightMotor * 65535);
+
+	XInputSetState(slot_, &vibration);
+}
+
+//	コントローラー振動ストップ
+void GamePad::StopVibration()
+{
+	XINPUT_VIBRATION vibration = {};
+	XInputSetState(slot_, &vibration);
 }

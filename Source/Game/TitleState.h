@@ -18,7 +18,7 @@ namespace TitleState
 
 	private:
 		float logoAlpha_ = 0.0f;
-		float logoAlphaAdd_ = 0.28f;
+		float fadeTime_ = 2.0f;
 
 	};
 }
@@ -53,24 +53,4 @@ namespace TitleState
 		void DrawDebug()override;
 
 	};
-}
-
-namespace TitleState
-{
-	class FadeOutState : public State<SceneTitle>
-	{
-	public:
-		FadeOutState(SceneTitle* owner) : State(owner){}
-		~FadeOutState() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-		void DrawDebug()override;
-
-	private:
-		float FadeOutTime_ = 0.0f;	//	フェードする時間
-
-	};
-
 }

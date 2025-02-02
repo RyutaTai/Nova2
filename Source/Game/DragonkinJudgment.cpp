@@ -57,7 +57,13 @@ namespace DragonkinJudgment
 {
 	bool DamageJudgment::Judgment()
 	{
-		//	仮で通らないようにしている
+		//	ダメージフラグが立っていたらtrue
+		if (owner_->IsDamaged())
+		{
+			owner_->SetIsDamaged(false);
+			return true;
+		}
+
 		return false;
 	}
 }

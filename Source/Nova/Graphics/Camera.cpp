@@ -22,42 +22,13 @@ Camera::~Camera()
 //	初期化
 void Camera::Initialize()
 {
-	//	シティモデル描画時
-	//eye_	= { 0.0f,	200.0f,	500.0f };		//	カメラの視点
-	//focus_	= { 0,		25.0f,	400.0f };	//	カメラの注視点
-	//up_		= { 0,		0.0f,	0.0f };		//	カメラの上方向
-	//angle_	= { -0.20f,		0,		0 };	//	カメラの回転値
-	//fov_	= 60.0f;							//	視野角
-
-	////	ShadowMap確認用
-	//eye_	= { 0.0f, 10.0f, 100.0f };		//	カメラの視点
-	//focus_	= { 0.0f, 25.0f,  50.0f };	//	カメラの注視点
-	//up_		= { 0.0f,  0.0f,   0.0f };	//	カメラの上方向
-	//angle_	= { 0.5f,  0.0f,   0.0f };	//	カメラの回転値
-	//eyeOffset_ = { 1.0f,2.0f,0.0f };
-	//fov_	= 60.0f;						//	視野角
-	//range_	= 15.0f;					//	ターゲットとカメラとの距離
-	//nearZ_ = 0.01f;
-	//farZ_ = 1000.0f;
-
-	//	通常実行用
-	//eye_		= { 9.0f, 12.0f, -9.5f };		//	カメラの視点
-	//focus_		= { 0.0f, 5.0f,  0.0f };		//	カメラの注視点
-	//up_			= { -0.3f,  0.8f,   0.3f };		//	カメラの上方向
-	//angle_		= { 0.5f,  -0.76f,   0.0f };	//	カメラの回転値
-	//eyeOffset_	= { 1.0f,2.0f,0.0f };
-	//fov_		= 60.0f;						//	視野角
-	//range_		= 5.0f;						//	ターゲットとカメラとの距離
-	//nearZ_		= 0.01f;
-	//farZ_		= 1000.0f;
-
-	eye_ = { 10.5f, 8.6f, -23.3f };		//	カメラの視点
-	focus_ = { 14.0f, 7.2f,  -20.0f };		//	カメラの注視点
-	up_ = { 0.2f,  0.9f,   0.2f };		//	カメラの上方向
-	angle_ = { 0.29f,  0.797f,   0.0f };	//	カメラの回転値
+	eye_ = { 10.5f, 8.6f, -23.3f };			//	視点
+	focus_ = { 14.0f, 7.2f,  -20.0f };		//	注視点
+	up_ = { 0.2f,  0.9f,   0.2f };			//	上方向
+	angle_ = { 0.29f,  0.797f,   0.0f };	//	回転値
 	eyeOffset_ = { 1.0f,2.0f,0.0f };
-	fov_ = 60.0f;						//	視野角
-	range_ = 5.0f;						//	ターゲットとカメラとの距離
+	fov_ = 60.0f;							//	視野角
+	range_ = 5.0f;							//	ターゲットとカメラとの距離
 	nearZ_ = 0.01f;
 	farZ_ = 1000.0f;
 }
@@ -434,10 +405,16 @@ void Camera::DrawDebug()
 	if (ImGui::TreeNode(u8"Cameraカメラ"))
 	{
 		ImGui::Checkbox("DebugCamera", &isDebugCamera_);	//	デバッグカメラ切り替え
-		GetTransform()->DrawDebug();
+		if (ImGui::TreeNode("Transform"))
+		{
+			GetTransform()->DrawDebug();
+			ImGui::TreePop();
+		}
+	
 		ImGui::DragFloat	("NearZ",		&nearZ_,		1.0f,	FLT_MIN,	FLT_MAX);	//	Near
 		ImGui::DragFloat	("FarZ",		&farZ_,			1.0f,	FLT_MIN,	FLT_MAX);	//	Far
-		ImGui::DragFloat	("MoveSpeed",	&moveSpeed_,	1.0f,	-FLT_MAX,	FLT_MAX);	//	移動速度
+		ImGui::DragFloat	("MoveSpeed",	&moveSpeed_,	0.01f,	-FLT_MAX,	FLT_MAX);	//	移動速度
+		ImGui::DragFloat	("RollSpeed",	&rollSpeed_,	0.01f,	-FLT_MAX,	FLT_MAX);	//	回転速度
 		ImGui::DragFloat3	("Eye",			&eye_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	カメラ視点
 		ImGui::DragFloat3	("Focus",		&focus_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	注視点
 		ImGui::DragFloat3	("Right",		&right.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	右方向

@@ -16,7 +16,7 @@ Input::Input(HWND hWnd)
 // XVˆ—
 void Input::Update(const float& elapsedTime)
 {
-	gamePad_.Update();
+	gamePad_.Update(elapsedTime);
 	mouse_.Update();
 	UpdateKeyData(elapsedTime);
 }

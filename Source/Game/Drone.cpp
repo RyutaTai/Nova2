@@ -166,6 +166,9 @@ void Drone::Update(const float& elapsedTime)
 	UpdateVelocity(elapsedTime);
 	Move(elapsedTime);
 
+	//	----- ù‰ñˆ— -----
+	Turn(elapsedTime);
+
 	//	----- ’eŠÛXVˆ— -----
  	BulletManager::Instance().Update(elapsedTime);
 	BulletManager::Instance().CoverModelUpdate(elapsedTime);

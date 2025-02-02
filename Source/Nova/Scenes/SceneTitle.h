@@ -13,12 +13,11 @@ class SceneTitle : public Scene
 {
 public:	
 	//	ステート
-	enum class SceneTitleState
+	enum class StateType
 	{
 		FadeIn,
 		Main,
 		Setting,
-		FadeOut,
 		Max,
 	};
 
@@ -36,11 +35,15 @@ public:
 	void DrawStateStr();
 
 	//	----- ステート -----
-	void ChangeState(SceneTitleState state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
+	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<SceneTitle>>* GetStateMachine() { return stateMachine_.get(); }					//	ステートマシン取得
 
 	//	----- フェード -----
 	void SetTitleLogoAlpha(const float& alpha) { titleLogoAlpha_ = alpha; }
+	void SetKeyTextAlpha(const float& alpha) { keyTextAlpha_ = alpha; }
+
+	//	----- ロードシーンへ遷移 -----
+	void ChangeLoadingScene();
 
 private:
 	//	----- ステート -----
@@ -58,6 +61,7 @@ private:	//	スプライト
 
 	//	----- フェード処理 -----
 	float titleLogoAlpha_ = 0.0f;		//	タイトルロゴのアルファ値
+	float keyTextAlpha_ = 0.0f;			//	キーテキストのアルファ値
 
 };
 

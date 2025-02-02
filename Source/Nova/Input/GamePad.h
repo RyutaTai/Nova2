@@ -30,7 +30,7 @@ public:
 	~GamePad() {}
 
 	// 更新
-	void Update();
+	void Update(const float& elapsedTime);
 
 	// スロット設定
 	void SetSlot(const int& slot) { this->slot_ = slot; }
@@ -62,6 +62,10 @@ public:
 	// 右トリガー入力状態の取得
 	float GetTriggerR() const { return triggerR_; }
 
+	//	コントローラー振動
+	void SetVibration(const float& leftMotor, const float& rightMotor, const float& time);
+	void StopVibration();
+
 private:
 	GamePadButton		buttonState_[2] = { 0 };
 	GamePadButton		buttonDown_ = 0;
@@ -73,4 +77,8 @@ private:
 	float				triggerL_ = 0.0f;
 	float				triggerR_ = 0.0f;
 	int					slot_ = 0;
+
+	bool				isVibration_ = false;	//	コントローラー振動フラグ
+	float				vibrationTime_ = 0.0f;	//	コントローラー振動時間
+	
 };

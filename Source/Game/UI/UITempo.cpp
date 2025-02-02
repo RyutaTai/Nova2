@@ -170,8 +170,6 @@ void UITempo::DrawDebug()
 		ImGui::DragInt("animChangeThreshold_", &animChangeThreshold_);
 		ImGui::DragFloat("RangeMax", &semicircleRangeMax_);
 		ImGui::DragFloat("RangeMin", &semicircleRangeMin_);
-		ImGui::DragFloat("RangeMin", &semicircleScaleMax_);
-		ImGui::DragFloat("RangeMin", &semicircleScaleMin_);
 		center_->DrawDebug();
 
 		ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.1f);	//	”¼‰~‚ªˆÚ“®‚·‚é‘¬‚³

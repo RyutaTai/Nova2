@@ -71,8 +71,8 @@ public:
 	virtual void UpdateCollisions(const float& elapsedTime) = 0;
 
 	//	----- ダメージ処理 -----
-	void			SetDamaged(const bool& damaged)	{ isDamaged_ = damaged; }	//	ダメージフラグ設定
-	bool			IsDamaged()const				{ return isDamaged_; }		//	ダメージフラグ取得
+	void			SetIsDamaged(const bool& isDamaged)	{ isDamaged_ = isDamaged; }	//	ダメージフラグ設定
+	bool			IsDamaged()const				{ return isDamaged_; }			//	ダメージフラグ取得
 	virtual void	AddDamage(const float& damage);
 
 	//	----- ターゲット -----

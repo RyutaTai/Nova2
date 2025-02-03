@@ -13,7 +13,7 @@ NodeBase::~NodeBase()
 }
 
 //	子ノードゲッター
-NodeBase* NodeBase::GetChild(int index)
+NodeBase* NodeBase::GetChild(const int& index)
 {
 	if (children_.size() <= index)//修正
 	{
@@ -168,8 +168,8 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 	if (step >= children_.size())
 	{
 		//	ルールによってシーケンシャルの処理を切り替える（ルールはthisで参照可能）
-		//	①ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
-		//	②ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
+		//	ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
+		//	ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
 		if (selectRule_ == BehaviorTree::SelectRule::SequentialLooping)
 		{
 			step = 0;
@@ -189,11 +189,11 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 		{
 			//	現在の実行ノードをスタックに保存、次に実行するステップの保存を行った後、
 			//	現在のステップ番号のノードをreturn
-			//	①スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノードであるthis。
-			//	②次に中間ノードと「次のステップ数」を保存する
-			//		ステップ数の保存にはdata->SetSequenceStep関数を使用する事。
-			//		引数はこの中間ノードの名前(this->name)とステップ数+1です(step + 1)
-			//	③ステップ番号目の子ノードを実行ノードとしてreturn
+			//	スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノードであるthis。
+			//	次に中間ノードと「次のステップ数」を保存する
+			//	　ステップ数の保存にはdata->SetSequenceStep関数を使用する事。
+			//	　引数はこの中間ノードの名前(this->name)とステップ数+1(step + 1)
+			//	ステップ番号目の子ノードを実行ノードとしてreturn
 			data->PushSequenceNode(this);
 			data->SetSequenceStep(this->name_, step + 1);
 			return children_.at(step);
@@ -228,7 +228,7 @@ bool NodeBase::Judgment()
 }
 
 //	ノード実行
-ActionBase::State NodeBase::Run(float elapsedTime)
+ActionBase::State NodeBase::Run(const float& elapsedTime)
 {
 	//	actionがあるか判断。あればメンバ関数Run()実行した結果をreturn
 	if (action_ != nullptr)

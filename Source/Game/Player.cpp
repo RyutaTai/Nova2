@@ -38,6 +38,7 @@ Player::Player()
 	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
 	stateMachine_->RegisterState(new PlayerState::ComboOne4(this));		//	コンボ0_4
 	stateMachine_->RegisterState(new PlayerState::DodgeState(this));	//	回避
+	stateMachine_->RegisterState(new PlayerState::GetUpState(this));	//	起き上がり
 	stateMachine_->RegisterState(new PlayerState::DamageState(this));	//	ダメージ
 	stateMachine_->RegisterState(new PlayerState::FlinchState(this));	//	怯み
 	stateMachine_->RegisterState(new PlayerState::DeathState(this));	//	死亡
@@ -212,9 +213,9 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 	
-	RegisterAttackDetectionData({ "RightPunch",	0.2f ,{},"ik_hand_r" });	//	右手のパンチ
-	RegisterAttackDetectionData({ "LeftPunch",	0.2f ,{},"ik_hand_l" });	//	左手のパンチ
-	RegisterAttackDetectionData({ "LeftKick",	0.2f ,{},"ik_foot_l" });	//	右のキック
+	RegisterAttackDetectionData({ "RightPunch",	0.3f ,{},"ik_hand_r" });	//	右手のパンチ
+	RegisterAttackDetectionData({ "LeftPunch",	0.3f ,{},"ik_hand_l" });	//	左手のパンチ
+	RegisterAttackDetectionData({ "LeftKick",	0.3f ,{},"ik_foot_l" });	//	右のキック
 
 	SetAllAttackDetectionActiveFlag(false);
 

@@ -265,9 +265,10 @@ namespace PlayerState
 		//	----- アニメーション -----
 		static const int	AnimSpeedSectionCount_ = 2;									//	アニメーション速度変化区間の数
 		JudgeTime			animSpeedChangeInterval_[AnimSpeedSectionCount_] = {};		//	再生速度を変更するアニメーション区間
-		float				animationSpeed_[AnimSpeedSectionCount_] = { 1.0f,1.2f };	//	各区間のアニメーション速度
+		float				animationSpeed_[AnimSpeedSectionCount_] = { 1.0f,1.5f };	//	各区間のアニメーション速度
 
-		float				endFrame_ = 1.333f;	//	回避アニメーションの長さで初期化
+		float				startFrame_ = 0.19f;	//	アニメーションの再生開始位置
+		float				endFrame_ = 0.96f;		//	回避アニメーションの長さで初期化
 
 	};
 }
@@ -293,15 +294,55 @@ namespace PlayerState
 		//	----- ステートの遷移を判断 -----
 		void DetermineStateTransition(const float& elapsedTime);
 
+		//	----- コントローラー振動 -----
+		void SetGamePadVibration();
+
 	private:
+		//	----- アニメーション再生 -----
+		float startFrame_ = 0.35f;
+		float endFrame_ = 1.0f;
+		
 		//	----- アニメーション速度 -----
-		static const int	AnimSpeedSectionCount_								= 3;					//	アニメーション速度変化区間の数
+		static const int	AnimSpeedSectionCount_								= 2;					//	アニメーション速度変化区間の数
 		JudgeTime			animSpeedChangeInterval_[AnimSpeedSectionCount_]	= {};					//	再生速度を変更するアニメーション区間
-		float				animationSpeed_[AnimSpeedSectionCount_]				= { 1.0f,1.2f,2.0f };	//	各区間のアニメーション速度
+		float				animationSpeed_[AnimSpeedSectionCount_]				= { 1.2f,2.8f};	//	各区間のアニメーション速度
 
 		//	----- 吹っ飛ばし -----
 		float blowPower_ = 20.0f;			//	吹っ飛ばし力
 		float decelerationForce_ = 30.0f;	//	
+
+		//	----- コントローラー振動 -----
+		float leftVibrationPower_ = 0.0f;
+		float rightVibrationPower_ = 0.0f;
+		float vibrationTime_ = 0.0f;
+
+	};
+}
+
+//	起き上がりステート
+namespace PlayerState
+{
+	class GetUpState :public State<Player>
+	{
+	public:
+		GetUpState(Player* owner) :State(owner) {}
+		~GetUpState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	private:
+		// ----- ステート遷移を判断 -----
+		void DetermineStateTransition();
+
+	private:
+		//	----- アニメーション再生 -----
+		float startFrame_ = 0.13f;
+		float endFrame_ = 1.0f;
+
+		float animationSpeed_ = 1.55f;
 
 	};
 }

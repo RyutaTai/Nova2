@@ -37,17 +37,21 @@ Dragonkin::Dragonkin()
 	behaviorData_ = new BehaviorData();
 	behaviorTree_ = new BehaviorTree(this);
 
-	behaviorTree_->AddNode("",			"Root",			0, BehaviorTree::SelectRule::Priority,	nullptr, nullptr);																			//	ルートノード
-	behaviorTree_->AddNode("Root",		"Death",		0, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::DeathJudgment(this),		new DragonkinAction::DeathAction(this));	//	死亡ノード(末端)
-	behaviorTree_->AddNode("Root",		"Damage",		1, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::DamageJudgment(this),	new DragonkinAction::DamageAction(this));	//	ダメージノード(末端)
-	behaviorTree_->AddNode("Root",		"Search",		2, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::SearchJudgment(this),	new DragonkinAction::SearchAction(this));	//	索敵ノード(末端)
-	behaviorTree_->AddNode("Root",		"Battle",		3, BehaviorTree::SelectRule::Random,	new DragonkinJudgment::BattleJudgment(this),	nullptr);									//	戦闘ノード(中間)
-	behaviorTree_->AddNode("Root",		"Idle",			4, BehaviorTree::SelectRule::Non,		new DragonkinJudgment::IdleJudgment(this),		new DragonkinAction::IdleAction(this));		//	待機ノード(末端)
-
-	behaviorTree_->AddNode("Battle",	"AttackPunch",	0, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackPunchAction(this));							//	通常パンチ攻撃(末端)
-	behaviorTree_->AddNode("Battle",	"AttackKick",	1, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackKickAction(this));							//	通常キック攻撃(末端)
-	behaviorTree_->AddNode("Battle",	"AttackWing",	2, BehaviorTree::SelectRule::Non,		nullptr, new DragonkinAction::AttackWingAction(this));							//	通常キック攻撃(末端)
-
+	//	ルートノード
+	behaviorTree_->AddNode("",			"Root",			0, BehaviorTree::SelectRule::Priority,	nullptr, nullptr);	
+	{
+		behaviorTree_->AddNode("Root", "Death", 0, BehaviorTree::SelectRule::Non, new DragonkinJudgment::DeathJudgment(this), new DragonkinAction::DeathAction(this), true);	//	死亡ノード(末端)
+		behaviorTree_->AddNode("Root", "Damage", 1, BehaviorTree::SelectRule::Non, new DragonkinJudgment::DamageJudgment(this), new DragonkinAction::DamageAction(this), true);	//	ダメージノード(末端)
+		behaviorTree_->AddNode("Root", "Search", 2, BehaviorTree::SelectRule::Non, new DragonkinJudgment::SearchJudgment(this), new DragonkinAction::SearchAction(this));		//	索敵ノード(末端)
+		behaviorTree_->AddNode("Root", "Battle", 3, BehaviorTree::SelectRule::Random, new DragonkinJudgment::BattleJudgment(this), nullptr);									//	戦闘ノード(中間)
+		{
+			behaviorTree_->AddNode("Battle", "AttackPunch", 0, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackPunchAction(this));							//	通常パンチ攻撃(末端)
+			behaviorTree_->AddNode("Battle", "AttackKick", 0, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackKickAction(this));								//	通常キック攻撃(末端)
+			behaviorTree_->AddNode("Battle", "AttackWing", 0, BehaviorTree::SelectRule::Non, nullptr, new DragonkinAction::AttackWingAction(this));								//	通常キック攻撃(末端)
+		}
+		behaviorTree_->AddNode("Root", "Idle", 4, BehaviorTree::SelectRule::Non, new DragonkinJudgment::IdleJudgment(this), new DragonkinAction::IdleAction(this));				//	待機ノード(末端)
+	}
+	
 }
 
 //	初期化
@@ -120,37 +124,38 @@ void Dragonkin::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
-	RegisterDamageDetectionData({ "head",			0.4f,{},1.0f, "head" });		//	頭
-	RegisterDamageDetectionData({ "spine_02",		0.4f,{},1.0f, "spine_02" });		//	胸部
-	RegisterDamageDetectionData({ "Shoulder_L",		0.4f,{},1.0f, "Shoulder_L" });		//	左肩
-	RegisterDamageDetectionData({ "Shoulder_R",		0.4f,{},1.0f, "Shoulder_R" });		//	右肩
-	RegisterDamageDetectionData({ "lowerarm_l",		0.4f,{},1.0f, "lowerarm_l" });		//	左肘
-	RegisterDamageDetectionData({ "lowerarm_r",		0.4f,{},1.0f, "lowerarm_r" });		//	右肘
-	RegisterDamageDetectionData({ "Hand_L",			0.4f,{},1.0f, "Hand_L" });		//	左手首
-	RegisterDamageDetectionData({ "Hand_R",			0.4f,{},1.0f, "Hand_R" });		//	右手首
-	RegisterDamageDetectionData({ "spine_01",		0.4f,{},1.0f, "spine_01" });		//	腰
-	RegisterDamageDetectionData({ "calf_l",			0.4f,{},1.0f, "calf_l" });		//	左膝
-	RegisterDamageDetectionData({ "calf_r",			0.4f,{},1.0f, "calf_r" });		//	右膝
-	RegisterDamageDetectionData({ "Foot_L",			0.6f,{},1.0f, "Foot_L" });		//	左足首
-	RegisterDamageDetectionData({ "Foot_R",			0.6f,{},1.0f, "Foot_R" });		//	右足首
+	RegisterDamageDetectionData({ "head",			0.5f,{},1.0f, "head" });		//	頭
+	RegisterDamageDetectionData({ "spine_02",		0.5f,{},1.0f, "spine_02" });	//	胸部
+	RegisterDamageDetectionData({ "Shoulder_L",		0.5f,{},1.0f, "Shoulder_L" });	//	左肩
+	RegisterDamageDetectionData({ "Shoulder_R",		0.5f,{},1.0f, "Shoulder_R" });	//	右肩
+	RegisterDamageDetectionData({ "lowerarm_l",		0.5f,{},1.0f, "lowerarm_l" });	//	左肘
+	RegisterDamageDetectionData({ "lowerarm_r",		0.5f,{},1.0f, "lowerarm_r" });	//	右肘
+	RegisterDamageDetectionData({ "Hand_L",			0.5f,{},1.0f, "Hand_L" });		//	左手首
+	RegisterDamageDetectionData({ "Hand_R",			0.5f,{},1.0f, "Hand_R" });		//	右手首
+	RegisterDamageDetectionData({ "spine_01",		0.5f,{},1.0f, "spine_01" });	//	腰
+	RegisterDamageDetectionData({ "calf_l",			0.5f,{},1.0f, "calf_l" });		//	左膝
+	RegisterDamageDetectionData({ "calf_r",			0.5f,{},1.0f, "calf_r" });		//	右膝
+	RegisterDamageDetectionData({ "Steps",			0.9f,{},1.0f, "Foot_L" });		//	足元
+	RegisterDamageDetectionData({ "Foot_L",			0.7f,{},1.0f, "Foot_L" });		//	左足首
+	RegisterDamageDetectionData({ "Foot_R",			0.7f,{},1.0f, "Foot_R" });		//	右足首
 
 	//	左の翼
-	RegisterDamageDetectionData({ "Wing_L03",		0.4f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
-	RegisterDamageDetectionData({ "Wing_L04",		0.4f,{},1.0f, "Wing_L04" });
-	RegisterDamageDetectionData({ "Wing_L05",		0.4f,{},1.0f, "Wing_L05" });
-	RegisterDamageDetectionData({ "Wing_L06",		0.4f,{},1.0f, "Wing_L06" });
-	RegisterDamageDetectionData({ "Wing_L08",		0.4f,{},1.0f, "Wing_L08" });
-	RegisterDamageDetectionData({ "Wing_L09",		0.4f,{},1.0f, "Wing_L09" });
-	RegisterDamageDetectionData({ "Wing_L10",		0.4f,{},1.0f, "Wing_L10" });		//	一番先の方
+	RegisterDamageDetectionData({ "Wing_L03",		0.5f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_L04",		0.5f,{},1.0f, "Wing_L04" });
+	RegisterDamageDetectionData({ "Wing_L05",		0.5f,{},1.0f, "Wing_L05" });
+	RegisterDamageDetectionData({ "Wing_L06",		0.5f,{},1.0f, "Wing_L06" });
+	RegisterDamageDetectionData({ "Wing_L08",		0.5f,{},1.0f, "Wing_L08" });
+	RegisterDamageDetectionData({ "Wing_L09",		0.5f,{},1.0f, "Wing_L09" });
+	RegisterDamageDetectionData({ "Wing_L10",		0.5f,{},1.0f, "Wing_L10" });		//	一番先の方
 
 	//	右の翼
-	RegisterDamageDetectionData({ "Wing_R03",		0.4f,{},1.0f, "Wing_R03" });		//	一番付け根に近い
-	RegisterDamageDetectionData({ "Wing_R04",		0.4f,{},1.0f, "Wing_R04" });
-	RegisterDamageDetectionData({ "Wing_R05",		0.4f,{},1.0f, "Wing_R05" });
-	RegisterDamageDetectionData({ "Wing_R06",		0.4f,{},1.0f, "Wing_R06" });
-	RegisterDamageDetectionData({ "Wing_R08",		0.4f,{},1.0f, "Wing_R08" });
-	RegisterDamageDetectionData({ "Wing_R09",		0.4f,{},1.0f, "Wing_R09" });
-	RegisterDamageDetectionData({ "Wing_R10",		0.4f,{},1.0f, "Wing_R10" });		//	一番先の方
+	RegisterDamageDetectionData({ "Wing_R03",		0.5f,{},1.0f, "Wing_R03" });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_R04",		0.5f,{},1.0f, "Wing_R04" });
+	RegisterDamageDetectionData({ "Wing_R05",		0.5f,{},1.0f, "Wing_R05" });
+	RegisterDamageDetectionData({ "Wing_R06",		0.5f,{},1.0f, "Wing_R06" });
+	RegisterDamageDetectionData({ "Wing_R08",		0.5f,{},1.0f, "Wing_R08" });
+	RegisterDamageDetectionData({ "Wing_R09",		0.5f,{},1.0f, "Wing_R09" });
+	RegisterDamageDetectionData({ "Wing_R10",		0.5f,{},1.0f, "Wing_R10" });		//	一番先の方
 
 #pragma endregion ----- くらい判定登録 -----
 
@@ -227,6 +232,7 @@ void Dragonkin::UpdateBehaviorTree(const float& elapsedTime)
 	//	ビヘイビアツリー更新フラグがfalseなら更新しない
 	if (behaviorTreeUpdateFlag_ == false)return;
 
+#if 0
 	//	現在実行されているノードが無ければ
 	if (activeNode_ == nullptr)
 	{
@@ -239,6 +245,24 @@ void Dragonkin::UpdateBehaviorTree(const float& elapsedTime)
 		//	ビヘイビアツリーからノードを実行
 		activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_, elapsedTime);
 	}
+#else
+	//	次に実行するノードを推論する
+	NodeBase* inferenceNode = behaviorTree_->ActiveNodeInference(behaviorData_);
+	if (inferenceNode->IsForceExecution())
+	{
+		activeNode_ = inferenceNode;
+	}
+	else if (activeNode_ == nullptr)
+	{
+		activeNode_ = inferenceNode;
+	}
+	//	現在実行するノードがあれば
+	if (activeNode_ != nullptr)
+	{
+		//	ビヘイビアツリーからノードを実行
+		activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_, elapsedTime);
+	}
+#endif
 }
 
 //	ステージとの当たり判定
@@ -370,20 +394,20 @@ void Dragonkin::DrawDebugPrimitive()
 //	デバッグ描画
 void Dragonkin::DrawDebug()
 {
-	std::string str = "";
-	if (activeNode_ != nullptr)
-	{
-		str = activeNode_->GetName();
-	}
-
 	if (ImGui::TreeNode(u8"Dragonkin竜人"))
 	{
 		//	----- 更新フラグ -----
 		ImGui::Checkbox("UpdateFlag", &updateFlag_);	//	更新フラグ
 
 		//	----- ビヘイビアツリー -----
+		std::string str = "";
+		if (activeNode_ != nullptr)
+		{
+			str = activeNode_->GetName();
+		}
 		ImGui::Text(u8"Behavior　%s", str.c_str());								//	現在のビヘイビア
 		ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);	//	ビヘイビアツリー更新フラグ
+		behaviorTree_->DrawDebug();
 
 		//	----- コリジョン描画フラグ -----
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定

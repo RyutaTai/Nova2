@@ -704,6 +704,8 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& b
     transitionTime_ = blendTime;
     factor_ = 0;
 
+    animationSpeed_ = animSpeed;
+
 	animationDuration_ = endFrame == 0.0f ? 
         animations_.at(animationClip_).duration_ : 
 		std::min(animations_.at(animationClip_).duration_, endFrame);

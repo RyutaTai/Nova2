@@ -45,6 +45,7 @@ public:
 		HitLeft,		//	くらい(左からくらった)
 		HitRight,		//	くらい(右からくらった)
 		Execution01,	//	
+		GetUp,			//	起き上がり	
 
 		Max,			//	アニメーション最大数
 	};
@@ -60,6 +61,7 @@ public:
 		ComboOne3,		//	コンボ0_3
 		ComboOne4,		//	コンボ0_4
 		Dodge,			//	回避
+		GetUp,			//	起き上がり
 		Damage,			//	ダメージを受けた
 		Flinch,			//	怯み
 		Death,			//	死亡

@@ -309,10 +309,10 @@ void Drone::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
-	RegisterDamageDetectionData({ "Body",	0.87f });
-	RegisterDamageDetectionData({ "Head",	1.3f,{0.0f,0.0f,2.88f},1.0f,"Body" });
-	RegisterDamageDetectionData({ "Left",	0.5f });
-	RegisterDamageDetectionData({ "Right",	0.5f });
+	RegisterDamageDetectionData({ "Body",	0.9f });
+	RegisterDamageDetectionData({ "Head",	1.4f,{0.0f,0.0f,2.88f},1.0f,"Body" });
+	RegisterDamageDetectionData({ "Left",	0.6f });
+	RegisterDamageDetectionData({ "Right",	0.6f });
 
 #pragma endregion ----- くらい判定登録 -----
 

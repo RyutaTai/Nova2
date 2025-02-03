@@ -143,7 +143,7 @@ void CollisionManager::PlayerAttackVsEnemyDamage()
                     if (enemy->IsDead() == false)
                     {
                         const float attackPower = player.GetAttackPower();
-                        const float damage = attackPower * enemyData.GetDamage();
+                        const float damage      = attackPower * enemyData.GetDamage();
 
                         enemy->SetIsDamaged(true);
                         enemy->AddDamage(damage);

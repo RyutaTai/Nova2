@@ -15,16 +15,16 @@ class BehaviorData
 public:
 	//	コンストラクタ
 	BehaviorData() { Initialize(); }
+	// 初期化
+	void Initialize();
 	//	シーケンスノードのプッシュ
 	void PushSequenceNode(NodeBase* node) { sequenceStack_.push(node); }
 	//	シーケンスノードのポップ
 	NodeBase* PopSequenceNode();
 	//	シーケンスステップのゲッター
-	int GetSequenceStep(std::string name);
+	int GetSequenceStep(const std::string& name);
 	//	シーケンスステップのセッター
-	void SetSequenceStep(std::string name, int step);
-	// 初期化
-	void Initialize();
+	void SetSequenceStep(const std::string& name, const int& step);
 
 private:
 	std::stack<NodeBase*>		sequenceStack_;			//	実行する中間ノードをスタック

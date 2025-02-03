@@ -17,11 +17,11 @@ class NodeBase
 {
 public:
 	//	コンストラクタ
-	NodeBase(std::string name,NodeBase* parent,NodeBase* sibling,int priority,
-		BehaviorTree::SelectRule selectRule,JudgmentBase* judgment,ActionBase* action,int hierarchyNo) :
+	NodeBase(std::string name,NodeBase* parent,NodeBase* sibling,const int& priority,
+		BehaviorTree::SelectRule selectRule, JudgmentBase* judgment, ActionBase* action, const int& hierarchyNo, const bool& isForceExecution = false) :
 		name_(name),parent_(parent),sibling_(sibling),priority_(priority),
 		selectRule_(selectRule),judgment_(judgment),action_(action),hierarchyNo_(hierarchyNo),
-		children_(NULL)
+		children_(NULL),isForceExecution_(isForceExecution)
 	{
 	}
 	//	デストラクタ
@@ -31,7 +31,7 @@ public:
 	//	親ノードゲッター
 	NodeBase* GetParent() { return parent_; }
 	//	子ノードゲッター
-	NodeBase* GetChild(int index);
+	NodeBase* GetChild(const int& index);
 	//	子ノードゲッター(末尾)
 	NodeBase* GetLastChild();
 	//	子ノードゲッター(先頭)
@@ -50,6 +50,8 @@ public:
 	void SetSibling(NodeBase* sibling) {this->sibling_ = sibling;}
 	//	行動データを持っているか
 	bool HasAction() { return action_ != nullptr ? true : false; }
+	//	行動データ取得
+	ActionBase* GetAction()const { return action_; }
 	//	実行可否判定
 	bool Judgment();
 	//	優先順位選択
@@ -63,7 +65,11 @@ public:
 	//	ノード推論
 	NodeBase* Inference(Enemy* enemy, BehaviorData* data);
 	//	実行
-	ActionBase::State Run(float elapsedTime);
+	ActionBase::State Run(const float& elapsedTime);
+
+	//	----- 強制実行フラグ -----
+	void SetIsForceExecution(const bool& isForceExecution) { isForceExecution_ = isForceExecution; }
+	const bool IsForceExecution() const{ return isForceExecution_; }
 
 public:
 	std::vector<NodeBase*>		children_;		//	子ノード
@@ -77,5 +83,7 @@ protected:
 	NodeBase*					parent_;		//	親ノード
 	NodeBase*					sibling_;		//	兄弟ノード
 	int							hierarchyNo_;	//	階層番号
+
+	bool						isForceExecution_ = false;	//	強制実行フラグ(他のノードが実行中でもJudgmentがtrueなら実行する)
 
 };

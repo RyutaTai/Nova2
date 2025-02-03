@@ -1,6 +1,17 @@
 #include "BehaviorData.h"
 
 #include "NodeBase.h"
+#include "../../External/imgui/imgui.h"
+
+//	初期化
+void BehaviorData::Initialize()
+{
+	runSequenceStepMap_.clear();
+	while (sequenceStack_.size() > 0)
+	{
+		sequenceStack_.pop();
+	}
+}
 
 //	シーケンスノードのポップ
 NodeBase* BehaviorData::PopSequenceNode()
@@ -20,7 +31,7 @@ NodeBase* BehaviorData::PopSequenceNode()
 }
 
 //	シーケンスステップのゲッター
-int BehaviorData::GetSequenceStep(std::string name)
+int BehaviorData::GetSequenceStep(const std::string& name)
 {
 	if (runSequenceStepMap_.count(name) == 0)
 	{
@@ -31,17 +42,7 @@ int BehaviorData::GetSequenceStep(std::string name)
 }
 
 //	シーケンスステップのセッター
-void BehaviorData::SetSequenceStep(std::string name, int step)
+void BehaviorData::SetSequenceStep(const std::string& name, const int& step)
 {
 	runSequenceStepMap_.at(name) = step;
-}
-
-//	初期化
-void BehaviorData::Initialize()
-{
-	runSequenceStepMap_.clear();
-	while (sequenceStack_.size() > 0)
-	{
-		sequenceStack_.pop();
-	}
 }

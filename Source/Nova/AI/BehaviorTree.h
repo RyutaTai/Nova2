@@ -27,6 +27,8 @@ public:
 	BehaviorTree(Enemy* enemy)	:root_(nullptr) , owner_(enemy){}
 	~BehaviorTree();
 
+	void DrawDebug();
+
 	//	実行ノードを推論する
 	NodeBase* ActiveNodeInference(BehaviorData* data);
 
@@ -34,10 +36,10 @@ public:
 	NodeBase* SequenceBack(NodeBase* sequenceNode, BehaviorData* data);
 
 	//	ノード追加
-	void AddNode(const std::string& parentName, const std::string& entryName, const int& priority, const SelectRule& selectRule, JudgmentBase* judgment, ActionBase* action);
+	void AddNode(const std::string& parentName, const std::string& entryName, const int& priority, const SelectRule& selectRule, JudgmentBase* judgment, ActionBase* action, const bool& isForceExecution = false);
 
 	//	実行
-	NodeBase* Run(NodeBase* actionNode, BehaviorData* data,float elapsedTime);
+	NodeBase* Run(NodeBase* actionNode, BehaviorData* data, const float& elapsedTime);
 
 private:
 	//	ノード全削除

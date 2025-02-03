@@ -57,22 +57,6 @@ inline void StateMachine<T>::DrawDebug()
         ImGui::TreePop();
     }
 
-    //static int state = 0;
-    //if (ImGui::TreeNode("stateMachine"))
-    //{
-    //    ImGui::Text(currentState_->GetName());
-
-    //    float temp = currentState_->GetTimer();
-    //    ImGui::DragFloat("time", &temp);
-
-    //    ImGui::SliderInt("state", &state, 0, statePool_.size() - 1);
-    //    if (ImGui::Button("Set State"))
-    //    {
-    //        ChangeState(state);
-    //    }
-
-    //    ImGui::TreePop();
-    //}
 }
 
 template<class T>

@@ -12,7 +12,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::Idle01), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::Idle01), false);
 			step_++;
 			break;
 		case 1:
@@ -88,7 +88,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackPunch), false);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.42f, 0.5f);
 
@@ -145,7 +145,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackKick), false);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.52f, 0.6f);
 			
@@ -179,6 +179,7 @@ namespace DragonkinAction
 				step_ = 0;
 				return ActionBase::State::Complete;
 			}
+
 			break;
 		}
 		return ActionBase::State::Run;
@@ -204,7 +205,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::AttackWing), false);
 			//	判定を取る区間を設定
 			animJudgeTime_.SetJudgeTime(0.34f, 0.41f);
 			
@@ -382,13 +383,13 @@ namespace DragonkinAction
 //	ダメージ行動
 namespace DragonkinAction
 {
-	ActionBase::State DamageAction::Run(const float& elapsedTIme)
+	ActionBase::State DamageAction::Run(const float& elapsedTime)
 	{
 		switch (step_)
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DamageHit01), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DamageHit02), false, 0.03f, 1.0f, startFrame_, endFrame_);
 			step_++;
 			break;
 		case 1:
@@ -407,6 +408,9 @@ namespace DragonkinAction
 	{
 		if (ImGui::TreeNode("DamageAction"))
 		{
+			//	----- アニメーション -----
+			ImGui::DragFloat("StartFrame", &startFrame_, 0.01f);
+			ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
 
 			ImGui::TreePop();
 		}
@@ -422,7 +426,7 @@ namespace DragonkinAction
 		{
 		case 0:
 			owner_->ResetRunTimer();
-			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DmageDieDown), false, 1.0f, 0.2f);
+			owner_->PlayAnimation(static_cast<int>(Dragonkin::AnimationType::DmageDieDown), false);
 			step_++;
 			break;
 		case 1:

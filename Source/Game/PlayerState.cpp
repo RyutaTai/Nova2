@@ -93,9 +93,6 @@ namespace PlayerState
 		//	移動速度を設定
 		owner_->SetMoveSpeed(moveSpeed_);
 
-		//	足音SE再生
-		//AudioManager::Instance().GetAudioResource("PlayerFootsteps")->Play(false);
-
 		//	足音タイマーリセット
 		footStepsTimer_ = 0.0f;
 
@@ -893,11 +890,11 @@ namespace PlayerState
 	void DodgeState::Initialize()
 	{
 		//	----- アニメーション再生設定 -----
-		owner_->PlayAnimation(Player::AnimationType::DodgeBack, false, 0.0f, 1.0f, 0.0f, endFrame_);
+		owner_->PlayAnimation(Player::AnimationType::DodgeBack, false, 0.0f, 1.0f, startFrame_, endFrame_);
 		owner_->SetAnimationSpeed(1.0f);
-		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.79f);
+		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.59f);
 		animSpeedChangeInterval_[0].SetName("AnimSpeedInterval0");
-		animSpeedChangeInterval_[1].SetJudgeTime(0.80f, 1.333f);
+		animSpeedChangeInterval_[1].SetJudgeTime(0.60f, 1.333f);
 		animSpeedChangeInterval_[1].SetName("AnimSpeedInterval1");
 
 		//	----- ルートモーション -----
@@ -978,8 +975,9 @@ namespace PlayerState
 		{
 			if (ImGui::TreeNode("Animation"))
 			{
-				//	アニメーション終了フレーム
-				ImGui::DragFloat("EndFrame", &endFrame_);
+				//	アニメーション再生フレーム
+				ImGui::DragFloat("StartFrame", &startFrame_,0.01f);
+				ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
 
 				//	アニメーション速度を変化させる区間	
 				for (int i = 0; i < AnimSpeedSectionCount_; ++i)
@@ -1012,13 +1010,15 @@ namespace PlayerState
 {
 	void DamageState::Initialize()
 	{
+		//	コントローラー振動設定
+		SetGamePadVibration();
+
 		//	アニメーションの速度を変える区間を設定
 		animSpeedChangeInterval_[0].SetJudgeTime(0.0f, 0.54f);		//	地面につく
-		animSpeedChangeInterval_[1].SetJudgeTime(0.55f, 1.16f);		//	動作終わり
-		animSpeedChangeInterval_[2].SetJudgeTime(1.17f, 2.2f);		//	余韻
+		animSpeedChangeInterval_[1].SetJudgeTime(0.55f, 1.1f);		//	動作終わり
 
 		//	吹っ飛びアニメーション再生
-		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, 0.35f, 1.18f);
+		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, startFrame_, endFrame_);
 		owner_->SetAnimationSpeed(1.5f);
 
 		//  敵からプレイヤーの方向へ吹っ飛ばす
@@ -1037,7 +1037,7 @@ namespace PlayerState
 	{
 		//	ステート経過時間更新
 		UpdateStateElapsedTime(elapsedTime);
-		
+
 		//	アニメーション速度調整
 		UpdateAnimationSpeed();
 
@@ -1052,7 +1052,7 @@ namespace PlayerState
 		//	アニメーション再生が終わったらステート終了
 		if (owner_->IsPlayAnimation() == false)
 		{
-			owner_->ChangeState(Player::StateType::Idle);
+			owner_->ChangeState(Player::StateType::GetUp);
 		}
 	}
 
@@ -1072,6 +1072,14 @@ namespace PlayerState
 		}
 	}
 
+	//	コントローラー振動
+	void DamageState::SetGamePadVibration()
+	{
+		GamePad& gamePad = Input::Instance().GetGamePad();
+		gamePad.SetVibration(leftVibrationPower_, rightVibrationPower_, vibrationTime_);
+
+	}
+
 	void DamageState::Finalize()
 	{
 		owner_->SetAnimationSpeed(1.0f);
@@ -1082,11 +1090,17 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("Damage"))
 		{
+			if (ImGui::TreeNode("PlayDuration"))
+			{
+				ImGui::DragFloat("StartFrame",	&startFrame_, 0.01f);
+				ImGui::DragFloat("EndFrame",	&endFrame_, 0.01f);
+				ImGui::TreePop();
+			}
+
 			if(ImGui::TreeNode("AnimationSpeed"))
 			{
 				ImGui::DragFloat("AnimSpeedSection0", &animationSpeed_[0]);
 				ImGui::DragFloat("AnimSpeedSection1", &animationSpeed_[1]);
-				ImGui::DragFloat("AnimSpeedSection2", &animationSpeed_[2]);
 				ImGui::TreePop();
 			}
 			if (ImGui::TreeNode("AddForce"))
@@ -1097,9 +1111,77 @@ namespace PlayerState
 				ImGui::TreePop();
 			}
 
+			if (ImGui::TreeNode("GamePadVibration"))
+			{
+				ImGui::DragFloat("LeftPower", &leftVibrationPower_, 0.01f);
+				ImGui::DragFloat("RightPower", &rightVibrationPower_, 0.01f);
+				ImGui::DragFloat("Time", &vibrationTime_, 0.01f);
+
+				ImGui::TreePop();
+			}
+
 			ImGui::TreePop();
 		}
 	}
+}
+
+//	起き上がりステート
+namespace PlayerState
+{
+	void GetUpState::Initialize()
+	{
+		//	起き上がりアニメーション再生
+		owner_->PlayAnimation(Player::AnimationType::GetUp, false, 0.1f, animationSpeed_, startFrame_, endFrame_);
+
+		//  敵からプレイヤーの方向へ吹っ飛ばす
+		DirectX::XMFLOAT3 direction = Normalize(owner_->GetTransform()->GetPosition() - owner_->GetEnemyPos());
+		direction.y = 0.0f;
+	
+		//	吹っ飛び方向から回転角度を求める
+		float blowbackRotationY = atan2(direction.x, direction.z) + DirectX::XM_PI;
+
+		//	吹っ飛び方向に応じた回転処理
+		owner_->GetTransform()->SetRotationY(blowbackRotationY); // 吹っ飛ぶ方向に回転
+
+	}
+
+	void GetUpState::Update(const float& elapsedTime)
+	{
+		//	ステート経過時間更新
+		UpdateStateElapsedTime(elapsedTime);
+
+		//	ステート遷移
+		DetermineStateTransition();
+
+	}
+
+	//	ステートの遷移を判断
+	void GetUpState::DetermineStateTransition()
+	{
+		//	起き上がりアニメーション再生が終わったらステート終了
+		if (owner_->IsPlayAnimation() == false)
+		{
+			owner_->ChangeState(Player::StateType::Idle);
+		}
+	}
+
+	void GetUpState::Finalize()
+	{
+
+	}
+
+	void GetUpState::DrawDebug()
+	{
+		if (ImGui::TreeNode("GetUpState"))
+		{
+			ImGui::DragFloat("StartFrame", &startFrame_, 0.01f);
+			ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
+			ImGui::DragFloat("AnimSpeed", &animationSpeed_, 0.01f);
+
+			ImGui::TreePop();
+		}
+	}
+
 }
 
 //	怯みステート

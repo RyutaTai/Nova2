@@ -149,6 +149,11 @@ namespace DragonkinAction
 		ActionBase::State Run(const float& elapsedTime)override;
 		void DrawDebug()override;
 
+	private:
+		//	----- アニメーション -----
+		float startFrame_ = 0.0f;
+		float endFrame_ = 0.333f;
+
 	};
 }
 

@@ -386,5 +386,10 @@ namespace PlayerState
 		//	----- ステートの遷移を判断 -----
 		void DetermineStateTransition(const float& elapsedTime);
 
+	private:
+		//	----- アニメーション -----
+		float startFrame_ = 0.0f;
+		float endFrame_ = 2.2f;
+
 	};
 }

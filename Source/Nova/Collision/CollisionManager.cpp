@@ -285,7 +285,7 @@ void CollisionManager::PlayerDamageVsEnemyAttack()
                     //  HP‚ª–³‚¢‚½‚ßDeathState‚É‘JˆÚ
                     else
                     {
-                        //player.ChangeState(Player::StateType::Death);  
+                        player.ChangeState(Player::StateType::Death);  
                     }
 
                     return;
@@ -343,7 +343,7 @@ void CollisionManager::PlayerDamageVsBulletAttack()
                 //  HP‚ª–³‚¢‚½‚ßDeathState‚É‘JˆÚ
                 else
                 {
-                    //player.ChangeState(Player::StateType::Death);
+                    player.ChangeState(Player::StateType::Death);
                 }
                 return;
             }

@@ -213,9 +213,9 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		updateName, defaultColor,		hitColor}
 	
-	RegisterAttackDetectionData({ "RightPunch",	0.3f ,{},"ik_hand_r" });	//	右手のパンチ
-	RegisterAttackDetectionData({ "LeftPunch",	0.3f ,{},"ik_hand_l" });	//	左手のパンチ
-	RegisterAttackDetectionData({ "LeftKick",	0.3f ,{},"ik_foot_l" });	//	右のキック
+	RegisterAttackDetectionData({ "RightPunch",	0.4f ,{},"ik_hand_r" });	//	右手のパンチ
+	RegisterAttackDetectionData({ "LeftPunch",	0.4f ,{},"ik_hand_l" });	//	左手のパンチ
+	RegisterAttackDetectionData({ "LeftKick",	0.4f ,{},"ik_foot_l" });	//	右のキック
 
 	SetAllAttackDetectionActiveFlag(false);
 
@@ -912,6 +912,16 @@ void Player::ChangeState(const StateType& state)
 	stateMachine_->ChangeState(static_cast<int>(state));
 }
 
+//	他のステートからでも強制で遷移するステートを確認
+void Player::ChangeForceExecutionState()
+{
+	//	HPが無ければ
+	if(GetHp()<=0)
+	{
+
+	}
+}
+
 //	現在のステート表示
 void Player::DrawStateStr()
 {
@@ -920,7 +930,7 @@ void Player::DrawStateStr()
 	{
 		"Idle","Move","Attack",
 		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
-		"Doege","Damage","Flinch","Death"
+		"Doege","GetUp","Damage","Flinch","Death"
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示

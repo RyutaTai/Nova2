@@ -775,7 +775,7 @@ namespace PlayerState
 		//owner_->SetUseRootMotion(true);
 
 		//	判定時間セット
-		animJudgeTime_.SetJudgeTime(0.64f, 1.185f);
+		animJudgeTime_.SetJudgeTime(0.4f, 1.185f);
 		acceptInputFrame_ = 10.0f;
 
 		//	ステート経過時間初期化
@@ -1228,7 +1228,8 @@ namespace PlayerState
 {
 	void DeathState::Initialize()
 	{
-		//owner_->PlayAnimation(Player::AnimationType:)
+		owner_->PlayAnimation(Player::AnimationType::HitDeath, false, 0.1f, 1.0f, startFrame_, endFrame_);
+		owner_->SetAnimationSpeed(1.5f);
 	}
 
 	void DeathState::Update(const float& elapsedTime)
@@ -1244,7 +1245,7 @@ namespace PlayerState
 	//	ステートの遷移を判断
 	void DeathState::DetermineStateTransition(const float& elapsedTime)
 	{
-		owner_->ChangeState(Player::StateType::Idle);
+		//	アニメーション再生が終わっても遷移しない
 	}
 
 	void DeathState::Finalize()
@@ -1256,6 +1257,8 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("Death"))
 		{
+			ImGui::DragFloat("StartFrame", &startFrame_, 0.01f);
+			ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
 
 			ImGui::TreePop();
 		}

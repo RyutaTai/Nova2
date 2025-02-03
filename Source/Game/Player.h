@@ -158,9 +158,8 @@ public:
 	void								ChangeState(const StateType& state);						//	ステート遷移
 	StateType							GetCurrentState()	const { return currentState_; }			//	現在のステート取得
 	StateType							GetLastState()		const { return lastState_; }			//	ひとつ前のステート取得
+	void								ChangeForceExecutionState();								//	他のステートからでも強制で遷移するステートを確認
 	void								DrawStateStr();												//	現在のステート描画
-	//void ForceChangeState();	//	どのステートからでも遷移するステート
-
 
 	//	----- オーディオ -----
 	void UpdateListener();	//	リスナー情報更新

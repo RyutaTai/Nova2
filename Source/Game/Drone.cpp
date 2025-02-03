@@ -342,16 +342,7 @@ void Drone::UpdateCollisions(const float& elapsedTime)
 	{
 		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
-		//data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
-
-	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
-	{
-		AttackDetectionData& data = GetAttackDetectionData(i);
-		DirectX::XMFLOAT3 pos = data.GetPosition();
-		pos.y = 1.0f;
-		data.SetJointPosition(pos);
-	}*/
 
 	//	押し出し判定更新
 	for (CollisionDetectionData& data : collisionDetectionData_)
@@ -458,7 +449,7 @@ void Drone::DrawDebug()
 		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定
 		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);		//	くらい判定
 
-		ImGui::Checkbox("Invincible", &isInvincible_);			//	無敵フラグ設定
+		ImGui::Checkbox("Invincible", &isInvincible_);				//	無敵フラグ設定
 		ImGui::Checkbox("Bullet Launch ", &isBulletLaunch_);		//	弾丸発射
 		
 		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール

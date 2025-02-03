@@ -133,11 +133,11 @@ void Dragonkin::RegisterCollisionData()
 	RegisterDamageDetectionData({ "Hand_L",			0.5f,{},1.0f, "Hand_L" });		//	左手首
 	RegisterDamageDetectionData({ "Hand_R",			0.5f,{},1.0f, "Hand_R" });		//	右手首
 	RegisterDamageDetectionData({ "spine_01",		0.5f,{},1.0f, "spine_01" });	//	腰
-	RegisterDamageDetectionData({ "calf_l",			0.5f,{},1.0f, "calf_l" });		//	左膝
-	RegisterDamageDetectionData({ "calf_r",			0.5f,{},1.0f, "calf_r" });		//	右膝
-	RegisterDamageDetectionData({ "Steps",			0.9f,{},1.0f, "Foot_L" });		//	足元
+	RegisterDamageDetectionData({ "calf_l",			0.7f,{},1.0f, "calf_l" });		//	左膝
+	RegisterDamageDetectionData({ "calf_r",			0.7f,{},1.0f, "calf_r" });		//	右膝
 	RegisterDamageDetectionData({ "Foot_L",			0.7f,{},1.0f, "Foot_L" });		//	左足首
 	RegisterDamageDetectionData({ "Foot_R",			0.7f,{},1.0f, "Foot_R" });		//	右足首
+	RegisterDamageDetectionData({ "Steps",			0.5f,{-190.0f,0.0f,0.0f},1.0f, "spine_01" });	//	足元
 
 	//	左の翼
 	RegisterDamageDetectionData({ "Wing_L03",		0.5f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
@@ -302,14 +302,6 @@ void Dragonkin::UpdateCollisions(const float& elapsedTime)
 		//	ジョイントの名前で位置設定(名前がジョイントの名前ではないとき別途更新必要)
 		data.SetJointPosition(GetJointPosition(data.GetUpdateName(), data.GetOffsetPosition()));
 	}
-
-	/*for (int i = AttackData::TrunAttackStart; i <= AttackData::TackleAttackEnd; ++i)
-	{
-		AttackDetectionData& data = GetAttackDetectionData(i);
-		DirectX::XMFLOAT3 pos = data.GetPosition();
-		pos.y = 1.0f;
-		data.SetJointPosition(pos);
-	}*/
 
 	//	押し出し判定更新
 	for (CollisionDetectionData& data : collisionDetectionData_)

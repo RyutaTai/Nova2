@@ -392,6 +392,7 @@ void Character::DrawDebug()
 	gltfModelResource_->DrawDebug();
 
 	//	----- HP -----
+	ImGui::Checkbox("Invincible", &isInvincible_);				//	–³“Gƒtƒ‰ƒOİ’è
 	ImGui::DragInt("HP", &hp_, 1.0f, 0, INT_MAX);
 	//	----- ˆÚ“® -----
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f, -FLT_MAX, FLT_MAX);			//	ˆÚ“®‘¬“x

@@ -52,6 +52,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("Wave1State"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -97,6 +98,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("Wave2State"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -142,6 +144,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("Wave3State"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -182,6 +185,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("GameClearState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -222,6 +226,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("GameOverState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -252,6 +257,7 @@ namespace GameState
 	{
 		if (ImGui::TreeNode("ContinueState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}

@@ -16,9 +16,6 @@ namespace TitleState
 
 	void FadeInState::Update(const float& elapsedTime)
 	{
-		//	----- ステート経過時間更新 -----
-		UpdateStateElapsedTime(elapsedTime);
-
 		//  ----- タイトル文字のフェード -----
 		logoAlpha_ = Easing::InSine(stateElapsedTime_, fadeTime_, 1.0f, 0.0f);
 
@@ -42,6 +39,8 @@ namespace TitleState
 	{
 		if (ImGui::TreeNode("FadeInState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			ImGui::DragFloat("FadeTime", &fadeTime_, 0.01f);
 			ImGui::DragFloat("LogoAlpha", &logoAlpha_, 0.01f);
 
@@ -73,6 +72,7 @@ namespace TitleState
 	{
 		if (ImGui::TreeNode("MainState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -102,6 +102,7 @@ namespace TitleState
 	{
 		if (ImGui::TreeNode("SettingState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}

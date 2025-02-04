@@ -31,7 +31,7 @@ public:
 	
 	const double GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
 
-	JudgmentType GetJudgmentType(const double& inputTime, const double& elapsedTime);
+	JudgmentType GetJudgmentType(const double& inputTime);
 
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }

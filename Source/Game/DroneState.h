@@ -89,6 +89,9 @@ namespace DroneState
 		void Finalize()override;
 		void DrawDebug()override;
 
+	private:
+		float initLaunchTimer_ = 1.0f;
+
 	};
 }
 
@@ -107,4 +110,40 @@ namespace DroneState
 		void DrawDebug()override;
 
 	};
+}
+
+//	ダメージステート　
+namespace DroneState
+{
+	class DamageState :public State<Drone>
+	{
+	public:
+		DamageState(Drone* owner) :State(owner) {}
+		~DamageState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	};
+
+}
+
+//	死亡ステート
+namespace DroneState
+{
+	class DeathState :public State<Drone>
+	{
+	public:
+		DeathState(Drone* owner) :State(owner) {}
+		~DeathState() {}
+
+		void Initialize()override;
+		void Update(const float& elapsedTime)override;
+		void Finalize()override;
+		void DrawDebug()override;
+
+	};
+
 }

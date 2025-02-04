@@ -3,26 +3,29 @@
 //  デバッグ用
 void Transform::DrawDebug()
 {
-    ImGui::DragFloat3("Position", &position_.x, 1.0f, -FLT_MAX, FLT_MAX);
-    ImGui::DragFloat3("Scale", &scale_.x, 0.001f, -FLT_MAX, FLT_MAX);
-    
-    DirectX::XMFLOAT3 rot{};
-    rot.x = DirectX::XMConvertToDegrees(rotation_.x);
-    rot.y = DirectX::XMConvertToDegrees(rotation_.y);
-    rot.z = DirectX::XMConvertToDegrees(rotation_.z);
-    ImGui::DragFloat3("Rotation", &rot.x, 0.5f, -FLT_MAX, FLT_MAX);
-    rotation_.x = DirectX::XMConvertToRadians(rot.x);
-    rotation_.y = DirectX::XMConvertToRadians(rot.y);
-    rotation_.z = DirectX::XMConvertToRadians(rot.z);
-    
-    ImGui::DragFloat("ScaleFactor", &scaleFactor_, 0.001f, 0.001f, 100.0f);
-    
-    ImGui::SliderInt("Coordinate System", &coordinateSystem_, 0, static_cast<int>(CoordinateSystem::cLeftZup));
-    ImGui::Text(coordinateSystemName_[coordinateSystem_].c_str());
-
-    if (ImGui::Button("Reset"))
+    if (ImGui::TreeNode("Transform"))
     {
-        Reset();
+        ImGui::DragFloat3("Position", &position_.x, 1.0f, -FLT_MAX, FLT_MAX);
+        ImGui::DragFloat3("Scale", &scale_.x, 0.001f, -FLT_MAX, FLT_MAX);
+
+        DirectX::XMFLOAT3 rot{};
+        rot.x = DirectX::XMConvertToDegrees(rotation_.x);
+        rot.y = DirectX::XMConvertToDegrees(rotation_.y);
+        rot.z = DirectX::XMConvertToDegrees(rotation_.z);
+        ImGui::DragFloat3("Rotation", &rot.x, 0.5f, -FLT_MAX, FLT_MAX);
+        rotation_.x = DirectX::XMConvertToRadians(rot.x);
+        rotation_.y = DirectX::XMConvertToRadians(rot.y);
+        rotation_.z = DirectX::XMConvertToRadians(rot.z);
+
+        ImGui::DragFloat("ScaleFactor", &scaleFactor_, 0.001f, 0.001f, 100.0f);
+
+        ImGui::SliderInt("Coordinate System", &coordinateSystem_, 0, static_cast<int>(CoordinateSystem::cLeftZup));
+        ImGui::Text(coordinateSystemName_[coordinateSystem_].c_str());
+
+        if (ImGui::Button("Reset"))
+        {
+            Reset();
+        }
     }
 }
 

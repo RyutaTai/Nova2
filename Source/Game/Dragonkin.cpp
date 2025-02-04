@@ -397,9 +397,14 @@ void Dragonkin::DrawDebug()
 		{
 			str = activeNode_->GetName();
 		}
-		ImGui::Text(u8"Behavior　%s", str.c_str());								//	現在のビヘイビア
-		ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);	//	ビヘイビアツリー更新フラグ
-		behaviorTree_->DrawDebug();
+		if (ImGui::TreeNode("BehaviorTree"))
+		{
+			ImGui::Text(u8"Behavior　%s", str.c_str());								//	現在のビヘイビア
+			ImGui::Checkbox("BehaviorTreeUpdateFlag", &behaviorTreeUpdateFlag_);	//	ビヘイビアツリー更新フラグ
+			behaviorTree_->DrawDebug();
+
+			ImGui::TreePop();
+		}
 
 		//	----- コリジョン描画フラグ -----
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定

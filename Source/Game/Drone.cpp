@@ -25,6 +25,7 @@ Drone::Drone()
 	stateMachine_->RegisterState(new DroneState::PursuitState(this));		//	追跡
 	stateMachine_->RegisterState(new DroneState::AttackState(this));		//	攻撃
 	stateMachine_->RegisterState(new DroneState::AvoidanceState(this));		//	回避
+	stateMachine_->RegisterState(new DroneState::DamageState(this));		//	ダメージ
 
 	//	初期ステート設定
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));
@@ -159,15 +160,15 @@ void Drone::Update(const float& elapsedTime)
 	//	----- 当たり判定更新 -----
 	UpdateCollisions(elapsedTime);
 
-	//	----- 次の弾を発射するまでのタイマー更新 -----
-	launchTimer_ -= elapsedTime;
-
 	//	----- 移動更新 -----
 	UpdateVelocity(elapsedTime);
 	Move(elapsedTime);
 
 	//	----- 旋回処理 -----
 	Turn(elapsedTime);
+
+	//	----- 発射タイマー更新 -----
+	//UpdateLaunchTimer(elapsedTime);
 
 	//	----- 弾丸更新処理 -----
  	BulletManager::Instance().Update(elapsedTime);
@@ -197,6 +198,12 @@ void Drone::UpdateEmitter()
 
 }
 
+//	ダメージステートへ遷移
+void Drone::ChangeDamageState()
+{
+	if (isDamaged_)ChangeState(StateType::Damage);
+}
+
 //	オーディオソース更新
 void Drone::UpdateAudioSource()
 {
@@ -213,14 +220,17 @@ void Drone::UpdateAudioSource()
 }
 
 //	弾丸処理
-void Drone::LaunchBullet()
+void Drone::LaunchBullet(const float& elapsedTime)
 {
 	//	弾丸発射フラグが立っていなければreturn(デバッグ用)
 	if (isBulletLaunch_ == false)return;
 
 #if 1
+	//	発射タイマー更新
+	UpdateLaunchTimer(elapsedTime);
+
 	//	一定間隔で弾を発射
-	if (launchTimer_ <= 0.0f)
+	if (launchTimer_ >= launchInterval_)
 #else
 	GamePad gamePad = Input::Instance().GetGamePad();
 	if (gamePad.GetButtonDown() & GamePad::BTN_START)	//	Enterキーで発射
@@ -252,17 +262,10 @@ void Drone::LaunchBullet()
 		bullet->SetOwnerPosition(this->GetTransform()->GetPosition());
 
 		//	発射タイマーリセット
-		launchTimer_ = 3.5f;
+		ResetLaunchTimer();
 
 		//	発射音再生
-#if 0
-		if (sources_[static_cast<int>(Audio3D::Shot)])
-		{
-			sources_[static_cast<int>(Audio3D::Shot)]->Play(false);
-		}
-#else
 		AudioManager::Instance().GetAudioResource("LaunchBullet")->Play(false);
-#endif
 
 	}
 
@@ -381,7 +384,9 @@ void Drone::DrawDebugPrimitive()
 	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), radius_, height_, DirectX::XMFLOAT4(0, 0, 0, 1));
 
 	//	索敵範囲描画(円柱)
-	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0,1,0.1f,1.0f });
+	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), searchRange_, 1.0f, { 0.0f,1.0f,0.1f,1.0f });
+	//	射程範囲描画(円柱)
+	debugRenderer->DrawCylinder(this->GetTransform()->GetPosition(), launchRange_, 1.0f, { 1.0f,0.1f,0.1f,1.0f });
 	
 	//	弾丸のデバッグ球描画
 	BulletManager::Instance().DrawDebugPrimitive();
@@ -424,7 +429,7 @@ void Drone::DrawStateStr()
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
 		"Idle","Search","Move","Pursuit",
-		"Attack","Avoidance"
+		"Attack","Avoidance","Damage",
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示
@@ -434,8 +439,6 @@ void Drone::DrawStateStr()
 //	デバッグ描画
 void Drone::DrawDebug()
 {
-	float scale = GetTransform()->GetScaleFactor();
-
 	if (ImGui::TreeNode(u8"Drone ドローン"))
 	{
 		//	----- ステート -----
@@ -444,24 +447,27 @@ void Drone::DrawDebug()
 
 		Character::DrawDebug();
 
-		//	コリジョン描画フラグ
+		//	----- コリジョン描画フラグ -----
 		ImGui::Checkbox("IsCollisionSphere", &isCollisionSphere_);	//	押し出し判定
 		ImGui::Checkbox("IsAttackSphere", &isAttackSphere_);		//	攻撃判定
 		ImGui::Checkbox("IsDamageSphere", &isDamageSphere_);		//	くらい判定
 
-		ImGui::Checkbox("Invincible", &isInvincible_);				//	無敵フラグ設定
-		ImGui::Checkbox("Bullet Launch ", &isBulletLaunch_);		//	弾丸発射
-		
-		ImGui::DragFloat("ScaleFactor", &scale,1.0f, -FLT_MAX, FLT_MAX);		//	スケール
-
 		//	----- ターゲット -----
+		ImGui::Text("----- Target -----");
+		ImGui::DragFloat3("TargetPos", &targetPosition_.x);
 		float distanceToTarget = CalcDistanceToTarget();
 		ImGui::DragFloat("DistanceToTarget", &distanceToTarget, 0.1f, -FLT_MAX, FLT_MAX);	//	ターゲットまでの距離
 		ImGui::DragFloat("SerchRange", &searchRange_, 0.1f, -FLT_MAX, FLT_MAX);				//	索敵範囲
-		ImGui::DragFloat("LaunchRange", &launchRange_, 0.1f, -FLT_MAX, FLT_MAX);			//	射程範囲
+
+		//	----- 弾丸 -----
+		ImGui::Text("----- Bullet -----");
+		ImGui::Checkbox("Bullet Launch ", &isBulletLaunch_);						//	弾丸発射処理をするかどうか
+		ImGui::DragFloat("LaunchTimer", &launchTimer_, 0.01f);						//	発射タイマー
+		ImGui::DragFloat("LaunchInterval", &launchInterval_, 0.01f);				//	発射間隔
+		ImGui::DragFloat("LaunchRange", &launchRange_, 0.1f, -FLT_MAX, FLT_MAX);	//	射程範囲
+		BulletManager::Instance().DrawDebug();	//	弾丸ImGui
 
 		ImGui::TreePop();
 	}
-	BulletManager::Instance().DrawDebug();	//	弾丸ImGui
 
 }

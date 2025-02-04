@@ -26,6 +26,7 @@ public:// 取得・設定
 private:
     T* currentState_;            // 現在のステート
     std::vector<T*> statePool_;  // 各ステートを保持する配列
+
 };
 
 template<class T>
@@ -42,6 +43,7 @@ inline StateMachine<T>::~StateMachine()
 template<class T>
 inline void StateMachine<T>::Update(const float& elapsedTime)
 {
+    currentState_->UpdateStateElapsedTime(elapsedTime);
     currentState_->Update(elapsedTime);
 }
 

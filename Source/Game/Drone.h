@@ -20,6 +20,7 @@ public:
 		Pursuit,			//	追跡
 		Attack,				//	攻撃
 		Avoidance,			//	回避
+		Damage,				//	ダメージ
 		Max,				//	ステート最大数
 	};
 
@@ -48,8 +49,14 @@ public:
 	void Destroy()override;					//	破棄処理
 
 	//	----- 弾丸 -----
-	void LaunchBullet();										//	弾丸生成処理
+	void		LaunchBullet(const float& elapsedTime);				//	弾丸生成処理
 	const float GetLaunchRange() const { return launchRange_; }	//	射程距離取得
+	void		UpdateLaunchTimer(const float& elapsedTime) { launchTimer_ += elapsedTime; }
+	void		ResetLaunchTimer() { launchTimer_ = 0.0f; }
+	void		SetLaunchTimer(const float& launchTimer) { launchTimer_ = launchTimer; }
+	const float GetLaunchTimer()const { return launchTimer_; }
+	void		SetLaunchInterval(const float& launchInterval) { launchInterval_ = launchInterval; }
+	const float GetLaunchInterval()const { return launchInterval_; }
 
 	//	----- Collision -----
 	void RegisterCollisionData()override;
@@ -67,7 +74,10 @@ public:
 	//	----- ステート -----
 	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<Drone>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
+	void ChangeDamageState();//	ダメージステートへ遷移
+	//void ChangeForceExecution();	//	強制実行するステートの遷移
 	void DrawStateStr();	//	現在のステート文字列設定
+
 
 	//	----- デバッグ描画 -----
 	void DrawDebugPrimitive()override;			//	デバッグプリミティブ描画
@@ -75,12 +85,13 @@ public:
 
 private:
 	//	----- エフェクト -----
-	std::shared_ptr <Effect>		effectResource_;	//	エフェクト
-	float	effectScale_ = 1.0f;						//	エフェクトスケール
+	std::shared_ptr <Effect>	effectResource_;	//	エフェクト
+	float	effectScale_ = 1.0f;					//	エフェクトスケール
 	
 	// ----- 弾丸 -----
-	float	launchTimer_ = 1.8f;	//	次の球を発射するまでのタイマー
-	float	launchRange_ = 10.0f;	//	射程距離
+	float	launchTimer_	= 0.0f;		//	次の弾を発射するまでのタイマー
+	float	launchInterval_ = 3.5f;		//	弾を発射する間隔
+	float	launchRange_	= 10.0f;	//	射程距離
 
 	//	----- オーディオ -----
 	SoundEmitter	emitter_ = {};				//	エミッター
@@ -96,7 +107,7 @@ private://	デバッグ用の変数
 	bool isAttackSphere_ = true;		//	攻撃判定
 	bool isDamageSphere_ = false;		//	くらい判定
 
-	bool	isBulletLaunch_	= true;		//	弾を発射するかどうか
+	bool	isBulletLaunch_	= true;		//	弾丸発射処理をするかどうか
 	static const int MaxHp_ = 40;		//	最大HP
 	//static const int MaxHp_ = 60;		//	最大HP
 	//static const int MaxHp_ = 3;		//	最大HP

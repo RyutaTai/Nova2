@@ -46,7 +46,8 @@ namespace PlayerState
 		void DetermineStateTransition(const float& elapssedTime);
 
 	private:
-		void PlayFootstepsSE(const float& elapsedTime);	//	足音再生
+		//	----- 足音再生 -----
+		void PlayFootstepsSE(const float& elapsedTime);
 
 	private:
 		//	----- 移動速度 -----
@@ -58,38 +59,6 @@ namespace PlayerState
 		//	----- 足音SE -----
 		float playFootstepsInterval_	= 0.278f;		//	足音SE再生間隔
 		float footStepsTimer_			= 0.0f;			//	足音SE再生間隔用タイマー
-
-	};
-}
-
-//	攻撃ステート
-namespace PlayerState
-{
-	class AttackState :public State<Player>
-	{
-	public:
-		AttackState(Player* owner) : State(owner) {}
-		~AttackState() {}
-
-		void Initialize()override;
-		void Update(const float& elapsedTime)override;
-		void Finalize()override;
-		void DrawDebug()override;
-
-		void UpdateJudgeTimer(const float& elapsedTime) { judgeTimer_ += elapsedTime; }
-		
-		void MoveTowardsEnemy(const float& elapsedTime);	//	ターゲットの方向へに向かって移動
-
-		void SetTargetPosition(const DirectX::XMFLOAT3& pos) { targetPos_ = pos; }	//	ターゲット位置設定
-
-		//	----- ステートの遷移を判断 -----
-		void DetermineStateTransition(const float& elapssedTime);
-
-	private:
-		DirectX::XMFLOAT3 targetPos_ = {};	//	ターゲット
-		float moveTime_ = 1.0f;				//	ターゲットへ向かってどのくらいの時間動くか
-		bool isMoving = false;				//	ターゲットへ移動中
-		float judgeTimer_ = 0.0f;			//	判定する時間を制限するときに使用
 
 	};
 }
@@ -113,9 +82,6 @@ namespace PlayerState
 		bool JudgeInput(const JudgeTime& inputJudgeTime);	//	正しい入力が取れていたらtrue
 		bool JudgeInputCommand(const JudgeTime& inputJudgeTime, const Command& command);
 		
-		//	----- 経過時間更新 -----
-		void UpdateStateElapsedTime(const float& elapsedTime)override;	//	経過時間更新
-		
 		//	----- アニメーション再生速度を調整 -----
 		void UpdateAnimationSpeed();	//	アニメーション箇所で速度を変化
 
@@ -127,7 +93,7 @@ namespace PlayerState
 		JudgeTime	animSpeedChangeInterval_[3] = {};	//	再生速度を変更するアニメーション区間
 		JudgeTime	cancellationTime_ = {};				//	キャンセル可能時間
 		float		acceptInputFrame_ = 0.0f;			//	入力時間を受け付ける時間(CommandConfirm関数でさかのぼるフレーム数)
-	
+
 	};
 }
 

@@ -29,9 +29,6 @@ namespace PlayerState
 
 	void IdleState::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	ステートへ遷移
 		DetermineStateTransition(elapsedTime);
 
@@ -53,16 +50,13 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
 			//	リズム判定処理
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime());
 			return;
 		}
 
 		//	回避ステートへ遷移
-		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
-		{
-			owner_->ChangeState(Player::StateType::Dodge);
-			return;
-		}
+		owner_->ChangeDodgeState();
+
 	}
 
 	void IdleState::Finalize()
@@ -72,8 +66,9 @@ namespace PlayerState
 
 	void IdleState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Idle"))
+		if (ImGui::TreeNode("IdleState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 			ImGui::DragFloat("BlendAnimTime", &blendAnimTime_, 0.001f);
 
 			ImGui::TreePop();
@@ -100,9 +95,6 @@ namespace PlayerState
 
 	void MoveState::Update(const float& elapsedTime)
 	{
-		//	ステート経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-		
 		//	足音再生
 		PlayFootstepsSE(elapsedTime);
 
@@ -128,16 +120,13 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
 			//	リズム判定処理
-			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime());
 			return;
 		}
 
 		//	回避ステートへ遷移
-		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
-		{
-			owner_->ChangeState(Player::StateType::Dodge);
-			return;
-		}
+		owner_->ChangeDodgeState();
+
 	}
 
 	//	足音SE再生
@@ -179,8 +168,11 @@ namespace PlayerState
 
 	void MoveState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Move"))
+		if (ImGui::TreeNode("MoveState"))
 		{
+			//	----- 経過時間 -----
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			//	----- 移動速度 -----
 			ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.01f);
 			
@@ -197,94 +189,6 @@ namespace PlayerState
 			ImGui::TreePop();
 		}
 	}
-}
-
-//	攻撃ステート
-namespace PlayerState
-{
-	void AttackState::Initialize()
-	{
-		//	アニメーションセット
-		//owner_->PlayAnimation(Player::AnimationType::ComboOne1, false, 2.0f, 0.0f);
-		owner_->PlayAnimation(Player::AnimationType::ComboOne1, false, 0.0f);
-		owner_->SetAnimationSpeed(1.0f);
-
-		//	当たり判定タイマー初期化
-		judgeTimer_ = 0.0f;
-	}
-
-	void AttackState::Update(const float& elapsedTime)
-	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-#if 1
-		DetermineStateTransition(elapsedTime);
-#endif
-		//	判定用タイマー更新
-		UpdateJudgeTimer(elapsedTime);
-
-	}
-
-	//	ステート遷移を判断
-	void AttackState::DetermineStateTransition(const float& elapsedTime)
-	{
-		//	アニメーション再生が終わったら待機ステートへ遷移
-		if (owner_->IsPlayAnimation() == false /* && isMoving == false*/)
-		{
-			owner_->ChangeState(Player::StateType::Idle);
-			return;
-		}
-	}
-
-	//	敵の方向へに向かって移動
-	void AttackState::MoveTowardsEnemy(const float& elapsedTime)
-	{
-		isMoving = true;
-		DirectX::XMVECTOR Velocity = {};
-		DirectX::XMVECTOR PlayerPos = DirectX::XMLoadFloat3(&owner_->GetTransform()->GetPosition());	//	プレイヤーの位置
-		DirectX::XMVECTOR TargetPos = DirectX::XMLoadFloat3(&targetPos_);								//	敵の位置
-		DirectX::XMVECTOR Move = DirectX::XMVectorSubtract(TargetPos, PlayerPos);						//	プレイヤーから敵に向かうベクトル
-
-		//	XZ平面のみの移動にする
-		Move = DirectX::XMVectorSetY(Move, 0.0f);
-
-		//	だんだんと移動する
-		float moveTimer = moveTime_;
-		Velocity = DirectX::XMVectorLerp(Velocity, Move, moveTimer);
-
-		//	移動タイマー更新
-		moveTimer -= elapsedTime;
-		if (moveTimer < 0.0f)
-		{
-			isMoving = false;
-		}
-		DirectX::XMFLOAT3 velocity;
-		DirectX::XMStoreFloat3(&velocity, Velocity);
-
-		//	プレイヤーのベロシティに加算
-		//owner_->AddVelocity(move);
-		owner_->SetVelocity(velocity);
-
-		//	移動処理
-		//owner_->Move();
-
-	}
-
-	void AttackState::Finalize()
-	{
-		judgeTimer_ = 0.0f;
-		owner_->SetAnimationSpeed(1.0f);
-	}
-
-	void AttackState::DrawDebug()
-	{
-		if (ImGui::TreeNode("Attack"))
-		{
-
-			ImGui::TreePop();
-		}
-	}
-
 }
 
 //	コンボ01_1(右パンチ)
@@ -327,9 +231,6 @@ namespace PlayerState
 
 	void ComboOne1::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	アニメーション速度更新
 		UpdateAnimationSpeed();			
 
@@ -352,7 +253,7 @@ namespace PlayerState
 		if (JudgeInput(cancellationTime_))
 		{
 			//	リズム判定処理(missならreturn)
-			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime()) == Rhythm::JudgmentType::Miss)
 				return;
 
 			//	miss以外なら次のステートへ遷移
@@ -364,6 +265,10 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
+
+		//	回避ステートへ遷移
+		owner_->ChangeDodgeState();
+
 	}
 
 	bool ComboOne1::JudgeInput(const JudgeTime& cancellationTime)
@@ -402,14 +307,6 @@ namespace PlayerState
 		return false;
 	}
 
-	//	ステート経過時間更新
-	void ComboOne1::UpdateStateElapsedTime(const float& elapsedTime)
-	{
-		//stateElapsedTime_ += elapsedTime;
-		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
-		stateElapsedTime_ = currentAnimationSeconds;
-	}
-
 	//	アニメーション速度の微調整
 	void ComboOne1::UpdateAnimationSpeed()
 	{
@@ -438,7 +335,7 @@ namespace PlayerState
 
 	void ComboOne1::DrawDebug()
 	{
-		if (ImGui::TreeNode("ComboOne1"))
+		if (ImGui::TreeNode("ComboOne1 State"))
 		{
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
@@ -489,9 +386,6 @@ namespace PlayerState
 
 	void ComboOne2::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);	
-
 		//	アニメーション速度更新
 		UpdateAnimationSpeed();
 
@@ -521,7 +415,7 @@ namespace PlayerState
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueならコンボを進める
 		{
 			//	リズム判定処理(missならreturn)
-			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime()) == Rhythm::JudgmentType::Miss)
 				return;
 
 			//	次のステートへ遷移
@@ -535,6 +429,10 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
+
+		//	回避ステートへ遷移
+		owner_->ChangeDodgeState();
+
 	}
 
 	bool ComboOne2::JudgeInput(const JudgeTime& cancellationTime)
@@ -601,7 +499,7 @@ namespace PlayerState
 
 	void ComboOne2::DrawDebug()
 	{
-		if (ImGui::TreeNode("ComboOne2"))
+		if (ImGui::TreeNode("ComboOne2 State"))
 		{
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
@@ -647,9 +545,6 @@ namespace PlayerState
 
 	void ComboOne3::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	一撃目の判定
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_[0].IsJudgeFlag(currentAnimationSeconds))
@@ -686,7 +581,7 @@ namespace PlayerState
 		if (JudgeInput(cancellationTime_))	//	入力判定がtrueなら
 		{
 			//	リズム判定処理(missならreturn)
-			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime) == Rhythm::JudgmentType::Miss)
+			if (Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime()) == Rhythm::JudgmentType::Miss)
 				return;
 
 			//	次のステートへ遷移
@@ -698,6 +593,10 @@ namespace PlayerState
 			owner_->ChangeState(Player::StateType::Idle);
 			return;
 		}
+
+		//	回避ステートへ遷移
+		owner_->ChangeDodgeState();
+
 	}
 
 	bool ComboOne3::JudgeInput(const JudgeTime& cancellationTime)
@@ -749,7 +648,7 @@ namespace PlayerState
 
 	void ComboOne3::DrawDebug()
 	{
-		if (ImGui::TreeNode("ComboOne3"))
+		if (ImGui::TreeNode("ComboOne3 State"))
 		{
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
@@ -790,11 +689,8 @@ namespace PlayerState
 
 	void ComboOne4::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-	
 		//	リズム判定をとって判定文字を出すため
-		Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime(), elapsedTime);
+		Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime());
 		
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
@@ -816,6 +712,10 @@ namespace PlayerState
 
 			return;
 		}
+
+		//	回避ステートへ遷移
+		owner_->ChangeDodgeState();
+
 	}
 
 	bool ComboOne4::JudgeInput(const JudgeTime& cancellationTime)
@@ -868,7 +768,7 @@ namespace PlayerState
 
 	void ComboOne4::DrawDebug()
 	{
-		if (ImGui::TreeNode("ComboOne4"))
+		if (ImGui::TreeNode("ComboOne4 State"))
 		{
 			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_);	//	ステート経過時間
 			ImGui::DragFloat("AcceptFrame", &acceptInputFrame_);		//	入力受付フレーム
@@ -903,9 +803,6 @@ namespace PlayerState
 
 	void DodgeState::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	----- ルートモーション設定 -----
 		if (owner_->IsBlendAnimation() == false)
 		{
@@ -971,8 +868,10 @@ namespace PlayerState
 
 	void DodgeState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Dodge"))
+		if (ImGui::TreeNode("DodgeState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			if (ImGui::TreeNode("Animation"))
 			{
 				//	アニメーション再生フレーム
@@ -1035,9 +934,6 @@ namespace PlayerState
 
 	void DamageState::Update(const float& elapsedTime)
 	{
-		//	ステート経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	アニメーション速度調整
 		UpdateAnimationSpeed();
 
@@ -1088,8 +984,10 @@ namespace PlayerState
 
 	void DamageState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Damage"))
+		if (ImGui::TreeNode("DamageState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			if (ImGui::TreeNode("PlayDuration"))
 			{
 				ImGui::DragFloat("StartFrame",	&startFrame_, 0.01f);
@@ -1147,9 +1045,6 @@ namespace PlayerState
 
 	void GetUpState::Update(const float& elapsedTime)
 	{
-		//	ステート経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	ステート遷移
 		DetermineStateTransition();
 
@@ -1174,6 +1069,8 @@ namespace PlayerState
 	{
 		if (ImGui::TreeNode("GetUpState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			ImGui::DragFloat("StartFrame", &startFrame_, 0.01f);
 			ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
 			ImGui::DragFloat("AnimSpeed", &animationSpeed_, 0.01f);
@@ -1194,9 +1091,6 @@ namespace PlayerState
 
 	void FlinchState::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	次のステートへ遷移
 		DetermineStateTransition(elapsedTime);
 
@@ -1215,8 +1109,9 @@ namespace PlayerState
 
 	void FlinchState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Flinch"))
+		if (ImGui::TreeNode("FlinchState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
 
 			ImGui::TreePop();
 		}
@@ -1234,9 +1129,6 @@ namespace PlayerState
 
 	void DeathState::Update(const float& elapsedTime)
 	{
-		//	経過時間更新
-		UpdateStateElapsedTime(elapsedTime);
-
 		//	次のステートへ遷移
 		DetermineStateTransition(elapsedTime);
 
@@ -1255,8 +1147,10 @@ namespace PlayerState
 
 	void DeathState::DrawDebug()
 	{
-		if (ImGui::TreeNode("Death"))
+		if (ImGui::TreeNode("DeathState"))
 		{
+			ImGui::DragFloat("StateElapsedTime", &stateElapsedTime_, 0.1f);
+
 			ImGui::DragFloat("StartFrame", &startFrame_, 0.01f);
 			ImGui::DragFloat("EndFrame", &endFrame_, 0.01f);
 

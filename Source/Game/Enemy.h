@@ -5,7 +5,7 @@
 
 class Enemy :public Character
 {
-protected:
+public:
 	enum class EnemyType	//	Enemyの種類
 	{
 		Drone = 0,
@@ -13,31 +13,6 @@ protected:
 		Max,
 	};
 	EnemyType myType_;
-
-	enum class StateType		//	ステート
-	{
-		Search,
-		Battle,
-		Recieve,			//	MetaAIからメッセージを受信したときのステート
-	};
-
-	enum class Search
-	{
-		Idle,
-		Wander
-	};
-
-	enum class Battle
-	{
-		Pursuit,
-		Attack,
-		Standby,		//	戦闘中に攻撃権を持っていないときの処理
-	};
-
-	enum class Recieve	//	MetaAIを経由して他のエネミーから呼ばれたときの処理
-	{
-		Called,
-	};
 
 public:
 	Enemy(const std::string& filename, const std::string& rootNodeName = "root");

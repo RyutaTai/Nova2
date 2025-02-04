@@ -55,7 +55,6 @@ public:
 	{
 		Idle = 0, 		//	待機
 		Move,			//	移動
-		Attack,			//	攻撃
 		ComboOne1,		//	コンボ0_1
 		ComboOne2,		//	コンボ0_2
 		ComboOne3,		//	コンボ0_3
@@ -153,12 +152,13 @@ public:
 	//	-----　移動方向取得 -----
 	DirectX::XMFLOAT3					GetMoveVec()const;				//	スティック入力値から移動ベクトルを取得
 	
-	//	----- State -----
+	//	----- ステート -----
 	StateMachine<State<Player>>*		GetStateMachine()	const { return stateMachine_.get(); }	//	ステートマシン取得
 	void								ChangeState(const StateType& state);						//	ステート遷移
+	void								ChangeDodgeState();											//	回避ステートへ遷移
 	StateType							GetCurrentState()	const { return currentState_; }			//	現在のステート取得
 	StateType							GetLastState()		const { return lastState_; }			//	ひとつ前のステート取得
-	void								ChangeForceExecutionState();								//	他のステートからでも強制で遷移するステートを確認
+	void								ChangeForceExecutionState();								//	強制実行するステートを遷移
 	void								DrawStateStr();												//	現在のステート描画
 
 	//	----- オーディオ -----

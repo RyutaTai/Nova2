@@ -103,9 +103,23 @@ void BehaviorTree::NodeAllClear(NodeBase* delNode)
 
 void BehaviorTree::DrawDebug()
 {
-	if (ImGui::TreeNode("BehaviorTree"))
+	//	“o˜^‚³‚ê‚Ä‚¢‚éƒm[ƒh‚ÌImGui•`‰æ
+	size_t count = root_->children_.size();
+	if (count > 0)
 	{
-		
-		ImGui::TreePop();
+		for (NodeBase* node : root_->children_)
+		{
+			if (node->GetAction() != nullptr)
+				node->GetAction()->DrawDebug();
+
+			for (NodeBase* n : node->children_)
+			{
+				if (n->GetAction() != nullptr)
+					n->GetAction()->DrawDebug();
+			}
+
+		}
 	}
+
 }
+

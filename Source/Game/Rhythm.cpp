@@ -23,7 +23,7 @@ void Rhythm::Update()
 }
 
 //  入力タイミングがリズムにあっているか判定する
-Rhythm::JudgmentType Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力されたか*/, const double& elapsedTime)
+Rhythm::JudgmentType Rhythm::GetJudgmentType(const double& inputTime/*midiの範囲内でいつ入力されたか*/)
 {
     //  ループ後の再生時間を考慮してノートを探索
     //Midi::MidiNote* closestNote = midi_->FindClosestNoteInLoop(inputTime);

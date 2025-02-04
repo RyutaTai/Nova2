@@ -32,7 +32,6 @@ Player::Player()
 	stateMachine_.reset(new StateMachine<State<Player>>());
 	stateMachine_->RegisterState(new PlayerState::IdleState(this));		//	待機
 	stateMachine_->RegisterState(new PlayerState::MoveState(this));		//	移動
-	stateMachine_->RegisterState(new PlayerState::AttackState(this));	//	攻撃
 	stateMachine_->RegisterState(new PlayerState::ComboOne1(this));		//	コンボ0_1
 	stateMachine_->RegisterState(new PlayerState::ComboOne2(this));		//	コンボ0_2
 	stateMachine_->RegisterState(new PlayerState::ComboOne3(this));		//	コンボ0_3
@@ -912,14 +911,20 @@ void Player::ChangeState(const StateType& state)
 	stateMachine_->ChangeState(static_cast<int>(state));
 }
 
+//	回避ステートへ遷移
+void Player::ChangeDodgeState()
+{
+	if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
+	{
+
+		ChangeState(Player::StateType::Dodge);
+	}
+}
+
 //	他のステートからでも強制で遷移するステートを確認
 void Player::ChangeForceExecutionState()
 {
-	//	HPが無ければ
-	if(GetHp()<=0)
-	{
-
-	}
+		
 }
 
 //	現在のステート表示
@@ -928,9 +933,9 @@ void Player::DrawStateStr()
 	//	ステート文字列
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
-		"Idle","Move","Attack",
+		"Idle","Move",
 		"ComboOne1","ComboOne2","ComboOne3","ComboOne4",
-		"Doege","GetUp","Damage","Flinch","Death"
+		"Dodge","GetUp","Damage","Flinch","Death"
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示

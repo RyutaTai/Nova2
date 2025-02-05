@@ -104,7 +104,14 @@ bool Enemy::SearchPlayer()
 //	ƒ_ƒ[ƒWˆ—
 void Enemy::AddDamage(const float& damage)
 {
+	if (isDead_)return;
+
 	hp_ -= damage;
+	if (hp_ <= 0.0f)
+	{
+		isDead_ = true;
+		OnDead();
+	}
 }
 
 //	”jŠü

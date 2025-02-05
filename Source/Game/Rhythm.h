@@ -31,7 +31,7 @@ public:
 	
 	const double GetCurrentMidiTime()const { return midi_->GetCurrentTimer(); }
 
-	JudgmentType GetJudgmentType(const double& inputTime);
+	JudgmentType GetJudgmentType(const double& time);
 
 	void	SetBPM(const float& bpm){ bpm_ = bpm; }
 	float	GetBPM()				{ return bpm_; }
@@ -53,6 +53,10 @@ private:
 	double GoodRange_ = 0.135;		//	Goodの範囲
 
 	std::unique_ptr<Midi> midi_ = nullptr;	//	タイミング判定用midi(4つ打ち)
+
+	//	デバッグ用
+	bool	useTestInput_ = false;	//	入力時間を自分で決める	
+	float	testInputTime_ = 0.41f;	//	テスト用入力時間
 
 };
 

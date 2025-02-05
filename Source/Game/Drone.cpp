@@ -26,6 +26,7 @@ Drone::Drone()
 	stateMachine_->RegisterState(new DroneState::AttackState(this));		//	攻撃
 	stateMachine_->RegisterState(new DroneState::AvoidanceState(this));		//	回避
 	stateMachine_->RegisterState(new DroneState::DamageState(this));		//	ダメージ
+	stateMachine_->RegisterState(new DroneState::DeathState(this));			//	死亡
 
 	//	初期ステート設定
 	stateMachine_->SetState(static_cast<int>(StateType::Idle));
@@ -81,7 +82,7 @@ void Drone::Initialize()
 
 	//	----- エフェクト設定 -----
 	effectResource_ = ResourceManager::Instance().LoadEffectResource("./Resources/Effect/HitEff.efk");
-	effectScale_ = 80.0f;
+	effectScale_ = 0.8f;
 
 	/* ----- オーディオ初期化 ----- */
 #if 1
@@ -174,34 +175,39 @@ void Drone::Update(const float& elapsedTime)
  	BulletManager::Instance().Update(elapsedTime);
 	BulletManager::Instance().CoverModelUpdate(elapsedTime);
 
-	//	----- 破棄処理 -----
-	JudgeDestroy();
-
 	//	----- オーディオ更新 -----
 	UpdateEmitter();
 	UpdateAudioSource();
 	
 }
 
-//	破棄判定
-void Drone::JudgeDestroy()
-{
-	if (isDead_)Destroy();
-}
-
-
 //	エミッター更新
 void Drone::UpdateEmitter()
 {
 	emitter_.position_ = GetTransform()->GetPosition();
-	//emitter_[static_cast<int>(Audio_3d::Shot)].velocity = {1,2,1};
-
+	
 }
 
 //	ダメージステートへ遷移
 void Drone::ChangeDamageState()
 {
 	if (isDamaged_)ChangeState(StateType::Damage);
+}
+
+//	死亡判定
+void Drone::JudgeDeath()
+{
+	//	死亡フラグがtrueなら死亡ステートへ遷移
+	if (isDead_)
+	{
+		ChangeState(StateType::Death);
+	}
+}
+
+//	死んだときに一回呼ばれる
+void Drone::OnDead()
+{
+	JudgeDeath();
 }
 
 //	オーディオソース更新
@@ -429,7 +435,7 @@ void Drone::DrawStateStr()
 	std::string stateStr[static_cast<int>(StateType::Max)] =
 	{
 		"Idle","Search","Move","Pursuit",
-		"Attack","Avoidance","Damage",
+		"Attack","Avoidance","Damage","Death",
 	};
 
 	ImGui::Text(u8"State　%s", stateStr[static_cast<int>(stateMachine_->GetStateIndex())].c_str());	//	ステート表示

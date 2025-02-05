@@ -21,6 +21,7 @@ public:
 		Attack,				//	攻撃
 		Avoidance,			//	回避
 		Damage,				//	ダメージ
+		Death,				//	死亡
 		Max,				//	ステート最大数
 	};
 
@@ -41,12 +42,6 @@ public:
 	void Initialize()override;
 	void Update(const float& elapsedTime)override;
 	void Render()override;
-
-	void Attack();
-
-	//	----- 破棄処理 -----
-	void JudgeDestroy()override;			//	破棄判定
-	void Destroy()override;					//	破棄処理
 
 	//	----- 弾丸 -----
 	void		LaunchBullet(const float& elapsedTime);				//	弾丸生成処理
@@ -71,13 +66,16 @@ public:
 	//	----- HP -----
 	const int GetMaxHp()const { return MaxHp_; }		//	最大HP取得
 
+	//	----- 死亡 -----
+	void Destroy()override;		//	破棄処理
+	void JudgeDeath();			//	死亡判定
+	void OnDead()override;		//	死んだときに一回呼ばれる
+
 	//	----- ステート -----
 	void ChangeState(const StateType& state) { stateMachine_->ChangeState(static_cast<int>(state)); }	//	ステート遷移
 	StateMachine<State<Drone>>* GetStateMachine() { return stateMachine_.get(); }	//	ステートマシン取得
-	void ChangeDamageState();//	ダメージステートへ遷移
-	//void ChangeForceExecution();	//	強制実行するステートの遷移
-	void DrawStateStr();	//	現在のステート文字列設定
-
+	void ChangeDamageState();	//	ダメージステートへ遷移
+	void DrawStateStr();		//	現在のステート文字列設定
 
 	//	----- デバッグ描画 -----
 	void DrawDebugPrimitive()override;			//	デバッグプリミティブ描画
@@ -86,7 +84,7 @@ public:
 private:
 	//	----- エフェクト -----
 	std::shared_ptr <Effect>	effectResource_;	//	エフェクト
-	float	effectScale_ = 1.0f;					//	エフェクトスケール
+	float	effectScale_ = 0.8f;					//	エフェクトスケール
 	
 	// ----- 弾丸 -----
 	float	launchTimer_	= 0.0f;		//	次の弾を発射するまでのタイマー

@@ -144,6 +144,10 @@ namespace DroneState
 		void Finalize()override;
 		void DrawDebug()override;
 
+	private:
+		float destroyTimer_		= 0.0f;	//	破棄するまでのタイマー
+		float destroyDuration_	= 2.0f;	//	破棄するまでの時間
+
 	};
 
 }

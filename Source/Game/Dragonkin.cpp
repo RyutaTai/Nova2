@@ -124,38 +124,38 @@ void Dragonkin::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 
-	RegisterDamageDetectionData({ "head",			0.5f,{},1.0f, "head" });		//	頭
-	RegisterDamageDetectionData({ "spine_02",		0.5f,{},1.0f, "spine_02" });	//	胸部
-	RegisterDamageDetectionData({ "Shoulder_L",		0.5f,{},1.0f, "Shoulder_L" });	//	左肩
-	RegisterDamageDetectionData({ "Shoulder_R",		0.5f,{},1.0f, "Shoulder_R" });	//	右肩
-	RegisterDamageDetectionData({ "lowerarm_l",		0.5f,{},1.0f, "lowerarm_l" });	//	左肘
-	RegisterDamageDetectionData({ "lowerarm_r",		0.5f,{},1.0f, "lowerarm_r" });	//	右肘
-	RegisterDamageDetectionData({ "Hand_L",			0.5f,{},1.0f, "Hand_L" });		//	左手首
-	RegisterDamageDetectionData({ "Hand_R",			0.5f,{},1.0f, "Hand_R" });		//	右手首
-	RegisterDamageDetectionData({ "spine_01",		0.5f,{},1.0f, "spine_01" });	//	腰
-	RegisterDamageDetectionData({ "calf_l",			0.7f,{},1.0f, "calf_l" });		//	左膝
-	RegisterDamageDetectionData({ "calf_r",			0.7f,{},1.0f, "calf_r" });		//	右膝
-	RegisterDamageDetectionData({ "Foot_L",			0.7f,{},1.0f, "Foot_L" });		//	左足首
-	RegisterDamageDetectionData({ "Foot_R",			0.7f,{},1.0f, "Foot_R" });		//	右足首
-	RegisterDamageDetectionData({ "Steps",			0.5f,{-190.0f,0.0f,0.0f},1.0f, "spine_01" });	//	足元
+	RegisterDamageDetectionData({ "head",			0.6f,{},1.0f, "head" });		//	頭
+	RegisterDamageDetectionData({ "spine_02",		0.6f,{},1.0f, "spine_02" });	//	胸部
+	RegisterDamageDetectionData({ "Shoulder_L",		0.6f,{},1.0f, "Shoulder_L" });	//	左肩
+	RegisterDamageDetectionData({ "Shoulder_R",		0.6f,{},1.0f, "Shoulder_R" });	//	右肩
+	RegisterDamageDetectionData({ "lowerarm_l",		0.6f,{},1.0f, "lowerarm_l" });	//	左肘
+	RegisterDamageDetectionData({ "lowerarm_r",		0.6f,{},1.0f, "lowerarm_r" });	//	右肘
+	RegisterDamageDetectionData({ "Hand_L",			0.6f,{},1.0f, "Hand_L" });		//	左手首
+	RegisterDamageDetectionData({ "Hand_R",			0.6f,{},1.0f, "Hand_R" });		//	右手首
+	RegisterDamageDetectionData({ "spine_01",		0.6f,{},1.0f, "spine_01" });	//	腰
+	RegisterDamageDetectionData({ "calf_l",			0.8f,{},1.0f, "calf_l" });		//	左膝
+	RegisterDamageDetectionData({ "calf_r",			0.8f,{},1.0f, "calf_r" });		//	右膝
+	RegisterDamageDetectionData({ "Foot_L",			0.8f,{},1.0f, "Foot_L" });		//	左足首
+	RegisterDamageDetectionData({ "Foot_R",			0.8f,{},1.0f, "Foot_R" });		//	右足首
+	RegisterDamageDetectionData({ "Steps",			0.7f,{-190.0f,0.0f,0.0f},1.0f, "spine_01" });	//	足元
 
 	//	左の翼
-	RegisterDamageDetectionData({ "Wing_L03",		0.5f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
-	RegisterDamageDetectionData({ "Wing_L04",		0.5f,{},1.0f, "Wing_L04" });
-	RegisterDamageDetectionData({ "Wing_L05",		0.5f,{},1.0f, "Wing_L05" });
-	RegisterDamageDetectionData({ "Wing_L06",		0.5f,{},1.0f, "Wing_L06" });
-	RegisterDamageDetectionData({ "Wing_L08",		0.5f,{},1.0f, "Wing_L08" });
-	RegisterDamageDetectionData({ "Wing_L09",		0.5f,{},1.0f, "Wing_L09" });
-	RegisterDamageDetectionData({ "Wing_L10",		0.5f,{},1.0f, "Wing_L10" });		//	一番先の方
+	RegisterDamageDetectionData({ "Wing_L03",		0.6f,{},1.0f, "Wing_L03" });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_L04",		0.6f,{},1.0f, "Wing_L04" });
+	RegisterDamageDetectionData({ "Wing_L05",		0.6f,{},1.0f, "Wing_L05" });
+	RegisterDamageDetectionData({ "Wing_L06",		0.6f,{},1.0f, "Wing_L06" });
+	RegisterDamageDetectionData({ "Wing_L08",		0.6f,{},1.0f, "Wing_L08" });
+	RegisterDamageDetectionData({ "Wing_L09",		0.6f,{},1.0f, "Wing_L09" });
+	RegisterDamageDetectionData({ "Wing_L10",		0.6f,{},1.0f, "Wing_L10" });		//	一番先の方
 
 	//	右の翼
-	RegisterDamageDetectionData({ "Wing_R03",		0.5f,{},1.0f, "Wing_R03" });		//	一番付け根に近い
-	RegisterDamageDetectionData({ "Wing_R04",		0.5f,{},1.0f, "Wing_R04" });
-	RegisterDamageDetectionData({ "Wing_R05",		0.5f,{},1.0f, "Wing_R05" });
-	RegisterDamageDetectionData({ "Wing_R06",		0.5f,{},1.0f, "Wing_R06" });
-	RegisterDamageDetectionData({ "Wing_R08",		0.5f,{},1.0f, "Wing_R08" });
-	RegisterDamageDetectionData({ "Wing_R09",		0.5f,{},1.0f, "Wing_R09" });
-	RegisterDamageDetectionData({ "Wing_R10",		0.5f,{},1.0f, "Wing_R10" });		//	一番先の方
+	RegisterDamageDetectionData({ "Wing_R03",		0.6f,{},1.0f, "Wing_R03" });		//	一番付け根に近い
+	RegisterDamageDetectionData({ "Wing_R04",		0.6f,{},1.0f, "Wing_R04" });
+	RegisterDamageDetectionData({ "Wing_R05",		0.6f,{},1.0f, "Wing_R05" });
+	RegisterDamageDetectionData({ "Wing_R06",		0.6f,{},1.0f, "Wing_R06" });
+	RegisterDamageDetectionData({ "Wing_R08",		0.6f,{},1.0f, "Wing_R08" });
+	RegisterDamageDetectionData({ "Wing_R09",		0.6f,{},1.0f, "Wing_R09" });
+	RegisterDamageDetectionData({ "Wing_R10",		0.6f,{},1.0f, "Wing_R10" });		//	一番先の方
 
 #pragma endregion ----- くらい判定登録 -----
 
@@ -178,22 +178,22 @@ void Dragonkin::RegisterCollisionData()
 	RegisterAttackDetectionData({ "Foot_R",			0.4f,{}, "Foot_R" });		//	右足首
 
 	//	左の翼
-	RegisterAttackDetectionData({ "Wing_L03",		0.4f,{}, "Wing_L03" });		//	一番付け根に近い
-	RegisterAttackDetectionData({ "Wing_L04",		0.4f,{}, "Wing_L04" });
-	RegisterAttackDetectionData({ "Wing_L05",		0.4f,{}, "Wing_L05" });
-	RegisterAttackDetectionData({ "Wing_L06",		0.4f,{}, "Wing_L06" });
-	RegisterAttackDetectionData({ "Wing_L08",		0.4f,{}, "Wing_L08" });
-	RegisterAttackDetectionData({ "Wing_L09",		0.4f,{}, "Wing_L09" });
-	RegisterAttackDetectionData({ "Wing_L10",		0.4f,{}, "Wing_L10" });		//	一番先の方
+	RegisterAttackDetectionData({ "Wing_L03",		0.5f,{}, "Wing_L03" });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_L04",		0.5f,{}, "Wing_L04" });
+	RegisterAttackDetectionData({ "Wing_L05",		0.5f,{}, "Wing_L05" });
+	RegisterAttackDetectionData({ "Wing_L06",		0.5f,{}, "Wing_L06" });
+	RegisterAttackDetectionData({ "Wing_L08",		0.5f,{}, "Wing_L08" });
+	RegisterAttackDetectionData({ "Wing_L09",		0.5f,{}, "Wing_L09" });
+	RegisterAttackDetectionData({ "Wing_L10",		0.5f,{}, "Wing_L10" });		//	一番先の方
 
 	//	右の翼												  
-	RegisterAttackDetectionData({ "Wing_R03",		0.4f,{}, "Wing_R03" });		//	一番付け根に近い
-	RegisterAttackDetectionData({ "Wing_R04",		0.4f,{}, "Wing_R04" });
-	RegisterAttackDetectionData({ "Wing_R05",		0.4f,{}, "Wing_R05" });
-	RegisterAttackDetectionData({ "Wing_R06",		0.4f,{}, "Wing_R06" });
-	RegisterAttackDetectionData({ "Wing_R08",		0.4f,{}, "Wing_R08" });
-	RegisterAttackDetectionData({ "Wing_R09",		0.4f,{}, "Wing_R09" });
-	RegisterAttackDetectionData({ "Wing_R10",		0.4f,{}, "Wing_R10" });		//	一番先の方
+	RegisterAttackDetectionData({ "Wing_R03",		0.5f,{}, "Wing_R03" });		//	一番付け根に近い
+	RegisterAttackDetectionData({ "Wing_R04",		0.5f,{}, "Wing_R04" });
+	RegisterAttackDetectionData({ "Wing_R05",		0.5f,{}, "Wing_R05" });
+	RegisterAttackDetectionData({ "Wing_R06",		0.5f,{}, "Wing_R06" });
+	RegisterAttackDetectionData({ "Wing_R08",		0.5f,{}, "Wing_R08" });
+	RegisterAttackDetectionData({ "Wing_R09",		0.5f,{}, "Wing_R09" });
+	RegisterAttackDetectionData({ "Wing_R10",		0.5f,{}, "Wing_R10" });		//	一番先の方
 
 #pragma endregion ----- 攻撃判定登録 -----
 }

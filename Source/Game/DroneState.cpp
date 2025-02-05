@@ -243,8 +243,12 @@ namespace DroneState
 {
 	void DamageState::Initialize()
 	{
+		//	ダメージフラグリセット
+		owner_->SetIsDamaged(false);
+
 		//	ダメージを受けたら発射タイマーリセット
 		owner_->ResetLaunchTimer();
+
 	}
 
 	void DamageState::Update(const float& elapsedTime)
@@ -265,7 +269,6 @@ namespace DroneState
 
 			ImGui::TreePop();
 		}
-
 	}
 
 }
@@ -275,12 +278,20 @@ namespace DroneState
 {
 	void DeathState::Initialize()
 	{
-
+		//	タイマーリセット
+		destroyTimer_ = 0.0f;
 	}
 
 	void DeathState::Update(const float& elapsedTime)
 	{
+		//	タイマー更新
+		destroyTimer_ += elapsedTime;
 
+		//	破棄処理
+		if (destroyTimer_ > destroyDuration_)
+		{
+			owner_->Destroy();
+		}
 	}
 
 	void DeathState::Finalize()
@@ -293,6 +304,9 @@ namespace DroneState
 		if (ImGui::TreeNode("DeathState"))
 		{
 			ImGui::DragFloat("ElapsedTime", &stateElapsedTime_, 0.1f);
+
+			ImGui::DragFloat("DestroyTimer", &destroyTimer_, 0.01f);
+			ImGui::DragFloat("DestroyDuration", &destroyDuration_, 0.01f);
 
 			ImGui::TreePop();
 		}

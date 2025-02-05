@@ -71,7 +71,7 @@ public:
 	void DrawDebugPrimitive()override;
 
 	//	----- 破棄処理 -----
-	void JudgeDestroy()override;
+	void JudgeDestroy();
 	void Destroy()override;
 
 	//	----- アニメーション -----

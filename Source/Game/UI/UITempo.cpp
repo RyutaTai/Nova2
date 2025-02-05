@@ -88,9 +88,6 @@ void UITempo::UpdatePosition(const float& elapsedTime)
 {
 	float centerPosX = center_->GetTransform()->GetPositionX();	//	中心円のX座標
 	
-	//	bpmに合わせた速度の設定
-	moveFactor_ = (Rhythm::Instance().GetBPM() / 120.0f);
-
 	for (int index = 0; index < SemicircleMax; ++index)
 	{
 		//	range更新
@@ -127,7 +124,9 @@ void UITempo::UpdateScale(const float& elapsedTime)
 //	BPMに合わせたMoveSpeedの更新
 void UITempo::UpdateMoveFactor()
 {
-	moveFactor_ = 1.0f;
+	//	bpmに合わせた速度の設定
+	moveFactor_ = (Rhythm::Instance().GetBPM() / 120.0f);
+
 }
 
 //	中心円のアニメーション更新
@@ -165,7 +164,10 @@ void UITempo::DrawDebug()
 		UI::DrawDebug();
 		float bpm = Rhythm::Instance().GetBPM();
 		ImGui::DragFloat("BPM", &bpm, 0.1f);
-
+		
+		//	描画フラグ
+		ImGui::Checkbox("IsVisible", &isVisible_);
+		
 		ImGui::Text("Center");								//	中心の円
 		ImGui::DragInt("animChangeThreshold_", &animChangeThreshold_);
 		ImGui::DragFloat("RangeMax", &semicircleRangeMax_);

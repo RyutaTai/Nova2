@@ -179,7 +179,7 @@ private:
 
 	//	----- エフェクト -----
 	std::shared_ptr<Effect>		effectResource_;								//	エフェクト
-	float						effectScale_ = 5.0f;							//	エフェクトスケール
+	float						effectScale_ = 0.4f;							//	エフェクトスケール
 	DirectX::XMFLOAT3			effectPos_ = {};								//	エフェクト再生位置
 	bool						playEffectFlag_ = false;						//	エフェクト再生フラグ
 	bool						drawEffectFlag_ = true;							//	エフェクト描画フラグ(falseなら描画しない)

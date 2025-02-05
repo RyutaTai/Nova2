@@ -715,6 +715,7 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& b
 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
 {
+    //  アニメーションを再生していなければreturn
     if (IsPlayAnimation() == false)return;
 
     if (transitionState_ > 0 && transitionTime_ > 0.0f)
@@ -722,7 +723,8 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
 		factor_ = blendAnimationSeconds_ / transitionTime_;
 		BlendAnimations(animatedNodes_[0], animatedNodes_[1], factor_, blendedAnimatedNodes_);
         blendAnimationSeconds_ += elapsedTime;
-		if (factor_ > 1.0f)
+		//  ブレンドアニメーションが終わったら
+        if (factor_ > 1.0f)
 		{
 			transitionState_ = 0;
             blendAnimationSeconds_ = 0.0f;
@@ -959,9 +961,11 @@ const int GltfModel::GetNodeIndex(const std::string& nodeName)
 //  ルートモーション
 void GltfModel::RootMotion(const float& scaleFactor)
 {
-    if (animationEndFlag_)return;                   //  アニメーションが再生されていないため処理しない
+    //  アニメーションが再生されていないためreturn
+    if (animationEndFlag_)return;                   
 
-    if (useRootMotionMovement_ == false)return;     //  
+    //  ルートモーションを使用しないためreturn
+    if (useRootMotionMovement_ == false)return;
 
     //  ルートモーション初回なら計算しなおす
     if (isFirstTimeRootMotion_)

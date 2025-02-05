@@ -64,10 +64,11 @@ public:
 private:
 	Transform transform_ = {};
 
-	static constexpr float MaxAngleX = DirectX::XMConvertToRadians(45);
-	static constexpr float MinAngleX = DirectX::XMConvertToRadians(-45);
-	static constexpr float MinRange = 2.0f;
-	static constexpr float MaxRange = 5.0f;
+	static constexpr float MaxAngleX_ = DirectX::XMConvertToRadians(45);
+	static constexpr float MinAngleX_ = DirectX::XMConvertToRadians(-45);
+	float minRange_ = 2.0f;
+	float maxRange_ = 9.0f;
+	//float maxRange_ = 5.0f;
 
 	DirectX::XMMATRIX viewMatrix_;								//	ビュー行列
 	DirectX::XMMATRIX projectionMatrix_;						//	プロジェクション行列

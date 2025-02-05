@@ -172,7 +172,7 @@ void Camera::NormalCamera(const float& elapsedTime)
 //#endif // DEBUG
 
 	//	右スティックでカメラ回転
-	if (!isPose_)
+	if (isPose_ == false)
 	{
 		GamePad& gamePad = Input::Instance().GetGamePad();
 		float ax = gamePad.GetAxisRX();
@@ -185,13 +185,13 @@ void Camera::NormalCamera(const float& elapsedTime)
 		angle_.y += ax * speed;
 
 		//	X軸のカメラ回転を制限
-		if (angle_.x < MinAngleX)
+		if (angle_.x < MinAngleX_)
 		{
-			angle_.x = MinAngleX;
+			angle_.x = MinAngleX_;
 		}
-		if (angle_.x > MaxAngleX)
+		if (angle_.x > MaxAngleX_)
 		{
-			angle_.x = MaxAngleX;
+			angle_.x = MaxAngleX_;
 		}
 
 		//	Y軸の回転値を-3.14～3.14に収まるようにする
@@ -205,8 +205,8 @@ void Camera::NormalCamera(const float& elapsedTime)
 		}
 
 		//	range_を線形補間
-		float t = (angle_.x - MinAngleX) / (MaxAngleX - MinAngleX);		//	補間係数tを計算
-		range_ = MinRange + (MaxRange - MinRange) * t;					//	rangeを補完
+		float t = (angle_.x - MinAngleX_) / (MaxAngleX_ - MinAngleX_);		//	補間係数tを計算
+		range_ = minRange_ + (maxRange_ - minRange_) * t;					//	rangeを補完
 
 	}
 
@@ -410,23 +410,28 @@ void Camera::DrawDebug()
 			GetTransform()->DrawDebug();
 			ImGui::TreePop();
 		}
-	
+		
 		ImGui::DragFloat	("NearZ",		&nearZ_,		1.0f,	FLT_MIN,	FLT_MAX);	//	Near
 		ImGui::DragFloat	("FarZ",		&farZ_,			1.0f,	FLT_MIN,	FLT_MAX);	//	Far
 		ImGui::DragFloat	("MoveSpeed",	&moveSpeed_,	0.01f,	-FLT_MAX,	FLT_MAX);	//	移動速度
 		ImGui::DragFloat	("RollSpeed",	&rollSpeed_,	0.01f,	-FLT_MAX,	FLT_MAX);	//	回転速度
 		ImGui::DragFloat3	("Eye",			&eye_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	カメラ視点
+		ImGui::DragFloat3	("EyeOffset",	&eyeOffset_.x,	0.001f,	-FLT_MAX,	FLT_MAX);	//	カメラ視点補正値
 		ImGui::DragFloat3	("Focus",		&focus_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	注視点
 		ImGui::DragFloat3	("Right",		&right.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	右方向
 		ImGui::DragFloat3	("Up",			&up_.x,			0.01f,	-FLT_MAX,	FLT_MAX);	//	上方向
 		ImGui::DragFloat3	("Forward",		&forward.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	前方向
 
-		float maxAngleX = MaxAngleX;
-		float minAngleX = MinAngleX;
-		ImGui::DragFloat	("MinAngleX", &minAngleX);	//	X軸の最小角度
-		ImGui::DragFloat	("MaxAngleX", &maxAngleX);	//	X軸の最大角度
+		ImGui::Text("----- Angle -----");
+		float maxAngleX = MaxAngleX_;
+		float minAngleX = MinAngleX_;
 		ImGui::DragFloat3	("Angle",		&angle_.x,		0.01f,	-FLT_MAX,	FLT_MAX);	//	回転値
-		ImGui::DragFloat3	("EyeOffset",	&eyeOffset_.x,	0.001f,	-FLT_MAX,	FLT_MAX);	//	カメラ視点補正値
+		ImGui::DragFloat	("MinAngleX_", &minAngleX);	//	X軸の最小角度
+		ImGui::DragFloat	("MaxAngleX_", &maxAngleX);	//	X軸の最大角度
+		
+		ImGui::Text("----- Range -----");
+		ImGui::DragFloat	("MinRange",	&minRange_, 0.01f);
+		ImGui::DragFloat	("MaxRange",	&maxRange_, 0.01f);
 		ImGui::DragFloat	("Range",		&range_,		0.1f,	FLT_MIN,	FLT_MAX);	//	間隔
 		if (ImGui::Button	("Reset"))
 		{

@@ -193,7 +193,7 @@ void Player::RegisterCollisionData()
 	//	{名前、半径、	オフセット位置、ダメージ倍率、	更新名、	デフォルトカラー、	ヒットカラー}
 	//	{name, radius,	offsetPos,		damage,			updateName,	defaultColor,		hitColor}
 	
-	RegisterDamageDetectionData({ "head",						0.2f,{},1.0f,"" });	//	頭
+	RegisterDamageDetectionData({ "head",						0.2f,{0.08f,0.0f,0.0f},0.3f,"" });	//	頭
 	RegisterDamageDetectionData({ "spine_04",					0.2f,{},1.0f,"" });	//	胸部
 	RegisterDamageDetectionData({ "upperarm_correctiveRoot_l",	0.2f,{},1.0f,"" });	//	左肩
 	RegisterDamageDetectionData({ "upperarm_correctiveRoot_r",	0.2f,{},1.0f,"" });	//	右肩
@@ -914,7 +914,8 @@ void Player::ChangeState(const StateType& state)
 //	回避ステートへ遷移
 void Player::ChangeDodgeState()
 {
-	if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
+	if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+	//if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y/*Vキー*/)
 	{
 
 		ChangeState(Player::StateType::Dodge);

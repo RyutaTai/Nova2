@@ -45,7 +45,7 @@ namespace PlayerState
 		}
 
 		//	攻撃ステートへ遷移
-		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
@@ -115,7 +115,7 @@ namespace PlayerState
 		}
 
 		//	攻撃ステートへ遷移
-		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			owner_->ChangeState(Player::StateType::ComboOne1);
 
@@ -281,7 +281,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			return true;
 		}
@@ -445,7 +445,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			return true;
 		}
@@ -609,7 +609,7 @@ namespace PlayerState
 
 		//if (cancellationTime.IsJudgeFlag(stateElapsedTime_) == false)return false;
 
-		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_B/*Xキー*/)
+		if(Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
 		{
 			return true;
 		}
@@ -690,8 +690,11 @@ namespace PlayerState
 	void ComboOne4::Update(const float& elapsedTime)
 	{
 		//	リズム判定をとって判定文字を出すため
-		Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime());
-		
+		if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A/*Zキー*/)
+		{
+			Rhythm::Instance().GetJudgmentType(Rhythm::Instance().GetCurrentMidiTime());
+		}
+
 		float currentAnimationSeconds = owner_->GetCurrentAnimationSeconds();	//	アニメーション再生時間
 		if (animJudgeTime_.IsJudgeFlag(currentAnimationSeconds))
 		{
@@ -854,10 +857,14 @@ namespace PlayerState
 		
 		//	移動入力があれば移動ステートへ遷移
 		if (owner_->InputMove(elapsedTime))
+		{
 			owner_->ChangeState(Player::StateType::Move);
+			return;
+		}
 
 		//	待機ステートへ遷移
 		owner_->ChangeState(Player::StateType::Idle);
+		return;
 	}
 
 	void DodgeState::Finalize()

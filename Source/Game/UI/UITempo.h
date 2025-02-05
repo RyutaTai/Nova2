@@ -40,7 +40,7 @@ private:
 	};
 
 private:
-	static constexpr int	SemicircleMax = 4;	//	半円の数
+	static constexpr int		SemicircleMax = 4;				//	半円の数
 	std::unique_ptr<Sprite>		center_;						//	テンポガイドの中心
 	std::unique_ptr<Semicircle> semicircles_[SemicircleMax];	//	半円の組
 	

@@ -30,7 +30,6 @@ public:
 	virtual void Turn(const float& elapsedTime);
 
 	//	----- 破棄処理 -----
-	virtual void JudgeDestroy() = 0;
 	virtual void Destroy();
 
 	//	----- プレイヤー探索 -----
@@ -49,6 +48,9 @@ public:
 	void			SetIsDamaged(const bool& isDamaged)	{ isDamaged_ = isDamaged; }	//	ダメージフラグ設定
 	bool			IsDamaged()const				{ return isDamaged_; }			//	ダメージフラグ取得
 	virtual void	AddDamage(const float& damage);
+
+	//	----- 死亡処理 -----
+	virtual void OnDead() {}
 
 	//	----- ターゲット -----
 	void				UpdateTargetPosition();	//	ターゲット位置更新

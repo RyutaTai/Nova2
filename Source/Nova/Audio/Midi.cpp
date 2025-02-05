@@ -12,7 +12,7 @@ Midi::Midi(const std::string& midiFilename,const double& midiFileDurationSeconds
     }
 
     //  midiファイルの長さ設定(ファイル全体の時間が取得できないため、ファイルの時間[s]を打ち込む)
-    midiFileDurationSeconds_ = midiFileDurationSeconds;
+    midiFileDurationSeconds_ = midiFileDurationSeconds == 0.0f ? midiFile_.getFileDurationInSeconds() : midiFileDurationSeconds;
 
 #if 0
     //  midiファイルの長さ設定(最後のノートの終了時間が取得できる)
@@ -50,7 +50,7 @@ void Midi::UpdateCurrentTimer(const double& elapsedTime)
     currentTimer_ += elapsedTime;
 
     //  再生時間が MIDI の総時間を超えた場合、ループ
-    if (currentTimer_ > midiFileDurationSeconds_) 
+    if (currentTimer_ >= midiFileDurationSeconds_) 
     {
         currentTimer_ = 0.0;  // ループさせる
         //currentTimer_ -= midiFileDurationSeconds_;  // ループさせる
@@ -91,7 +91,7 @@ Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 
     //  最も近いノートを探索
     MidiNote* closestNote = nullptr;
-    double minDelta = DBL_MAX; // 最小のズレ値（初期値を最大値に設定）
+    double minDelta = DBL_MAX;
 
     for(auto& note : notes_) 
     {
@@ -110,21 +110,25 @@ Midi::MidiNote* Midi::FindClosestNote(const double& inputTime)
 }
 
 //  入力タイミングから最も近いノートを返す(midiのループに対応)
+#if 0
 Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& inputTime)
 {
     MidiNote* closestNote = nullptr;
     double minDelta = DBL_MAX;
 
+    int count = 0;
+
     for (auto& note : notes_) 
     {
+        count++;
         //  判定済みノートは無視
-        if (note.judged_) continue;
+        //if (note.judged_) continue;
 
         //  ノート時間をループ補正
         float noteTime = note.time_;
-        if (currentTimer_ < noteTime && currentTimer_ + midiFileDurationSeconds_ > noteTime)
+		if (currentTimer_ < noteTime && noteTime < currentTimer_ + midiFileDurationSeconds_)
         {
-            noteTime -= midiFileDurationSeconds_; // 巻き戻し時の補正
+            //noteTime -= midiFileDurationSeconds_; // 巻き戻し時の補正
         }
 
         double delta = std::abs(inputTime - noteTime);
@@ -133,10 +137,50 @@ Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& inputTime)
             minDelta = delta;
             closestNote = &note;
         }
+        //  デバッグ用
+        if (count > 3)
+        {
+            _ASSERT_EXPR(minDelta < 0.4f, "debugDelta >= 0.4f.");
+        }
     }
 
     return closestNote;
 }
+#else
+Midi::MidiNote* Midi::FindClosestNoteInLoop(const double& time)
+{
+    MidiNote* closestNote = nullptr;
+    double minDelta = DBL_MAX;
+
+    double inputTime = time;
+
+    int count = 0;
+
+    for (auto& note : notes_)
+    {
+        count++;
+        //  判定済みノートは無視
+        //if (note.judged_) continue;
+
+        //  ループ対応
+        float noteTime = note.time_;
+
+        double delta = std::abs(inputTime - noteTime);
+        if (delta < minDelta)
+        {
+            minDelta = delta;
+            closestNote = &note;
+        }
+        //  デバッグ用
+        if (count > 3)
+        {
+            //_ASSERT_EXPR(minDelta < 0.4f, "debugDelta >= 0.4f.");
+        }
+    }
+
+    return closestNote;
+}
+#endif
 
 const Midi::MidiNote* Midi::GetNextNote(const float& currentTime)
 {
@@ -151,7 +195,7 @@ const Midi::MidiNote* Midi::GetNextNote(const float& currentTime)
 }
 
 // 入力時間に最も近いノートの開始時間を取得
-float Midi::GetNearMidiTime(const double& inputTime)
+const double Midi::GetNearMidiTime(const double& inputTime)
 {
     if (notes_.empty()) return -1.0f;
 

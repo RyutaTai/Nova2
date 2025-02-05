@@ -74,7 +74,7 @@ namespace DragonkinJudgment
 	bool DeathJudgment::Judgment()
 	{
 		//	HP‚ª‚È‚¯‚ê‚Îtrue
-		if (owner_->GetHp() <= 0)
+		if (owner_->IsDead())
 		{
 			return true;
 		}
